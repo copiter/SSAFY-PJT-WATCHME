@@ -226,3 +226,7 @@ function Todos() {
   const [todos, dispatch] = useReducer(todosReducer);
   // ...
 참고자료 : React 공식 문서
+
+
+# 7_12
+아이디어 회의

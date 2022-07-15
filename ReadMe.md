@@ -1,56 +1,87 @@
-# 웹/모바일(웹 기술) 스켈레톤 프로젝트
 
-<!-- 필수 항목 -->
-
-## 카테고리
-
-| Application | Domain | Language | Framework |
-| ---- | ---- | ---- | ---- |
-| :white_check_mark: Desktop Web | :black_square_button: AI | :white_check_mark: JavaScript | :white_check_mark: Vue.js |
-| :white_check_mark: Mobile Web | :black_square_button: Big Data | :black_square_button: TypeScript | :black_square_button: React |
-| :white_check_mark: Responsive Web | :black_square_button: Blockchain | :black_square_button: C/C++ | :black_square_button: Angular |
-| :black_square_button: Android App | :black_square_button: IoT | :black_square_button: C# | :black_square_button: Node.js |
-| :black_square_button: iOS App | :black_square_button: AR/VR/Metaverse | :white_check_mark: Python | :white_check_mark: Flask/Django |
-| :black_square_button: Desktop App | :black_square_button: Game | :white_check_mark: Java | :white_check_mark: Spring/Springboot |
-| | | :black_square_button: Kotlin | |
-
-<!-- 필수 항목 -->
-
-## 프로젝트 소개
-
-* 프로젝트명: 그룹 비디오 컨퍼런스 서비스
-* 서비스 특징: 웹/모바일(웹 기술) 프로젝트를 위한 스켈레톤 프로젝트
-* 주요 기능
-  - 회원 관리
-  - 화상 미팅룸
-  - 그룹 채팅
-* 주요 기술
+# 공부해야돼, WATCH ME 📑
+* **서비스 특징**: 웹 RTC 기술을 응용한
+* **주요 기능**
+  - 회원기능 
+* **주요 기술**
   - WebRTC
   - WebSocket
   - JWT Authentication
   - REST API
-* 참조 리소스
-  * Vuetify: 디자인 전반 적용
-  * Vue Argon Design System: 디자인 전반 적용
-  * Vue Black Dashboard Pro(유료): 캘린더 컴포넌트 사용
-  * AR Core: 구글에서 제공하는 AR 지원 라이브러리. 이미지 인식 및 오버레이 영상에 활용
-  * Color Thief: 이미지 색상 추출 라이브러리. 커버 사진 색상 추출 및 배경 변경에 활용
-  * Animation.css: CSS 애니메이션 지원 라이브러리. 메인 페이지 진입 애니메이션에 활용
-* 배포 환경
-  - URL: // 웹 서비스, 랜딩 페이지, 프로젝트 소개 등의 배포 URL 기입
-  - 테스트 계정: // 로그인이 필요한 경우, 사용 가능한 테스트 계정(ID/PW) 기입
+* **참조 리소스**
+  * figma : 와이어 프레임워크
+
 
 <!-- 자유 양식 -->
 
 ## 팀 소개
-* 김ㅇㅇ: 팀장, 프론트엔드 개발
-* 이ㅇㅇ: 부팀장, 기획 및 와이어프레임 작성, 프론트엔드 개발
-* 박ㅇㅇ: 백엔드 개발 및 QA 담당
-* 홍ㅇㅇ: 백엔드 개발, Swagger API 문서 관리
-* 전ㅇㅇ: 코드 리뷰 및 인프라 담당, CI/CD, HTTPS, Docker 구성
+
+* **홍석인**: 팀장, 백엔드 개발
+* **고동훤**: 팀원, 백엔드 개발
+* **김영훈**: 팀원, 프론트엔드 개발
+* **박나경**: 팀원, 프론트엔드 개발
+* **박철민**: 팀원, 백엔드 개발
+* **장태경**: 팀원, 프론트엔드 개발
+
 
 <!-- 자유 양식 -->
+## Commit Convention
+1. 제목에서 커밋 TYPE은 영어 대문자로 작성
+2. 본문 설명에는 **무엇**을 했는지에 대해서 써야함
+
+#### Convention
+```
+FIX - 버그, 오류 해결
+ADD - FEAT 이외의 부수적인 코드 추가 / 라이브러리 추가/ 새로운 VIEW나 ACTIVE 생성
+FEAT - 새로운 기능 구현
+DEL - 쓸모없는 코드 삭제
+REMOVE - 파일삭제
+REFACTOR - 내부 로직 변경이 없고, 코드개선하는 리팩토링
+CHORE - 그 외의 일(버전 코드 수정, 파일 이동, 가독성이나 변수명 reformat)
+COMMENT - 필요한 주석 추가 및 변경
+DOCS - README나 WIKI 등 내용 추가 및 변경
+TEST - 테스트 코드 추가
+```
+
+#### Example
+```
+ADD-로그인 Validation 추가
+DOCS-0711 진행사항 수정
+```
+
 
 ## 프로젝트 상세 설명
 
-// 개발 환경, 기술 스택, 시스템 구성도, ERD, 기능 상세 설명 등
+* 프로젝트 기획
+
+* 개발 환경 및 기술 스택
+
+<img src ="https://img.shields.io/badge/platform-Web-red"></img>
+<img src ="https://img.shields.io/badge/library-React-skyblue"></img>
+<img src ="https://img.shields.io/badge/framework-SpringBoot-green"></img>
+<img src ="https://img.shields.io/badge/database-MySQL-silver"></img>
+<img src ="https://img.shields.io/badge/server-AWS-gold"></img>
+<img src ="https://img.shields.io/badge/language-Java%2C%20JavaScript-purple"></img>
+
+**BE**
+- **IDE** : IntelliJ
+- **Framework** : Spring boot
+- **JAVA** : 8
+- **Build** : Gradle
+- **WAS** : Tomcat
+- **DBMS** : MySql
+- **DB API** : JPA
+
+**FE**
+- **IDE** : vscode
+- **Framework/Library** : React
+
+**Server**
+- Docker
+
+- **진행 기간**: 2022.07.04 ~
+
+## 기능 상세 설명
+
+ 1. 회원 관리
+  - 회원가입

@@ -26,10 +26,14 @@
 
 <!-- 자유 양식 -->
 ## Commit Convention
-1. 제목에서 커밋 TYPE은 영어 대문자로 작성
-2. 본문 설명에는 **무엇**을 했는지에 대해서 써야함
+### 틀 : ```[TYPE]-"MESSAGE"```
+1. 제목에서 커밋 TYPE은 영어 대문자로, 아래에 Type Convention에 맞춰 작성
+2. TYPE뒤에 띄어쓰기 없이!! ```-```을 넣고 띄우지 않고 MESSAGE를 입력한다.
+3. MESSAGE는 한글, 영어 자유롭게 입력.
+4. MESSAGE는 **무엇**을 했는지에 대해서 써야하고 문장형으로 쓰지 않음.
+5. 안에 상세 설명에는 보충설명 내용이 들어가야함.
 
-#### Convention
+#### TYPE Convention
 ```
 FIX - 버그, 오류 해결
 ADD - FEAT 이외의 부수적인 코드 추가 / 라이브러리 추가/ 새로운 VIEW나 ACTIVE 생성

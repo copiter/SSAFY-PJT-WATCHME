@@ -1,0 +1,183 @@
+#signup{
+    position: absolute;
+    width: 1200px;
+    height: 700px;
+    left: 250px;
+    top: 140px;
+}
+#signup-top{
+    border:1px solid ;
+    width: 100%;
+    height: 70px;
+}
+#signup-top-title{
+    position: absolute;
+width: 187px;
+height: 22px;
+left: 33px;
+top: 29px;
+
+font-weight: 700;
+font-size: 18px;
+line-height: 22px;
+}
+
+
+#signup-left{
+    border:1px solid ;
+    position: absolute;
+    width: 500px;
+    height: 630px;
+    left: 0px;
+    top: 70px;
+
+
+}
+#signup-left-image{
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: 100px;
+    top: 70px;
+    background-color: #D9D9D9;
+
+    border-radius: 50%;
+
+}
+#signup-left-addimage
+{
+    position: absolute;
+    width: 150px;
+    height: 75px;
+    left: 175px;
+    bottom: 80px;
+    background-color: #D9D9D9;
+
+    border-radius: 10%;
+
+
+
+font-family: 'Montserrat';
+font-style: normal;
+font-weight: 600;
+font-size: 17px;
+line-height: 70px;
+
+text-align: center;
+
+color: rgba(0, 0, 0, 0.7);
+}
+
+#signup-right{
+    border:1px solid ;
+    position: absolute;
+width: 700px;
+height: 630px;
+left: 500px;
+top: 70px;
+
+}
+
+#signup-right-1
+{
+    position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 40px;
+    
+
+}
+
+#signup-right-2
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 110px;
+}
+#signup-right-3
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 180px;
+    
+}
+#signup-right-4
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 250px;
+}
+#signup-right-5
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 320px;
+    
+}
+#signup-right-6
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 390px;
+}
+#signup-right-7
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 460px;
+}
+#signup-right-8
+{position: absolute;
+    width: 535px;
+    height: 60px;
+    left: 60px;
+    top: 550px;
+    
+}
+
+
+.dup{
+    background-color: #9A9A9A;
+    border-radius: 30px;
+    float :right;
+    height: 80%;
+    width: 20%;
+}
+.submitting{
+    color:#FFFFFF;
+    background-color: #9A9A9A;
+}
+
+
+.width100{
+    width:100%;
+    height: 80%;
+}
+.width45{
+    width:45%;
+    height: 80%;
+}
+.width70{
+    width:70%;
+    height: 80%;
+}
+.left10{
+    left:10%;
+}
+
+.input{
+    position: relative;
+  
+    box-sizing: border-box;
+    padding: 10px 10px 10px 29px;
+  
+    border: 1px solid #c2c6cc;
+    border-radius: 30px;
+  }

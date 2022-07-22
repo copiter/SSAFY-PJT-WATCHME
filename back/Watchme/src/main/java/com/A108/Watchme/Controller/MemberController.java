@@ -29,6 +29,7 @@ public class MemberController {
     @PostMapping("/login")
     @ResponseBody
     public ApiResponse login(@RequestBody @Validated LoginRequestDTO loginRequestDTO){
+        System.out.println("hi");
         return memberService.login(loginRequestDTO);
     }
 

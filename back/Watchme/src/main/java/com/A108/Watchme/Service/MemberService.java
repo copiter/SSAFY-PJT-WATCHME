@@ -33,7 +33,7 @@ public class MemberService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
 
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public int memberInsert(SignUpRequestDTO signUpRequestDTO) {
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
@@ -50,6 +50,7 @@ public class MemberService {
                 .imageLink(signUpRequestDTO.getImageLink())
                 .score(0)
                 .build());
+        // my-batis ? lastId 가지고와야 회원가입 되었는지 안되었는지 알지않나요?
         return 1;
     }
 

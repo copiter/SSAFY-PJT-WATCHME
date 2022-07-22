@@ -10,9 +10,9 @@ import java.util.Map;
 @Setter
 public class ResponseMap extends ApiResponse{
     private Map responseData = new HashMap();
-
+    private String message;
     public ResponseMap() {
-        setResult(responseData);
+        setResult(this.getMessage());
     }
 
     public void setResponseData(String key, Object value) {

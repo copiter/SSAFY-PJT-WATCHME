@@ -8,16 +8,16 @@ import org.springframework.http.HttpStatus;
 @Setter
 public class ApiResponse {
     private int code = HttpStatus.OK.value();
-    private Object result;
+    private String message;
 
     public ApiResponse() {}
 
-    public ApiResponse(int code, Object result) {
-        this.code = code;
-        this.result = result;
+    public ApiResponse(int code, String message) {
+        this.setCode(code);
+        this.setMessage(message);
     }
 
-    public void setResult(Object result) {
-        this.result = result;
+    public void setResult(String message) {
+        this.setMessage(message);
     }
 }

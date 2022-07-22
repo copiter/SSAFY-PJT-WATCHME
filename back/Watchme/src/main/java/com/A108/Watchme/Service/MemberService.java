@@ -56,6 +56,7 @@ public class MemberService {
                 .score(0)
                 .build());
         Map createToken = createTokenReturn(member.getId());
+        result.setMessage("MEMBER INSERT SUCCESS");
         result.setResponseData("accessToken", createToken.get("accessToken"));
         result.setResponseData("refreshToken", createToken.get("refreshToken"));
         return result;
@@ -71,6 +72,7 @@ public class MemberService {
 
             Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
             Map createToken = createTokenReturn(member.getId());
+            result.setMessage("LOGIN SUCCESS");
             result.setResponseData("accessToken", createToken.get("accessToken"));
             result.setResponseData("refreshToken", createToken.get("refreshToken"));
         } catch (Exception e) {

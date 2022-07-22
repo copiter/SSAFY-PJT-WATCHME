@@ -35,23 +35,30 @@ public class MemberService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public int memberInsert(SignUpRequestDTO signUpRequestDTO) {
+    public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO) throws ParseException {
+        ResponseMap result = new ResponseMap();
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
-        memberRepository.save(Member.builder()
-                .email(signUpRequestDTO.getEmail())
-                .nickName(signUpRequestDTO.getNickName())
-                .pwd(encPassword)
-                .status(Status.YES)
-                .build());
+        Member member = memberRepository.save(Member.builder()
+                    .email(signUpRequestDTO.getEmail())
+                    .nickName(signUpRequestDTO.getNickName())
+                    .role(Role.MEMBER)
+                    .pwd(encPassword)
+                    .status(Status.YES)
+                    .build());
+
         memberInfoRepository.save(MemberInfo.builder()
+                .member(member)
                 .gender(signUpRequestDTO.getGender())
+                .name(signUpRequestDTO.getName())
                 .birth(signUpRequestDTO.getBirth())
                 .point(0)
                 .imageLink(signUpRequestDTO.getImageLink())
                 .score(0)
                 .build());
-        // my-batis ? lastId 가지고와야 회원가입 되었는지 안되었는지 알지않나요?
-        return 1;
+        Map createToken = createTokenReturn(member.getId());
+        result.setResponseData("accessToken", createToken.get("accessToken"));
+        result.setResponseData("refreshToken", createToken.get("refreshToken"));
+        return result;
     }
 
     public ApiResponse login(LoginRequestDTO loginRequestDTO) {

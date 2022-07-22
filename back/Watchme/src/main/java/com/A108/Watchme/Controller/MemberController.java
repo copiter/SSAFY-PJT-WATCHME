@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 
 @RestController
 
@@ -21,15 +22,14 @@ public class MemberController {
     MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) {
-        memberService.memberInsert(signUpRequestDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseBody
+    public ApiResponse signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) throws ParseException {
+        return memberService.memberInsert(signUpRequestDTO);
     }
 
     @PostMapping("/login")
     @ResponseBody
     public ApiResponse login(@RequestBody @Validated LoginRequestDTO loginRequestDTO){
-        System.out.println("hi");
         return memberService.login(loginRequestDTO);
     }
 

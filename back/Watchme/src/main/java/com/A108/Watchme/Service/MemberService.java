@@ -44,6 +44,7 @@ public class MemberService {
                     .role(Role.MEMBER)
                     .pwd(encPassword)
                     .status(Status.YES)
+                    .providerType(ProviderType.EMAIL)
                     .build());
 
         memberInfoRepository.save(MemberInfo.builder()

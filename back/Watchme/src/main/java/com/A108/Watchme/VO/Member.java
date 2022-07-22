@@ -29,4 +29,6 @@ public class Member{
     private Status status;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
 }

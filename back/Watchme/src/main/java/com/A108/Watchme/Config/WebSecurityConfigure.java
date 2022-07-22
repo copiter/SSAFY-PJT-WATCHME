@@ -2,6 +2,7 @@ package com.A108.Watchme.Config;
 
 import com.A108.Watchme.Exception.AuthenticationEntryPointHandler;
 import com.A108.Watchme.Exception.WebAccessDeniedHandler;
+import com.A108.Watchme.auth.CustomOAuth2UserService;
 import com.A108.Watchme.jwt.JwtAuthenticationFilter;
 import com.A108.Watchme.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class WebSecurityConfigure {
     private final JwtProvider jwtProvider;
     private final AuthenticationEntryPointHandler authenticationEntryPointHandler;
     private final WebAccessDeniedHandler webAccessDeniedHandler;
-
+    private final CustomOAuth2UserService customOAuth2UserService;
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -45,6 +46,9 @@ public class WebSecurityConfigure {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(corsFilter) // @CrossOrigin(인증 X), 시큐리티 필터에 등록해줘야함.
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasRole("ADMIN")
@@ -55,9 +59,10 @@ public class WebSecurityConfigure {
                 .authenticationEntryPoint(authenticationEntryPointHandler)
                 .accessDeniedHandler(webAccessDeniedHandler)
                 .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .formLogin().disable()
-                .httpBasic().disable();
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService);
+
 
         return http.build();
     }

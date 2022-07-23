@@ -22,6 +22,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
+        System.out.println("HELLo");
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
             System.out.println("HELLo");
@@ -37,7 +38,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
-
+        System.out.println(oAuth2UserInfo.getEmail());
+        System.out.println(providerType);
+        System.out.println(oAuth2UserInfo.getAttributes());
         Member savedMember = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
 
         if(savedMember != null){

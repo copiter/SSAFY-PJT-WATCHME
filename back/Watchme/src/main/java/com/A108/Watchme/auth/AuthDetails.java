@@ -21,20 +21,21 @@ public class AuthDetails implements UserDetails, OAuth2User {
     private ProviderType providerType;
     private Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
-
+    private String name;
     public AuthDetails(ProviderType providerType, Map<String, Object> attributes) {
         this.providerType = providerType;
         this.attributes = attributes;
+        this.name = (String)attributes.get("name");
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return attributes;
     }
 
     @Override
@@ -49,7 +50,7 @@ public class AuthDetails implements UserDetails, OAuth2User {
 
     @Override
     public String getUsername() {
-        return null;
+        return name;
     }
 
     @Override

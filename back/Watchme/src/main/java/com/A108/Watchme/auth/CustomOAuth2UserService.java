@@ -24,6 +24,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
+            System.out.println("HELLo");
             return this.processOAuth2User(oAuth2UserRequest, oAuth2User);
         } catch (AuthenticationException e) {
             throw e;
@@ -42,9 +43,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if(savedMember != null){
                 throw new OAuthProviderMissMatchException(
                         savedMember.getProviderType() + "로 가입된계정이 있습니다.");
-            } else {
+            }
+        return new AuthDetails(providerType, oAuth2UserInfo.getAttributes());
 
-        }
-        return new PrincipalDetails(savedMember, oAuth2User.getAttributes());
     }
 }

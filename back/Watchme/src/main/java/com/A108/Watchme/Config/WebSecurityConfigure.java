@@ -3,6 +3,8 @@ package com.A108.Watchme.Config;
 import com.A108.Watchme.Exception.AuthenticationEntryPointHandler;
 import com.A108.Watchme.Exception.WebAccessDeniedHandler;
 import com.A108.Watchme.auth.CustomOAuth2UserService;
+import com.A108.Watchme.auth.OAuth2AuthenticationFailureHandler;
+import com.A108.Watchme.auth.OAuth2SuccessHandler;
 import com.A108.Watchme.jwt.JwtAuthenticationFilter;
 import com.A108.Watchme.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.web.filter.CorsFilter;
@@ -29,6 +33,8 @@ public class WebSecurityConfigure {
     private final AuthenticationEntryPointHandler authenticationEntryPointHandler;
     private final WebAccessDeniedHandler webAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -38,6 +44,14 @@ public class WebSecurityConfigure {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+    @Bean
+    public AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
+        return oAuth2AuthenticationSuccessHandler;
+    }
+    @Bean
+    public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler(){
+        return oAuth2AuthenticationFailureHandler;
     }
 
     @Bean
@@ -60,10 +74,19 @@ public class WebSecurityConfigure {
                 .accessDeniedHandler(webAccessDeniedHandler)
                 .and()
                 .oauth2Login()
+                .authorizationEndpoint()
+                .baseUri("/oauth2/authorization")
+                .and()
                 .userInfoEndpoint()
-                .userService(customOAuth2UserService);
-
+                .userService(customOAuth2UserService)
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/*/oauth2/code/*")
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler())
+                .failureHandler(oAuth2AuthenticationFailureHandler());
 
         return http.build();
     }
+
 }

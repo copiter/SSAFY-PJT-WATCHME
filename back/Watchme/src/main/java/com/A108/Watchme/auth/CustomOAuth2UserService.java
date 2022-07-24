@@ -49,7 +49,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 throw new OAuthProviderMissMatchException(
                         savedMember.getProviderType() + "로 가입된계정이 있습니다.");
             }
-        return new AuthDetails(providerType, oAuth2UserInfo.getAttributes());
-
+        return new AuthDetails(providerType, oAuth2UserInfo.getAttributes(), oAuth2UserInfo.getName(),oAuth2UserInfo.getImageUrl());
     }
 }

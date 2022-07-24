@@ -33,8 +33,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         httpSession = request.getSession();
         httpSession.setAttribute("email",authDetails.getAttributes().get("email").toString());
-        httpSession.setAttribute("name",authDetails.getAttributes().get("name").toString());
-        httpSession.setAttribute("image",authDetails.getAttributes().get("picture").toString());
+        httpSession.setAttribute("name",authDetails.getName());
+        httpSession.setAttribute("image",authDetails.getImgUrl());
         response.sendRedirect("/home");
     }
 }

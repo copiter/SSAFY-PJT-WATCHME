@@ -22,10 +22,12 @@ public class AuthDetails implements UserDetails, OAuth2User {
     private Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
     private String name;
-    public AuthDetails(ProviderType providerType, Map<String, Object> attributes) {
+    private String imgUrl;
+    public AuthDetails(ProviderType providerType, Map<String, Object> attributes, String name, String imgUrl) {
         this.providerType = providerType;
         this.attributes = attributes;
-        this.name = (String)attributes.get("name");
+        this.name = name;
+        this.imgUrl = imgUrl;
     }
 
     @Override

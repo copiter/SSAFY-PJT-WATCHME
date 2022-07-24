@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpSession;
+
 
 
 
@@ -22,10 +22,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
-        System.out.println("HELLo");
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
-            System.out.println("HELLo");
             return this.processOAuth2User(oAuth2UserRequest, oAuth2User);
         } catch (AuthenticationException e) {
             throw e;
@@ -38,12 +36,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
-        System.out.println(oAuth2UserInfo.getEmail());
-        System.out.println(providerType);
-        System.out.println(oAuth2UserInfo.getAttributes());
+//        System.out.println(oAuth2UserInfo.getEmail());
+//        System.out.println(providerType);
+//        System.out.println(oAuth2UserInfo.getAttributes());
+
         Member savedMember = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
 
         if(savedMember != null){
+            if(savedMember.getProviderType().equals(providerType)){
+                //jwt return;
+            }
                 throw new OAuthProviderMissMatchException(
                         savedMember.getProviderType() + "로 가입된계정이 있습니다.");
             }

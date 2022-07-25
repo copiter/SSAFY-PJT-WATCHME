@@ -6,11 +6,9 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class RefreshToken {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="refresh_id")

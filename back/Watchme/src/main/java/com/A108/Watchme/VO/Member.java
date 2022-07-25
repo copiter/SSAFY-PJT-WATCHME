@@ -10,13 +10,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-@ToString
 @Entity
-@Getter
-@Setter
+@Getter @Setter
+@AllArgsConstructor @NoArgsConstructor
+@ToString
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Member{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_id")
@@ -31,4 +29,5 @@ public class Member{
     private Role role;
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
+
 }

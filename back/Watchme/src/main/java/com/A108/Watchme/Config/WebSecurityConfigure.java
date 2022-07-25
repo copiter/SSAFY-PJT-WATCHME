@@ -65,6 +65,7 @@ public class WebSecurityConfigure {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(corsFilter) // @CrossOrigin(인증 X), 시큐리티 필터에 등록해줘야함.
                 .authorizeRequests()
+                .antMatchers("/api/v2/**","/health","/swagger-ui.html","/swagger/**","/swagger-resources/**","/webjars/**","/v2/api-docs").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/member/**").hasRole("MEMBER")
                 .anyRequest().permitAll()

@@ -19,7 +19,8 @@ import GroupDetail from "./components/Group/GroupDetail"; //그룹정보
 //그외페이지
 import MainPage from "./components/MainPage/MainPage";
 import NotFound from "./pages/NotFound";
-import About from "./ETC/About";
+import About from "./components/ETC/About";
+import MyPage from "./components/ETC/MyPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/GroupCreate" element={<GroupCreate />} />
         <Route path="/GroupDetail" element={<GroupDetail />} />
         <Route path="/About" element={<About />} />
+        <Route path="/MyPage" element={<MyPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Layout>

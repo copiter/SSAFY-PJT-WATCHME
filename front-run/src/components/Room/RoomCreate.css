@@ -1,0 +1,32 @@
+#bodyFraome{
+    position: absolute;
+    width: 1220px;
+    height: 671px;
+    left: 130px;
+    top: 120px;
+    margin:
+
+}
+#back{
+    position: re;
+    width: 147px;
+    height: 46px;
+    left: 20px;
+
+}
+#room-image{
+    position: absolute;
+    width: 279px;
+    height: 566px;
+    left: 16px;
+    top: 20px;
+    background: #EFF0F2;
+    border-radius: 8px;
+}
+#room-infor{
+    position: absolute;
+    width: 824px;
+    height: 570px;
+    left: 332px;
+    top: 20px;
+}

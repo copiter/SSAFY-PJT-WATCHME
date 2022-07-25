@@ -31,16 +31,13 @@ function SocialLogin() {
     const enteredBirthday = birthdayInputRef.current.value;
 
     //쿠키 가져오기
-    const getCookie = () => {
+    //쿠키 가져오기
+    let cookie;
+    function getCookie() {
       const cookie_array = document.cookie
-        .split("; ")
-        .map((item) => item.split("="));
-      for (let i = 0; i < cookie_array.length; i++) {
-        if (cookie_array[i][0] === "JSESSIONID") {
-          return cookie_array[i][1];
-        }
-      }
-    };
+        .split(";")
+       console.log(cookie_array);
+    }
 
     const url = "http://localhost:8080/social-signup";
     // Interacting with server
@@ -76,6 +73,7 @@ function SocialLogin() {
           navigate("/");
           window.location.reload();
         }
+        
       })
       .catch((err) => {
         alert(err.message);

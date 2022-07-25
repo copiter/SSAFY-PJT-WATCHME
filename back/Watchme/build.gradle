@@ -35,6 +35,11 @@ dependencies {
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.0.0'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
+	//WebRTC SETTING
+//	compile group: 'org.kurento', name: 'kurento-client'
+//	compile group: 'org.kurento', name: 'kurento-util-js'
+//	compile group: 'org.webjars', name: 'webjars-locator'
+
 }
 
 tasks.named('test') {

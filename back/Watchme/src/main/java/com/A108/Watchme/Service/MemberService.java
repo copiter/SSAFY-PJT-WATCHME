@@ -5,7 +5,6 @@ import com.A108.Watchme.DTO.NewTokenRequestDTO;
 import com.A108.Watchme.DTO.SignUpRequestDTO;
 import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Http.ApiResponse;
-import com.A108.Watchme.Http.ResponseMap;
 import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
@@ -36,7 +35,7 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO) throws ParseException {
-        ResponseMap result = new ResponseMap();
+        ApiResponse result = new ApiResponse();
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
         Member member = memberRepository.save(Member.builder()
                     .email(signUpRequestDTO.getEmail())
@@ -62,7 +61,7 @@ public class MemberService {
     }
 
     public ApiResponse login(LoginRequestDTO loginRequestDTO) {
-        ResponseMap result = new ResponseMap();
+        ApiResponse result = new ApiResponse();
 
         try {
             authenticationManager.authenticate(
@@ -83,7 +82,7 @@ public class MemberService {
     }
 
     public ApiResponse newAccessToken(NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request){
-        ResponseMap result = new ResponseMap();
+        ApiResponse result = new ApiResponse();
         String refreshToken = newTokenRequestDTO.getToken();
 
         // AccessToken은 만료되었지만 RefreshToken은 만료되지 않은 경우

@@ -23,8 +23,9 @@ const Login = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    const url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
+    const url = "localhost:8080/login";
+    // const url =
+    //   "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
 
     // Interacting with server
     fetch(url, {
@@ -48,9 +49,11 @@ const Login = () => {
         }
       })
       .then((result) => {
-        authCtx.login(result.idToken);
+        document.cookie = `accessToken=${result.accessToken}`; //token
+        authCtx.login();
         alert("로그인 되었습니다");
         navigate("/");
+        window.location.reload();
       })
       .catch((err) => {
         alert(err.message);

@@ -1,0 +1,67 @@
+[{
+    
+    
+
+    "MainpageRooms":[
+        {
+            "ID":"ID",
+            "roomName":"스터디그룹이름1",
+            "roomImage":"none",
+            "roomDiscription":"그룹세부정보1",
+            "romMemberNo":1,
+            "roomMemberMaxNo":6,
+            "roomLookUp":1234,
+            "roomTag":"공무원"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름2",
+            "roomImage":"방이미지SRC2",
+            "roomDiscription":"그룹세부정보2",
+            "romMemberNo":1,
+            "roomMemberMaxNo":5,
+            "roomLookUp":1235,
+            "roomTag":"공무원"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름3",
+            "roomImage":"방이미지SRC3",
+            "roomDiscription":"그룹세부정보3",
+            "romMemberNo":3,
+            "roomMemberMaxNo":16,
+            "roomLookUp":1234,
+            "roomTag":"공무원"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름4",
+            "roomImage":"방이미지SRC4",
+            "roomDiscription":"그룹세부정보4",
+            "romMemberNo":11,
+            "roomMemberMaxNo":11,
+            "roomLookUp":1234,
+            "roomTag":"공무원"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름5",
+            "roomImage":"방이미지SRC5",
+            "roomDiscription":"그룹세부정보5",
+            "romMemberNo":1,
+            "roomMemberMaxNo":2,
+            "roomLookUp":1234,
+            "roomTag":"공무원"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름6",
+            "roomImage":"방이미지SRC6",
+            "roomDiscription":"그룹세부정보6",
+            "romMemberNo":25,
+            "roomMemberMaxNo":25,
+            "roomLookUp":1234,
+            "roomTag":"공무원"
+        }
+
+    ]
+
+    
+
+
+}]

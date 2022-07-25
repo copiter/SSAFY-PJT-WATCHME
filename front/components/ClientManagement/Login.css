@@ -1,0 +1,167 @@
+/* 로그인/autolayout */
+
+/* Auto layout */
+.login {
+  position: relative;
+  box-sizing: border-box;
+  padding: 30px 35px;
+  margin: 50px auto 0;
+
+  width: 617px;
+  height: 670px;
+
+  background-color: #ffffff;
+  border: #000;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+.login .login-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 27px;
+}
+
+.login .login-inputs::before {
+  display: block;
+  content: "";
+  width: 547px;
+  height: 1px;
+  background: #e0e2e6;
+  margin: 0 auto;
+}
+
+.login .login-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 19px;
+}
+
+.login-inputs .input-box {
+  position: relative;
+
+  box-sizing: border-box;
+  padding: 10px 10px 10px 29px;
+
+  width: 547px;
+  height: 55px;
+
+  background: #ffffff;
+  border: 1px solid #c2c6cc;
+  border-radius: 30px;
+}
+
+.login-inputs a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17px;
+
+  color: #9a9a9a;
+  margin: 0 0 0 20px;
+}
+
+.login-inputs button {
+  width: 547px;
+  height: 55px;
+
+  background: #9a9a9a;
+  border-radius: 30px;
+  border-style: none;
+
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 24px;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+}
+
+.login-inputs::after {
+  display: block;
+  content: "";
+  width: 547px;
+  height: 1px;
+  background: #e0e2e6;
+  margin: 0 auto;
+}
+
+.login .insert-word {
+  display: inline-block;
+  position: absolute;
+  left: 59px;
+  top: 345px;
+  background-color: #ffffff;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 15px;
+
+  color: #9a9a9a;
+}
+
+.signup-btns {
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+
+  width: 547px;
+  height: 249px;
+  
+  margin-top: 27px;
+  
+  flex: none;
+  order: 4;
+  align-self: stretch;
+  flex-grow: 0;
+  z-index: 4;
+}
+
+.signup-btns a {
+  display: inline-block;
+  overflow: hidden;
+  
+  width: 547px;
+  height: 50px;
+  
+  border-radius: 30px;
+  border-style: none;
+  
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  line-height: 50px;
+}
+
+.signup-btns a .email {
+  background: #e8eaec;
+}
+.signup-btns a .kakao {
+  background-color: #fee500;
+}
+.signup-btns a .naver {
+  background-color: #03c75a;
+}
+.signup-btns a .google {
+  background-color:rgba(0, 0, 0, 0.05);
+}
+
+.signup-btns .kakao img {
+  vertical-align: middle;
+  margin: 0 7px 2px 0;
+}
+
+.signup-btns .naver img {
+  vertical-align: middle;
+  margin: 0 2px 4px 0;
+}
+
+.signup-btns .google img {
+  vertical-align: middle;
+  margin: 0 2px 4px 0; 
+}

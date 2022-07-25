@@ -24,29 +24,6 @@
 
 
 <!-- 자유 양식 -->
-## Commit Convention
-### 틀 : ```[TYPE]-"MESSAGE"```
-1. 제목에서 커밋 TYPE은 영어 대문자로, 아래에 Type Convention에 맞춰 작성
-2. TYPE뒤에 띄어쓰기 없이!! ```-```을 넣고 띄우지 않고 MESSAGE를 입력한다.
-3. MESSAGE는 한글, 영어 자유롭게 입력.
-4. MESSAGE는 **무엇**을 했는지에 대해서 써야하고 문장형으로 쓰지 않음.
-5. 안에 상세 설명에는 보충설명 내용이 들어가야함.
-
-#### TYPE Convention
-```
-FIX - 버그, 오류 해결
-ADD - FEAT 이외의 부수적인 코드 추가 / 라이브러리 추가/ 새로운 VIEW나 ACTIVE 생성
-FEAT - 새로운 기능 구현
-DEL - 쓸모없는 코드 삭제
-REMOVE - 파일삭제
-REFACTOR - 내부 로직 변경이 없고, 코드개선하는 리팩토링
-CHORE - 그 외의 일(버전 코드 수정, 파일 이동, 가독성이나 변수명 reformat)
-COMMENT - 필요한 주석 추가 및 변경
-DOCS - README나 WIKI 등 내용 추가 및 변경
-TEST - 테스트 코드 추가
-MERGE - Branch 병합
-```
-
 #### Example
 ```
 ADD-로그인 Validation 추가

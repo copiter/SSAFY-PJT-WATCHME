@@ -1,0 +1,229 @@
+a{text-decoration: none;
+color:black ;}
+#outer{
+    position: absolute;
+    left:10%
+}
+
+nav{
+    width: 1440px;
+    height: 80px;
+
+    background-color: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+}
+  
+  #nav__logo{
+      
+      position:absolute;
+      width: 150px;
+      top:30px;
+  }
+  #nav__link{
+      
+      position:absolute;
+      top:0px;
+      left:150px;
+      width: 900px;
+      height:80px;
+
+
+  }
+  .li{
+      position: absolute;
+      width: 300px;
+      top:30px;
+      left:100px;
+  }   
+  #li2{
+      left:400px
+  }
+  #li3{
+      left:700px
+  }
+  #nav__user{
+
+      position: absolute;
+      width: 390px;
+      height: 80px;
+      right: 0px;
+
+  }
+  .nav__user__dropdown{
+    
+  }
+  
+  #nav__user_userimage{
+    position:absolute;
+    top:10px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    right:200px;
+    background-color: #C2C6CC;;
+}
+#nav__user-username{
+    position:absolute;
+    top:30px;
+    right:100px;
+    font-weight: 600;
+    font-size: 16px;
+    /* identical to box height, or 150% */
+
+    display: flex;
+    align-items: center;
+
+    color: #545454;
+}
+body{
+    min-height: 400px;
+}
+footer{
+    position: relative;
+    top:2500px;
+    Width:1443px;
+    height: 350px;
+       background: #EFF0F2;
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 5;
+    flex-grow: 0;
+    } 
+    #footer__about{
+        position: absolute;
+    width: 382px;
+    height: 183px;
+    left: 119px;
+    top: 75px;
+
+    }
+    #footer__contact{
+        position: absolute;
+        width: 315px;
+        height: 199px;
+        left: 1090px;
+        top: 78px;
+
+    }
+    #footer__bottom{
+        position: absolute;
+    width: 1366px;
+    left: 119px;
+    top: 300px;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#NavLinks{display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 32px;
+    
+    position: absolute;
+    width: 252px;
+    height: 19px;
+    left: 182px;
+    top: 35px;
+    
+
+}
+#Room{
+height: 19px;
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+text-transform: capitalize;
+
+/* Black */
+
+color: #000000;
+
+
+/* Inside auto layout */
+
+flex: none;
+order: 0;
+flex-grow: 0;
+}
+#Study{
+    height: 19px;
+    
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    text-transform: capitalize;
+    
+    /* Black */
+    
+    color: #000000;
+    
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+#About{
+    height: 19px;
+    
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    text-transform: capitalize;
+    
+    /* Black */
+    
+    color: #000000;
+    
+    
+    /* Inside auto layout */
+    
+    flex: none;
+    order: 2;
+    flex-grow: 0;
+
+}
+
+#AvartarAndLinks{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px;
+    position: absolute;
+    width: 200px;
+    height: 54px;
+    right:50px;
+    top: 17px;
+
+
+}
+#Avartar{
+}
+#Username{
+
+}

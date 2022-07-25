@@ -30,10 +30,24 @@ function SocialLogin() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
+    //쿠키 가져오기
+    const getCookie = () => {
+      const cookie_array = document.cookie
+        .split("; ")
+        .map((item) => item.split("="));
+      for (let i = 0; i < cookie_array.length; i++) {
+        if (cookie_array[i][0] === "JSESSIONID") {
+          return cookie_array[i][1];
+        }
+      }
+    };
+
     const url = "http://localhost:8080/social-signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
+      credentials: "include",
+      withCredentials: true,
       body: JSON.stringify({
         userName: enteredUsername,
         nickname: enteredNickname,
@@ -42,6 +56,7 @@ function SocialLogin() {
       }),
       headers: {
         "content-type": "application/json",
+        Authorization: `Bearer ${getCookie()}`,
       },
     })
       .then((response) => {
@@ -55,13 +70,12 @@ function SocialLogin() {
         }
       })
       .then((result) => {
-        if(result!=null){
+        if (result != null) {
           authCtx.login();
           alert("로그인 되었습니다");
           navigate("/");
           window.location.reload();
         }
-        
       })
       .catch((err) => {
         alert(err.message);

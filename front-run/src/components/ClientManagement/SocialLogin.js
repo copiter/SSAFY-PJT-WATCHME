@@ -25,33 +25,23 @@ function SocialLogin() {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    // const enteredEmail = emailInputRef.current.value;
-    // const enteredPassword = passwordInputRef.current.value;
     const enteredUsername = usernameInputRef.current.value;
     const enteredNickname = nicknameInputRef.current.value;
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
-    // const enteredPhoneNumber = phoneNumberInputRef.current.value;
 
-    const url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
+    const url = "http://localhost:8080/signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
-      // withCredentials: true,
-      // credentials: "include",
       body: JSON.stringify({
-        // email: enteredEmail,
-        // password: enteredPassword,
-        username: enteredUsername,
+        userName: enteredUsername,
         nickname: enteredNickname,
-        sex: enteredSex,
-        birthday: enteredBirthday,
-        // phoneNumber: enteredPhoneNumber,
+        gender: enteredSex,
+        birth: enteredBirthday,
       }),
       headers: {
         "content-type": "application/json",
-        // authorization: `Bearer ${authCtx.accessToken}`,
       },
     })
       .then((response) => {
@@ -65,10 +55,11 @@ function SocialLogin() {
         }
       })
       .then((result) => {
-        authCtx.accessToken = result.accessToken;
-        authCtx.login(authCtx.accessToken);
+        document.cookie = `accessToken:${result.accessToken}`; //쿠키
+        authCtx.login();
         alert("로그인 되었습니다");
-        navigate("/"); //메인페이지로
+        navigate("/");
+        window.location.reload();
       })
       .catch((err) => {
         alert(err.message);
@@ -80,20 +71,17 @@ function SocialLogin() {
       <div className="signup">
         <form onSubmit={submitHandler}>
           <div className="signup-top">
-            <div className="signup-top-title">SIGN UP</div>
+            <div className="signup-top-title">소셜 로그인 추가 정보 입력</div>
           </div>
-          <div id="signup-left">
+          {/* <div id="signup-left">
             <div id="signup-left-image"></div>
             <button id="signup-left-addimage" disabled>
               프로필 사진 추가
             </button>
-          </div>
+          </div> */}
           <div id="signup-right">
-            <div id="signup-right-1">
-            
-            </div>
-            <div id="signup-right-2">
-            </div>
+            <div id="signup-right-1"></div>
+            <div id="signup-right-2"></div>
             <div id="signup-right-3">
               <input
                 className="width100 input"

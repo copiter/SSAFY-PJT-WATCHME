@@ -23,9 +23,7 @@ const Login = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    const url = "localhost:8080/login";
-    // const url =
-    //   "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
+    const url = "http://localhost:8080/login";
 
     // Interacting with server
     fetch(url, {
@@ -49,7 +47,7 @@ const Login = () => {
         }
       })
       .then((result) => {
-        document.cookie = `accessToken=${result.accessToken}`; //token
+        document.cookie = `accessToken:${result.accessToken}`;
         authCtx.login();
         alert("로그인 되었습니다");
         navigate("/");
@@ -89,18 +87,18 @@ const Login = () => {
         <Link to="/signup">
           <div className="email">이메일로 회원가입</div>
         </Link>
-        <Link to="#none">
+        <a href="http://localhost:8080/oauth2/authorization/kakao">
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
             <span>카카오로 로그인</span>
           </div>
-        </Link>
-        <Link to="#none">
+        </a>
+        <a href="http://localhost:8080/oauth2/authorization/kakao">
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
             <span>네이버로 로그인</span>
           </div>
-        </Link>
+        </a>
         <Link to="/slogin">
           <div className="google">
             <img src={google} alt="구글" width={40} />

@@ -28,7 +28,7 @@ function SignUp() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = "localhost:8080/signup";
+    const url = "http://localhost:8080/signup";
     // Interacting with server
     fetch(url, {
       method: "POST",

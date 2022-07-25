@@ -3,6 +3,7 @@ package com.A108.Watchme.Service;
 import com.A108.Watchme.DTO.LoginRequestDTO;
 import com.A108.Watchme.DTO.NewTokenRequestDTO;
 import com.A108.Watchme.DTO.SignUpRequestDTO;
+import com.A108.Watchme.DTO.SocialSignUpRequestDTO;
 import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.MemberInfoRepository;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -122,6 +124,33 @@ public class MemberService {
 
         result.put("accessToken", accessToken);
         result.put("refreshToken", insertRefreshToken.getToken());
+        return result;
+    }
+
+    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpSession httpSession) {
+        ApiResponse result = new ApiResponse();
+        ProviderType providerType = (ProviderType) httpSession.getAttribute("providerType");
+        String encPassword = bCryptPasswordEncoder.encode("1234");
+        Member member = memberRepository.save(Member.builder()
+                .email(httpSession.getAttribute("email").toString())
+                .nickName(socialSignUpRequestDTO.getNickName())
+                .role(Role.MEMBER)
+                .pwd(encPassword)
+                .status(Status.YES)
+                .providerType(providerType)
+                .build());
+
+        memberInfoRepository.save(MemberInfo.builder()
+                .member(member)
+                .gender(socialSignUpRequestDTO.getGender())
+                .name(socialSignUpRequestDTO.getName())
+                .birth(socialSignUpRequestDTO.getBirth())
+                .point(0)
+                .imageLink(httpSession.getAttribute("image").toString())
+                .score(0)
+                .build());
+        result.setMessage("MEMBER INSERT SUCCESS");
+        result.setResponseData("DATA", "Success");
         return result;
     }
 }

@@ -56,10 +56,8 @@ public class MemberService {
                 .imageLink(signUpRequestDTO.getImageLink())
                 .score(0)
                 .build());
-        Map createToken = createTokenReturn(member.getId());
         result.setMessage("MEMBER INSERT SUCCESS");
-        result.setResponseData("accessToken", createToken.get("accessToken"));
-        result.setResponseData("refreshToken", createToken.get("refreshToken"));
+        result.setResponseData("DATA", "Success");
         return result;
     }
 

@@ -1,5 +1,8 @@
 package com.A108.Watchme.Controller;
 
+import com.A108.Watchme.Http.ApiResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,5 +27,41 @@ public class HomeController {
             throw new RuntimeException("잘못된 접근");
         }
         return map;
+    }
+
+    @GetMapping("/test")
+    public ApiResponse root(HttpServletRequest request){
+
+//        System.out.println("hello1");
+        ApiResponse result = new ApiResponse();
+//        System.out.println("hello2");
+        Map<String, Object> response = new LinkedHashMap<>();
+//        System.out.println("hello3");
+
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if(!authentication.getAuthorities().equals("ROLE_ANONYMOUS")){
+                result.setCode(200);
+                result.setMessage("homeview success");
+
+
+
+
+
+                /*Map<String, Object> studyTime =
+                TypedQuery<Member> query = "Select ";
+
+                result.addResult();*/
+            }
+
+        } catch(Exception e){
+            result.setCode(400);
+            result.setMessage("homeview fail");
+        } finally {
+            result.setResponseData(response);
+        }
+
+        return result;
     }
 }

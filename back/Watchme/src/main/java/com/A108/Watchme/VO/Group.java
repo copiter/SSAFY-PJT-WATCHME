@@ -4,11 +4,11 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "Groupss")
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @Builder
-public class Groupss {
+public class Group {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="group_id")

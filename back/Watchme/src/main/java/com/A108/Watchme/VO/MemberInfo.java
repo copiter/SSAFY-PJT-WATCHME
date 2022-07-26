@@ -1,5 +1,6 @@
 package com.A108.Watchme.VO;
 
+import com.A108.Watchme.VO.ENUM.Gender;
 import lombok.*;
 
 import javax.persistence.*;

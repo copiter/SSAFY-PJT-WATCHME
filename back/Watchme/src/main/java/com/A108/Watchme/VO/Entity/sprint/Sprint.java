@@ -5,6 +5,7 @@ import com.A108.Watchme.VO.Entity.room.Room;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,5 +28,8 @@ public class Sprint {
 
     @Column(name = "sum_point")
     private Integer sumPoint;
+
+    @OneToMany(mappedBy = "sprint")
+    List<SprintRule> sprintRuleList;
 
 }

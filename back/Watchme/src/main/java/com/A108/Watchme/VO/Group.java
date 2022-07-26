@@ -1,8 +1,11 @@
 package com.A108.Watchme.VO;
 
+import com.A108.Watchme.VO.ENUM.Status;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "Groupss")
 @Getter @Setter
@@ -14,12 +17,12 @@ public class Group {
     @Column(name="group_id")
     private Long id;
 
-    @Column(length = 45)
-    private String group_name;
+    @Column(name = "group_name", length = 45)
+    private String groupName;
 
     @ManyToOne
     @JoinColumn(name="leader")
-    private Member member;
+    private Member leader;
 
 //    private Timestamp createdAt;
 //    private Timestamp updatedAt;
@@ -27,4 +30,6 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @OneToMany(mappedBy = "leader")
+    List<Sprint> sprints = new ArrayList<>();
 }

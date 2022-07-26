@@ -1,14 +1,11 @@
 package com.A108.Watchme.VO;
 
+import com.A108.Watchme.VO.ENUM.ProviderType;
+import com.A108.Watchme.VO.ENUM.Role;
+import com.A108.Watchme.VO.ENUM.Status;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Getter @Setter

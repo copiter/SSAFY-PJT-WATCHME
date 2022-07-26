@@ -1,5 +1,6 @@
 package com.A108.Watchme.VO;
 
+import com.A108.Watchme.VO.ENUM.RoomStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,8 +22,11 @@ public class Room {
     @JoinColumn(name="owner_id")
     private Member member;
 
-
     @Enumerated(EnumType.STRING)
     private RoomStatus status;
+
+    @OneToOne
+    @JoinColumn(name = "")
+    private Sprint sprint;
 
 }

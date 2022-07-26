@@ -1,6 +1,7 @@
 package com.A108.Watchme;
 
-import com.A108.Watchme.VO.Member;
+import com.A108.Watchme.VO.WebRTC.RoomManager;
+import com.A108.Watchme.VO.WebRTC.UserRegistry;
 import com.A108.Watchme.WebRTC.CallHandler;
 import org.kurento.client.KurentoClient;
 import org.springframework.boot.SpringApplication;
@@ -12,12 +13,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 @EnableWebSocket
 @SpringBootApplication
-public class GroupCallApp implements WebSocketConfigurer {
+public class WatchmeApplication implements WebSocketConfigurer {
 
 
     @Bean
-    public MemberRegistry registry() {
-        return new MemberRegistry();
+    public UserRegistry registry() {
+        return new UserRegistry();
     }
 
     @Bean
@@ -36,7 +37,7 @@ public class GroupCallApp implements WebSocketConfigurer {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(GroupCallApp.class, args);
+        SpringApplication.run(WatchmeApplication.class, args);
     }
 
     @Override

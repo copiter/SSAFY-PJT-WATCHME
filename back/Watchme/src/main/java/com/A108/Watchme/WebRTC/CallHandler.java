@@ -1,12 +1,18 @@
 package com.A108.Watchme.WebRTC;
 
+import com.A108.Watchme.VO.WebRTC.Room;
+import com.A108.Watchme.VO.WebRTC.RoomManager;
+import com.A108.Watchme.VO.WebRTC.UserRegistry;
+import com.A108.Watchme.VO.WebRTC.UserSession;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import lombok.RequiredArgsConstructor;
 import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -14,7 +20,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 
-
+@Component
 public class CallHandler extends TextWebSocketHandler {
 
     private static final Logger log = LoggerFactory.getLogger(CallHandler.class);
@@ -91,5 +97,4 @@ public class CallHandler extends TextWebSocketHandler {
             roomManager.removeRoom(room);
         }
     }
-}{
 }

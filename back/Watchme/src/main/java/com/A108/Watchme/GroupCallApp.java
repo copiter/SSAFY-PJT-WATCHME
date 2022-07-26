@@ -10,10 +10,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
-@EnableWebSocket
+
 @SpringBootApplication
-public class WatchmeApplication implements WebSocketConfigurer {
+@EnableWebSocket
+public class GroupCallApp implements WebSocketConfigurer {
 
 
     @Bean
@@ -37,9 +39,14 @@ public class WatchmeApplication implements WebSocketConfigurer {
     }
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(WatchmeApplication.class, args);
+        SpringApplication.run(GroupCallApp.class, args);
     }
-
+    @Bean
+    public ServletServerContainerFactoryBean createServletServerContainerFactoryBean(){
+        ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
+        container.setMaxTextMessageBufferSize(32768);
+        return container;
+    }
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(groupCallHandler(), "/groupcall");

@@ -4,11 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
 @Setter
 public class ApiResponse {
     private int code = HttpStatus.OK.value();
     private String message;
+    private Map responseData = new HashMap();
 
     public ApiResponse() {}
 
@@ -17,7 +21,17 @@ public class ApiResponse {
         this.setMessage(message);
     }
 
-    public void setResult(String message) {
+    public ApiResponse(int code, String message, Map responseData) {
+        this.setCode(code);
         this.setMessage(message);
+        this.responseData = responseData;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setResponseData(String key, Object value) {
+        this.responseData.put(key, value);
     }
 }

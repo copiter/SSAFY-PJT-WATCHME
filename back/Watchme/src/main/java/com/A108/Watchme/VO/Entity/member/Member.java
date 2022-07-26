@@ -3,9 +3,11 @@ package com.A108.Watchme.VO.Entity.member;
 import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.ENUM.Role;
 import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.Entity.group.Group;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -27,4 +29,6 @@ public class Member{
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
+    @OneToMany(mappedBy = "member")
+    List<Group> groups;
 }

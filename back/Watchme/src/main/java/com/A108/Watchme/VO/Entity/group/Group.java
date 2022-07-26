@@ -23,8 +23,8 @@ public class Group {
     private String groupName;
 
     @ManyToOne
-    @JoinColumn(name="leader")
-    private Member leader;
+    @JoinColumn(name="member_id")
+    private Member member;
 
 //    private Timestamp createdAt;
 //    private Timestamp updatedAt;
@@ -32,6 +32,6 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "leader")
+    @OneToMany(mappedBy = "group")
     List<Sprint> sprints = new ArrayList<>();
 }

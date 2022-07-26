@@ -2,7 +2,7 @@ package com.A108.Watchme.jwt;
 
 
 import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.VO.Entity.Member;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.auth.PrincipalDetails;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +84,7 @@ public class JwtProvider {
     }
 
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("token");
+        return request.getHeader("accessToken");
     }
 
     public boolean validateJwtToken(ServletRequest request, String authToken) {

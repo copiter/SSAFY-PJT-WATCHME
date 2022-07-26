@@ -1,4 +1,4 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.member;
 
 import com.A108.Watchme.VO.ENUM.Gender;
 import lombok.*;
@@ -9,10 +9,9 @@ import java.util.Date;
 
 
 @Entity
-@Getter
+@Getter @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class MemberInfo{
     @Id
     @Column(name="member_id", nullable = false)

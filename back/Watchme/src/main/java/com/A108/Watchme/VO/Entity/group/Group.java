@@ -1,6 +1,8 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.group;
 
 import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.*;
 
 import javax.persistence.*;

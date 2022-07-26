@@ -1,5 +1,6 @@
 package com.A108.Watchme.VO.Entity;
 
+import com.A108.Watchme.VO.Entity.member.Member;
 import lombok.Getter;
 import lombok.Setter;
 

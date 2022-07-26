@@ -1,6 +1,6 @@
 package com.A108.Watchme.auth;
 
-import com.A108.Watchme.VO.Entity.Member;
+import com.A108.Watchme.VO.Entity.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

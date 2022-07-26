@@ -1,5 +1,7 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.sprint;
 
+import com.A108.Watchme.VO.Entity.group.Group;
+import com.A108.Watchme.VO.Entity.room.Room;
 import lombok.Data;
 
 import javax.persistence.*;

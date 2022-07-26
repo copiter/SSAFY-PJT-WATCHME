@@ -1,4 +1,4 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.room;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

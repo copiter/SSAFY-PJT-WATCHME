@@ -1,4 +1,4 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.member;
 
 import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.ENUM.Role;

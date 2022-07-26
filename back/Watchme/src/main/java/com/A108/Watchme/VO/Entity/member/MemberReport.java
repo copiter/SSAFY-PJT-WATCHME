@@ -1,5 +1,6 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.member;
 
+import com.A108.Watchme.VO.Entity.ReportCategory;
 import lombok.*;
 
 import javax.persistence.*;

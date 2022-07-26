@@ -1,4 +1,6 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.room;
+
+import com.A108.Watchme.VO.Entity.Category;
 
 import javax.persistence.*;
 

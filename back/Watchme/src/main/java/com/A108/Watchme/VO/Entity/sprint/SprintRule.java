@@ -1,5 +1,6 @@
-package com.A108.Watchme.VO.Entity;
+package com.A108.Watchme.VO.Entity.sprint;
 
+import com.A108.Watchme.VO.Entity.Rule;
 import lombok.*;
 
 import javax.persistence.*;

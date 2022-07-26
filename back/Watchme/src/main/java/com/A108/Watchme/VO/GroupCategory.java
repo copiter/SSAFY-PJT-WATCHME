@@ -15,5 +15,5 @@ public class GroupCategory {
 
     @ManyToOne
     @JoinColumn(name = "group_id")
-    private Groupss groupss;
+    private Group group;
 }

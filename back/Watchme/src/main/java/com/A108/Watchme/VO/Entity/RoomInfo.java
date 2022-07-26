@@ -1,10 +1,9 @@
-package com.A108.Watchme.VO;
+package com.A108.Watchme.VO.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 

@@ -1,6 +1,6 @@
 package com.A108.Watchme.Repository;
 
-import com.A108.Watchme.VO.Member;
+import com.A108.Watchme.VO.Entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

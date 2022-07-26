@@ -1,4 +1,4 @@
-package com.A108.Watchme.VO;
+package com.A108.Watchme.VO.Entity;
 
 import com.A108.Watchme.VO.ENUM.RoomStatus;
 import lombok.*;

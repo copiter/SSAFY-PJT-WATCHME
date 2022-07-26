@@ -1,4 +1,4 @@
-package com.A108.Watchme.VO;
+package com.A108.Watchme.VO.Entity;
 
 import lombok.Getter;
 import lombok.Setter;

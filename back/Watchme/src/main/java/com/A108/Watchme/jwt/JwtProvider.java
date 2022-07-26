@@ -2,7 +2,7 @@ package com.A108.Watchme.jwt;
 
 
 import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.VO.Member;
+import com.A108.Watchme.VO.Entity.Member;
 import com.A108.Watchme.auth.PrincipalDetails;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;

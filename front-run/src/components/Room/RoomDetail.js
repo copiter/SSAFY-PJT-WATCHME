@@ -12,6 +12,15 @@ import "./RoomDetail.css";
 
 function RoomDetail() {
   const [isMicOn, setIsMicOn] = useState(false);
+  const [isHeadphoneOn, setIsHeadphoneOn] = useState(false);
+
+  const micHandler = () => {
+    setIsMicOn(!isMicOn);
+  };
+
+  const headphoneHandler = () => {
+    setIsHeadphoneOn(!isHeadphoneOn);
+  };
 
   return (
     <>
@@ -20,16 +29,41 @@ function RoomDetail() {
           <button type="button">방장설정</button>
         </div>
         <div className="body">
-          <div className="webrtc">webrtc 페이지</div>
+          <div className="webrtc">
+            webrtc 페이지
+            {/* <video></video> */}
+          </div>
           <div className="side">side bar</div>
         </div>
         <div className="footer">
           <img src={share_video} alt="out" width={30} />
-          <img src={mic} alt="out" width={30} />
 
-          <img src={mic_mute} alt="out" width={30} />
-          <img src={headset} alt="out" width={30} />
-          <img src={headset_mute} alt="out" width={30} />
+          {/* 마이크 on/off */}
+          {!isMicOn && (
+            <img src={mic} alt="out" width={30} onClick={micHandler} />
+          )}
+          {isMicOn && (
+            <img src={mic_mute} alt="out" width={30} onClick={micHandler} />
+          )}
+
+          {/* 헤드폰 on/off */}
+          {!isHeadphoneOn && (
+            <img
+              src={headset}
+              alt="out"
+              width={30}
+              onClick={headphoneHandler}
+            />
+          )}
+          {isHeadphoneOn && (
+            <img
+              src={headset_mute}
+              alt="out"
+              width={30}
+              onClick={headphoneHandler}
+            />
+          )}
+
           <img src={setting} alt="out" width={30} />
           <img src={out} alt="out" width={30} />
         </div>

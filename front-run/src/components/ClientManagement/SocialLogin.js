@@ -27,7 +27,7 @@ function SocialLogin() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = "http://localhost:8080/social-signup";
+    const url = "http://localhost:81/social-signup";
     // Interacting with server
     fetch(url, {
       method: "POST",

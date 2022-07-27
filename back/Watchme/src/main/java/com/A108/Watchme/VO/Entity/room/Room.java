@@ -17,8 +17,8 @@ public class Room {
     @Column(name="room_id")
     private Long id;
 
-    @Column(length = 45)
-    private String room_name;
+    @Column(name = "room_name", length = 45)
+    private String roomName;
 
     @ManyToOne
     @JoinColumn(name="owner_id")
@@ -30,5 +30,7 @@ public class Room {
     @OneToOne
     @JoinColumn(name = "")
     private Sprint sprint;
+
+    private Integer view;
 
 }

@@ -29,4 +29,14 @@ public class MemberInfo{
     private int score;
     @Column(name="img_link")
     private String imageLink;
+
+    @Column(name = "study_time")
+    private Integer studyTime;
+    @Column(name = "study_time_day")
+    private Integer studyTimeDay;
+    @Column(name = "study_time_week")
+    private Integer studyTimeWeek;
+    @Column(name = "study_time_month")
+    private Integer studyTimeMonth;
+
 }

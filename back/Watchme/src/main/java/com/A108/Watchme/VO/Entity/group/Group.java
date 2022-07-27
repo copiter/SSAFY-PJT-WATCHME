@@ -34,4 +34,6 @@ public class Group {
 
     @OneToMany(mappedBy = "group")
     List<Sprint> sprints = new ArrayList<>();
+
+    private Integer view;
 }

@@ -27,6 +27,7 @@ public class ApiResponse {
         this.responseData = responseData;
     }
 
+
     public void setMessage(String message) {
         this.message = message;
     }

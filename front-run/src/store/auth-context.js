@@ -7,15 +7,15 @@ const AuthContext = React.createContext({
 });
 
 export const AuthContextProvider = (props) => {
-  const userIsLoggedIn = !localStorage.hasOwnProperty("isLoggedIn")
+  const userIsLoggedIn = !sessionStorage.hasOwnProperty("isLoggedIn")
     ? 0
-    : localStorage.getItem("isLoggedIn");
+    : sessionStorage.getItem("isLoggedIn");
 
   const loginHandler = () => {
-    localStorage.setItem("isLoggedIn", 1); //1 true, 0 false
+    sessionStorage.setItem("isLoggedIn", 1); //1 true, 0 false
   };
   const logoutHandler = () => {
-    localStorage.setItem("isLoggedIn", 0);
+    sessionStorage.setItem("isLoggedIn", 0);
   };
 
   const contextValue = {

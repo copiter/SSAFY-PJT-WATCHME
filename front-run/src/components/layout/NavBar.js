@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 
@@ -6,17 +6,18 @@ import "./NavBar.css";
 
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !sessionStorage.hasOwnProperty("isLoggedIn")
+      ? false
+      : sessionStorage.getItem("isLoggedIn")
+      ? true
+      : false
+  );
 
   const logoutHandler = () => {
     authCtx.logout();
-    location.push(0);
+    setIsLoggedIn(false);
   };
-
-  const isLoggedIn = !localStorage.hasOwnProperty("isLoggedIn")
-    ? false
-    : localStorage.getItem("isLoggedIn")
-    ? true
-    : false;
 
   return (
     <header className="navbar">

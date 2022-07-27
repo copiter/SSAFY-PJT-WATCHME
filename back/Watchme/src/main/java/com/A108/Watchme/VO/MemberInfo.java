@@ -21,6 +21,7 @@ public class MemberInfo{
     @MapsId
     @JoinColumn(name="member_id")
     private Member member;
+    @Enumerated(EnumType.STRING)
     private Gender gender;
     private Date birth;
     private String name;

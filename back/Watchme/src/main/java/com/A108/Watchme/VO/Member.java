@@ -25,7 +25,10 @@ public class Member{
     @Column(name="nick_name")
     private String nickName;
     private String pwd;
+    @Enumerated(EnumType.STRING)
     private Status status;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
 }

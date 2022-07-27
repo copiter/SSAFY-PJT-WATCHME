@@ -23,7 +23,7 @@ function MainPage() {
   let myGroupNo=0;
 
 
-  const mainPabeSetting=(event)=>{
+  const mainPageSetting=(event)=>{
 
     fetch(url+"UserInformation")
     .then((response) => {
@@ -99,6 +99,8 @@ function MainPage() {
       console.log("통신오류_공개룸");
     });
   }
+
+  mainPageSetting();
   return (
     <>
     <div id="outer">

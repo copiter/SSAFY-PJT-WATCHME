@@ -22,7 +22,7 @@ function CreateRoom() {
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">
-        목록으로 돌아가기
+        &lt; 목록으로 돌아가기
       </Link>
 
       <form onSubmit={handleSubmit}>

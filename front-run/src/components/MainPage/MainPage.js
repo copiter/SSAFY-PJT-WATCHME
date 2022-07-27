@@ -10,9 +10,10 @@ import userInfor from "../json/userInfor"
 function MainPage() {
 
 
+  //URL
+  const url = "http://localhost:81/MainPage";
 
   let userInformation=userInfor[0]["myUserInfor"][0];
-  console.log(userInformation);  
 
   let myGroups=  groupInfor[0]["MainpageMyGroup"];
   let groups=  groupInfor[0]["MainpageGroups"];
@@ -22,6 +23,82 @@ function MainPage() {
   let myGroupNo=0;
 
 
+  const mainPabeSetting=(event)=>{
+
+    fetch(url+"UserInformation")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "유저정보 획득 실패";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      userInformation=result;
+    })
+    .catch((err) => {
+      console.log("통신오류_내정보");
+    });
+
+    
+    fetch(url+"myGroups")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "내 그룹정보 획득 실패";
+          throw new Error("통신오류_그룹정보");
+        });
+      }
+    })
+    .then((result) => {
+      myGroups=result;
+    })
+    .catch((err) => {
+      console.log("통신오류_내그룹");
+    });
+
+
+     fetch(url+"groups")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "그룹정보 획득 실패";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      groups=result;
+    })
+    .catch((err) => {
+      console.log("통신오류_그룹정보");
+    });
+
+    fetch(url+"rooms")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "공개룸 획득 실패";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      rooms=result;
+    })
+    .catch((err) => {
+      console.log("통신오류_공개룸");
+    });
+  }
   return (
     <>
     <div id="outer">

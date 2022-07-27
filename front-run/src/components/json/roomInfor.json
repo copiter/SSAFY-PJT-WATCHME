@@ -1,5 +1,13 @@
 [{
-    
+
+    "DUMMY_Comment_Enter_0":"방 클릭시 입장전 비밀번호 입력 보안방법 고민해야함", 
+    "EnteringRooms":[{
+        "roomName":"스터디그룹이름1",
+        "roomPassword":"ROWD1"
+    }],
+
+    "DUMMY_Comment_0":"메인페이지 인기도순으로 검색되는 방 더보기없이 9개", 
+    "DUMMY_Comment_1":"룸탐색페이지 인기도순으로 검색되는 방 더보기없이 9+(roomPageNo(기본0)*3또는 6또는 9)개",
     
 
     "MainpageRooms":[
@@ -12,7 +20,7 @@
             "romMemberNo":1,
             "roomMemberMaxNo":6,
             "roomLookUp":1234,
-            "roomTag":"공무원"
+            "roomCategory":"공무원"
         }, {
             "ID":"ID",
             "roomName":"스터디그룹이름2",
@@ -21,7 +29,7 @@
             "romMemberNo":1,
             "roomMemberMaxNo":5,
             "roomLookUp":1235,
-            "roomTag":"공무원"
+            "roomCategory":"공무원"
         }, {
             "ID":"ID",
             "roomName":"스터디그룹이름3",
@@ -30,7 +38,7 @@
             "romMemberNo":3,
             "roomMemberMaxNo":16,
             "roomLookUp":1234,
-            "roomTag":"공무원"
+            "roomCategory":"공무원"
         }, {
             "ID":"ID",
             "roomName":"스터디그룹이름4",
@@ -39,7 +47,7 @@
             "romMemberNo":11,
             "roomMemberMaxNo":11,
             "roomLookUp":1234,
-            "roomTag":"공무원"
+            "roomCategory":"공무원"
         }, {
             "ID":"ID",
             "roomName":"스터디그룹이름5",
@@ -48,7 +56,7 @@
             "romMemberNo":1,
             "roomMemberMaxNo":2,
             "roomLookUp":1234,
-            "roomTag":"공무원"
+            "roomCategory":"공무원"
         }, {
             "ID":"ID",
             "roomName":"스터디그룹이름6",
@@ -57,11 +65,10 @@
             "romMemberNo":25,
             "roomMemberMaxNo":25,
             "roomLookUp":1234,
-            "roomTag":"공무원"
+            "roomCategory":"공무원"
         }
 
     ]
-
     
 
 

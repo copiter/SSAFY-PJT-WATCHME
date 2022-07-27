@@ -1,8 +1,82 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import {useState} from 'react'
 import roomInfor from "../json/roomInfor"
-let rooms=  roomInfor[0]["MainpageRooms"];
-let roomNo=0;
+let roomPageNo=0;
+
+
+function RoomRecruit() {
+
+  const [inputs, setInputs] = useState({
+    "roomTag":"",
+    "roomSearch":"",
+  });
+  const navigate=useNavigate()
+
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setInputs(values => ({...values, [name]: value}))
+  }
+  
+
+
+  //URL
+  const url = "http://localhost:8080/RoomRecruit";
+  //Otpion
+
+  let rooms=  roomInfor[0]["MainpageRooms"];
+  let roomNo=0;
+  
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    {/*완성후삭제 */}console.log(url+"?roomTag="+inputs["roomTag"]+"&roomSearch="+inputs["roomSearch"]+"&pageNo=0");
+    fetch(url+"?roomTag="+inputs["roomTag"]+"&roomSearch="+inputs["roomSearch"]+"&pageNo=0")
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "검색오류 발생";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      rooms=result;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+ 
+  }
+
+  const addMore=(event)=>{
+    roomPageNo++;
+    {/*완성후삭제 */}console.log(url+"?roomTag="+inputs["roomTag"]+"&roomSearch="+inputs["roomSearch"]+"&pageNo="+roomPageNo);
+    fetch(url+"?roomTag="+inputs["roomTag"]+"&roomSearch="+inputs["roomSearch"]+"&pageNo="+roomPageNo)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "검색오류 발생";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      rooms=result;
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
+  }
+
+
+
+
+
 
 function RoomRecruit() {
   return (
@@ -49,7 +123,7 @@ function RoomRecruit() {
                     {rooms[roomNo]["roomDiscription"]}
                   </div>
                   <div className=''>
-                    {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                    {rooms[roomPageNo]["romMemberNo"]}/{rooms[roomPageNo]["roomMemberMaxNo"]}
                   </div>
                 </div>
               </div>
@@ -57,7 +131,7 @@ function RoomRecruit() {
             <Link to='/RoomDetail'> 
               <div className='Lines'>
                 <div className=''>{/*미팅룸 이미지 내부에 기능들 표기됨*/}
-                  {rooms[roomNo]["roomImage"]==="none"?"(이미지없음)":rooms[roomNo]["roomImage"]}
+                  {rooms[roomPageNo]["roomImage"]==="none"?"(이미지없음)":rooms[roomPageNo]["roomImage"]}
                   <div className=''>
                     <p>⏱ 기능</p>
                     ✔ 뽀모도로<br></br>
@@ -71,16 +145,16 @@ function RoomRecruit() {
                 </div>
                 <div className=''>
                   <div className=''>{/*태그*/}
-                    {rooms[++roomNo]["roomTag"]}
+                    {rooms[++roomPageNo]["roomTag"]}
                   </div>
                   <div className=''>{/*이름*/}
-                    {rooms[roomNo]["roomName"]}
+                    {rooms[roomPageNo]["roomName"]}
                   </div>
                   <div className=''>{/*세부설명*/}
-                    {rooms[roomNo]["roomDiscription"]}
+                    {rooms[roomPageNo]["roomDiscription"]}
                   </div>
                   <div className=''>
-                    {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                    {rooms[roomPageNo]["romMemberNo"]}/{rooms[roomPageNo]["roomMemberMaxNo"]}
                   </div>
                 </div>
               </div>

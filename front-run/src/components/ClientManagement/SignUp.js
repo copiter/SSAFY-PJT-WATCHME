@@ -76,9 +76,9 @@ function SignUp() {
               <button className="signup-left-addimage">프로필 사진 추가</button>
             </div>
             <div className="signup-right">
-              <div id="signup-right-1">
+              <div className="line">
                 <input
-                  className="width70 input"
+                  className="short"
                   type="email"
                   placeholder="이메일을 입력하세요"
                   required
@@ -86,32 +86,31 @@ function SignUp() {
                 />
                 <button className="dup">중복확인</button>
               </div>
-              <div id="signup-right-2">
+              <div className="line">
                 <input
-                  className="width45 input"
+                  className="half"
                   type="password"
                   placeholder="비밀번호를 입력하세요"
                   required
                   ref={passwordInputRef}
                 />
                 <input
-                  className="width45 left10 input"
+                  className="half"
                   type="password"
                   placeholder="비밀번호를 다시한번 입력하세요"
                 />
               </div>
-              <div id="signup-right-3">
+              <div className="line">
                 <input
-                  className="width100 input"
                   type="text"
                   placeholder="이름을 입력하세요"
                   required
                   ref={usernameInputRef}
                 />
               </div>
-              <div id="signup-right-4">
+              <div className="line">
                 <input
-                  className="width70 input"
+                  className="short"
                   type="text"
                   placeholder="닉네임을 입력하세요"
                   required
@@ -119,9 +118,8 @@ function SignUp() {
                 />
                 <button className="dup">중복확인</button>
               </div>
-              <div id="signup-right-5">
+              <div className="line">
                 <select
-                  className="width100 input"
                   name="sex"
                   placeholder="성별을 입력하세요"
                   onChange={handleSelectSex}
@@ -134,20 +132,19 @@ function SignUp() {
                   <option value="ND">공개안함</option>
                 </select>
               </div>
-              <div id="signup-right-6">
+              <div className="line">
                 <input
-                  className="width100 input"
                   type="date"
                   placeholder="생년월일을 입력하세요"
                   required
+                  min="1900-01-01"
+                  max="2022-12-31"
                   ref={birthdayInputRef}
                 />
               </div>
-              <div id="signup-right-8">
-                <button className="width100 input submitting" type="submit">
-                  회원가입
-                </button>
-              </div>
+              <button className="submitting" type="submit">
+                회원가입
+              </button>
             </div>
           </div>
         </form>

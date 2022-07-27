@@ -67,32 +67,25 @@ function SocialLogin() {
 
   return (
     <Fragment>
-      <div className="signup">
+      <div className="social-login">
         <form onSubmit={submitHandler}>
-          <div className="signup-top">
-            <div className="signup-top-title">소셜 로그인 추가 정보 입력</div>
+          <div className="social-login-top">
+            <div className="social-login-top__word">
+              소셜 로그인 추가 입력 정보
+            </div>
           </div>
-          {/* <div id="signup-left">
-            <div id="signup-left-image"></div>
-            <button id="signup-left-addimage" disabled>
-              프로필 사진 추가
-            </button>
-          </div> */}
-          <div id="signup-right">
-            <div id="signup-right-1"></div>
-            <div id="signup-right-2"></div>
-            <div id="signup-right-3">
+          <div className="social-login-form">
+            <div className="line">
               <input
-                className="width100 input"
                 type="text"
                 placeholder="이름을 입력하세요"
                 required
                 ref={usernameInputRef}
               />
             </div>
-            <div id="signup-right-4">
+            <div className="line">
               <input
-                className="width70 input"
+                className="short"
                 type="text"
                 placeholder="닉네임을 입력하세요"
                 required
@@ -100,9 +93,8 @@ function SocialLogin() {
               />
               <button className="dup">중복확인</button>
             </div>
-            <div id="signup-right-5">
+            <div className="line">
               <select
-                className="width100 input"
                 name="sex"
                 placeholder="성별을 입력하세요"
                 onChange={handleSelectSex}
@@ -115,30 +107,19 @@ function SocialLogin() {
                 <option value="ND">공개안함</option>
               </select>
             </div>
-            <div id="signup-right-6">
+            <div className="line">
               <input
-                className="width100 input"
                 type="date"
                 placeholder="생년월일을 입력하세요"
                 required
+                min="1900-01-01"
+                max="2022-12-31"
                 ref={birthdayInputRef}
               />
             </div>
-            {/* <div id="signup-right-7">
-              <input
-                className="width100 input"
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-                placeholder="전화번호를 입력하세요"
-                required
-                ref={phoneNumberInputRef}
-              />
-            </div> */}
-            <div id="signup-right-8">
-              <button className="width100 input submitting" type="submit">
-                회원가입
-              </button>
-            </div>
+            <button className="submitting" type="submit">
+              회원가입
+            </button>
           </div>
         </form>
       </div>

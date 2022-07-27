@@ -4,20 +4,23 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
 @Setter
 public class ApiResponse {
     private int code = HttpStatus.OK.value();
-    private Object result;
+    private String message;
+    private Map responseData = new HashMap();
 
     public ApiResponse() {}
 
-    public ApiResponse(int code, Object result) {
-        this.code = code;
-        this.result = result;
+    public void setMessage(String message){
+        this.message = message;
     }
 
-    public void setResult(Object result) {
-        this.result = result;
+    public void setResponseData(String key, Object value) {
+        this.responseData.put(key, value);
     }
 }

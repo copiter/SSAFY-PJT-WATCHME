@@ -2,10 +2,7 @@ package com.A108.Watchme.VO;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -15,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RefreshToken {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="refresh_id")
     private Long id;
     private String token;

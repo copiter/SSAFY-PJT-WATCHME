@@ -11,7 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class WatchmeApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(WatchmeApplication.class, args);
 	}
+
+
 
 }

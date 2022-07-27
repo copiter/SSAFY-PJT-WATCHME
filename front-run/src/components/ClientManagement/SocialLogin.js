@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useContext } from "react";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
 
-import "./SignUp.css"; // 동일한 CSS 파일 사용
+import "./SocialLogin.css"; // 동일한 CSS 파일 사용
 
 function SocialLogin() {
   const [selectSex, setSelectSex] = useState("ND");
@@ -12,46 +12,34 @@ function SocialLogin() {
     setSelectSex(e.target.value);
   };
 
-  // const emailInputRef = useRef();
-  // const passwordInputRef = useRef();
   const usernameInputRef = useRef();
   const nicknameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
-  // const phoneNumberInputRef = useRef();
 
   const authCtx = useContext(AuthContext);
 
   const submitHandler = (event) => {
     event.preventDefault();
 
-    // const enteredEmail = emailInputRef.current.value;
-    // const enteredPassword = passwordInputRef.current.value;
     const enteredUsername = usernameInputRef.current.value;
     const enteredNickname = nicknameInputRef.current.value;
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
-    // const enteredPhoneNumber = phoneNumberInputRef.current.value;
 
-    const url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
+    const url = "http://localhost:8080/social-signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
-      // withCredentials: true,
-      // credentials: "include",
+      withCredentials: true,
       body: JSON.stringify({
-        // email: enteredEmail,
-        // password: enteredPassword,
-        username: enteredUsername,
+        userName: enteredUsername,
         nickname: enteredNickname,
-        sex: enteredSex,
-        birthday: enteredBirthday,
-        // phoneNumber: enteredPhoneNumber,
+        gender: enteredSex,
+        birth: enteredBirthday,
       }),
       headers: {
         "content-type": "application/json",
-        // authorization: `Bearer ${authCtx.accessToken}`,
       },
     })
       .then((response) => {
@@ -59,16 +47,18 @@ function SocialLogin() {
           return response.json();
         } else {
           response.json().then((data) => {
-            let errorMessage = "Authentication failed!";
+            let errorMessage = "인증 실패";
             throw new Error(errorMessage);
           });
         }
       })
       .then((result) => {
-        authCtx.accessToken = result.accessToken;
-        authCtx.login(authCtx.accessToken);
-        alert("로그인 되었습니다");
-        navigate("/"); //메인페이지로
+        if (result != null) {
+          authCtx.login();
+          alert("로그인 되었습니다");
+          navigate("/");
+          window.location.reload();
+        }
       })
       .catch((err) => {
         alert(err.message);
@@ -77,35 +67,25 @@ function SocialLogin() {
 
   return (
     <Fragment>
-      <div className="signup">
+      <div className="social-login">
         <form onSubmit={submitHandler}>
-          <div className="signup-top">
-            <div className="signup-top-title">SIGN UP</div>
-          </div>
-          <div id="signup-left">
-            <div id="signup-left-image"></div>
-            <button id="signup-left-addimage" disabled>
-              프로필 사진 추가
-            </button>
-          </div>
-          <div id="signup-right">
-            <div id="signup-right-1">
-            
+          <div className="social-login-top">
+            <div className="social-login-top__word">
+              소셜 로그인 추가 입력 정보
             </div>
-            <div id="signup-right-2">
-            </div>
-            <div id="signup-right-3">
+          </div>
+          <div className="social-login-form">
+            <div className="line">
               <input
-                className="width100 input"
                 type="text"
                 placeholder="이름을 입력하세요"
                 required
                 ref={usernameInputRef}
               />
             </div>
-            <div id="signup-right-4">
+            <div className="line">
               <input
-                className="width70 input"
+                className="short"
                 type="text"
                 placeholder="닉네임을 입력하세요"
                 required
@@ -113,9 +93,8 @@ function SocialLogin() {
               />
               <button className="dup">중복확인</button>
             </div>
-            <div id="signup-right-5">
+            <div className="line">
               <select
-                className="width100 input"
                 name="sex"
                 placeholder="성별을 입력하세요"
                 onChange={handleSelectSex}
@@ -128,30 +107,19 @@ function SocialLogin() {
                 <option value="ND">공개안함</option>
               </select>
             </div>
-            <div id="signup-right-6">
+            <div className="line">
               <input
-                className="width100 input"
                 type="date"
                 placeholder="생년월일을 입력하세요"
                 required
+                min="1900-01-01"
+                max="2022-12-31"
                 ref={birthdayInputRef}
               />
             </div>
-            {/* <div id="signup-right-7">
-              <input
-                className="width100 input"
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-                placeholder="전화번호를 입력하세요"
-                required
-                ref={phoneNumberInputRef}
-              />
-            </div> */}
-            <div id="signup-right-8">
-              <button className="width100 input submitting" type="submit">
-                회원가입
-              </button>
-            </div>
+            <button className="submitting" type="submit">
+              회원가입
+            </button>
           </div>
         </form>
       </div>

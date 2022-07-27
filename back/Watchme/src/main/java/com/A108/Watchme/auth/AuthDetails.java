@@ -1,16 +1,14 @@
 package com.A108.Watchme.auth;
 
-import com.A108.Watchme.VO.Member;
+import com.A108.Watchme.VO.ProviderType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -18,25 +16,43 @@ import java.util.Map;
 @Setter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class PrincipalDetails implements UserDetails {
-    private final Member member;
+public class AuthDetails implements UserDetails, OAuth2User {
+    private String password;
+    private ProviderType providerType;
+    private Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
+    private String name;
+    private String imgUrl;
+    public AuthDetails(ProviderType providerType, Map<String, Object> attributes, String name, String imgUrl) {
+        this.providerType = providerType;
+        this.attributes = attributes;
+        this.name = name;
+        this.imgUrl = imgUrl;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(member.getRole().toString()));
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return member.getPwd();
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return name;
     }
 
     @Override
@@ -58,5 +74,4 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

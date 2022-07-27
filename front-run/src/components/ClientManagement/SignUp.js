@@ -1,5 +1,4 @@
-import React, { useState, Fragment, useRef, useContext } from "react";
-import AuthContext from "../../store/auth-context";
+import React, { useState, Fragment, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./SignUp.css";
@@ -19,8 +18,6 @@ function SignUp() {
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
 
-  const authCtx = useContext(AuthContext);
-
   const submitHandler = (event) => {
     event.preventDefault();
 
@@ -31,8 +28,7 @@ function SignUp() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
+    const url = "http://localhost:8080/signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
@@ -59,10 +55,8 @@ function SignUp() {
         }
       })
       .then((result) => {
-        //가지고 오는 토큰 처리 어떻게 할지 넣어야 됩니다.
-        authCtx.login(result.refreshToken); //회원가입 시 로그인도 함께 처리
         alert("회원가입 되었습니다");
-        navigate("/"); //메인페이지로
+        navigate("/login"); //로그인 페이지로
       })
       .catch((err) => {
         alert(err.message);
@@ -148,16 +142,6 @@ function SignUp() {
                 ref={birthdayInputRef}
               />
             </div>
-            {/* <div id="signup-right-7">
-              <input
-                className="width100 input"
-                type="tel"
-                pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
-                placeholder="전화번호를 입력하세요"
-                required
-                ref={phoneNumberInputRef}
-              />
-            </div> */}
             <div id="signup-right-8">
               <button className="width100 input submitting" type="submit">
                 회원가입

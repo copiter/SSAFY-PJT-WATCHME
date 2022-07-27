@@ -1,19 +1,26 @@
 package com.A108.Watchme.auth;
 
 import com.A108.Watchme.VO.Member;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails {
-    private Member member;
-
-    public PrincipalDetails(Member member){
-        this.member = member;
-    }
+    private final Member member;
+    private Map<String, Object> attributes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -51,4 +58,5 @@ public class PrincipalDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

@@ -31,15 +31,12 @@ const Login = () => {
     // Interacting with server
     fetch(url, {
       method: "POST",
-      withCredentials: true,
-      credentials: "include",
       body: JSON.stringify({
         email: enteredEmail,
         password: enteredPassword,
       }),
       headers: {
         "content-type": "application/json",
-        authorization: `Bearer ${authCtx.accessToken}`,
       },
     })
       .then((response) => {

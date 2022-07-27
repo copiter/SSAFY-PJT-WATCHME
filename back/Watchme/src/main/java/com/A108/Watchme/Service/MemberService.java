@@ -3,9 +3,9 @@ package com.A108.Watchme.Service;
 import com.A108.Watchme.DTO.LoginRequestDTO;
 import com.A108.Watchme.DTO.NewTokenRequestDTO;
 import com.A108.Watchme.DTO.SignUpRequestDTO;
+import com.A108.Watchme.DTO.SocialSignUpRequestDTO;
 import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Http.ApiResponse;
-import com.A108.Watchme.Http.ResponseMap;
 import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,27 +36,34 @@ public class MemberService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public int memberInsert(SignUpRequestDTO signUpRequestDTO) {
+    public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO) throws ParseException {
+        ApiResponse result = new ApiResponse();
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
-        memberRepository.save(Member.builder()
-                .email(signUpRequestDTO.getEmail())
-                .nickName(signUpRequestDTO.getNickName())
-                .pwd(encPassword)
-                .status(Status.YES)
-                .build());
+        Member member = memberRepository.save(Member.builder()
+                    .email(signUpRequestDTO.getEmail())
+                    .nickName(signUpRequestDTO.getNickName())
+                    .role(Role.MEMBER)
+                    .pwd(encPassword)
+                    .status(Status.YES)
+                    .providerType(ProviderType.EMAIL)
+                    .build());
+
         memberInfoRepository.save(MemberInfo.builder()
+                .member(member)
                 .gender(signUpRequestDTO.getGender())
+                .name(signUpRequestDTO.getName())
                 .birth(signUpRequestDTO.getBirth())
                 .point(0)
                 .imageLink(signUpRequestDTO.getImageLink())
                 .score(0)
                 .build());
-        // my-batis ? lastId 가지고와야 회원가입 되었는지 안되었는지 알지않나요?
-        return 1;
+        result.setMessage("MEMBER INSERT SUCCESS");
+        result.setResponseData("DATA", "Success");
+        return result;
     }
 
     public ApiResponse login(LoginRequestDTO loginRequestDTO) {
-        ResponseMap result = new ResponseMap();
+        ApiResponse result = new ApiResponse();
 
         try {
             authenticationManager.authenticate(
@@ -64,6 +72,7 @@ public class MemberService {
 
             Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
             Map createToken = createTokenReturn(member.getId());
+            result.setMessage("LOGIN SUCCESS");
             result.setResponseData("accessToken", createToken.get("accessToken"));
             result.setResponseData("refreshToken", createToken.get("refreshToken"));
         } catch (Exception e) {
@@ -75,7 +84,7 @@ public class MemberService {
     }
 
     public ApiResponse newAccessToken(NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request){
-        ResponseMap result = new ResponseMap();
+        ApiResponse result = new ApiResponse();
         String refreshToken = newTokenRequestDTO.getToken();
 
         // AccessToken은 만료되었지만 RefreshToken은 만료되지 않은 경우
@@ -115,6 +124,33 @@ public class MemberService {
 
         result.put("accessToken", accessToken);
         result.put("refreshToken", insertRefreshToken.getToken());
+        return result;
+    }
+
+    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpSession httpSession) {
+        ApiResponse result = new ApiResponse();
+        ProviderType providerType = (ProviderType) httpSession.getAttribute("providerType");
+        String encPassword = bCryptPasswordEncoder.encode("1234");
+        Member member = memberRepository.save(Member.builder()
+                .email(httpSession.getAttribute("email").toString())
+                .nickName(socialSignUpRequestDTO.getNickName())
+                .role(Role.MEMBER)
+                .pwd(encPassword)
+                .status(Status.YES)
+                .providerType(providerType)
+                .build());
+
+        memberInfoRepository.save(MemberInfo.builder()
+                .member(member)
+                .gender(socialSignUpRequestDTO.getGender())
+                .name(socialSignUpRequestDTO.getName())
+                .birth(socialSignUpRequestDTO.getBirth())
+                .point(0)
+                .imageLink(httpSession.getAttribute("image").toString())
+                .score(0)
+                .build());
+        result.setMessage("MEMBER INSERT SUCCESS");
+        result.setResponseData("DATA", "Success");
         return result;
     }
 }

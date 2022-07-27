@@ -18,7 +18,6 @@ function SignUp() {
   const nicknameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
-  const phoneNumberInputRef = useRef();
 
   const authCtx = useContext(AuthContext);
 
@@ -31,7 +30,6 @@ function SignUp() {
     const enteredNickname = nicknameInputRef.current.value;
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
-    const enteredPhoneNumber = phoneNumberInputRef.current.value;
 
     const url =
       "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA7OgmwziXipTd23RnFtyt6SZ17gqW_V48";
@@ -41,11 +39,10 @@ function SignUp() {
       body: JSON.stringify({
         email: enteredEmail,
         password: enteredPassword,
-        username: enteredUsername,
+        userName: enteredUsername,
         nickname: enteredNickname,
-        sex: enteredSex,
-        birthday: enteredBirthday,
-        phoneNumber: enteredPhoneNumber,
+        gender: enteredSex,
+        birth: enteredBirthday,
       }),
       headers: {
         "content-type": "application/json",

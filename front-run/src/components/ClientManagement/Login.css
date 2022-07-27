@@ -5,7 +5,7 @@
   position: relative;
   box-sizing: border-box;
   padding: 30px 35px;
-  margin: 50px auto 0;
+  margin: 50px auto 50px;
 
   width: 617px;
   height: 670px;
@@ -102,7 +102,7 @@
   color: #9a9a9a;
 }
 
-.signin-btns {
+.signup-btns {
   /* Auto layout */
 
   display: flex;
@@ -122,73 +122,46 @@
   z-index: 4;
 }
 
-.signin-btns .email button {
+.signup-btns a {
+  display: inline-block;
+  overflow: hidden;
+
   width: 547px;
   height: 50px;
 
-  background: #e8eaec;
   border-radius: 30px;
   border-style: none;
 
   font-weight: 600;
   font-size: 15px;
-  line-height: 18px;
-}
-
-.signin-btns .kakao img {
-  position: absolute;
-  left: 210px;
-  top: 455px;
-}
-
-.signin-btns .kakao button {
-  width: 547px;
-  height: 50px;
-
-  background: #fee500;
-  border-radius: 30px;
-  border-style: none;
-
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 18px;
   text-align: center;
+  line-height: 50px;
+}
+
+.signup-btns a .email {
+  background: #e8eaec;
+}
+.signup-btns a .kakao {
+  background-color: #fee500;
+}
+.signup-btns a .naver {
+  background-color: #03c75a;
+}
+.signup-btns a .google {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.signup-btns .kakao img {
   vertical-align: middle;
+  margin: 0 7px 2px 0;
 }
 
-.signin-btns .naver img {
-  position: absolute;
-  left: 205px;
-  top: 515px;
-}
-.signin-btns .naver button {
-  width: 547px;
-  height: 50px;
-
-  background: #03c75a;
-  border-radius: 30px;
-  border-style: none;
-
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 18px;
+.signup-btns .naver img {
+  vertical-align: middle;
+  margin: 0 2px 4px 0;
 }
 
-.signin-btns .google img {
-  position: absolute;
-  left: 208px;
-  top: 585px;
-}
-
-.signin-btns .google button {
-  width: 547px;
-  height: 50px;
-
-  background: #fff;
-  border-radius: 30px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 18px;
+.signup-btns .google img {
+  vertical-align: middle;
+  margin: 0 2px 4px 0;
 }

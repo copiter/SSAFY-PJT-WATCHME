@@ -2,7 +2,7 @@ import React, { useState, Fragment, useRef, useContext } from "react";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
 
-import "./SignUp.css"; // 동일한 CSS 파일 사용
+import "./SocialLogin.css"; // 동일한 CSS 파일 사용
 
 function SocialLogin() {
   const [selectSex, setSelectSex] = useState("ND");
@@ -12,13 +12,10 @@ function SocialLogin() {
     setSelectSex(e.target.value);
   };
 
-  // const emailInputRef = useRef();
-  // const passwordInputRef = useRef();
   const usernameInputRef = useRef();
   const nicknameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
-  // const phoneNumberInputRef = useRef();
 
   const authCtx = useContext(AuthContext);
 
@@ -30,23 +27,10 @@ function SocialLogin() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    //쿠키 가져오기
-    const getCookie = () => {
-      const cookie_array = document.cookie
-        .split("; ")
-        .map((item) => item.split("="));
-      for (let i = 0; i < cookie_array.length; i++) {
-        if (cookie_array[i][0] === "JSESSIONID") {
-          return cookie_array[i][1];
-        }
-      }
-    };
-
     const url = "http://localhost:8080/social-signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
-      credentials: "include",
       withCredentials: true,
       body: JSON.stringify({
         userName: enteredUsername,
@@ -56,7 +40,6 @@ function SocialLogin() {
       }),
       headers: {
         "content-type": "application/json",
-        Authorization: `Bearer ${getCookie()}`,
       },
     })
       .then((response) => {
@@ -64,7 +47,7 @@ function SocialLogin() {
           return response.json();
         } else {
           response.json().then((data) => {
-            let errorMessage = "Authentication failed!";
+            let errorMessage = "인증 실패";
             throw new Error(errorMessage);
           });
         }

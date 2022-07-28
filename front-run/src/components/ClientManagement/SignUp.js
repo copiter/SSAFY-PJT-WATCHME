@@ -1,6 +1,6 @@
 import React, { useState, Fragment, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { FetchUrl } from "../../store/auth-context";
+import { FetchUrl } from "../../store/communication";
 
 import "./SignUp.css";
 

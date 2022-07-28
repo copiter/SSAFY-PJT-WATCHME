@@ -1,17 +1,20 @@
 import React from "react";
+import { useContext } from "react";
 
 import "./MainPage.css";
 import { Link } from "react-router-dom";
 import groupInfor from "../json/groupInfor"
 import roomInfor from "../json/roomInfor"
 import userInfor from "../json/userInfor"
+import { FetchUrl } from "../../store/communication";
 
 
 function MainPage() {
 
 
   //URL
-  const url = "http://localhost:81/MainPage";
+  const FETCH_URL = useContext(FetchUrl);
+  const url = `${FETCH_URL}/MainPage`;
 
   let userInformation=userInfor[0]["myUserInfor"][0];
 
@@ -23,6 +26,7 @@ function MainPage() {
   let myGroupNo=0;
 
 
+  let MainJSP;
   const mainPageSetting=(event)=>{
 
     fetch(url+"UserInformation")
@@ -31,73 +35,19 @@ function MainPage() {
         return response.json();
       } else {
         response.json().then((data) => {
-          let errorMessage = "유저정보 획득 실패";
+          let errorMessage = "유저정보";
           throw new Error(errorMessage);
         });
       }
     })
     .then((result) => {
-      userInformation=result;
+      MainJSP=result;
     })
     .catch((err) => {
-      console.log("통신오류_내정보");
+      console.log("통신실패");
     });
 
     
-    fetch(url+"myGroups")
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        response.json().then((data) => {
-          let errorMessage = "내 그룹정보 획득 실패";
-          throw new Error("통신오류_그룹정보");
-        });
-      }
-    })
-    .then((result) => {
-      myGroups=result;
-    })
-    .catch((err) => {
-      console.log("통신오류_내그룹");
-    });
-
-
-     fetch(url+"groups")
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        response.json().then((data) => {
-          let errorMessage = "그룹정보 획득 실패";
-          throw new Error(errorMessage);
-        });
-      }
-    })
-    .then((result) => {
-      groups=result;
-    })
-    .catch((err) => {
-      console.log("통신오류_그룹정보");
-    });
-
-    fetch(url+"rooms")
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        response.json().then((data) => {
-          let errorMessage = "공개룸 획득 실패";
-          throw new Error(errorMessage);
-        });
-      }
-    })
-    .then((result) => {
-      rooms=result;
-    })
-    .catch((err) => {
-      console.log("통신오류_공개룸");
-    });
   }
 
   mainPageSetting();
@@ -105,7 +55,7 @@ function MainPage() {
     <>
     <div id="outer">
       <section id='mainpage__myinfor'>{/*개인과 관련된 섹션. 임시링크들 있음 수정예정 */}
-        <div id='mypage__myinfor__title'>오늘도 화이팅, {userInformation[0]}</div>
+        <div id='mypage__myinfor__title'>오늘도 화이팅, {userInformation["nickname"]}</div>
         <div id='mypage__myinfor__create-room'>{/*방생성관련 */}
           <div className='mypage__myinfor__sub-title'>
             방만들기
@@ -125,14 +75,14 @@ function MainPage() {
           
           <Link to="/GroupDetail">
             <div id='mypage__myinfor__mystduy-group1' className='mypage__myinfor__mystduy-group-image'>
-              { myGroups[myGroupNo]["groupImage"]=="none"?"이미지 없음":myGroups[myGroupNo]["groupImage"]}
+              { myGroups[myGroupNo]["groupImage"]==="none"?"이미지 없음":myGroups[myGroupNo]["groupImage"]}
               <div className= 'mypage__myinfor__mystduy-group__img'></div>
               <div className='mypage__myinfor__mystduy-group__Title'>{myGroups[myGroupNo]["groupName"]}</div>
             </div>
           </Link>
           <Link to="/GroupDetail">
             <div id='mypage__myinfor__mystduy-group2' className='mypage__myinfor__mystduy-group-image'>
-              { myGroups[++myGroupNo]["groupImage"]=="none"?"이미지 없음":myGroups[myGroupNo]["groupImage"]}
+              { myGroups[++myGroupNo]["groupImage"]==="none"?"이미지 없음":myGroups[myGroupNo]["groupImage"]}
                 <div className= 'mypage__myinfor__mystduy-group__img'></div>
                 <div className='mypage__myinfor__mystduy-group__Title'>{myGroups[myGroupNo]["groupName"]}</div>
             </div>

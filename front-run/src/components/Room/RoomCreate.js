@@ -1,6 +1,7 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { Link,useNavigate  } from "react-router-dom";
+import { FetchUrl } from "../../store/communication";
 
 import "./RoomCreate.css";
 
@@ -28,7 +29,8 @@ function CreateRoom() {
 
 
   //URL
-  const url = "http://localhost:81/RoomCreate";
+  const FETCH_URL = useContext(FetchUrl);
+  const url = `${FETCH_URL}/MainPage`;
   //Otpion
   const requestOptions ={
     method: "POST", 

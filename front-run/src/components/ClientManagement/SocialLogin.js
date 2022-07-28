@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useRef, useContext } from "react";
-import { FetchUrl } from "../../store/auth-context";
+import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
 

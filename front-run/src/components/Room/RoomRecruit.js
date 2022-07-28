@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import roomInfor from "../json/roomInfor";
 
@@ -10,7 +10,6 @@ function RoomRecruit() {
     roomTag: "",
     roomSearch: "",
   });
-  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -27,9 +26,6 @@ function RoomRecruit() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    {
-      /*완성후삭제 */
-    }
     console.log(
       url +
         "?roomTag=" +
@@ -66,9 +62,6 @@ function RoomRecruit() {
 
   const addMore = (event) => {
     roomPageNo++;
-    {
-      /*완성후삭제 */
-    }
     console.log(
       url +
         "?roomTag=" +

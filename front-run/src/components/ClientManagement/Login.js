@@ -90,19 +90,25 @@ const Login = () => {
         <Link to="/signup">
           <div className="email">이메일로 회원가입</div>
         </Link>
-        <a href={`${FETCH_URL}/oauth2/authorization/kakao`}>
+        <a
+          href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=https://watchme2.shop/api/login/oauth2/code/kakao`}
+        >
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
             <span>카카오로 로그인</span>
           </div>
         </a>
-        <a href={`${FETCH_URL}/oauth2/authorization/naver`}>
+        <a
+          href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=https://watchme2.shop/api/login/oauth2/code/naver`}
+        >
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
             <span>네이버로 로그인</span>
           </div>
         </a>
-        <a href={`${FETCH_URL}/oauth2/authorization/google`}>
+        <a
+          href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=https://watchme2.shop/api/login/oauth2/code/google`}
+        >
           <div className="google">
             <img src={google} alt="구글" width={40} />
             <span>Google로 로그인</span>

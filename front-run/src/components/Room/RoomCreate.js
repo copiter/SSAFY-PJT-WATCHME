@@ -35,7 +35,6 @@ function CreateRoom() {
     headers: {"content-type": "application/json",},
     body: JSON.stringify(inputs),
   } 
-
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(requestOptions);
@@ -58,7 +57,7 @@ function CreateRoom() {
       }
     })
     .catch((err) => {
-      alert(err.message);
+      console.log(err.message);
     });
 
   }

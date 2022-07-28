@@ -2,6 +2,7 @@ import React from "react";
 import { Link,useNavigate } from "react-router-dom";
 import {useState} from 'react'
 import roomInfor from "../json/roomInfor"
+
 let roomPageNo=0;
 
 
@@ -22,7 +23,7 @@ function RoomRecruit() {
 
 
   //URL
-  const url = "http://localhost:8080/RoomRecruit";
+  const url = "http://localhost:81/RoomRecruit";
   //Otpion
 
   let rooms=  roomInfor[0]["MainpageRooms"];
@@ -73,25 +74,26 @@ function RoomRecruit() {
     });
   }
 
-
-
-
-
-
-function RoomRecruit() {
   return (
-    <form>
+    <form  onSubmit={handleSubmit}>
       <div id="위에 검색창">
         <div>공개룸찾기</div>
-        <input type="text" 
-        
+        <input type="text" name='roomSearch' 
+          value={inputs.roomSearch || ""} onChange={handleChange}
         placeholder="찾는 공개룸을 입력하세요"/>
         <input type="submit"/>
       </div>
       <div id="흰부분">
           <div id="up">
             <div id="tags">
-              all
+              <select name="roomTag" value={inputs.roomTag|| ""} onChange={handleChange}>
+                <option value="">all</option>
+                <option value="공무원">공무원</option>
+                <option value="취업">취업</option>
+                <option value="수능">수능</option>
+                <option value="자격증">자격증</option>
+                <option value="기타">기타</option>
+               </select>
             </div>
             <Link to="/RoomCreate"><div >공개방 만들기</div></Link>
             <div >필터</div>{/*아직 미구현예정 */}
@@ -123,7 +125,7 @@ function RoomRecruit() {
                     {rooms[roomNo]["roomDiscription"]}
                   </div>
                   <div className=''>
-                    {rooms[roomPageNo]["romMemberNo"]}/{rooms[roomPageNo]["roomMemberMaxNo"]}
+                    {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                   </div>
                 </div>
               </div>
@@ -131,7 +133,7 @@ function RoomRecruit() {
             <Link to='/RoomDetail'> 
               <div className='Lines'>
                 <div className=''>{/*미팅룸 이미지 내부에 기능들 표기됨*/}
-                  {rooms[roomPageNo]["roomImage"]==="none"?"(이미지없음)":rooms[roomPageNo]["roomImage"]}
+                  {rooms[roomNo]["roomImage"]==="none"?"(이미지없음)":rooms[roomNo]["roomImage"]}
                   <div className=''>
                     <p>⏱ 기능</p>
                     ✔ 뽀모도로<br></br>
@@ -145,16 +147,16 @@ function RoomRecruit() {
                 </div>
                 <div className=''>
                   <div className=''>{/*태그*/}
-                    {rooms[++roomPageNo]["roomTag"]}
+                    {rooms[++roomNo]["roomTag"]}
                   </div>
                   <div className=''>{/*이름*/}
-                    {rooms[roomPageNo]["roomName"]}
+                    {rooms[roomNo]["roomName"]}
                   </div>
                   <div className=''>{/*세부설명*/}
-                    {rooms[roomPageNo]["roomDiscription"]}
+                    {rooms[roomNo]["roomDiscription"]}
                   </div>
                   <div className=''>
-                    {rooms[roomPageNo]["romMemberNo"]}/{rooms[roomPageNo]["roomMemberMaxNo"]}
+                    {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                   </div>
                 </div>
               </div>
@@ -162,7 +164,7 @@ function RoomRecruit() {
             
           </div>
           <div id="more">
-            <button>더보기</button>
+            <button type="button" name="roomPageNo" onClick={addMore}>더보기</button>
           </div>
       </div>
     </form>

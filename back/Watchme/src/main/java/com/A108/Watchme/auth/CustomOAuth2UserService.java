@@ -1,7 +1,8 @@
 package com.A108.Watchme.auth;
 
 import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.VO.*;
+import com.A108.Watchme.VO.ENUM.ProviderType;
+import com.A108.Watchme.VO.Entity.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;

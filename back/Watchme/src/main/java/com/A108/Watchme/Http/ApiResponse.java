@@ -16,7 +16,14 @@ public class ApiResponse {
 
     public ApiResponse() {}
 
-    public void setMessage(String message){
+    public ApiResponse(int code, String message, Map responseData) {
+        this.setCode(code);
+        this.setMessage(message);
+        this.responseData = responseData;
+    }
+
+
+    public void setMessage(String message) {
         this.message = message;
     }
 

@@ -1,4 +1,4 @@
-package com.A108.Watchme.VO;
+package com.A108.Watchme.VO.ENUM;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

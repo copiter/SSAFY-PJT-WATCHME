@@ -82,7 +82,7 @@ public class WebSecurityConfigure {
                 .userService(customOAuth2UserService)
                 .and()
                 .redirectionEndpoint()
-                .baseUri("/*/oauth2/code/*")
+                .baseUri("/api/login/oauth2/code/*")
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
                 .failureHandler(oAuth2AuthenticationFailureHandler());

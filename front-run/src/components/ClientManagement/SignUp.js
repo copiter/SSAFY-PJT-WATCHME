@@ -38,8 +38,8 @@ function SignUp() {
       body: JSON.stringify({
         email: enteredEmail,
         password: enteredPassword,
-        userName: enteredUsername,
-        nickname: enteredNickname,
+        username: enteredUsername,
+        nickName: enteredNickname,
         gender: enteredSex,
         birth: enteredBirthday,
       }),

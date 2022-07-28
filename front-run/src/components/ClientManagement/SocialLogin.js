@@ -36,8 +36,8 @@ function SocialLogin() {
       method: "POST",
       withCredentials: true,
       body: JSON.stringify({
-        userName: enteredUsername,
-        nickname: enteredNickname,
+        username: enteredUsername,
+        nickName: enteredNickname,
         gender: enteredSex,
         birth: enteredBirthday,
       }),

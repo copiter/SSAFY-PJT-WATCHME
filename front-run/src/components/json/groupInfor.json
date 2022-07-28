@@ -4,20 +4,20 @@
             "ID":"ID",
             "groupName":"그룹이름1",
             "groupImage":"none",
-            "groupDiscription":"그룹세부정보2",
+            "groupde·scrip·tion":"그룹세부정보2",
             "groupMemberNo":2,
             "groupMemberMaxNo":6,
             "groupLookUp":1234,
-            "groupCategory":"공무원"
+            "groupCategory":"public_official"
         },{
             "ID":"ID",
             "groupName":"그룹이름2",
             "groupImage":"이미지주소2",
-            "groupDiscription":"그룹세부정보2",
+            "groupde·scrip·tion":"그룹세부정보2",
             "groupMemberNo":1,
             "groupMemberMaxNo":10,
             "groupLookUp":1234,
-            "groupCategory":"공무원"
+            "groupCategory":"public_official"
         
 
     }],
@@ -28,38 +28,38 @@
             "ID":"ID",
             "groupName":"스터디그룹이름1",
             "groupImage":"none",
-            "groupDiscription":"그룹세부정보1",
+            "groupde·scrip·tion":"그룹세부정보1",
             "groupMemberNo":1,
             "groupMemberMaxNo":6,
             "groupLookUp":1234,
-            "groupCategory":"공무원"
+            "groupCategory":"public_official"
         },{
             "ID":"ID",
             "groupName":"스터디그룹이름2",
             "groupImage":"이미지주소2",
-            "groupDiscription":"그룹세부정보2",
+            "groupde·scrip·tion":"그룹세부정보2",
             "groupMemberNo":2,
             "groupMemberMaxNo":10,
             "groupLookUp":1234,
-            "groupCategory":"공무원"
+            "groupCategory":"public_official"
         },{
             "ID":"ID",
             "groupName":"스터디그룹이름3",
             "groupImage":"이미지주소3",
-            "groupDiscription":"그룹세부정보3",
+            "groupde·scrip·tion":"그룹세부정보3",
             "groupMemberNo":12,
             "groupMemberMaxNo":16,
             "groupLookUp":1234,
-            "groupCategory":"수능"
+            "groupCategory":"public_official"
         },{
             "ID":"ID",
             "groupName":"스터디그룹이름4",
             "groupImage":"이미지주소4",
-            "groupDiscription":"그룹세부정보4",
+            "groupde·scrip·tion":"그룹세부정보4",
             "groupMemberNo":25,
             "groupMemberMaxNo":25,
             "groupLookUp":1234,
-            "groupCategory":"공무원"
+            "groupCategory":"public_official"
         
 
     }]

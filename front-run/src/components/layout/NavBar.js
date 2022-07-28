@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 
@@ -14,9 +14,13 @@ const NavBar = () => {
       : false
   );
 
+  useEffect(() => {
+    // window.location.reload();
+  }, [setIsLoggedIn]);
+
   const logoutHandler = () => {
-    authCtx.logout();
     setIsLoggedIn(false);
+    authCtx.logout();
   };
 
   return (
@@ -45,14 +49,20 @@ const NavBar = () => {
       <div className="navbar__right">
         {/* 로그인 되면 */}
         {isLoggedIn && (
-          <>
-            {/* 로그아웃 버튼은 임시 */}
-            <button onClick={logoutHandler}>로그아웃</button>
-            <div className="nav-profile-picture">
-              <img src="#none" alt="profile" /> {/* 프로필사진 */}
+          <div className="dropdown__login">
+            {/* 프로필사진, 이름 */}
+            <div className="user-info">
+              <img src="#none" alt="profile" className="nav-profile-picture" />
+              <span className="nav-username">Username</span>
             </div>
-            <div className="nav-username">Username</div>
-          </>
+
+            {/* dropdown */}
+            <div className="dropdowncontent__login">
+              <a onClick={logoutHandler}>로그아웃</a>
+              <Link to="/MyPage">마이페이지</Link>
+              <Link to="/MyGroups">내그룹</Link>
+            </div>
+          </div>
         )}
         {/* 로그아웃되면 */}
         {!isLoggedIn && <Link to="/login">로그인</Link>}

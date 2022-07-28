@@ -1,0 +1,40 @@
+.room {
+  display: flex;
+  flex-direction: column;
+}
+
+.room .nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.room .body {
+  display: flex;
+  flex-direction: row;
+}
+
+.body {
+  display: flex;
+  height: 80vh;
+}
+
+.body .webrtc {
+  background-color: brown;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.body .side {
+  width: 250px;
+  background-color: yellow;
+}
+
+.room .footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer img + img {
+  margin-left: 5px;
+}

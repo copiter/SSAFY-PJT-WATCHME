@@ -8,7 +8,7 @@
             "groupMemberNo":2,
             "groupMemberMaxNo":6,
             "groupLookUp":1234,
-            "groupTag":"공무원"
+            "groupCategory":"공무원"
         },{
             "ID":"ID",
             "groupName":"그룹이름2",
@@ -17,7 +17,7 @@
             "groupMemberNo":1,
             "groupMemberMaxNo":10,
             "groupLookUp":1234,
-            "groupTag":"공무원"
+            "groupCategory":"공무원"
         
 
     }],
@@ -32,7 +32,7 @@
             "groupMemberNo":1,
             "groupMemberMaxNo":6,
             "groupLookUp":1234,
-            "groupTag":"공무원"
+            "groupCategory":"공무원"
         },{
             "ID":"ID",
             "groupName":"스터디그룹이름2",
@@ -41,7 +41,7 @@
             "groupMemberNo":2,
             "groupMemberMaxNo":10,
             "groupLookUp":1234,
-            "groupTag":"공무원"
+            "groupCategory":"공무원"
         },{
             "ID":"ID",
             "groupName":"스터디그룹이름3",
@@ -50,7 +50,7 @@
             "groupMemberNo":12,
             "groupMemberMaxNo":16,
             "groupLookUp":1234,
-            "groupTag":"수능"
+            "groupCategory":"수능"
         },{
             "ID":"ID",
             "groupName":"스터디그룹이름4",
@@ -59,7 +59,7 @@
             "groupMemberNo":25,
             "groupMemberMaxNo":25,
             "groupLookUp":1234,
-            "groupTag":"공무원"
+            "groupCategory":"공무원"
         
 
     }]

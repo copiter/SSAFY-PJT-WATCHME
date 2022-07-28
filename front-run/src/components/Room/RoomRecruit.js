@@ -107,24 +107,19 @@ function RoomRecruit() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div id="위에 검색창">
-        <div>공개룸찾기</div>
-        <input
-          type="text"
-          name="roomSearch"
-          value={inputs.roomSearch || ""}
-          onChange={handleChange}
-          placeholder="찾는 공개룸을 입력하세요"
-        />
-        <input type="submit" />
-      </div>
-      <div id="흰부분">
-        <div id="up">
-          <div id="tags">
-            <select
-              name="roomCategory"
-              value={inputs.roomCategory || ""}
+    <div id="open-room">
+      {/* 공개룸 찾기 section */}
+      <form onSubmit={handleSubmit}>
+        <div className="open-room__search">
+          <div className="search__info">
+            <strong>공개룸 찾기</strong>
+            <small>Search Open Room</small>
+          </div>
+          <div className="search__input">
+            <input
+              type="text"
+              name="roomSearch"
+              value={inputs.roomSearch || ""}
               onChange={handleChange}
               placeholder="찾는 공개룸을 입력하세요"
             />

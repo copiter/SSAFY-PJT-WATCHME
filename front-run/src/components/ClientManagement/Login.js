@@ -1,6 +1,6 @@
 import { useRef, useContext } from "react";
 import AuthContext from "../../store/auth-context";
-import { FetchUrl } from "../../store/auth-context";
+import { FetchUrl } from "../../store/communication";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import kakao from "../../img/SignUpLogos/kakao.png";

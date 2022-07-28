@@ -9,18 +9,17 @@ a {
 #mainpage__myinfor {
   margin-left: auto;
   margin-right: auto;
-  position: absolute;
+  margin-top: 90px;
+  position: relative;
   height: 370px;
   width: 1440px;
-  left: 0px;
-  top: 90px;
   border-radius: 0px;
 
   background-color: #eff0f2;
 }
 #mypage__myinfor__title {
   position: absolute;
-  width: 485px;
+  width: 600px;
   height: 49px;
   left: 118px;
   top: 25px;
@@ -204,13 +203,12 @@ a {
 }
 
 #mainpage_study-groups {
-  left: 100px;
-  position: absolute;
+  position: relative;
+  margin-top: 50px;
   margin-left: auto;
   margin-right: auto;
   height: 480px;
   width: 1240px;
-  top: 530px;
   border-radius: 0px;
 }
 .section__top {
@@ -340,13 +338,12 @@ a {
 }
 
 #mainpage__banner {
-  position: absolute;
+  position: relative;
   margin-left: auto;
   margin-right: auto;
-  left: 100px;
+  margin-top:50px;
   height: 400px;
   width: 1240px;
-  top: 1140px;
 
   background: #eff0f2;
   border-radius: 12px;
@@ -401,13 +398,12 @@ a {
 }
 
 #mainpage__meeting-rooms {
-  position: absolute;
+  position: relative;
   margin-left: auto;
   margin-right: auto;
-  left: 100px;
+  margin-top: 50px;
   width: 1240px;
   height: 1170px;
-  top: 1700px;
 }
 #mainpage__meeting-rooms__rooms {
   position: absolute;

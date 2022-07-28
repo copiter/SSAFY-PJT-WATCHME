@@ -2,14 +2,12 @@ package com.A108.Watchme;
 
 import com.A108.Watchme.Repository.MRLRepository;
 import com.A108.Watchme.Repository.MemberInfoRepository;
-import com.A108.Watchme.VO.Entity.MemberRoomLog;
-import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;

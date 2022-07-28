@@ -23,6 +23,7 @@ public class RoomInfo {
     private Room room;
 
     private int num;
+
     private int score;
 
     private int diplsy;

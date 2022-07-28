@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import roomInfor from "../json/roomInfor";
-import { FetchUrl } from "../../store/auth-context";
+import { FetchUrl } from "../../store/communication";
 
 import "./RoomRecruit.css";
 import btnPlane from "../../img/Icons/btn-plane.png";

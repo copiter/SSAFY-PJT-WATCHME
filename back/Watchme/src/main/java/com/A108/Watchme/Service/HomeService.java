@@ -84,19 +84,7 @@ public class HomeService {
                 Member member = memberRepository.findByEmail(currUser.getUsername());
                 MemberInfo memberInfo = memberInfoRepository.findById(member.getId()).get();
 
-                List<MemberGroup> memberGroupList = mgRepository.findByMember_id(member.getId());
-//                List<Group> myGroups = groupRepository.findAllGroupByMember_id(member.getId());
-
-                System.out.println("memberGroupList");
-
-//                List<Group> myGroups = groupRepository.findAllByIdIn();
-
-                System.out.println("myGroups");
-
                 result.setResponseData("user", MemberDataDTO.builder().email(member.getEmail()).username(memberInfo.getName()).nickname(member.getNickName()).sex(memberInfo.getGender()).birthday(memberInfo.getBirth()).profileImage(memberInfo.getImageLink()).studyTimeToday(memberInfo.getStudyTimeDay()).studyTimeWeek(memberInfo.getStudyTimeWeek()).studyTimeMonth(memberInfo.getStudyTimeMonth()).studyTimeTotal(memberInfo.getStudyTime()).build());
-
-//                result.setResponseData("myGroups", myGroups);
-//                result.setResponseData("myGroups", GroupDataDTO.builder().build());
 
             }
 

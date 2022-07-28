@@ -15,7 +15,7 @@ function SocialLogin() {
     setSelectSex(e.target.value);
   };
 
-  const userNameInputRef = useRef();
+  const nameInputRef = useRef();
   const nickNameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
@@ -25,7 +25,7 @@ function SocialLogin() {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const enteredUserName = userNameInputRef.current.value;
+    const enteredName = nameInputRef.current.value;
     const enteredNickname = nickNameInputRef.current.value;
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
@@ -36,7 +36,7 @@ function SocialLogin() {
       method: "POST",
       withCredentials: true,
       body: JSON.stringify({
-        userName: enteredUserName,
+        name: enteredName,
         nickName: enteredNickname,
         gender: enteredSex,
         birth: enteredBirthday,
@@ -83,7 +83,7 @@ function SocialLogin() {
                 type="text"
                 placeholder="이름을 입력하세요"
                 required
-                ref={userNameInputRef}
+                ref={nameInputRef}
               />
             </div>
             <div className="line">

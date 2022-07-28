@@ -13,6 +13,6 @@ import java.io.IOException;
 public class OAuth2AuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        response.sendRedirect("/home");
+        response.sendRedirect("/errorPage");
     }
 }

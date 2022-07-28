@@ -9,7 +9,13 @@ import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
-import com.A108.Watchme.VO.*;
+import com.A108.Watchme.VO.ENUM.ErrorCode;
+import com.A108.Watchme.VO.ENUM.ProviderType;
+import com.A108.Watchme.VO.ENUM.Role;
+import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.member.MemberInfo;
+import com.A108.Watchme.VO.Entity.RefreshToken;
 import com.A108.Watchme.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,6 +45,7 @@ public class MemberService {
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO) throws ParseException {
         ApiResponse result = new ApiResponse();
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
+
         Member member = memberRepository.save(Member.builder()
                     .email(signUpRequestDTO.getEmail())
                     .nickName(signUpRequestDTO.getNickName())
@@ -57,6 +64,7 @@ public class MemberService {
                 .imageLink(signUpRequestDTO.getImageLink())
                 .score(0)
                 .build());
+
         result.setMessage("MEMBER INSERT SUCCESS");
         result.setResponseData("DATA", "Success");
         return result;

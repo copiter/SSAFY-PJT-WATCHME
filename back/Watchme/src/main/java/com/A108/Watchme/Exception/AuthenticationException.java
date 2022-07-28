@@ -1,6 +1,6 @@
 package com.A108.Watchme.Exception;
 
-import com.A108.Watchme.VO.ErrorCode;
+import com.A108.Watchme.VO.ENUM.ErrorCode;
 import lombok.Getter;
 
 @Getter

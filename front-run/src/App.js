@@ -15,6 +15,7 @@ import RoomDetail from "./components/Room/RoomDetail"; //룸생성
 import GroupRecruit from "./components/Group/GroupRecruit"; //그룹탐색
 import GroupCreate from "./components/Group/GroupCreate"; //그룹생성
 import GroupDetail from "./components/Group/GroupDetail"; //그룹정보
+import MyGroups from "./components/Group/MyGroups"; //그룹정보
 
 //그외페이지
 import MainPage from "./components/MainPage/MainPage";
@@ -36,6 +37,7 @@ function App() {
         <Route path="/GroupRecruit" element={<GroupRecruit />} />
         <Route path="/GroupCreate" element={<GroupCreate />} />
         <Route path="/GroupDetail" element={<GroupDetail />} />
+        <Route path="/MyGroups" element={<MyGroups />} />
         <Route path="/About" element={<About />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="*" element={<NotFound />} />

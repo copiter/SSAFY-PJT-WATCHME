@@ -2,7 +2,7 @@ package com.A108.Watchme.jwt;
 
 
 import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.VO.Member;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.auth.PrincipalDetails;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,8 @@ public class JwtProvider {
     private final String secretKey="c88d74ba-1554-48a4-b549-b926f5d77c9e";
     private final long accessExpireTime = 60 * 60 * 1000L;
     private final long refreshExpireTime = 60 * 360 * 1000L;
-    private MemberRepository memberRepository;
+
+    private final MemberRepository memberRepository;
 
 
     public String createAccessToken(Long memberId){
@@ -74,17 +75,19 @@ public class JwtProvider {
 
     // 토큰 유효성 검사
     public Authentication getAuthentication(String token) {
+
         Optional<Member> member = memberRepository.findById(this.getMemberId(token));
+
         UserDetails userDetails = new PrincipalDetails(member.get());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public Long getMemberId(String token) {
-        return (Long)Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("memberId");
+        return Long.parseLong(String.valueOf(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("memberId")));
     }
 
     public String resolveToken(HttpServletRequest request){
-        return request.getHeader("token");
+        return request.getHeader("accessToken");
     }
 
     public boolean validateJwtToken(ServletRequest request, String authToken) {

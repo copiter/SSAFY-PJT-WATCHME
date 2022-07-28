@@ -9,10 +9,6 @@
             "studyTimeToday":59,
             "studyTimeWeek":300,
             "studyTimeMonth":4321,
-            "studyTimeTotal":12345,
-            "studyPanaltyTotay":1,
-            "studyPanaltyWeek":4,
-            "studyPanaltyMonth":21,
-            "studyPanaltyTotal":111
+            "studyTimeTotal":12345
     }]
 }]

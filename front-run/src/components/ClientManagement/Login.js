@@ -1,6 +1,6 @@
 import { useRef, useContext } from "react";
 import AuthContext from "../../store/auth-context";
-import { FetchUrl } from "../../store/auth-context";
+import { FetchUrl } from "../../store/communication";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import kakao from "../../img/SignUpLogos/kakao.png";
@@ -9,7 +9,6 @@ import google from "../../img/SignUpLogos/google.png";
 
 const Login = () => {
   const FETCH_URL = useContext(FetchUrl);
-  console.log(FETCH_URL);
 
   const navigate = useNavigate();
 
@@ -27,11 +26,11 @@ const Login = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     const url = `${FETCH_URL}/login`;
+    console.log(url);
 
     // Interacting with server
     fetch(url, {
       method: "POST",
-      credentials: "include",
       body: JSON.stringify({
         email: enteredEmail,
         password: enteredPassword,
@@ -91,19 +90,25 @@ const Login = () => {
         <Link to="/signup">
           <div className="email">이메일로 회원가입</div>
         </Link>
-        <a href={`${FETCH_URL}/oauth2/authorization/kakao`}>
+        <a
+          href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=https://watchme2.shop/api/login/oauth2/code/kakao`}
+        >
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
             <span>카카오로 로그인</span>
           </div>
         </a>
-        <a href={`${FETCH_URL}/oauth2/authorization/naver`}>
+        <a
+          href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=https://watchme2.shop/api/login/oauth2/code/naver`}
+        >
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
             <span>네이버로 로그인</span>
           </div>
         </a>
-        <a href={`${FETCH_URL}/oauth2/authorization/google`}>
+        <a
+          href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=https://watchme2.shop/api/login/oauth2/code/google`}
+        >
           <div className="google">
             <img src={google} alt="구글" width={40} />
             <span>Google로 로그인</span>

@@ -30,7 +30,16 @@ function SocialLogin() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = `${FETCH_URL}/social-signup`;
+    //쿠키 가져오기
+    //쿠키 가져오기
+    let cookie;
+    function getCookie() {
+      const cookie_array = document.cookie
+        .split(";")
+       console.log(cookie_array);
+    }
+
+    const url = "http://localhost:8080/social-signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
@@ -62,6 +71,7 @@ function SocialLogin() {
           navigate("/");
           window.location.reload();
         }
+        
       })
       .catch((err) => {
         alert(err.message);

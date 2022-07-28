@@ -127,7 +127,7 @@ public class MemberService {
         return result;
     }
 
-    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpSession httpSession) {
+    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpSession httpSession) throws ParseException {
         ApiResponse result = new ApiResponse();
         ProviderType providerType = (ProviderType) httpSession.getAttribute("providerType");
         String encPassword = bCryptPasswordEncoder.encode("1234");
@@ -149,8 +149,10 @@ public class MemberService {
                 .imageLink(httpSession.getAttribute("image").toString())
                 .score(0)
                 .build());
-        result.setMessage("MEMBER INSERT SUCCESS");
-        result.setResponseData("DATA", "Success");
+        Map createToken = createTokenReturn(member.getId());
+        result.setMessage("LOGIN SUCCESS");
+        result.setResponseData("accessToken", createToken.get("accessToken"));
+        result.setResponseData("refreshToken", createToken.get("refreshToken"));
         return result;
     }
 }

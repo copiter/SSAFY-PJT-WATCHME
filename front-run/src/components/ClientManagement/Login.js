@@ -9,7 +9,6 @@ import google from "../../img/SignUpLogos/google.png";
 
 const Login = () => {
   const FETCH_URL = useContext(FetchUrl);
-  console.log(FETCH_URL);
 
   const navigate = useNavigate();
 
@@ -27,11 +26,11 @@ const Login = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     const url = `${FETCH_URL}/login`;
+    console.log(url);
 
     // Interacting with server
     fetch(url, {
       method: "POST",
-      credentials: "include",
       body: JSON.stringify({
         email: enteredEmail,
         password: enteredPassword,

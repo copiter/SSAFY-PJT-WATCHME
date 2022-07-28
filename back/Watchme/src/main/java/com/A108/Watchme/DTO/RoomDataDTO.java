@@ -12,7 +12,7 @@ public class RoomDataDTO {
     private String URL;
     private String roomName;
     private String roomImage;
-    private String roomDiscription;
+    private String roomDescription;
     private Integer roomMemberNo;
     private Integer roomMemberMaxNo;
     private Integer roomLookUp;

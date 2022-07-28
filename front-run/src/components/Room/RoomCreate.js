@@ -30,7 +30,7 @@ function CreateRoom() {
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
-  const url = `${FETCH_URL}/MainPage`;
+  const url = `${FETCH_URL}/RoomCreate`;
   //Otpion
   const requestOptions ={
     method: "POST", 

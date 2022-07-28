@@ -10,9 +10,9 @@
             "studyTimeWeek":300,
             "studyTimeMonth":4321,
             "studyTimeTotal":12345,
-            "studyPanaltyTotay":1,
-            "studyPanaltyWeek":4,
-            "studyPanaltyMonth":21,
-            "studyPanaltyTotal":111
+            "studypenaltyToday":1,
+            "studypenaltyWeek":4,
+            "studypenaltyMonth":21,
+            "studypenaltyTotal":111
     }]
 }]

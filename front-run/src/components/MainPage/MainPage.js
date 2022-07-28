@@ -48,8 +48,11 @@ function MainPage() {
     .then((result) => {
       rooms=result["rooms"]["content"];
       groups=result["groups"]["content"];
-      userInformation=result["user"];
-      myGroups=result["myGroups"]["content"]
+      if(isLoggedIn)
+      {
+        userInformation=result["user"];
+        myGroups=result["myGroups"]["content"]
+      }
     })
     .catch((err) => {
       console.log("통신실패");

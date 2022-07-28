@@ -1,10 +1,13 @@
 import React, { useState, Fragment, useRef, useContext } from "react";
+import { FetchUrl } from "../../store/auth-context";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
 
 import "./SocialLogin.css"; // 동일한 CSS 파일 사용
 
 function SocialLogin() {
+  const FETCH_URL = useContext(FetchUrl);
+
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
@@ -27,7 +30,7 @@ function SocialLogin() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = "http://localhost:81/social-signup";
+    const url = `${FETCH_URL}/social-signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",

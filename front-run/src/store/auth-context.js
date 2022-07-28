@@ -6,6 +6,8 @@ const AuthContext = React.createContext({
   logout: () => {},
 });
 
+export const FetchUrl = React.createContext("43.200.6.20:81");
+
 export const AuthContextProvider = (props) => {
   const userIsLoggedIn = !sessionStorage.hasOwnProperty("isLoggedIn")
     ? 0

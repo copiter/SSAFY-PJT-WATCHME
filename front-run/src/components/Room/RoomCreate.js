@@ -1,11 +1,24 @@
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate  } from "react-router-dom";
 
 import "./RoomCreate.css";
 
 function CreateRoom() {
-  const [inputs, setInputs] = useState({});
+  
+  //방생성 요청 보내기
+  const [inputs, setInputs] = useState({
+    "roomImage":"",
+    "roomName":"",
+    "roomDiscription":"",
+    "roomMemMaxNoMex":"",
+    "roomPublic":"Private",
+    "roomCategory":"공무원",
+    "roomPassword":"",
+    "roomTags":""
+  });
+  const navigate=useNavigate()
+
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -13,16 +26,45 @@ function CreateRoom() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
+
+  //URL
+  const url = "http://localhost:81/RoomCreate";
+  //Otpion
+  const requestOptions ={
+    method: "POST", 
+    headers: {"content-type": "application/json",},
+    body: JSON.stringify(inputs),
+  } 
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert(inputs);
-  };
-  //https://www.w3schools.com/react/react_forms.asp
+    console.log(requestOptions);
+    fetch(url, requestOptions)
+    .then(response => response.json())//보내기 문제없으면 넘어감
+    .then((response) => {
+      if (response.ok) {return response.json();//ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => { 
+          let errorMessage = "";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+        console.log("방생성 완료")
+        navigate("/");
+        window.location.reload();//리다이렉션관련
+      }
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 
+  }
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">
-        목록으로 돌아가기
+        &lt; 목록으로 돌아가기
       </Link>
 
       <form onSubmit={handleSubmit}>

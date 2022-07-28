@@ -1,5 +1,6 @@
 import { useRef, useContext } from "react";
 import AuthContext from "../../store/auth-context";
+import { FetchUrl } from "../../store/auth-context";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import kakao from "../../img/SignUpLogos/kakao.png";
@@ -7,6 +8,9 @@ import naver from "../../img/SignUpLogos/naver1.png";
 import google from "../../img/SignUpLogos/google.png";
 
 const Login = () => {
+  const FETCH_URL = useContext(FetchUrl);
+  console.log(FETCH_URL);
+
   const navigate = useNavigate();
 
   const emailInputRef = useRef();
@@ -22,7 +26,7 @@ const Login = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    const url = "http://localhost:81/login";
+    const url = `${FETCH_URL}/login`;
 
     // Interacting with server
     fetch(url, {
@@ -87,19 +91,19 @@ const Login = () => {
         <Link to="/signup">
           <div className="email">이메일로 회원가입</div>
         </Link>
-        <a href="http://localhost:8080/oauth2/authorization/kakao">
+        <a href={`${FETCH_URL}/oauth2/authorization/kakao`}>
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
             <span>카카오로 로그인</span>
           </div>
         </a>
-        <a href="http://localhost:8080/oauth2/authorization/naver">
+        <a href={`${FETCH_URL}/oauth2/authorization/naver`}>
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
             <span>네이버로 로그인</span>
           </div>
         </a>
-        <a href="http://localhost:8080/oauth2/authorization/google">
+        <a href={`${FETCH_URL}/oauth2/authorization/google`}>
           <div className="google">
             <img src={google} alt="구글" width={40} />
             <span>Google로 로그인</span>

@@ -7,7 +7,7 @@ let roomPageNo = 0;
 
 function RoomRecruit() {
   const [inputs, setInputs] = useState({
-    roomTag: "",
+    roomCategory: "",
     roomSearch: "",
   });
 
@@ -28,16 +28,16 @@ function RoomRecruit() {
     event.preventDefault();
     console.log(
       url +
-        "?roomTag=" +
-        inputs["roomTag"] +
+        "?roomCategory=" +
+        inputs["roomCategory"] +
         "&roomSearch=" +
         inputs["roomSearch"] +
         "&pageNo=0"
     );
     fetch(
       url +
-        "?roomTag=" +
-        inputs["roomTag"] +
+        "?roomCategory=" +
+        inputs["roomCategory"] +
         "&roomSearch=" +
         inputs["roomSearch"] +
         "&pageNo=0"
@@ -64,8 +64,8 @@ function RoomRecruit() {
     roomPageNo++;
     console.log(
       url +
-        "?roomTag=" +
-        inputs["roomTag"] +
+        "?roomCategory=" +
+        inputs["roomCategory"] +
         "&roomSearch=" +
         inputs["roomSearch"] +
         "&pageNo=" +
@@ -73,8 +73,8 @@ function RoomRecruit() {
     );
     fetch(
       url +
-        "?roomTag=" +
-        inputs["roomTag"] +
+        "?roomCategory=" +
+        inputs["roomCategory"] +
         "&roomSearch=" +
         inputs["roomSearch"] +
         "&pageNo=" +
@@ -115,8 +115,8 @@ function RoomRecruit() {
         <div id="up">
           <div id="tags">
             <select
-              name="roomTag"
-              value={inputs.roomTag || ""}
+              name="roomCategory"
+              value={inputs.roomCategory || ""}
               onChange={handleChange}
             >
               <option value="">all</option>
@@ -152,7 +152,7 @@ function RoomRecruit() {
               <div className="">
                 <div className="">
                   {/*태그*/}
-                  {rooms[roomNo]["roomTag"]}
+                  {rooms[roomNo]["roomCategory"]}
                 </div>
                 <div className="">
                   {/*이름*/}
@@ -187,7 +187,7 @@ function RoomRecruit() {
               <div className="">
                 <div className="">
                   {/*태그*/}
-                  {rooms[++roomNo]["roomTag"]}
+                  {rooms[++roomNo]["roomCategory"]}
                 </div>
                 <div className="">
                   {/*이름*/}

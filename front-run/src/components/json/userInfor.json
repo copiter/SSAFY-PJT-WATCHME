@@ -9,10 +9,6 @@
             "studyTimeToday":59,
             "studyTimeWeek":300,
             "studyTimeMonth":4321,
-            "studyTimeTotal":12345,
-            "studypenaltyToday":1,
-            "studypenaltyWeek":4,
-            "studypenaltyMonth":21,
-            "studypenaltyTotal":111
+            "studyTimeTotal":12345
     }]
 }]

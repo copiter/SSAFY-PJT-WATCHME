@@ -35,6 +35,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         httpSession.setAttribute("email",authDetails.getAttributes().get("email").toString());
         httpSession.setAttribute("providerType",authDetails.getProviderType());
         httpSession.setAttribute("image",authDetails.getImgUrl());
-        response.sendRedirect("https://watchme.shop/slogin");
+        response.sendRedirect("https://watchme2.shop/slogin");
     }
 }

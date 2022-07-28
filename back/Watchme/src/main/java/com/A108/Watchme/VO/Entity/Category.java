@@ -1,5 +1,7 @@
 package com.A108.Watchme.VO.Entity;
 
+import com.A108.Watchme.VO.ENUM.CategoryList;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +15,6 @@ public class Category {
     private int id;
 
     @Column(name = "ctg_name", length = 45)
-    String name;
+    private CategoryList name;
 
 }

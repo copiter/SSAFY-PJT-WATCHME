@@ -1,9 +1,12 @@
-import React, { useState, Fragment, useRef } from "react";
+import React, { useState, Fragment, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { FetchUrl } from "../../store/auth-context";
 
 import "./SignUp.css";
 
 function SignUp() {
+  const FETCH_URL = useContext(FetchUrl);
+
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
@@ -28,7 +31,7 @@ function SignUp() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = "http://localhost:81/signup";
+    const url = `${FETCH_URL}/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",

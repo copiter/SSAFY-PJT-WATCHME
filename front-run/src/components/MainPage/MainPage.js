@@ -1,5 +1,5 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext ,useState} from "react";
 
 import "./MainPage.css";
 import { Link } from "react-router-dom";
@@ -24,9 +24,14 @@ function MainPage() {
   let groupNo=0;
   let roomNo=0;
   let myGroupNo=0;
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !sessionStorage.hasOwnProperty("isLoggedIn")
+      ? false
+      : sessionStorage.getItem("isLoggedIn")
+      ? true
+      : false
+  );
 
-
-  let MainJSP;
   const mainPageSetting=(event)=>{
 
     fetch(url+"UserInformation")
@@ -41,7 +46,13 @@ function MainPage() {
       }
     })
     .then((result) => {
-      MainJSP=result;
+      rooms=result["rooms"]["content"];
+      groups=result["groups"]["content"];
+      if(isLoggedIn)
+      { 
+        userInformation=result["user"];
+        myGroups=result["myGroups"]["content"]
+      }
     })
     .catch((err) => {
       console.log("통신실패");
@@ -54,6 +65,7 @@ function MainPage() {
   return (
     <>
     <div id="outer">
+      {isLoggedIn&&
       <section id='mainpage__myinfor'>{/*개인과 관련된 섹션. 임시링크들 있음 수정예정 */}
         <div id='mypage__myinfor__title'>오늘도 화이팅, {userInformation["nickname"]}</div>
         <div id='mypage__myinfor__create-room'>{/*방생성관련 */}
@@ -112,6 +124,7 @@ function MainPage() {
           
         </div>
       </section>
+      }
       <section id='mainpage_study-groups'>{/* 스터디 그룹탐색 관련 섹션 연결하는 임시링크들 있음. 수정예정. */}
         <div className='section__top'>
           <div className= 'section__top__text'>인기있는<br></br> 모집한 스터디그룹🥇 </div>
@@ -211,7 +224,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -244,7 +257,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -277,7 +290,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -310,7 +323,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -343,7 +356,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -376,7 +389,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>

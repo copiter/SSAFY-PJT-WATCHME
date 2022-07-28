@@ -173,7 +173,7 @@ function RoomRecruit() {
             <div className="Lines">
               <div className="">
                 {/*미팅룸 이미지 내부에 기능들 표기됨*/}
-                {rooms[roomNo]["roomImage"] === "none"
+                {rooms[++roomNo]["roomImage"] === "none"
                   ? "(이미지없음)"
                   : rooms[roomNo]["roomImage"]}
                 <div className="">

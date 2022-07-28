@@ -49,7 +49,7 @@ function MainPage() {
       rooms=result["rooms"]["content"];
       groups=result["groups"]["content"];
       if(isLoggedIn)
-      {
+      { 
         userInformation=result["user"];
         myGroups=result["myGroups"]["content"]
       }
@@ -224,7 +224,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -257,7 +257,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -290,7 +290,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -323,7 +323,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -356,7 +356,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>
@@ -389,7 +389,7 @@ function MainPage() {
                   {rooms[roomNo]["roomDiscription"]}
                 </div>
                 <div className='mainpage__meeting-rooms__mem-no-rec'>
-                  {rooms[roomNo]["romMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
+                  {rooms[roomNo]["roomMemberNo"]}/{rooms[roomNo]["roomMemberMaxNo"]}
                 </div>
               </div>
             </div>

@@ -5,15 +5,10 @@
             "nickname":"nickName1",
             "sex":"ND",
             "birthday":19961022,
-            "phoneNumber":"01012345678",
-            "profileImabe":"URL입니다.",
+            "profileImage":"URL입니다.",
             "studyTimeToday":59,
             "studyTimeWeek":300,
             "studyTimeMonth":4321,
-            "studyTimeTotal":12345,
-            "studyPanaltyTotay":1,
-            "studyPanaltyWeek":4,
-            "studyPanaltyMonth":21,
-            "studyPanaltyTotal":111
+            "studyTimeTotal":12345
     }]
 }]

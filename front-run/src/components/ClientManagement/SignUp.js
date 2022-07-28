@@ -1,9 +1,12 @@
-import React, { useState, Fragment, useRef } from "react";
+import React, { useState, Fragment, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { FetchUrl } from "../../store/communication";
 
 import "./SignUp.css";
 
 function SignUp() {
+  const FETCH_URL = useContext(FetchUrl);
+
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
@@ -13,8 +16,8 @@ function SignUp() {
 
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
-  const usernameInputRef = useRef();
-  const nicknameInputRef = useRef();
+  const nameInputRef = useRef();
+  const nickNameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
 
@@ -23,20 +26,20 @@ function SignUp() {
 
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
-    const enteredUsername = usernameInputRef.current.value;
-    const enteredNickname = nicknameInputRef.current.value;
+    const enteredName = nameInputRef.current.value;
+    const enteredNickName = nickNameInputRef.current.value;
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = "http://localhost:81/signup";
+    const url = `${FETCH_URL}/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
         email: enteredEmail,
         password: enteredPassword,
-        userName: enteredUsername,
-        nickname: enteredNickname,
+        name: enteredName,
+        nickName: enteredNickName,
         gender: enteredSex,
         birth: enteredBirthday,
       }),
@@ -105,7 +108,7 @@ function SignUp() {
                   type="text"
                   placeholder="이름을 입력하세요"
                   required
-                  ref={usernameInputRef}
+                  ref={nameInputRef}
                 />
               </div>
               <div className="line">
@@ -114,7 +117,7 @@ function SignUp() {
                   type="text"
                   placeholder="닉네임을 입력하세요"
                   required
-                  ref={nicknameInputRef}
+                  ref={nickNameInputRef}
                 />
                 <button className="dup">중복확인</button>
               </div>

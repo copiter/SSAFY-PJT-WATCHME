@@ -21,8 +21,6 @@ import java.text.ParseException;
 public class MemberController {
     @Autowired
     MemberService memberService;
-
-    private HttpSession httpSession;
     @PostMapping("/signup")
     @ResponseBody
     public ApiResponse signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) throws ParseException {
@@ -50,11 +48,20 @@ public class MemberController {
 
     @PostMapping("/social-signup")
     @ResponseBody
-    public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request, HttpServletResponse response){
+    public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
+                                    HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = true) Cookie authCookie) throws ParseException {
 
-        httpSession=request.getSession(false);
+        HttpSession httpSession = request.getSession(false);
+
         if(httpSession!=null){
-            return memberService.memberInsert(socialSignUpRequestDTO, httpSession);
+            ApiResponse apiResponse = memberService.memberInsert(socialSignUpRequestDTO, httpSession);
+            String token = apiResponse.getResponseData().get("refreshToken").toString();
+            Cookie cookie = new Cookie("refreshToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            response.addCookie(cookie);
+            apiResponse.getResponseData().remove("refreshToken");
+            return apiResponse;
         }
         else{
             throw new RuntimeException("잘못된 접근");

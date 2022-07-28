@@ -1,10 +1,13 @@
 import React, { useState, Fragment, useRef, useContext } from "react";
+import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
 
 import "./SocialLogin.css"; // 동일한 CSS 파일 사용
 
 function SocialLogin() {
+  const FETCH_URL = useContext(FetchUrl);
+
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
@@ -12,8 +15,8 @@ function SocialLogin() {
     setSelectSex(e.target.value);
   };
 
-  const usernameInputRef = useRef();
-  const nicknameInputRef = useRef();
+  const nameInputRef = useRef();
+  const nickNameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
 
@@ -22,19 +25,28 @@ function SocialLogin() {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const enteredUsername = usernameInputRef.current.value;
-    const enteredNickname = nicknameInputRef.current.value;
+    const enteredName = nameInputRef.current.value;
+    const enteredNickname = nickNameInputRef.current.value;
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = "http://localhost:81/social-signup";
+    //쿠키 가져오기
+    //쿠키 가져오기
+    let cookie;
+    function getCookie() {
+      const cookie_array = document.cookie
+        .split(";")
+       console.log(cookie_array);
+    }
+
+    const url = "http://localhost:8080/social-signup";
     // Interacting with server
     fetch(url, {
       method: "POST",
       withCredentials: true,
       body: JSON.stringify({
-        userName: enteredUsername,
-        nickname: enteredNickname,
+        name: enteredName,
+        nickName: enteredNickname,
         gender: enteredSex,
         birth: enteredBirthday,
       }),
@@ -59,6 +71,7 @@ function SocialLogin() {
           navigate("/");
           window.location.reload();
         }
+        
       })
       .catch((err) => {
         alert(err.message);
@@ -80,7 +93,7 @@ function SocialLogin() {
                 type="text"
                 placeholder="이름을 입력하세요"
                 required
-                ref={usernameInputRef}
+                ref={nameInputRef}
               />
             </div>
             <div className="line">
@@ -89,7 +102,7 @@ function SocialLogin() {
                 type="text"
                 placeholder="닉네임을 입력하세요"
                 required
-                ref={nicknameInputRef}
+                ref={nickNameInputRef}
               />
               <button className="dup">중복확인</button>
             </div>

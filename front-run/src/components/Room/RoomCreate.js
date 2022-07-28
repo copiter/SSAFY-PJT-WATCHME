@@ -1,11 +1,24 @@
 import React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState,useContext } from "react";
+import { Link,useNavigate  } from "react-router-dom";
+import { FetchUrl } from "../../store/communication";
 
 import "./RoomCreate.css";
 
 function CreateRoom() {
-  const [inputs, setInputs] = useState({});
+  
+  //방생성 요청 보내기
+  const [inputs, setInputs] = useState({
+    "roomName":"",
+    "roomImage":"",
+    "roomDiscription":"",
+    "roomMemNoMex":"",
+    "roomPublic":"Private",
+    "roomCategory":"public_official",
+    "roomPassword":""
+  });
+  const navigate=useNavigate()
+
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -13,16 +26,46 @@ function CreateRoom() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
+
+  //URL
+  const FETCH_URL = useContext(FetchUrl);
+  const url = `${FETCH_URL}/RoomCreate`;
+  //Otpion
+  const requestOptions ={
+    method: "POST", 
+    headers: {"content-type": "application/json",},
+    body: JSON.stringify(inputs),
+  } 
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert(inputs);
-  };
-  //https://www.w3schools.com/react/react_forms.asp
+    console.log(requestOptions);
+    fetch(url, requestOptions)
+    .then(response => response.json())//보내기 문제없으면 넘어감
+    .then((response) => {
+      if (response.ok) {return response.json();//ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => { 
+          let errorMessage = "";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+        console.log("방생성 완료")
+        navigate("/");
+        window.location.reload();//리다이렉션관련
+      }
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 
+  }
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">
-        목록으로 돌아가기
+        &lt; 목록으로 돌아가기
       </Link>
 
       <form onSubmit={handleSubmit}>
@@ -64,24 +107,24 @@ function CreateRoom() {
               <div className="line">
                 <input
                   type="number"
-                  name="roomMemMaxNoMex"
-                  value={inputs.roomMemMaxNoMex || ""}
+                  name="roomMemNoMex"
+                  value={inputs.roomMemNoMex || ""}
                   onChange={handleChange}
                   placeholder="인원수를 선택하세요(1~25)"
                 />
                 <select
-                  name="roomTags"
-                  value={inputs.roomTags || ""}
+                  name="roomCategory"
+                  value={inputs.roomCategory || ""}
                   onChange={handleChange}
                 >
                   <option value="" disabled>
                     카테고리를 선택하세요
                   </option>
-                  <option value="공무원">공무원</option>
-                  <option value="취업">취업</option>
-                  <option value="수능">수능</option>
-                  <option value="자격증">자격증</option>
-                  <option value="기타">기타</option>
+                  <option value="public_official">공무원</option>
+                  <option value="employment">취업</option>
+                  <option value="sat">수능</option>
+                  <option value="certificate">자격증</option>
+                  <option value="etc">기타</option>
                 </select>
               </div>
               <div className="line">

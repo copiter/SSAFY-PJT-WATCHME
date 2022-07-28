@@ -19,7 +19,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 })
 public class SwaggerConfig {
 
-    /** swagger */
     @Bean
     public Docket WatchmeApi() {
         return new Docket(DocumentationType.SWAGGER_2)

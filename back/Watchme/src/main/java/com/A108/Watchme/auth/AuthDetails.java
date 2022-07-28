@@ -1,6 +1,6 @@
 package com.A108.Watchme.auth;
 
-import com.A108.Watchme.VO.ProviderType;
+import com.A108.Watchme.VO.ENUM.ProviderType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

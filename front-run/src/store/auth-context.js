@@ -6,6 +6,7 @@ const AuthContext = React.createContext({
   logout: () => {},
 });
 
+
 export const AuthContextProvider = (props) => {
   const userIsLoggedIn = !sessionStorage.hasOwnProperty("isLoggedIn")
     ? 0

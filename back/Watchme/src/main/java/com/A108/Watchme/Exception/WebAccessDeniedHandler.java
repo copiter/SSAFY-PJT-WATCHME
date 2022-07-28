@@ -1,6 +1,6 @@
 package com.A108.Watchme.Exception;
 
-import com.A108.Watchme.VO.ErrorCode;
+import com.A108.Watchme.VO.ENUM.ErrorCode;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

@@ -1,7 +1,8 @@
 package com.A108.Watchme.auth;
 
 import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.VO.*;
+import com.A108.Watchme.VO.ENUM.ProviderType;
+import com.A108.Watchme.VO.Entity.member.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -24,6 +25,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
+            System.out.println("loadUser");
             return this.processOAuth2User(oAuth2UserRequest, oAuth2User);
         } catch (AuthenticationException e) {
             throw e;
@@ -34,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         ProviderType providerType = ProviderType.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
-
+        System.out.println(providerType);
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, oAuth2User.getAttributes());
 //        System.out.println(oAuth2UserInfo.getEmail());
 //        System.out.println(providerType);

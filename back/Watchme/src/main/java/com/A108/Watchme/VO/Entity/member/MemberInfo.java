@@ -1,6 +1,7 @@
 package com.A108.Watchme.VO.Entity.member;
 
 import com.A108.Watchme.VO.ENUM.Gender;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class MemberInfo{
     @OneToOne(fetch = FetchType.EAGER)
     @MapsId
     @JoinColumn(name="member_id")
+    @JsonBackReference
     private Member member;
 
     @Enumerated(EnumType.STRING)

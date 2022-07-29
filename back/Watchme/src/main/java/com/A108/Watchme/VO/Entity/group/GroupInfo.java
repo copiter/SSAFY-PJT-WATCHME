@@ -1,26 +1,33 @@
 package com.A108.Watchme.VO.Entity.group;
 
+import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.Entity.Category;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter @Setter
-public class GroupCategory {
+@AllArgsConstructor @NoArgsConstructor
+@Builder
+public class GroupInfo {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_ctg_id")
+    @Column(name = "groupInfo_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "ctg_id")
-    private Category category;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "group_id")
     @JsonBackReference
     private Group group;
+
+    private String imageLink;
+
+    private String description;
+
+    private Integer currMember;
+
+    private Integer maxMember;
+
 }

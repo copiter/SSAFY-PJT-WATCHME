@@ -12,10 +12,10 @@ import java.util.Date;
 public class MemberDataDTO {
 
     private String email;
-    private String username;
-    private String nickname;
-    private Gender sex;
-    private Date birthday;
+    private String name;
+    private String nickName;
+    private Gender gender;
+    private Date birth;
     private String profileImage;
 
     private Integer studyTimeToday;

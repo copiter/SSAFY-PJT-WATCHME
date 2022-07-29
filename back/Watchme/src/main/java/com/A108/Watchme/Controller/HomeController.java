@@ -99,9 +99,10 @@ public class HomeController {
         return result;
     }
 
-    @GetMapping("/MainPage")
+
+    @GetMapping("/main")
     public ApiResponse root(HttpServletRequest request){
-        return homeService.mainPage();
+        return homeService.main();
     }
 
 

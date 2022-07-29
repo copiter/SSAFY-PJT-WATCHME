@@ -1,5 +1,7 @@
 package com.A108.Watchme.VO.Entity.room;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,16 +22,16 @@ public class RoomInfo {
     @OneToOne(fetch = FetchType.EAGER)
     @MapsId
     @JoinColumn(name="room_id")
+    @JsonBackReference
     private Room room;
 
-    private int roomPwd;
+    private String description;
 
-    private int num;
+    private Integer currMember;
 
-    private int score;
-
-    private int diplsy;
+    private Integer maxMember;
 
     @Column(name="img_link")
     private String imageLink;
+
 }

@@ -14,13 +14,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     Page<Group> findAllByOrderByViewDesc(Pageable pageable);
 
-    List<Group> findAllGroupByMember_id(Long id);
+//    List<Group> findAllGroupByMember_id(Long id);
 
-    List<Group> findAllByIdIn(List<Long> groupIds);
-
-
-    @Query(value="select g from Groupss g where g.memberGroupList.=?1")
-    List<Group> findAllBByA_aId(String aId);
+//    List<Group> findAllByIdIn(List<Long> groupIds);
 
 
 }

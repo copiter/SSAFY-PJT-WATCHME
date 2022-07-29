@@ -5,6 +5,7 @@ import com.A108.Watchme.VO.ENUM.Role;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,8 +15,8 @@ import java.util.List;
 @Entity
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
-@ToString
 @Builder
+
 public class Member{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_id")
@@ -37,9 +38,14 @@ public class Member{
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @OneToMany(mappedBy = "member")
-    private List<Group> leadList = new ArrayList<>();
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private MemberInfo memberInfo;
 
-    @OneToMany(mappedBy = "member")
+//    @OneToMany(mappedBy = "leader")
+//    private List<Group> leadList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<MemberGroup> memberGroupList = new ArrayList<>();
 }

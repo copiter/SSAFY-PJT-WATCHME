@@ -2,11 +2,17 @@ package com.A108.Watchme.VO.Entity;
 
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Getter @Setter
+@AllArgsConstructor @NoArgsConstructor
+@Builder
+
 public class MemberGroup {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,10 +21,12 @@ public class MemberGroup {
 
     @ManyToOne
     @JoinColumn(name = "group_id")
+    @JsonBackReference
     private Group group;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
+    @JsonBackReference
     private Member member;
 
     @Temporal(TemporalType.TIMESTAMP)

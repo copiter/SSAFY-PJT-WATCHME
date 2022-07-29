@@ -4,6 +4,7 @@ import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @Builder
+
 public class Group {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +27,9 @@ public class Group {
     @Column(name = "group_name", length = 45)
     private String groupName;
 
-    @ManyToOne
-    @JoinColumn(name="member_id")
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name="leader_id")
+//    private Member leader;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
@@ -40,11 +42,20 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     List<Sprint> sprints = new ArrayList<>();
 
-    @OneToMany(mappedBy = "group")
-    private List<MemberGroup> memberGroupList;
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<MemberGroup> memberGroupList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "group", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private GroupInfo groupInfo;
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<GroupCategory> category;
 
     private Integer view;
 }

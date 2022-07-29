@@ -1,6 +1,6 @@
 package com.A108.Watchme.DTO;
 
-import com.A108.Watchme.VO.Gender;
+import com.A108.Watchme.VO.ENUM.Gender;
 import lombok.Getter;
 import lombok.Setter;
 

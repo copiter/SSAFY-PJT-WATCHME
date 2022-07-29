@@ -29,14 +29,11 @@ public class HomeController {
         return "home";
     }
 
-    @PostMapping("/addRoom")
-    public ApiResponse addRoom(@RequestBody RoomCreateDTO roomCreateDTO){
-        return homeService.addRoom(roomCreateDTO);
-    }
 
-    @GetMapping("/MainPage")
+
+    @GetMapping("/main")
     public ApiResponse root(HttpServletRequest request){
-        return homeService.mainPage();
+        return homeService.main();
     }
 
 

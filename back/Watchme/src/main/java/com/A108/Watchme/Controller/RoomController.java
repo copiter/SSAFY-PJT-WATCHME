@@ -30,10 +30,11 @@ public class RoomController {
     @Autowired
     private RoomRepository roomRepository;
     @Autowired
+    private RoomInfoRepository roomInfoRepository;
+    @Autowired
     private GroupRepository groupRepository;
     @Autowired
     private MRLRepository mrlRepository;
-
     @Autowired
     private MemberInfoRepository memberInfoRepository;
 
@@ -63,8 +64,6 @@ public class RoomController {
     @PostMapping("/joinRoom")
     public ApiResponse joinRoom(@RequestBody @Validated RoomJoinDTO roomJoinDTO) {
        ApiResponse result = new ApiResponse();
-
-
 
        try {
            Member member = memberRepository.findById(roomJoinDTO.getMemberId()).get();
@@ -114,8 +113,16 @@ public class RoomController {
 
               result.setMessage("JOIN ROOM SUCCESS");
               result.setResponseData("roomToken", token);
+
               result.setCode(200);
           }
+
+           result.setResponseData("roomName", room.getRoomName());
+           result.setResponseData("roomLeader", room.getMember().getNickName());
+           result.setResponseData("roomView", room.getView());
+           result.setResponseData("roomStatus", room.getStatus());
+           result.setResponseData("roomPeopleNum", this.mapSessionNamesTokens.get(room.getId()).size());
+
 
        }catch (Exception e){
            e.printStackTrace();
@@ -143,7 +150,9 @@ public class RoomController {
             if (this.mapSessionNamesTokens.get(room.getId()).remove(room.getId()) != null) {
                 // 만약 토큰이 있다면
 
+                //내가 나갔는데 마지막 사람일 경우
                 if(this.mapSessionNamesTokens.get(room.getId()).isEmpty()) {
+                        //세션을 닫아버린다.
                         this.mapSessions.remove(room.getId());
                     }
                     result.setMessage("LEAVE SUCCESS");
@@ -163,4 +172,5 @@ public class RoomController {
 //    public ApiResponse changeRule(@RequestBody RoomChangeDTO roomChangeDTO){
 //
 //    }
+
 }

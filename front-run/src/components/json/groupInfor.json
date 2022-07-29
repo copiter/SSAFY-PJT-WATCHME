@@ -1,7 +1,7 @@
 [{
-    "MainpageMyGroup":[
+    "myGroups":[
         {
-            "ID":"ID",
+            "id":"id",
             "groupName":"그룹이름1",
             "groupImage":"none",
             "groupDescription":"그룹세부정보2",
@@ -10,7 +10,7 @@
             "groupLookUp":1234,
             "groupCategory":"public_official"
         },{
-            "ID":"ID",
+            "id":"id",
             "groupName":"그룹이름2",
             "groupImage":"이미지주소2",
             "groupDescription":"그룹세부정보2",
@@ -23,9 +23,9 @@
     }],
     
 
-    "MainpageGroups":[
+    "groups":[
        {
-            "ID":"ID",
+            "id":"id",
             "groupName":"스터디그룹이름1",
             "groupImage":"none",
             "groupDescription":"그룹세부정보1",
@@ -34,7 +34,7 @@
             "groupLookUp":1234,
             "groupCategory":"public_official"
         },{
-            "ID":"ID",
+            "id":"id",
             "groupName":"스터디그룹이름2",
             "groupImage":"이미지주소2",
             "groupDescription":"그룹세부정보2",
@@ -43,7 +43,7 @@
             "groupLookUp":1234,
             "groupCategory":"public_official"
         },{
-            "ID":"ID",
+            "id":"id",
             "groupName":"스터디그룹이름3",
             "groupImage":"이미지주소3",
             "groupDescription":"그룹세부정보3",
@@ -52,7 +52,7 @@
             "groupLookUp":1234,
             "groupCategory":"public_official"
         },{
-            "ID":"ID",
+            "id":"id",
             "groupName":"스터디그룹이름4",
             "groupImage":"이미지주소4",
             "groupDescription":"그룹세부정보4",

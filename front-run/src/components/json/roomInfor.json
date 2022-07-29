@@ -6,14 +6,10 @@
         "roomPassword":"ROWD1"
     }],
 
-    "DUMMY_Comment_0":"메인페이지 인기도순으로 검색되는 방 더보기없이 9개", 
-    "DUMMY_Comment_1":"룸탐색페이지 인기도순으로 검색되는 방 더보기없이 9+(roomPageNo(기본0)*3또는 6또는 9)개",
-    
-
     "MainpageRooms":[
         {
-            "ID":"ID",
-            "URL":"URL",
+            "id":"id",
+            "url":"url",
             "roomName":"스터디그룹이름1",
             "roomImage":"none",
             "groupDescription":"그룹세부정보1",
@@ -22,7 +18,8 @@
             "roomLookUp":1234,
             "roomCategory":"public_official"
         }, {
-            "ID":"ID",
+            "id":"id",
+            "url":"url",
             "roomName":"스터디그룹이름2",
             "roomImage":"방이미지SRC2",
             "groupDescription":"그룹세부정보2",
@@ -31,7 +28,8 @@
             "roomLookUp":1235,
             "roomCategory":"public_official"
         }, {
-            "ID":"ID",
+            "id":"id",
+            "url":"url",
             "roomName":"스터디그룹이름3",
             "roomImage":"방이미지SRC3",
             "groupDescription":"그룹세부정보3",
@@ -40,7 +38,8 @@
             "roomLookUp":1234,
             "roomCategory":"public_official"
         }, {
-            "ID":"ID",
+            "id":"id",
+            "url":"url",
             "roomName":"스터디그룹이름4",
             "roomImage":"방이미지SRC4",
             "groupDescription":"그룹세부정보4",
@@ -49,7 +48,8 @@
             "roomLookUp":1234,
             "roomCategory":"public_official"
         }, {
-            "ID":"ID",
+            "id":"id",
+            "url":"url",
             "roomName":"스터디그룹이름5",
             "roomImage":"방이미지SRC5",
             "groupDescription":"그룹세부정보5",
@@ -58,7 +58,8 @@
             "roomLookUp":1234,
             "roomCategory":"public_official"
         }, {
-            "ID":"ID",
+            "id":"id",
+            "url":"url",
             "roomName":"스터디그룹이름6",
             "roomImage":"방이미지SRC6",
             "groupDescription":"그룹세부정보6",

@@ -18,8 +18,8 @@ function MainPage() {
 
   let userInformation=userInfor[0]["myUserInfor"][0];
 
-  let myGroups=  groupInfor[0]["MainpageMyGroup"];
-  let groups=  groupInfor[0]["MainpageGroups"];
+  let myGroups=  groupInfor[0]["myGroups"];
+  let groups=  groupInfor[0]["groups"];
   let rooms=  roomInfor[0]["MainpageRooms"];
   let groupNo=0;
   let roomNo=0;

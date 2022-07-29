@@ -7,6 +7,7 @@ import com.A108.Watchme.VO.Entity.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.room.Room;
+import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,8 @@ public class HomeController {
     private MRLRepository mrlRepository;
     @Autowired
     private MemberInfoRepository memberInfoRepository;
+    @Autowired
+    private RoomInfoRepository roomInfoRepository;
 
     @GetMapping("home")
     public Map<String, String> home(HttpServletRequest request) {
@@ -60,17 +63,31 @@ public class HomeController {
     @PostMapping("/addRoom")
     public ApiResponse addRoom(@RequestBody RoomCreateDTO roomCreateDTO){
 
-        System.out.println(roomCreateDTO.getRoomName());
+//        System.out.println(roomCreateDTO.getRoomName());
+
+        if(roomCreateDTO.getImageLink() == null){
+            roomCreateDTO.setImageLink("https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg");
+        }
 
         ApiResponse result = new ApiResponse();
 
         try{
 
-            Room room = Room.builder()
-                    .roomName(roomCreateDTO.getRoomName()).status(roomCreateDTO.getStatus()).view(roomCreateDTO.getView())
-                            .build();
+            Room newRoom = roomRepository.save(Room.builder()
+                    .roomName(roomCreateDTO.getRoomName())
+                    .status(roomCreateDTO.getStatus())
+                    .view(roomCreateDTO.getView())
+                    .member(roomCreateDTO.getMember())
+                    .sprint(roomCreateDTO.getSprint())
+                            .build());
 
-            Room newRoom = roomRepository.save(room);
+            roomInfoRepository.save(RoomInfo.builder()
+                    .room(newRoom)
+                    .roomPwd(roomCreateDTO.getRoomPwd())
+                    .imageLink(roomCreateDTO.getImageLink())
+                    .num(0)
+                    .score(0)
+                    .build());
 
             System.out.println(newRoom.getId());
 
@@ -84,11 +101,12 @@ public class HomeController {
             ttime.setTime(cal.getTime().getTime());
 
             System.out.println(ttime);
-
             //
-            MemberRoomLog newMRL = MemberRoomLog.builder().room(newRoom).startAt(ttime).member(memberRepository.findById(1L).get()).build();
-
-            mrlRepository.save(newMRL);
+            MemberRoomLog newMRL = mrlRepository.save(MemberRoomLog.builder()
+                    .room(newRoom)
+                    .startAt(ttime)
+                    .member(memberRepository.findById(1L).get())
+                    .build());
 
             result.setCode(200);
         } catch(Exception e){

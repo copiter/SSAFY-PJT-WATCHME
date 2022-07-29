@@ -16,5 +16,6 @@ public class RoomCreateDTO {
     private Sprint sprint;
     private Integer num;
     private Integer display;
+    private String imageLink;
 
 }

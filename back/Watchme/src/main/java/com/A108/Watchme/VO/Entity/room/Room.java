@@ -42,8 +42,9 @@ public class Room {
     @JsonManagedReference
     private RoomInfo roomInfo;
 
-    @OneToMany(mappedBy = "room")
-    private List<RoomCtg> roomCtg;
+    @OneToOne
+    @JoinColumn(name = "room_ctg")
+    private Category roomCtg;
 
 
 }

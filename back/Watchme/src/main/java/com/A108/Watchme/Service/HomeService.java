@@ -54,10 +54,10 @@ public class HomeService {
 
                 MemberDataDTO resMember = MemberDataDTO.builder()
                         .email(member.getEmail())
-                        .username(member.getMemberInfo().getName())
-                        .nickname(member.getNickName())
-                        .sex(member.getMemberInfo().getGender())
-                        .birthday(member.getMemberInfo().getBirth())
+                        .name(member.getMemberInfo().getName())
+                        .nickName(member.getNickName())
+                        .gender(member.getMemberInfo().getGender())
+                        .birth(member.getMemberInfo().getBirth())
                         .profileImage(member.getMemberInfo().getImageLink())
                         .studyTimeToday(member.getMemberInfo().getStudyTimeDay())
                         .studyTimeWeek(member.getMemberInfo().getStudyTimeWeek())
@@ -109,7 +109,7 @@ public class HomeService {
                         .roomMemberNo(room.getRoomInfo().getCurrMember())
                         .roomMemberMaxNo(room.getRoomInfo().getMaxMember())
                         .roomLookUp(room.getView())
-                        .roomCategory(room.getRoomCtg().stream().map(x->x.getCategory().getName()).collect(Collectors.toList()))
+                        .roomCategory(room.getRoomCtg().getName())
                         .build());
             }
 

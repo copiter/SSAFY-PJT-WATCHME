@@ -27,8 +27,7 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private RoomStatus status;
 
-    @OneToOne
-    @JoinColumn(name = "")
+    @OneToOne(mappedBy = "room")
     private Sprint sprint;
 
     private Integer view;

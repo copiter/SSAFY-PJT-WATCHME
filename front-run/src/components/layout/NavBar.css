@@ -1,0 +1,91 @@
+.navbar {
+  padding: 30px 30px;
+  display: flex;
+  justify-content: space-between;
+  height: 19px;
+  line-height: 19px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+.navbar .navbar__left {
+  display: flex;
+  flex-direction: row;
+}
+
+.navbar .nav-logo {
+  margin-right: 18px;
+  font-weight: 700;
+}
+
+.navbar .nav-list {
+  display: inline-block;
+}
+
+.nav-list ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar .nav-list li {
+  font-weight: 400;
+  font-size: 16px;
+  float: left;
+}
+.navbar .nav-list li + li {
+  margin-left: 32px;
+}
+
+.navbar a:hover,
+.navbar a:active {
+  font-weight: 700;
+}
+
+.navbar .navbar__right {
+  display: flex;
+  flex-direction: row;
+}
+
+.navbar .nav-username {
+  margin-left: 10px;
+}
+
+.dropdown__login {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdowncontent__login {
+  display: none;
+  position: absolute;
+  background-color: #e0e2e6;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdowncontent__login a,
+.dropdowncontent__login button {
+  cursor: pointer;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown__login:hover .dropdowncontent__login {
+  display: block;
+}
+.dropdowncontent__login:hover .dropdowncontent__login {
+  background-color: #fff;
+}

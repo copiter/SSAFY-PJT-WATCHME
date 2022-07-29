@@ -1,12 +1,15 @@
 package com.A108.Watchme.VO.Entity.group;
 
 import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "Groupss")
@@ -26,14 +29,22 @@ public class Group {
     @JoinColumn(name="member_id")
     private Member member;
 
-//    private Timestamp createdAt;
-//    private Timestamp updatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
     @OneToMany(mappedBy = "group")
     List<Sprint> sprints = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group")
+    private List<MemberGroup> memberGroupList;
 
     private Integer view;
 }

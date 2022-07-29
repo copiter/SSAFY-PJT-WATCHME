@@ -11,7 +11,7 @@ public class GroupDataDTO {
     private Long ID;
     private String groupName;
     private String groupImage;
-    private String groupDiscription;
+    private String groupDescription;
     private Integer groupMemberNo;
     private Integer groupMemberMaxNo;
     private Integer groupLookUp;

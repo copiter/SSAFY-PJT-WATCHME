@@ -9,10 +9,6 @@ import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,17 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class HomeController {
-    private HttpSession httpSession;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -46,18 +36,10 @@ public class HomeController {
     private RoomInfoRepository roomInfoRepository;
 
     @GetMapping("home")
-    public Map<String, String> home(HttpServletRequest request) {
+    public String home(HttpServletRequest request) {
         Map<String, String> map = new LinkedHashMap<>();
-        httpSession=request.getSession(false);
-        if(httpSession!=null){
-            map.put("email", (String)httpSession.getAttribute("email"));
-            map.put("image",(String)httpSession.getAttribute("image"));
-            map.put("name",(String)httpSession.getAttribute("name"));
-        }
-        else{
-            throw new RuntimeException("잘못된 접근");
-        }
-        return map;
+
+        return "home";
     }
 
     @PostMapping("/addRoom")
@@ -117,46 +99,10 @@ public class HomeController {
         return result;
     }
 
-    @GetMapping("/main")
+    @GetMapping("/MainPage")
     public ApiResponse root(HttpServletRequest request){
-
-        ApiResponse result = new ApiResponse();
-
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")){
-                Map<String, Object> userInfo = new LinkedHashMap<>();
-
-                UserDetails currUser = (UserDetails)authentication.getPrincipal();
-
-                Member member = memberRepository.findByEmail(currUser.getUsername());
-                MemberInfo memberInfo = memberInfoRepository.findById(member.getId()).get();
-
-                userInfo.put("username",member.getNickName());
-                userInfo.put("groups",member.getGroups());
-                userInfo.put("studyDay",memberInfo.getStudyTimeDay());
-                userInfo.put("studyWeek",memberInfo.getStudyTimeWeek());
-                userInfo.put("studyMonth",memberInfo.getStudyTimeMonth());
-
-                result.setResponseData(userInfo);
-
-            }
-
-            PageRequest pageRequest = PageRequest.of(0,5);
-
-            result.setResponseData("rooms",roomRepository.findAllByOrderByViewDesc(pageRequest));
-            result.setResponseData("groups",groupRepository.findAllByOrderByViewDesc(pageRequest));
-
-            result.setMessage("homeview success");
-            result.setCode(200);
-
-        } catch(Exception e){
-            e.printStackTrace();
-            result.setCode(400);
-            result.setMessage("homeview fail");
-        }
-
-        return result;
+        return homeService.mainPage();
     }
+
+
 }

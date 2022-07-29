@@ -76,21 +76,7 @@ public class JwtProvider {
     // 토큰 유효성 검사
     public Authentication getAuthentication(String token) {
 
-        System.out.println("getAuthentication");
-
-        System.out.println(this.getMemberId(token));
-
         Optional<Member> member = memberRepository.findById(this.getMemberId(token));
-
-        System.out.println("member start");
-
-        System.out.println(member.get().getId());
-        System.out.println("1");
-        System.out.println(member.get().getEmail());
-        System.out.println("2");
-        System.out.println(member.get().getRole());
-        System.out.println("3");
-
 
         UserDetails userDetails = new PrincipalDetails(member.get());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

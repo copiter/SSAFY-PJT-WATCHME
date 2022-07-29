@@ -1,0 +1,36 @@
+import React from "react";
+
+const AuthContext = React.createContext({
+  isLoggedIn: false,
+  login: () => {},
+  logout: () => {},
+});
+
+export const AuthContextProvider = (props) => {
+  const userIsLoggedIn = !sessionStorage.hasOwnProperty("isLoggedIn")
+    ? 0
+    : sessionStorage.getItem("isLoggedIn");
+
+  const loginHandler = () => {
+    sessionStorage.setItem("isLoggedIn", 1); //1 true, 0 false
+  };
+  const logoutHandler = () => {
+    sessionStorage.setItem("isLoggedIn", 0);
+    document.cookie =
+      "accessToken" + "=; expires=Thu, 01 Jan 1999 00:00:10 GMT;";
+  };
+
+  const contextValue = {
+    isLoggedIn: userIsLoggedIn,
+    login: loginHandler,
+    logout: logoutHandler,
+  };
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {props.children}
+    </AuthContext.Provider>
+  );
+};
+
+export default AuthContext;

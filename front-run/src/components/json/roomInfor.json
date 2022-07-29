@@ -1,0 +1,75 @@
+[{
+
+    "DUMMY_Comment_Enter_0":"방 클릭시 입장전 비밀번호 입력 보안방법 고민해야함", 
+    "EnteringRooms":[{
+        "roomName":"스터디그룹이름1",
+        "roomPassword":"ROWD1"
+    }],
+
+    "DUMMY_Comment_0":"메인페이지 인기도순으로 검색되는 방 더보기없이 9개", 
+    "DUMMY_Comment_1":"룸탐색페이지 인기도순으로 검색되는 방 더보기없이 9+(roomPageNo(기본0)*3또는 6또는 9)개",
+    
+
+    "MainpageRooms":[
+        {
+            "ID":"ID",
+            "URL":"URL",
+            "roomName":"스터디그룹이름1",
+            "roomImage":"none",
+            "groupDescription":"그룹세부정보1",
+            "roomMemberNo":1,
+            "roomMemberMaxNo":6,
+            "roomLookUp":1234,
+            "roomCategory":"public_official"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름2",
+            "roomImage":"방이미지SRC2",
+            "groupDescription":"그룹세부정보2",
+            "roomMemberNo":1,
+            "roomMemberMaxNo":5,
+            "roomLookUp":1235,
+            "roomCategory":"public_official"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름3",
+            "roomImage":"방이미지SRC3",
+            "groupDescription":"그룹세부정보3",
+            "roomMemberNo":3,
+            "roomMemberMaxNo":16,
+            "roomLookUp":1234,
+            "roomCategory":"public_official"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름4",
+            "roomImage":"방이미지SRC4",
+            "groupDescription":"그룹세부정보4",
+            "roomMemberNo":11,
+            "roomMemberMaxNo":11,
+            "roomLookUp":1234,
+            "roomCategory":"public_official"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름5",
+            "roomImage":"방이미지SRC5",
+            "groupDescription":"그룹세부정보5",
+            "roomMemberNo":1,
+            "roomMemberMaxNo":2,
+            "roomLookUp":1234,
+            "roomCategory":"public_official"
+        }, {
+            "ID":"ID",
+            "roomName":"스터디그룹이름6",
+            "roomImage":"방이미지SRC6",
+            "groupDescription":"그룹세부정보6",
+            "roomMemberNo":25,
+            "roomMemberMaxNo":25,
+            "roomLookUp":1234,
+            "roomCategory":"public_official"
+        }
+
+    ]
+    
+
+
+}]

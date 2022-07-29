@@ -1,8 +1,11 @@
 package com.A108.Watchme.DTO;
 
+import com.A108.Watchme.VO.ENUM.Gender;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Getter @Setter
 @Builder
@@ -11,16 +14,13 @@ public class MemberDataDTO {
     private String email;
     private String username;
     private String nickname;
-    private String sex;
-    private String birthday;
+    private Gender sex;
+    private Date birthday;
     private String profileImage;
-    private String studyTimeToday;
-    private String studyTimeWeek;
-    private String studyTimeMonth;
-    private String studyTimeTotal;
-    private String studyPanaltyTotay;
-    private String studyPanaltyWeek;
-    private String studyPanaltyMonth;
-    private String studyPanaltyTotal;
+
+    private Integer studyTimeToday;
+    private Integer studyTimeWeek;
+    private Integer studyTimeMonth;
+    private Integer studyTimeTotal;
 
 }

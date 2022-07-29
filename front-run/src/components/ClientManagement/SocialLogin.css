@@ -1,0 +1,61 @@
+.social-login {
+  box-sizing: border-box;
+  width: 650px;
+  height: 570px;
+  margin: 57px auto 57px;
+  padding: 0 30px;
+
+  background-color: #ffffff;
+  border: #000;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+}
+
+.social-login .social-login-top {
+  height: 70px;
+
+  line-height: 70px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.social-login .social-login-top__word {
+  padding-left: 10px;
+}
+
+.social-login .social-login-top::after {
+  display: block;
+  content: "";
+  width: 540px;
+  height: 1px;
+  background: #e0e2e6;
+  margin: 0 auto;
+}
+
+.social-login-form {
+  height: 400px;
+  margin: 50px 0 0 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-login-form input,
+.social-login-form select {
+  width: 535px;
+  height: 54px;
+
+  box-sizing: border-box;
+  padding: 10px 10px 10px 29px;
+
+  border: 1px solid #c2c6cc;
+  border-radius: 30px;
+}
+
+.social-login-form .line {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 25px;
+}

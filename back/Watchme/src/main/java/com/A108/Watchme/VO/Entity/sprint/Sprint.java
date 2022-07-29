@@ -1,10 +1,12 @@
 package com.A108.Watchme.VO.Entity.sprint;
 
 import com.A108.Watchme.VO.Entity.group.Group;
+import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.room.Room;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,7 +22,7 @@ public class Sprint {
     private Group group;
 
     @OneToOne
-    @JoinColumn(name = "room_id")
+    @JoinColumn(name="room_id")
     private Room room;
 
     @Column(name = "sprint_name")
@@ -30,6 +32,9 @@ public class Sprint {
     private Integer sumPoint;
 
     @OneToMany(mappedBy = "sprint")
-    List<SprintRule> sprintRuleList;
+    List<SprintRule> sprintRuleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sprint")
+    List<PointLog> pointLogList = new ArrayList<>();
 
 }

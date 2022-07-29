@@ -25,6 +25,7 @@ public class RoomInfo {
     private int roomPwd;
 
     private int num;
+
     private int score;
 
     private int diplsy;

@@ -22,6 +22,8 @@ public class RoomInfo {
     @JoinColumn(name="room_id")
     private Room room;
 
+    private int roomPwd;
+
     private int num;
 
     private int score;

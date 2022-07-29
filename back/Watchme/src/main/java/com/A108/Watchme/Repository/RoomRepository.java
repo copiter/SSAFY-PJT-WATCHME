@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
+
     Page<Room> findAllByOrderByViewDesc(Pageable pageable);
+
 
 }

@@ -6,7 +6,6 @@ const AuthContext = React.createContext({
   logout: () => {},
 });
 
-
 export const AuthContextProvider = (props) => {
   const userIsLoggedIn = !sessionStorage.hasOwnProperty("isLoggedIn")
     ? 0
@@ -17,6 +16,8 @@ export const AuthContextProvider = (props) => {
   };
   const logoutHandler = () => {
     sessionStorage.setItem("isLoggedIn", 0);
+    document.cookie =
+      "accessToken" + "=; expires=Thu, 01 Jan 1999 00:00:10 GMT;";
   };
 
   const contextValue = {

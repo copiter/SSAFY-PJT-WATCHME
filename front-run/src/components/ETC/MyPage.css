@@ -1,0 +1,55 @@
+.Left{
+    position: absolute;
+    width: 300px;
+    height: 500px;
+    background-color: green;
+}
+.Right{
+    position: absolute;
+    width: 900px;
+    height: 500px;
+    left:300px;
+    
+    
+}
+.Up{
+    
+    position: absolute;
+    width: 900px;
+    height: 250px;
+}
+.subTitle{
+    position: relative;
+    height: 20px;
+}
+.studyLeft{
+    position: absolute;
+    background-color: grey;
+    width:300px;
+    height:230px;
+}
+.studyCenter{
+    position: absolute;
+    left:300px;
+    width: 300px;
+    height:230px;
+    background-color: blue;
+
+}
+.studyRight{
+    position: absolute;
+    left:600px;
+    width: 300px;
+    height:230px;
+    background-color: saddlebrown;
+
+}
+
+.Down{
+    
+    position: absolute;
+    top:250px;
+    width: 900px;
+    height: 250px;
+    background-color: yellow;
+}

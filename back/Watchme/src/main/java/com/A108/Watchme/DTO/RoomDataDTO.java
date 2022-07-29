@@ -20,6 +20,6 @@ public class RoomDataDTO {
     private Integer roomMemberNo;
     private Integer roomMemberMaxNo;
     private Integer roomLookUp;
-    private List<CategoryList> roomCategory;
+    private CategoryList roomCategory;
 
 }

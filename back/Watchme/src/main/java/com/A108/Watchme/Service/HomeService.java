@@ -2,18 +2,14 @@ package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.GroupDataDTO;
 import com.A108.Watchme.DTO.MemberDataDTO;
-import com.A108.Watchme.DTO.RoomCreateDTO;
 import com.A108.Watchme.DTO.RoomDataDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
-import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.Member;
-import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.room.Room;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

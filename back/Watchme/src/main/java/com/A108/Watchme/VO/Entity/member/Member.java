@@ -7,6 +7,7 @@ import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
+import lombok.Builder.Default;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,9 +15,9 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-@AllArgsConstructor @NoArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-
 public class Member{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="member_id")
@@ -47,5 +48,5 @@ public class Member{
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<MemberGroup> memberGroupList = new ArrayList<>();
+    private List<MemberGroup> memberGroupList;
 }

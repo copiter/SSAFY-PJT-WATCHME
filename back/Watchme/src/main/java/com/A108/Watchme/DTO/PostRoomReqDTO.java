@@ -6,15 +6,17 @@ import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter @Setter
-public class RoomCreateDTO {
+public class PostRoomReqDTO {
     private String roomName;
-    private RoomStatus status;
-    private Integer view;
+    private String status;
     private Integer roomPwd;
-    private Member member;
-    private Sprint sprint;
+    private String description;
+    private String categoryName;
     private Integer num;
+    private Date endTime;
     private Integer display;
     private String imageLink;
 

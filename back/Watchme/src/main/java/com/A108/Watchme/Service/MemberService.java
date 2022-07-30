@@ -22,9 +22,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +46,7 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
+    private S3Client client;
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO) throws ParseException {
         ApiResponse result = new ApiResponse();
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
@@ -162,5 +167,21 @@ public class MemberService {
         result.setResponseData("accessToken", createToken.get("accessToken"));
         result.setResponseData("refreshToken", createToken.get("refreshToken"));
         return result;
+    }
+
+    // DI 받거나, 만들거나 원하는대로 한다.
+
+
+    public void upload(MultipartFile multipartFile) throws IOException {
+        // 요청 구성
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket("bucketName")
+                .key("objectKey")
+                .build();
+        // 요청 바디 구성
+        RequestBody requestBody = RequestBody
+                .fromInputStream(multipartFile.getInputStream(), multipartFile.getSize());
+
+        client.putObject(putObjectRequest, requestBody);
     }
 }

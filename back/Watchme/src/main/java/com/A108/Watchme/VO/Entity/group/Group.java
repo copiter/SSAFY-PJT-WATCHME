@@ -15,9 +15,9 @@ import java.util.List;
 
 @Entity(name = "Groupss")
 @Getter @Setter
-@AllArgsConstructor @NoArgsConstructor
+@NoArgsConstructor
 @Builder
-
+@AllArgsConstructor
 public class Group {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,11 +43,11 @@ public class Group {
     private Status status;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    List<Sprint> sprints = new ArrayList<>();
+    private List<Sprint> sprints;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<MemberGroup> memberGroupList = new ArrayList<>();
+    private List<MemberGroup> memberGroupList;
 
     @OneToOne(mappedBy = "group", fetch = FetchType.LAZY)
     @JsonManagedReference

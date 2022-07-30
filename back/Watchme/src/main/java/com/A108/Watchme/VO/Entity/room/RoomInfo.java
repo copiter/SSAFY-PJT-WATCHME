@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,10 +26,12 @@ public class RoomInfo {
     @JoinColumn(name="room_id")
     @JsonBackReference
     private Room room;
-
+    private Integer pwd;
     private String description;
 
     private Integer currMember;
+    private Timestamp createdAt;
+    private Date endAt;
 
     private Integer maxMember;
 

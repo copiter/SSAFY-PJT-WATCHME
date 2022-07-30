@@ -21,8 +21,9 @@ public class RoomController {
 
     @ApiOperation(value="룸 생성", notes="룸 생성 성공시 200코드를 반환합니다.")
     @PostMapping(value = "/addRoom", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ApiResponse addRoom(@RequestPart PostRoomReqDTO postRoomReqDTO, @RequestPart MultipartFile images) {
-        return roomService.createRoom(postRoomReqDTO, images);
+    public ApiResponse addRoom(@RequestPart PostRoomReqDTO postRoomReqDTO, @RequestPart(required = false) MultipartFile images, HttpServletRequest request) {
+        System.out.println("controller");
+        return roomService.createRoom(postRoomReqDTO, images, request);
     }
 
     @ApiOperation(value="룸 조회", notes="룸 조회 성공시 룸정보들을 반환합니다.")

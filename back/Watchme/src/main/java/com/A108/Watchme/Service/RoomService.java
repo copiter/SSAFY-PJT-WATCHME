@@ -3,13 +3,9 @@ package com.A108.Watchme.Service;
 import com.A108.Watchme.DTO.GetRoomResDTO;
 import com.A108.Watchme.DTO.PostRoomReqDTO;
 import com.A108.Watchme.Http.ApiResponse;
-import com.A108.Watchme.Repository.CategoryRepository;
-import com.A108.Watchme.Repository.MRLRepository;
-import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.Repository.RoomRepository;
+import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.RoomStatus;
-import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.Member;
@@ -22,11 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.service.ApiInfo;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
+import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,12 +31,12 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MRLRepository mrlRepository;
-
+    private final RoomInfoRepository roomInfoRepository;
     private final CategoryRepository categoryRepository;
 
     private final S3Uploader s3Uploader;
 
-    public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images) {
+    public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images, HttpServletRequest request) {
 
         ApiResponse result = new ApiResponse();
 
@@ -51,7 +44,7 @@ public class RoomService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-
+                System.out.println("heelo");
                 String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
 
                 try{
@@ -83,7 +76,8 @@ public class RoomService {
                         .build();
 
 
-
+                roomRepository.save(room);
+                roomInfoRepository.save(roominfo);
                 joinRooom(room.getId());
                 result.setCode(200);
                 result.setMessage("SUCCESS ADD&JOIN ROOM");

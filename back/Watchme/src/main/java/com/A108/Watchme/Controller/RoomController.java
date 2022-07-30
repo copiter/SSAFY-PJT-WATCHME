@@ -26,7 +26,6 @@ public class RoomController {
 
     @PostMapping("/room/join/{roomId}")
     public ApiResponse joinRoom(@PathVariable("roomId") int roomId){
-
         return roomService.joinRoom(Long.valueOf(roomId));
     }
 

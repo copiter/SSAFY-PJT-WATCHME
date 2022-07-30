@@ -7,7 +7,7 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
     private Long id;
 
     public KakaoOAuth2UserInfo(Map<String, Object> attributes) {
-        super((Map<String, Object>) attributes.get("kakao_account"));
+        super((Map<String, Object>)attributes.get("kakao_account"));
         this.id = (Long) attributes.get("id");
     }
 

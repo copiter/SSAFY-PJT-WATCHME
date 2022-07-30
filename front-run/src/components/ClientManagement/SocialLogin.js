@@ -39,7 +39,7 @@ function SocialLogin() {
        console.log(cookie_array);
     }
 
-    const url = "http://localhost:8080/social-signup";
+    const url = `${FETCH_URL}/social-signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",

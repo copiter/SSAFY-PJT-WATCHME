@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState, useContext } from "react";
-import roomInfor from "../json/roomInfor";
 import { FetchUrl } from "../../store/communication";
 
 import "./RoomRecruit.css";
@@ -9,15 +8,22 @@ import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 
+import jsons from "../json/jsons"
+
 let roomPageNo = 0;
 
 function RoomRecruit() {
   const FETCH_URL = useContext(FetchUrl);
 
+  const [responseData, setResponseData] = useState(
+    jsons["responseData"]
+  );
   const [inputs, setInputs] = useState({
     roomCategory: "",
     roomSearch: "",
   });
+
+
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -25,23 +31,17 @@ function RoomRecruit() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
+
   //URL
-  const url = `${FETCH_URL}/RoomRecruit"`;
+  const url = `${FETCH_URL}/room/recruit"`;
   //Otpion
 
-  let rooms = roomInfor[0]["MainpageRooms"];
+  let rooms = responseData["rooms"];
   let roomNo = 0;
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(
-      url +
-        "?roomCategory=" +
-        inputs["roomCategory"] +
-        "&roomSearch=" +
-        inputs["roomSearch"] +
-        "&pageNo=0"
-    );
+  
     fetch(
       url +
         "?roomCategory=" +

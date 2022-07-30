@@ -6,7 +6,7 @@
         "roomPassword":"ROWD1"
     }],
 
-    "MainpageRooms":[
+    "rooms":[
         {
             "id":"id",
             "url":"url",

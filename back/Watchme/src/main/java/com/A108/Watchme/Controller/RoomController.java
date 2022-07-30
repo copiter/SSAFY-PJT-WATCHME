@@ -19,7 +19,7 @@ public class RoomController {
         return roomService.createRoom(postRoomReqDTO);
     }
 
-    @GetMapping("/room")
+    @GetMapping("/room/recruit")
     public ApiResponse getRoom(@RequestParam(required = false, value="category") String ctgName, @RequestParam(value="page") int page, HttpServletRequest request) {
         return roomService.getRoom(ctgName, page);
     }

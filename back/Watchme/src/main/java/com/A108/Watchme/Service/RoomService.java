@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.service.ApiInfo;
 
 import java.sql.Timestamp;
@@ -38,7 +39,9 @@ public class RoomService {
 
     private final CategoryRepository categoryRepository;
 
-    public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO) {
+    private final S3Uploader s3Uploader;
+
+    public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images) {
 
         ApiResponse result = new ApiResponse();
 
@@ -46,9 +49,16 @@ public class RoomService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                if (postRoomReqDTO.getImageLink() == null) {
-                    postRoomReqDTO.setImageLink("https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg");
+
+                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
+
+                try{
+                    url = s3Uploader.upload(images,"Watchme");
+                } catch(Exception e){
+                    e.printStackTrace();
                 }
+
+
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
                 Member member = memberRepository.findByEmail(currUser.getUsername());
                 CategoryList name = CategoryList.valueOf(postRoomReqDTO.getCategoryName());
@@ -67,6 +77,7 @@ public class RoomService {
                         .currMember(0)
                         .endAt(postRoomReqDTO.getEndTime())
                         .description(postRoomReqDTO.getDescription())
+                        .imageLink(url)
                         .build();
 
 

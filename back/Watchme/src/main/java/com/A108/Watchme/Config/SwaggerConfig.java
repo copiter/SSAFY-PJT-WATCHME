@@ -38,7 +38,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Watchme API")
                 .description("Watchme API")
-                .termsOfServiceUrl("http://www.watchme.m??")
+                .termsOfServiceUrl("https://www.watchme2.m??")
                 .version("1.0")
                 .build();
     }

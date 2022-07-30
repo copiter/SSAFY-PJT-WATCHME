@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 
 @RestController
-
 public class HomeController {
     @Autowired
     private S3Uploader s3Uploader;
@@ -24,23 +23,10 @@ public class HomeController {
     private HomeService homeService;
 
 
-    public HomeController() {
-    }
-
     @GetMapping("/main")
     public ApiResponse root(HttpServletRequest request) {
 
         return homeService.main();
-    }
-
-    @PostMapping("/images")
-    public ApiResponse uploadImages(@RequestParam("images") MultipartFile images) throws IOException {
-        ApiResponse result = new ApiResponse();
-        String url = s3Uploader.upload(images, "Watchme");
-        result.setCode(200);
-        result.setMessage("SUCCESS UPLOAD");
-        result.setResponseData("URL", url);
-        return result;
     }
 }
 

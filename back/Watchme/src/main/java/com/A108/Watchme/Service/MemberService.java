@@ -46,10 +46,11 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private S3Client client;
-    public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO) throws ParseException {
+    public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
         ApiResponse result = new ApiResponse();
+
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
+
 
         Member member = memberRepository.save(Member.builder()
                     .email(signUpRequestDTO.getEmail())
@@ -66,7 +67,7 @@ public class MemberService {
                 .name(signUpRequestDTO.getName())
                 .birth(signUpRequestDTO.getBirth())
                 .point(0)
-                .imageLink(signUpRequestDTO.getImageLink())
+                .imageLink(url)
                 .score(0)
                 .build());
 
@@ -167,21 +168,5 @@ public class MemberService {
         result.setResponseData("accessToken", createToken.get("accessToken"));
         result.setResponseData("refreshToken", createToken.get("refreshToken"));
         return result;
-    }
-
-    // DI 받거나, 만들거나 원하는대로 한다.
-
-
-    public void upload(MultipartFile multipartFile) throws IOException {
-        // 요청 구성
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket("bucketName")
-                .key("objectKey")
-                .build();
-        // 요청 바디 구성
-        RequestBody requestBody = RequestBody
-                .fromInputStream(multipartFile.getInputStream(), multipartFile.getSize());
-
-        client.putObject(putObjectRequest, requestBody);
     }
 }

@@ -40,7 +40,7 @@ public class HomeService {
 
         try{
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
+            System.out.println(authentication.getName());
             if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")){
 
                 UserDetails currUser = (UserDetails)authentication.getPrincipal();

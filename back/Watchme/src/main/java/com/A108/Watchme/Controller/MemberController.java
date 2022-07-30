@@ -5,14 +5,19 @@ import com.A108.Watchme.DTO.NewTokenRequestDTO;
 import com.A108.Watchme.DTO.SignUpRequestDTO;
 import com.A108.Watchme.DTO.SocialSignUpRequestDTO;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Repository.MemberRepository;
+import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.A108.Watchme.VO.Entity.RefreshToken;
+import com.A108.Watchme.VO.Entity.member.Member;
+import io.swagger.annotations.*;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,13 +31,22 @@ import java.text.ParseException;
 @RestController
 public class MemberController {
     @Autowired
-    MemberService memberService;
+    private MemberService memberService;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
     @Autowired
     private S3Uploader s3Uploader;
+
     @ApiOperation(value="회원가입", notes="성공시 200코드를 반환합니다.")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name="email", value="유저 EMAIL"),
+//            @ApiImplicitParam(name="password", value="유저 비밀번호")
+//    })
     @PostMapping(value="/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public ApiResponse signUp(@RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO, @RequestPart(value = "files") MultipartFile images) throws ParseException {
+    public ApiResponse signUp(@ApiParam @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO, @ApiParam @RequestPart(value = "files") MultipartFile images) throws ParseException {
         String url="https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png";
         try{
             url = s3Uploader.upload(images, "Watchme");
@@ -54,7 +68,32 @@ public class MemberController {
         apiResponse.getResponseData().remove("refreshToken");
         return apiResponse;
     }
+    @PostMapping("/logout")
+    @ResponseBody
+    public ApiResponse logout(HttpServletRequest request,
+                              HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = false) Cookie authCookie,
+                              @CookieValue(value="refreshToken", required = false) Cookie cookie){
 
+        ApiResponse apiResponse = new ApiResponse();
+        HttpSession httpSession = request.getSession(false);
+        // 소셜로그인인 경우
+        if(httpSession!= null){
+            httpSession.invalidate();
+        }
+        // 일반 로그인의 경우
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+                refreshTokenRepository.deleteAllByToken(cookie.getValue());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        apiResponse.setCode(200);
+        apiResponse.setMessage("LOGOUT SUCCESS");
+
+        return apiResponse;
+    }
     @PostMapping("/newtoken")
     @ResponseBody
     public ApiResponse newAccessToken(@RequestBody @Validated NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request) {

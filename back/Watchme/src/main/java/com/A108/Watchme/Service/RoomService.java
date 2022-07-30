@@ -25,7 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.service.ApiInfo;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,13 +100,20 @@ public class RoomService {
 
     public ApiResponse getRoom(String ctgName, int page) {
         ApiResponse result = new ApiResponse();
-        CategoryList name = CategoryList.valueOf(ctgName);
         PageRequest pageRequest = PageRequest.of(page - 1, 10);
-        Category category = categoryRepository.findByName(name);
-        List<Room> roomList = roomRepository.findAllByRoomCtg(category, pageRequest).stream().collect(Collectors.toList());
+        List<Room> roomList;
+        if(ctgName!=null){
+            CategoryList name = CategoryList.valueOf(ctgName);
+            Category category = categoryRepository.findByName(name);
+            roomList = roomRepository.findAllByRoomCtg(category, pageRequest).stream().collect(Collectors.toList());
+        }
+        else{
+            roomList = roomRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+        }
 
+        List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {
-            result.setResponseData("rooms", new GetRoomResDTO().builder()
+             getRooms.add(new GetRoomResDTO().builder()
                     .id(room.getId())
                     .roomImage(room.getRoomInfo().getImageLink())
                     .roomName(room.getRoomName())
@@ -118,7 +127,8 @@ public class RoomService {
                     .build()
             );
         }
-        result.setMessage("GetRooms success");
+        result.setResponseData("rooms", getRooms);
+        result.setMessage("GETROOMS SUCCESS");
         result.setCode(200);
         return result;
     }

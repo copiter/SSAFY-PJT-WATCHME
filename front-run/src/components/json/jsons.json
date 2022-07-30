@@ -1,182 +1,158 @@
 {
-    "responseData":{
-        "rooms": [
-            {
-                "roomName": "r4",
-                "roomImage": "img4",
-                "roomDescription": "설명4",
-                "roomMemberNo": 5,
-                "roomMemberMaxNo": 15,
-                "roomLookUp": 256,
-                "roomCategory": [
-                    "TAG2"
-                ],
-                "url": "4",
-                "id": 4
-            },{
-                "roomName": "r4",
-                "roomImage": "img4",
-                "roomDescription": "설명4",
-                "roomMemberNo": 5,
-                "roomMemberMaxNo": 15,
-                "roomLookUp": 256,
-                "roomCategory": [
-                    "TAG2"
-                ],
-                "url": "4",
-                "id": 4
-            },
-            {
-                "roomName": "r5",
-                "roomImage": "img5",
-                "roomDescription": "설명5",
-                "roomMemberNo": 3,
-                "roomMemberMaxNo": 20,
-                "roomLookUp": 246,
-                "roomCategory": [
-                    "TAG3"
-                ],
-                "url": "5",
-                "id": 5
-            },
-            {
-                "roomName": "r1",
-                "roomImage": "img1",
-                "roomDescription": "설명1",
-                "roomMemberNo": 3,
-                "roomMemberMaxNo": 15,
-                "roomLookUp": 135,
-                "roomCategory": [
-                    "TAG1"
-                ],
-                "url": "1",
-                "id": 1
-            },
-            {
-                "roomName": "r6",
-                "roomImage": "img6",
-                "roomDescription": "설명6",
-                "roomMemberNo": 6,
-                "roomMemberMaxNo": 20,
-                "roomLookUp": 135,
-                "roomCategory": [],
-                "url": "6",
-                "id": 6
-            },
-            {
-                "roomName": "r7",
-                "roomImage": "img7",
-                "roomDescription": "설명7",
-                "roomMemberNo": 3,
-                "roomMemberMaxNo": 20,
-                "roomLookUp": 123,
-                "roomCategory": [],
-                "url": "7",
-                "id": 7
-            }
-        ],
-        "myGroups": [
-            {
-                "groupName": "g3",
-                "groupImage": "g3img",
-                "groupDescription": "g3des",
-                "groupMemberNo": 5,
-                "groupMemberMaxNo": 30,
-                "groupLookUp": 1,
-                "groupCategory": [
-                    "TAG2"
-                ],
-                "id": 3
-            },
-            {
-                "groupName": "g1",
-                "groupImage": "g1img",
-                "groupDescription": "g1des",
-                "groupMemberNo": 8,
-                "groupMemberMaxNo": 10,
-                "groupLookUp": 754,
-                "groupCategory": [
-                    "TAG1",
-                    "TAG2"
-                ],
-                "id": 1
-            }
-        ],
-        "member": {
-            "email": "donghar1@naver.com",
-            "name": "donghwun",
-            "nickName": "nick1",
-            "gender": "M",
-            "birth": 12341234,
-            "profileImage": "img1",
-            "studyTimeToday": 456,
-            "studyTimeWeek": 54,
-            "studyTimeMonth": 231,
-            "studyTimeTotal": 416
-        },
-        "groups": [
-            {
-                "groupName": "테스트입니다",
-                "groupImage": "g1img",
-                "groupDescription": "g1des",
-                "groupMemberNo": 8,
-                "groupMemberMaxNo": 10,
-                "groupLookUp": 754,
-                "groupCategory": [
-                    "TAG1",
-                    "TAG2"
-                ],
-                "id": 1
-            },
-            {
-                "groupName": "g2",
-                "groupImage": "g2img",
-                "groupDescription": "g2des",
-                "groupMemberNo": 2,
-                "groupMemberMaxNo": 20,
-                "groupLookUp": 235,
-                "groupCategory": [
-                    "TAG1",
-                    "TAG2"
-                ],
-                "id": 2
-            },
-            {
-                "groupName": "g5",
-                "groupImage": "g5img",
-                "groupDescription": "g5des",
-                "groupMemberNo": 8,
-                "groupMemberMaxNo": 50,
-                "groupLookUp": 135,
-                "groupCategory": [
-                    "TAG2"
-                ],
-                "id": 5
-            },
-            {
-                "groupName": "g4",
-                "groupImage": "g4img",
-                "groupDescription": "g4des",
-                "groupMemberNo": 7,
-                "groupMemberMaxNo": 40,
-                "groupLookUp": 64,
-                "groupCategory": [
-                    "TAG2"
-                ],
-                "id": 4
-            },
-            {
-                "groupName": "g3",
-                "groupImage": "g3img",
-                "groupDescription": "g3des",
-                "groupMemberNo": 5,
-                "groupMemberMaxNo": 30,
-                "groupLookUp": 1,
-                "groupCategory": [
-                    "TAG2"
-                ],
-                "id": 3
-            }
-        ]
-    }
+  "responseData": {
+    "rooms": [
+      {
+        "roomName": "r4",
+        "roomImage": "img4",
+        "roomDescription": "설명4",
+        "roomMemberNo": 5,
+        "roomMemberMaxNo": 15,
+        "roomLookUp": 256,
+        "roomCategory": ["TAG2"],
+        "url": "4",
+        "id": 4
+      },
+      {
+        "roomName": "r4",
+        "roomImage": "img4",
+        "roomDescription": "설명4",
+        "roomMemberNo": 5,
+        "roomMemberMaxNo": 15,
+        "roomLookUp": 256,
+        "roomCategory": ["TAG2"],
+        "url": "4",
+        "id": 4
+      },
+      {
+        "roomName": "r5",
+        "roomImage": "img5",
+        "roomDescription": "설명5",
+        "roomMemberNo": 3,
+        "roomMemberMaxNo": 20,
+        "roomLookUp": 246,
+        "roomCategory": ["TAG3"],
+        "url": "5",
+        "id": 5
+      },
+      {
+        "roomName": "r1",
+        "roomImage": "img1",
+        "roomDescription": "설명1",
+        "roomMemberNo": 3,
+        "roomMemberMaxNo": 15,
+        "roomLookUp": 135,
+        "roomCategory": ["TAG1"],
+        "url": "1",
+        "id": 1
+      },
+      {
+        "roomName": "r6",
+        "roomImage": "img6",
+        "roomDescription": "설명6",
+        "roomMemberNo": 6,
+        "roomMemberMaxNo": 20,
+        "roomLookUp": 135,
+        "roomCategory": [],
+        "url": "6",
+        "id": 6
+      },
+      {
+        "roomName": "r7",
+        "roomImage": "img7",
+        "roomDescription": "설명7",
+        "roomMemberNo": 3,
+        "roomMemberMaxNo": 20,
+        "roomLookUp": 123,
+        "roomCategory": [],
+        "url": "7",
+        "id": 7
+      }
+    ],
+    "myGroups": [
+      {
+        "groupName": "g3",
+        "groupImage": "g3img",
+        "groupDescription": "g3des",
+        "groupMemberNo": 5,
+        "groupMemberMaxNo": 30,
+        "groupLookUp": 1,
+        "groupCategory": ["TAG2"],
+        "id": 3
+      },
+      {
+        "groupName": "g1",
+        "groupImage": "g1img",
+        "groupDescription": "g1des",
+        "groupMemberNo": 8,
+        "groupMemberMaxNo": 10,
+        "groupLookUp": 754,
+        "groupCategory": ["TAG1", "TAG2"],
+        "id": 1
+      }
+    ],
+    "member": {
+      "email": "test@naver.com",
+      "name": "donghwun",
+      "nickName": "nick1",
+      "gender": "M",
+      "birth": 12341234,
+      "profileImage": "img1",
+      "studyTimeToday": 456,
+      "studyTimeWeek": 54,
+      "studyTimeMonth": 231,
+      "studyTimeTotal": 416
+    },
+    "groups": [
+      {
+        "groupName": "테스트입니다",
+        "groupImage": "g1img",
+        "groupDescription": "g1des",
+        "groupMemberNo": 8,
+        "groupMemberMaxNo": 10,
+        "groupLookUp": 754,
+        "groupCategory": ["TAG1", "TAG2"],
+        "id": 1
+      },
+      {
+        "groupName": "g2",
+        "groupImage": "g2img",
+        "groupDescription": "g2des",
+        "groupMemberNo": 2,
+        "groupMemberMaxNo": 20,
+        "groupLookUp": 235,
+        "groupCategory": ["TAG1", "TAG2"],
+        "id": 2
+      },
+      {
+        "groupName": "g5",
+        "groupImage": "g5img",
+        "groupDescription": "g5des",
+        "groupMemberNo": 8,
+        "groupMemberMaxNo": 50,
+        "groupLookUp": 135,
+        "groupCategory": ["TAG2"],
+        "id": 5
+      },
+      {
+        "groupName": "g4",
+        "groupImage": "g4img",
+        "groupDescription": "g4des",
+        "groupMemberNo": 7,
+        "groupMemberMaxNo": 40,
+        "groupLookUp": 64,
+        "groupCategory": ["TAG2"],
+        "id": 4
+      },
+      {
+        "groupName": "g3",
+        "groupImage": "g3img",
+        "groupDescription": "g3des",
+        "groupMemberNo": 5,
+        "groupMemberMaxNo": 30,
+        "groupLookUp": 1,
+        "groupCategory": ["TAG2"],
+        "id": 3
+      }
+    ]
+  }
 }

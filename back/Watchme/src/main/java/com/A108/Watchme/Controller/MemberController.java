@@ -32,7 +32,7 @@ public class MemberController {
     @ApiOperation(value="회원가입", notes="성공시 200코드를 반환합니다.")
     @PostMapping(value="/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public ApiResponse signUp(@RequestPart(value = "request") SignUpRequestDTO signUpRequestDTO, @RequestPart(value = "images") MultipartFile images) throws ParseException {
+    public ApiResponse signUp(@RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO, @RequestPart(value = "files") MultipartFile images) throws ParseException {
         String url="https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png";
         try{
             url = s3Uploader.upload(images, "Watchme");

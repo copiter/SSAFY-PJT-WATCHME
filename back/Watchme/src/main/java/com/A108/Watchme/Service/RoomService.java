@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoomService {
-
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM월 dd일 HH시 mm분");
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MRLRepository mrlRepository;
@@ -78,9 +80,10 @@ public class RoomService {
 
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
-                joinRooom(room.getId());
+                joinRoom(room.getId());
                 result.setCode(200);
                 result.setMessage("SUCCESS ADD&JOIN ROOM");
+                result.setResponseData("roomId", room.getId());
             }
 
         } catch (Exception e) {
@@ -114,7 +117,7 @@ public class RoomService {
                     .roomStatus(room.getStatus())
                     .ctgName(room.getRoomCtg().getName())
                     .description(room.getRoomInfo().getDescription())
-                    .endTime(room.getRoomInfo().getEndAt())
+                    .endTime(simpleDateFormat.format(room.getRoomInfo().getEndAt()))
                     .secret(room.getRoomInfo().getPwd() != null)
                     .nowNum(room.getRoomInfo().getCurrMember())
                     .maxNum(room.getRoomInfo().getMaxMember())
@@ -127,7 +130,8 @@ public class RoomService {
         return result;
     }
 
-    public ApiResponse joinRoom(Long roomId) {
+
+    public ApiResponse joinRooms(Long roomId) {
         ApiResponse result = new ApiResponse();
         try{
             joinRoom(roomId);
@@ -140,7 +144,7 @@ public class RoomService {
 
         return result;
     }
-    public void joinRooom(Long roomId){
+    public void joinRoom(Long roomId){
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {

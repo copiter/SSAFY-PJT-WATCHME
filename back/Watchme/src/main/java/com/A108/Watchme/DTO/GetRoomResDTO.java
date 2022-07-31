@@ -33,7 +33,7 @@ public class GetRoomResDTO {
     private int nowNum;
     @DateTimeFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     @Schema(description = "방 종료 시간")
-    private Date endTime;
+    private String endTime;
     @Schema(description = "방 이름")
     private String description;
     @Schema(description = "방 이미지 링크")

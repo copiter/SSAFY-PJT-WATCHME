@@ -45,7 +45,7 @@ public class RoomController {
     @PostMapping("/room/join/{roomId}")
     @ApiImplicitParam(name="roomId", value="룸ID", required = true)
     public ApiResponse joinRoom(@PathVariable(value ="roomId")  int roomId){
-        return roomService.joinRoom(Long.valueOf(roomId));
+        return roomService.joinRooms(Long.valueOf(roomId));
     }
 
 }

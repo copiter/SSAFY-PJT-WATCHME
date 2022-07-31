@@ -13,8 +13,13 @@ export const AuthContextProvider = (props) => {
     ? true
     : false;
 
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState(
+    sessionStorage.hasOwnProperty("userData")
+      ? JSON.parse(sessionStorage.getItem("userData"))
+      : {}
+  );
   const userDataGetter = (item) => {
+    sessionStorage.setItem("userData", JSON.stringify(item));
     setUserData(item);
   };
 
@@ -25,6 +30,7 @@ export const AuthContextProvider = (props) => {
 
   const logoutHandler = () => {
     sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("userData");
     userIsLoggedIn = false;
     document.cookie =
       "accessToken" + "=; expires=Thu, 01 Jan 1999 00:00:10 GMT;";

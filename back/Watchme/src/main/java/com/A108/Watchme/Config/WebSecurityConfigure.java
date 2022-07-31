@@ -37,7 +37,7 @@ public class WebSecurityConfigure {
     private final AuthenticationEntryPointHandler authenticationEntryPointHandler;
     private final WebAccessDeniedHandler webAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2SuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -51,7 +51,7 @@ public class WebSecurityConfigure {
     }
     @Bean
     public AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
-        return oAuth2AuthenticationSuccessHandler;
+        return oAuth2SuccessHandler;
     }
     @Bean
     public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler(){
@@ -79,6 +79,7 @@ public class WebSecurityConfigure {
                 .accessDeniedHandler(webAccessDeniedHandler)
                 .and()
                 .oauth2Login()
+                .defaultSuccessUrl("/slogin")
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .and()

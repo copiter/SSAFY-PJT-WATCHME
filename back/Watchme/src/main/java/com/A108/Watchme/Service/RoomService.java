@@ -41,6 +41,7 @@ public class RoomService {
     public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images, HttpServletRequest request) {
 
         ApiResponse result = new ApiResponse();
+        System.out.println(postRoomReqDTO.getCategoryName());
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,14 +77,16 @@ public class RoomService {
                         .description(postRoomReqDTO.getDescription())
                         .imageLink(url)
                         .build();
-
+                System.out.println("TEST1");
 
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
                 joinRoom(room.getId());
+                System.out.println("TEST2");
                 result.setCode(200);
                 result.setMessage("SUCCESS ADD&JOIN ROOM");
                 result.setResponseData("roomId", room.getId());
+
             }
 
         } catch (Exception e) {

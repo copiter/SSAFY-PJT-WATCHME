@@ -30,7 +30,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 //        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getName());
 //        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getProviderType());
         AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
-
         httpSession = request.getSession();
         httpSession.setAttribute("email",authDetails.getAttributes().get("email").toString());
         httpSession.setAttribute("providerType",authDetails.getProviderType());

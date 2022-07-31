@@ -2,7 +2,7 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 
 import "./MainPage.css";
-import { Link ,useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import jsons from "../json/jsons";
 import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
@@ -47,6 +47,12 @@ function MainPage() {
       });
       const data = await response.json();
       setResponseData(data.responseData);
+      if (data.responseData.member !== undefined) {
+        authCtx.userDataGetter({
+          profileImage: data.responseData.member.profileImage,
+          nickName: data.responseData.member.nickName,
+        });
+      }
     };
     getDatas();
   }, []);
@@ -59,48 +65,42 @@ function MainPage() {
     myGroups = responseData["myGroups"];
   }
 
-  function enteringRoom(id){
-    const urls= `${FETCH_URL}/room/join/`;
-    
+  function enteringRoom(id) {
+    const urls = `${FETCH_URL}/room/join/`;
+
     function getCookie(name) {
       const cookie = document.cookie
-        .split(";").map((cookie) => cookie.split("="))
+        .split(";")
+        .map((cookie) => cookie.split("="))
         .filter((cookie) => cookie[0] === name);
       return cookie[0][1];
     }
-    console.log(urls+15);
-    fetch(urls+id,{
-      method:"POST",
-      headers:{
-        accessToken: getCookie("accessToken")
-      }
+    console.log(urls + 15);
+    fetch(urls + id, {
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
     })
-    .then((response) => {
-      console.log("T1");
-      if(response.bodyUsed)
-      {
-        console.log("재사용됨");
-
-      }
-      else if(response.ok)
-      {
-        console.log("Case2");
-        return response.json();
-      }
-      else{
-
-        console.log("C4");
-      }
-    })
-    .then((result)=>{
-      console.log(result);
-      navigate(`/RoomDetail/:${id}`);
-    })
-    .catch((err) => {
-      alert("로그인후 이용부탁드립니다.");
-    });
-    
-  };
+      .then((response) => {
+        console.log("T1");
+        if (response.bodyUsed) {
+          console.log("재사용됨");
+        } else if (response.ok) {
+          console.log("Case2");
+          return response.json();
+        } else {
+          console.log("C4");
+        }
+      })
+      .then((result) => {
+        console.log(result);
+        navigate(`/RoomDetail/:${id}`);
+      })
+      .catch((err) => {
+        alert("로그인후 이용부탁드립니다.");
+      });
+  }
 
   return (
     <>
@@ -451,7 +451,7 @@ function MainPage() {
             {rooms.length && (
               <ul className="rooms__whole">
                 <li>
-                  <div onClick={()=>enteringRoom(rooms[0]["id"])} >
+                  <div onClick={() => enteringRoom(rooms[0]["id"])}>
                     <article>
                       <div
                         className="group-specs"
@@ -495,7 +495,7 @@ function MainPage() {
                 </li>
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={()=>enteringRoom(rooms[1]["id"])} >
+                    <div onClick={() => enteringRoom(rooms[1]["id"])}>
                       <article>
                         <div
                           className="group-specs"
@@ -540,7 +540,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={()=>enteringRoom(rooms[2]["id"])} >
+                    <div onClick={() => enteringRoom(rooms[2]["id"])}>
                       <article>
                         <div
                           className="group-specs"
@@ -585,7 +585,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={()=>enteringRoom(rooms[3]["id"])} >
+                    <div onClick={() => enteringRoom(rooms[3]["id"])}>
                       <article>
                         <div
                           className="group-specs"
@@ -630,7 +630,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={()=>enteringRoom(rooms[4]["id"])} >
+                    <div onClick={() => enteringRoom(rooms[4]["id"])}>
                       <article>
                         <div
                           className="group-specs"
@@ -675,7 +675,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={()=>enteringRoom(rooms[5]["id"])} >
+                    <div onClick={() => enteringRoom(rooms[5]["id"])}>
                       <article>
                         <div
                           className="group-specs"
@@ -720,7 +720,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={()=>enteringRoom(rooms[5]["id"])} >
+                    <div onClick={() => enteringRoom(rooms[5]["id"])}>
                       <article>
                         <div
                           className="group-specs"
@@ -762,7 +762,7 @@ function MainPage() {
                       </article>
                     </div>
                   </li>
-                )}    
+                )}
               </ul>
             )}
           </div>

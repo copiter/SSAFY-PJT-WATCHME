@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 const AuthContext = React.createContext({
+  userData: "",
+  userDataGetter: () => {},
   isLoggedIn: false,
   login: () => {},
   logout: () => {},
@@ -10,6 +12,11 @@ export const AuthContextProvider = (props) => {
   let userIsLoggedIn = sessionStorage.hasOwnProperty("isLoggedIn")
     ? true
     : false;
+
+  const [userData, setUserData] = useState({});
+  const userDataGetter = (item) => {
+    setUserData(item);
+  };
 
   const loginHandler = () => {
     sessionStorage.setItem("isLoggedIn", 1); //1 true, 0 false
@@ -25,6 +32,8 @@ export const AuthContextProvider = (props) => {
   };
 
   const contextValue = {
+    userData: userData,
+    userDataGetter: userDataGetter,
     isLoggedIn: userIsLoggedIn,
     login: loginHandler,
     logout: logoutHandler,

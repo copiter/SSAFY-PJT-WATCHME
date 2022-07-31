@@ -47,8 +47,12 @@ const NavBar = () => {
           <div className="dropdown__login">
             {/* 프로필사진, 이름 */}
             <div className="user-info">
-              <img src={tmp_picture} alt="profile" id="nav-profile-picture" />
-              <span className="nav-username">Username</span>
+              <img
+                src={authCtx.userData.profileImage}
+                alt="profile"
+                id="nav-profile-picture"
+              />
+              <span className="nav-username">{authCtx.userData.nickName}</span>
             </div>
 
             {/* dropdown */}

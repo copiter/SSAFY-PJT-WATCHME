@@ -2,6 +2,7 @@
   padding: 30px 30px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 19px;
   line-height: 19px;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
@@ -15,10 +16,15 @@ a {
 .navbar .navbar__left {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .navbar .nav-logo {
   margin-right: 18px;
+  display: flex;
+  align-items: center;
+
+  font-family: "Montserrat", sans-serif;
   font-weight: 700;
 }
 
@@ -54,13 +60,12 @@ a {
 
 #nav-profile-picture {
   border-radius: 50%;
-  width: 25px;
+  width: 40px;
 }
 
 .dropdown__login .user-info {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
 }
 
 .navbar .nav-username {

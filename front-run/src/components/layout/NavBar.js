@@ -3,6 +3,8 @@ import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 
 import "./NavBar.css";
+import logo from "../../img/logo.png";
+import tmp_picture from "../../img/tmp_picture.PNG";
 
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
@@ -19,8 +21,7 @@ const NavBar = () => {
       <div className="navbar__left">
         <Link to="/">
           <div className="nav-logo">
-            <img src="#none" alt="로고" />
-            WATCH ME
+            <img src={logo} alt="로고" height="30px" />
           </div>
         </Link>
         <nav className="nav-list">
@@ -43,7 +44,7 @@ const NavBar = () => {
           <div className="dropdown__login">
             {/* 프로필사진, 이름 */}
             <div className="user-info">
-              <img src="#none" alt="profile" className="nav-profile-picture" />
+              <img src={tmp_picture} alt="profile" id="nav-profile-picture" />
               <span className="nav-username">Username</span>
             </div>
 

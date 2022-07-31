@@ -8,29 +8,24 @@ import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 
-import jsons from "../json/jsons"
+import jsons from "../json/jsons";
 
 let roomPageNo = 0;
 
 function RoomRecruit() {
   const FETCH_URL = useContext(FetchUrl);
 
-  const [responseData, setResponseData] = useState(
-    jsons["responseData"]
-  );
+  const [responseData, setResponseData] = useState(jsons["responseData"]);
   const [inputs, setInputs] = useState({
     roomCategory: "",
     roomSearch: "",
   });
-
-
 
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
-
 
   //URL
   const url = `${FETCH_URL}/room/recruit"`;
@@ -41,7 +36,7 @@ function RoomRecruit() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-  
+
     fetch(
       url +
         "?roomCategory=" +
@@ -203,7 +198,7 @@ function RoomRecruit() {
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["romMemberNo"]}/
+                        {rooms[roomNo]["roomMemberNo"]}/
                         {rooms[roomNo]["roomMemberMaxNo"]}
                       </dl>
                     </div>
@@ -249,7 +244,7 @@ function RoomRecruit() {
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["romMemberNo"]}/
+                        {rooms[roomNo]["roomMemberNo"]}/
                         {rooms[roomNo]["roomMemberMaxNo"]}
                       </dl>
                     </div>
@@ -295,7 +290,7 @@ function RoomRecruit() {
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["romMemberNo"]}/
+                        {rooms[roomNo]["roomMemberNo"]}/
                         {rooms[roomNo]["roomMemberMaxNo"]}
                       </dl>
                     </div>
@@ -341,7 +336,7 @@ function RoomRecruit() {
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["romMemberNo"]}/
+                        {rooms[roomNo]["roomMemberNo"]}/
                         {rooms[roomNo]["roomMemberMaxNo"]}
                       </dl>
                     </div>

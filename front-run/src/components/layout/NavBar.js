@@ -6,21 +6,12 @@ import "./NavBar.css";
 
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !sessionStorage.hasOwnProperty("isLoggedIn")
-      ? false
-      : sessionStorage.getItem("isLoggedIn")
-      ? true
-      : false
-  );
 
-  useEffect(() => {
-    // window.location.reload();
-  }, [setIsLoggedIn]);
+  const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
 
   const logoutHandler = () => {
-    setIsLoggedIn(false);
     authCtx.logout();
+    setIsLoggedIn(false);
   };
 
   return (

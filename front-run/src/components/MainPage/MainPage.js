@@ -5,9 +5,13 @@ import "./MainPage.css";
 import { Link } from "react-router-dom";
 import jsons from "../json/jsons";
 import { FetchUrl } from "../../store/communication";
+import AuthContext from "../../store/auth-context";
 
 //유일한 쿠키 조회
 function getCookie(name) {
+  if (!document.cookie) {
+    return;
+  }
   const cookie = document.cookie
     .split("; ")
     .map((cookie) => cookie.split("="))
@@ -16,6 +20,7 @@ function getCookie(name) {
 }
 
 function MainPage() {
+  const authCtx = useContext(AuthContext);
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/main`;
@@ -26,17 +31,9 @@ function MainPage() {
   let roomNo = 0;
   let myGroupNo = 0;
 
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !sessionStorage.hasOwnProperty("isLoggedIn")
-      ? false
-      : sessionStorage.getItem("isLoggedIn") === "1"
-      ? true
-      : false
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
 
   const [responseData, setResponseData] = useState(jsons["responseData"]);
-
-  console.log("cookie", getCookie("accessToken"));
 
   useEffect(() => {
     const getDatas = async () => {

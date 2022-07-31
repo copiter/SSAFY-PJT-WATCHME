@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useState, useContext } from "react";
+import { Link,useNavigate } from "react-router-dom";
+import { useState, useContext,useEffect } from "react";
 import { FetchUrl } from "../../store/communication";
 
 import "./RoomRecruit.css";
@@ -8,18 +8,21 @@ import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 
-import jsons from "../json/jsons";
+import roomJsons from "../json/roomReq.json"
 
-let roomPageNo = 0;
+let page = 0;
 
-function RoomRecruit() {
+function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
   const FETCH_URL = useContext(FetchUrl);
+  const navigate = useNavigate();
 
-  const [responseData, setResponseData] = useState(jsons["responseData"]);
   const [inputs, setInputs] = useState({
-    roomCategory: "",
+    categoryname: "",
     roomSearch: "",
   });
+
+
+
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -27,80 +30,158 @@ function RoomRecruit() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
+
   //URL
-  const url = `${FETCH_URL}/room/recruit"`;
+  const url = `${FETCH_URL}/room/recruit`;
   //Otpion
 
-  let rooms = responseData["rooms"];
   let roomNo = 0;
+  
+
+	const [rooms, setRooms] = useState(roomJsons["responseData"]["rooms"])
+  
+	useEffect(() => {
+     fetch(url+"?categoryname=&page=")
+    .then((response) => {
+      if(response.bodyUsed)
+      {
+        console.log("재사용됨");
+
+      }
+      else if(response.ok)
+      {
+        return response.json();
+      }
+      else{
+
+        console.log("C4");
+      }
+    })
+    .then((result)=>{
+       setRooms(result["responseData"]["rooms"])
+    })
+    .catch((err) => {
+      console.log("ERROR");
+    });
+	}, [])
+ 
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    fetch(
-      url +
-        "?roomCategory=" +
-        inputs["roomCategory"] +
-        "&roomSearch=" +
-        inputs["roomSearch"] +
-        "&pageNo=0"
+    fetch(url+"?categoryname="+inputs["categoryname"]+"&page="
+    //+"&roomSearch=" +
+    //inputs["roomSearch"]
     )
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          response.json().then((data) => {
-            let errorMessage = "검색오류 발생";
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((result) => {
-        rooms = result;
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    .then((response) => {
+      if(response.bodyUsed)
+      {
+        console.log("재사용됨");
+
+      }
+      else if(response.ok)
+      {
+        return response.json();
+      }
+      else{
+
+        console.log("C4");
+      }
+    })
+    .then((result)=>{
+       setRooms(result["responseData"]["rooms"])
+    })
+    .catch((err) => {
+      console.log("ERROR");
+    });
+  
   };
 
   const addMore = (event) => {
-    roomPageNo++;
-    console.log(
-      url +
-        "?roomCategory=" +
-        inputs["roomCategory"] +
-        "&roomSearch=" +
-        inputs["roomSearch"] +
-        "&pageNo=" +
-        roomPageNo
-    );
-    fetch(
-      url +
-        "?roomCategory=" +
-        inputs["roomCategory"] +
-        "&roomSearch=" +
-        inputs["roomSearch"] +
-        "&pageNo=" +
-        roomPageNo
+    page++;
+    console.log(url+"?categoryname="+inputs["categoryname"]+"&page="+page);
+    fetch(url+"?categoryname="+inputs["categoryname"]+"&page="
+    //page
+
+        //+"&roomSearch=" +
+        //inputs["roomSearch"]
     )
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          response.json().then((data) => {
-            let errorMessage = "검색오류 발생";
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((result) => {
-        rooms = result;
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    .then((response) => {
+      if(response.bodyUsed)
+      {
+        console.log("재사용됨");
+
+      }
+      else if(response.ok)
+      {
+        return response.json();
+      }
+      else{
+
+        console.log("C4");
+      }
+    })
+    .then((result)=>{
+       setRooms(result["responseData"]["rooms"])
+    })
+    .catch((err) => {
+      console.log("ERROR");
+    });
   };
 
+  const ctgChange=(event)=>{
+    event.preventDefault();
+    const ARR=["전부","공무원","취업","수능","자격증","기타"];
+
+      
+    setInputs((values) => ({ ...values, categoryname: ARR[event.target.value] }));  
+  }
+
+  function enteringRoom(id){
+    const urls= `${FETCH_URL}/room/join/`;
+
+    
+    function getCookie(name) {
+      const cookie = document.cookie
+        .split(";").map((cookie) => cookie.split("="))
+        .filter((cookie) => cookie[0] === name);
+      return cookie[0][1];
+    }
+    fetch(urls+id,{
+      method:"POST",
+      headers:{
+        accessToken: getCookie("accessToken")
+      }
+    })
+    .then((response) => {
+      console.log("T1");
+      if(response.bodyUsed)
+      {
+        console.log("재사용됨");
+
+      }
+      else if(response.ok)
+      {
+        console.log("Case2");
+        return response.json();
+      }
+      else{
+
+        console.log("C4");
+      }
+    })
+    .then((result)=>{
+      console.log(result);
+      navigate(`/RoomDetail/:${id}`);
+    })
+    .catch((err) => {
+      alert("로그인후 이용부탁드립니다.");
+    });
+    
+  };
+
+
+  
   return (
     <div id="open-room">
       {/* 공개룸 찾기 section */}
@@ -131,12 +212,12 @@ function RoomRecruit() {
           {/* select tag -> ul tag 로 변경했습니다 
               NavLink 사용해도 괜찮을 것 같습니다 */}
           <ul className="header__tags">
-            <li>All</li>
-            <li className="active">공무원</li>
-            <li>취업</li>
-            <li>수능</li>
-            <li>자격증</li>
-            <li>기타</li>
+            <li onClick={ctgChange} value={0}>All</li>
+            <li className="active" onClick={ctgChange} value={1}>공무원</li>
+            <li onClick={ctgChange} value={2}>취업</li>
+            <li onClick={ctgChange} value={3}>수능</li>
+            <li onClick={ctgChange} value={4}>자격증</li>
+            <li onClick={ctgChange} value={5} >기타</li>
           </ul>
 
           {/* handleChange 확인 */}
@@ -168,18 +249,18 @@ function RoomRecruit() {
         <div className="module__rooms">
           <ul className="rooms__whole">
             <li>
-              <Link to="/RoomDetail">
+              <div onClick={()=>enteringRoom(rooms[0]["id"])} >
                 <article>
                   <div className="group-specs">
-                    {/* 미팅룸 이미지가 background가 되거나
+                    {/* 미팅#가 background가 되거나
                         img태그 자체를 적용해야 합니다*/}
                     <img
                       src={
-                        rooms[roomNo]["roomImage"] === "none"
-                          ? "(이미지없음)"
+                        rooms[roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                          ? "#"
                           : rooms[roomNo]["roomImage"]
                       }
-                      alt="룸 이미지"
+                      alt="#" className="imgSrc"
                     />
                     <div className="group-specs__rules">
                       <span>📝 규칙</span>
@@ -194,12 +275,12 @@ function RoomRecruit() {
                   <dl className="group-info">
                     <div className="category member-no">
                       <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["roomCategory"]}</dl>
+                      <dl>{rooms[roomNo]["ctgName"]}</dl>
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["roomMemberNo"]}/
-                        {rooms[roomNo]["roomMemberMaxNo"]}
+                        {rooms[roomNo]["nowNum"]}/
+                        {rooms[roomNo]["maxNum"]}
                       </dl>
                     </div>
                     <div>
@@ -208,24 +289,24 @@ function RoomRecruit() {
                     </div>
                     <div className="info-content">
                       <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["roomDiscription"]}</dl>
+                      <dl>{rooms[roomNo]["description"]}</dl>
                     </div>
                   </dl>
                 </article>
-              </Link>
+              </div>
             </li>
             <li>
-              <Link to="/RoomDetail">
+              <div onClick={()=>enteringRoom(rooms[1]["id"])} >
                 <article>
                   <div className="group-specs">
-                    {/*미팅룸 이미지 내부에 기능들 표기됨*/}
+                    {/*미팅# 내부에 기능들 표기됨*/}
                     <img
                       src={
-                        rooms[roomNo]["roomImage"] === "none"
-                          ? "(이미지없음)"
+                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                          ? "#"
                           : rooms[roomNo]["roomImage"]
                       }
-                      alt="룸 이미지"
+                      alt="#" className="imgSrc" 
                     />
                     <div className="group-specs__rules">
                       <span>📝 규칙</span>
@@ -240,12 +321,12 @@ function RoomRecruit() {
                   <dl className="group-info">
                     <div className="category member-no">
                       <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["roomCategory"]}</dl>
+                      <dl>{rooms[roomNo]["ctgName"]}</dl>
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["roomMemberNo"]}/
-                        {rooms[roomNo]["roomMemberMaxNo"]}
+                        {rooms[roomNo]["nowNum"]}/
+                        {rooms[roomNo]["maxNum"]}
                       </dl>
                     </div>
                     <div>
@@ -254,24 +335,24 @@ function RoomRecruit() {
                     </div>
                     <div className="info-content">
                       <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["roomDiscription"]}</dl>
+                      <dl>{rooms[roomNo]["description"]}</dl>
                     </div>
                   </dl>
                 </article>
-              </Link>
+              </div>
             </li>
             <li>
-              <Link to="/RoomDetail">
+              <div onClick={()=>enteringRoom(rooms[2]["id"])} >
                 <article>
                   <div className="group-specs">
-                    {/*미팅룸 이미지 내부에 기능들 표기됨*/}
+                    {/*미팅# 내부에 기능들 표기됨*/}
                     <img
                       src={
-                        rooms[roomNo]["roomImage"] === "none"
-                          ? "(이미지없음)"
+                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                          ? "#"
                           : rooms[roomNo]["roomImage"]
                       }
-                      alt="룸 이미지"
+                      alt="#" className="imgSrc"
                     />
                     <div className="group-specs__rules">
                       <span>📝 규칙</span>
@@ -286,12 +367,12 @@ function RoomRecruit() {
                   <dl className="group-info">
                     <div className="category member-no">
                       <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["roomCategory"]}</dl>
+                      <dl>{rooms[roomNo]["ctgName"]}</dl>
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["roomMemberNo"]}/
-                        {rooms[roomNo]["roomMemberMaxNo"]}
+                        {rooms[roomNo]["nowNum"]}/
+                        {rooms[roomNo]["maxNum"]}
                       </dl>
                     </div>
                     <div>
@@ -300,24 +381,24 @@ function RoomRecruit() {
                     </div>
                     <div className="info-content">
                       <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["roomDiscription"]}</dl>
+                      <dl>{rooms[roomNo]["description"]}</dl>
                     </div>
                   </dl>
                 </article>
-              </Link>
+              </div>
             </li>
             <li>
-              <Link to="/RoomDetail">
+              <div onClick={()=>enteringRoom(rooms[3]["id"])} >
                 <article>
                   <div className="group-specs">
-                    {/*미팅룸 이미지 내부에 기능들 표기됨*/}
+                    {/*미팅# 내부에 기능들 표기됨*/}
                     <img
                       src={
-                        rooms[roomNo]["roomImage"] === "none"
-                          ? "(이미지없음)"
+                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                          ? "#"
                           : rooms[roomNo]["roomImage"]
                       }
-                      alt="룸 이미지"
+                      alt="#" className="imgSrc"
                     />
                     <div className="group-specs__rules">
                       <span>📝 규칙</span>
@@ -332,12 +413,12 @@ function RoomRecruit() {
                   <dl className="group-info">
                     <div className="category member-no">
                       <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["roomCategory"]}</dl>
+                      <dl>{rooms[roomNo]["ctgName"]}</dl>
                       <dt className="sr-only">인원수</dt>
                       <dl>
                         &#128509;
-                        {rooms[roomNo]["roomMemberNo"]}/
-                        {rooms[roomNo]["roomMemberMaxNo"]}
+                        {rooms[roomNo]["nowNum"]}/
+                        {rooms[roomNo]["maxNum"]}
                       </dl>
                     </div>
                     <div>
@@ -346,15 +427,105 @@ function RoomRecruit() {
                     </div>
                     <div className="info-content">
                       <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["roomDiscription"]}</dl>
+                      <dl>{rooms[roomNo]["description"]}</dl>
                     </div>
                   </dl>
                 </article>
-              </Link>
+              </div>
+            </li>  <li>
+              <div onClick={()=>enteringRoom(rooms[4]["id"])} >
+                <article>
+                  <div className="group-specs">
+                    {/*미팅# 내부에 기능들 표기됨*/}
+                    <img
+                      src={
+                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                          ? "#"
+                          : rooms[roomNo]["roomImage"]
+                      }
+                      alt="#" className="imgSrc"
+                    />
+                    <div className="group-specs__rules">
+                      <span>📝 규칙</span>
+                      <ul>
+                        <li>✔ 휴대폰 인식</li>
+                        <li>✔ 얼굴 인식</li>
+                        <li>✔ 캠 켜기</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <dl className="group-info">
+                    <div className="category member-no">
+                      <dt className="sr-only">카테고리</dt>
+                      <dl>{rooms[roomNo]["ctgName"]}</dl>
+                      <dt className="sr-only">인원수</dt>
+                      <dl>
+                        &#128509;
+                        {rooms[roomNo]["nowNum"]}/
+                        {rooms[roomNo]["maxNum"]}
+                      </dl>
+                    </div>
+                    <div>
+                      <dt className="sr-only">이름</dt>
+                      <dl>{rooms[roomNo]["roomName"]}</dl>
+                    </div>
+                    <div className="info-content">
+                      <dt className="sr-only">세부설명</dt>
+                      <dl>{rooms[roomNo]["description"]}</dl>
+                    </div>
+                  </dl>
+                </article>
+              </div>
+            </li>  <li>
+              <div onClick={()=>enteringRoom(rooms[5]["id"])} >
+                <article>
+                  <div className="group-specs">
+                    {/*미팅# 내부에 기능들 표기됨*/}
+                    <img
+                      src={
+                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                          ? "#"
+                          : rooms[roomNo]["roomImage"]
+                      }
+                      alt="#" className="imgSrc"
+                    />
+                    <div className="group-specs__rules">
+                      <span>📝 규칙</span>
+                      <ul>
+                        <li>✔ 휴대폰 인식</li>
+                        <li>✔ 얼굴 인식</li>
+                        <li>✔ 캠 켜기</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <dl className="group-info">
+                    <div className="category member-no">
+                      <dt className="sr-only">카테고리</dt>
+                      <dl>{rooms[roomNo]["ctgName"]}</dl>
+                      <dt className="sr-only">인원수</dt>
+                      <dl>
+                        &#128509;
+                        {rooms[roomNo]["nowNum"]}/
+                        {rooms[roomNo]["maxNum"]}
+                      </dl>
+                    </div>
+                    <div>
+                      <dt className="sr-only">이름</dt>
+                      <dl>{rooms[roomNo]["roomName"]}</dl>
+                    </div>
+                    <div className="info-content">
+                      <dt className="sr-only">세부설명</dt>
+                      <dl>{rooms[roomNo]["description"]}</dl>
+                    </div>
+                  </dl>
+                </article>
+              </div>
             </li>
           </ul>
         </div>
-        <button type="button" id="more-btn" name="roomPageNo" onClick={addMore}>
+        <button type="button" id="more-btn" name="roompage" onClick={addMore}>
           <img src={down} alt="+" />
           더보기
         </button>

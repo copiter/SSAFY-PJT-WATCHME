@@ -24,8 +24,6 @@ function SignUp() {
 
   const submitHandler = (event) => {
     event.preventDefault();
-
-
     const data={
       email: emailInputRef.current.value,
       password: passwordInputRef.current.value,
@@ -36,12 +34,10 @@ function SignUp() {
     };
 
     const files=imageInputRef.current.files[0];
-
-
     const formData = new FormData();
     formData.append('files', files);
     formData.append("data", new Blob([JSON.stringify(data)], {type: "application/json"}))
-    console.log(formData);
+   
     //myjsons->application.josn
     
 
@@ -81,7 +77,7 @@ function SignUp() {
       <div className="signup">
         <form onSubmit={submitHandler} method="post" >
           <div className="signup-top">
-            <div className="signup-top__word">SIGN UP</div>
+            <div className="signup-top__worfd">SIGN UP</div>
           </div>
           <div className="signup-form">
             <div className="signup-left">
@@ -90,7 +86,7 @@ function SignUp() {
               }} /> )}
               </div>
               <input  name="imggeUpload" type="file" accept="image/*" onChange={saveFileImage}  ref={imageInputRef}/>
-              chceck
+              
               <button className="signup-left-addimage">프로필 사진 추가</button>
 
              

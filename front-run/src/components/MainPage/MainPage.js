@@ -2,7 +2,7 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 
 import "./MainPage.css";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate} from "react-router-dom";
 import jsons from "../json/jsons";
 import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
@@ -22,6 +22,7 @@ function getCookie(name) {
 
 function MainPage() {
   const authCtx = useContext(AuthContext);
+  const navigate = useNavigate();
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/main`;
@@ -57,6 +58,49 @@ function MainPage() {
     userInformation = responseData["member"];
     myGroups = responseData["myGroups"];
   }
+
+  function enteringRoom(id){
+    const urls= `${FETCH_URL}/room/join/`;
+    
+    function getCookie(name) {
+      const cookie = document.cookie
+        .split(";").map((cookie) => cookie.split("="))
+        .filter((cookie) => cookie[0] === name);
+      return cookie[0][1];
+    }
+    console.log(urls+15);
+    fetch(urls+id,{
+      method:"POST",
+      headers:{
+        accessToken: getCookie("accessToken")
+      }
+    })
+    .then((response) => {
+      console.log("T1");
+      if(response.bodyUsed)
+      {
+        console.log("재사용됨");
+
+      }
+      else if(response.ok)
+      {
+        console.log("Case2");
+        return response.json();
+      }
+      else{
+
+        console.log("C4");
+      }
+    })
+    .then((result)=>{
+      console.log(result);
+      navigate(`/RoomDetail/:${id}`);
+    })
+    .catch((err) => {
+      alert("로그인후 이용부탁드립니다.");
+    });
+    
+  };
 
   return (
     <>
@@ -407,7 +451,7 @@ function MainPage() {
             {rooms.length && (
               <ul className="rooms__whole">
                 <li>
-                  <Link to="/RoomDetail">
+                  <div onClick={()=>enteringRoom(rooms[0]["id"])} >
                     <article>
                       <div
                         className="group-specs"
@@ -416,17 +460,6 @@ function MainPage() {
                           backgroundSize: "cover",
                         }}
                       >
-                        {/* 미팅룸 이미지가 background가 되거나
-                        img태그 자체를 적용해야 합니다*/}
-                        {/* <img
-                          className="rooms__img"
-                          src={
-                            rooms[roomNo]["roomImage"] === "none"
-                              ? "(이미지없음)"
-                              : rooms[roomNo]["roomImage"]
-                          }
-                          alt="룸 이미지"
-                        /> */}
                         <div className="group-specs__rules">
                           <span>📝 규칙</span>
                           <ul>
@@ -458,11 +491,11 @@ function MainPage() {
                         </div>
                       </dl>
                     </article>
-                  </Link>
+                  </div>
                 </li>
                 {rooms.length > ++roomNo && (
                   <li>
-                    <Link to="/RoomDetail">
+                    <div onClick={()=>enteringRoom(rooms[1]["id"])} >
                       <article>
                         <div
                           className="group-specs"
@@ -471,17 +504,6 @@ function MainPage() {
                             backgroundSize: "cover",
                           }}
                         >
-                          {/* 미팅룸 이미지가 background가 되거나
-                        img태그 자체를 적용해야 합니다*/}
-                          {/* <img
-                          className="rooms__img"
-                          src={
-                            rooms[roomNo]["roomImage"] === "none"
-                              ? "(이미지없음)"
-                              : rooms[roomNo]["roomImage"]
-                          }
-                          alt="룸 이미지"
-                        /> */}
                           <div className="group-specs__rules">
                             <span>📝 규칙</span>
                             <ul>
@@ -513,12 +535,12 @@ function MainPage() {
                           </div>
                         </dl>
                       </article>
-                    </Link>
+                    </div>
                   </li>
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <Link to="/RoomDetail">
+                    <div onClick={()=>enteringRoom(rooms[2]["id"])} >
                       <article>
                         <div
                           className="group-specs"
@@ -527,17 +549,6 @@ function MainPage() {
                             backgroundSize: "cover",
                           }}
                         >
-                          {/* 미팅룸 이미지가 background가 되거나
-                        img태그 자체를 적용해야 합니다*/}
-                          {/* <img
-                          className="rooms__img"
-                          src={
-                            rooms[roomNo]["roomImage"] === "none"
-                              ? "(이미지없음)"
-                              : rooms[roomNo]["roomImage"]
-                          }
-                          alt="룸 이미지"
-                        /> */}
                           <div className="group-specs__rules">
                             <span>📝 규칙</span>
                             <ul>
@@ -569,12 +580,12 @@ function MainPage() {
                           </div>
                         </dl>
                       </article>
-                    </Link>
+                    </div>
                   </li>
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <Link to="/RoomDetail">
+                    <div onClick={()=>enteringRoom(rooms[3]["id"])} >
                       <article>
                         <div
                           className="group-specs"
@@ -583,17 +594,6 @@ function MainPage() {
                             backgroundSize: "cover",
                           }}
                         >
-                          {/* 미팅룸 이미지가 background가 되거나
-                        img태그 자체를 적용해야 합니다*/}
-                          {/* <img
-                          className="rooms__img"
-                          src={
-                            rooms[roomNo]["roomImage"] === "none"
-                              ? "(이미지없음)"
-                              : rooms[roomNo]["roomImage"]
-                          }
-                          alt="룸 이미지"
-                        /> */}
                           <div className="group-specs__rules">
                             <span>📝 규칙</span>
                             <ul>
@@ -625,12 +625,12 @@ function MainPage() {
                           </div>
                         </dl>
                       </article>
-                    </Link>
+                    </div>
                   </li>
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <Link to="/RoomDetail">
+                    <div onClick={()=>enteringRoom(rooms[4]["id"])} >
                       <article>
                         <div
                           className="group-specs"
@@ -639,17 +639,6 @@ function MainPage() {
                             backgroundSize: "cover",
                           }}
                         >
-                          {/* 미팅룸 이미지가 background가 되거나
-                        img태그 자체를 적용해야 합니다*/}
-                          {/* <img
-                          className="rooms__img"
-                          src={
-                            rooms[roomNo]["roomImage"] === "none"
-                              ? "(이미지없음)"
-                              : rooms[roomNo]["roomImage"]
-                          }
-                          alt="룸 이미지"
-                        /> */}
                           <div className="group-specs__rules">
                             <span>📝 규칙</span>
                             <ul>
@@ -681,12 +670,12 @@ function MainPage() {
                           </div>
                         </dl>
                       </article>
-                    </Link>
+                    </div>
                   </li>
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <Link to="/RoomDetail">
+                    <div onClick={()=>enteringRoom(rooms[5]["id"])} >
                       <article>
                         <div
                           className="group-specs"
@@ -695,17 +684,6 @@ function MainPage() {
                             backgroundSize: "cover",
                           }}
                         >
-                          {/* 미팅룸 이미지가 background가 되거나
-                        img태그 자체를 적용해야 합니다*/}
-                          {/* <img
-                          className="rooms__img"
-                          src={
-                            rooms[roomNo]["roomImage"] === "none"
-                              ? "(이미지없음)"
-                              : rooms[roomNo]["roomImage"]
-                          }
-                          alt="룸 이미지"
-                        /> */}
                           <div className="group-specs__rules">
                             <span>📝 규칙</span>
                             <ul>
@@ -737,9 +715,54 @@ function MainPage() {
                           </div>
                         </dl>
                       </article>
-                    </Link>
+                    </div>
                   </li>
                 )}
+                {rooms.length > ++roomNo && (
+                  <li>
+                    <div onClick={()=>enteringRoom(rooms[5]["id"])} >
+                      <article>
+                        <div
+                          className="group-specs"
+                          style={{
+                            backgroundImage: `url(${rooms[roomNo]["roomImage"]})`,
+                            backgroundSize: "cover",
+                          }}
+                        >
+                          <div className="group-specs__rules">
+                            <span>📝 규칙</span>
+                            <ul>
+                              <li>✔ 휴대폰 인식</li>
+                              <li>✔ 얼굴 인식</li>
+                              <li>✔ 캠 켜기</li>
+                            </ul>
+                          </div>
+                        </div>
+
+                        <dl className="group-info">
+                          <div className="category member-no">
+                            <dt className="sr-only">카테고리</dt>
+                            <dl>{rooms[roomNo]["roomCategory"]}</dl>
+                            <dt className="sr-only">인원수</dt>
+                            <dl>
+                              &#128509;
+                              {rooms[roomNo]["roomMemberNo"]}/
+                              {rooms[roomNo]["roomMemberMaxNo"]}
+                            </dl>
+                          </div>
+                          <div>
+                            <dt className="sr-only">이름</dt>
+                            <dl>{rooms[roomNo]["roomName"]}</dl>
+                          </div>
+                          <div className="info-content">
+                            <dt className="sr-only">세부설명</dt>
+                            <dl>{rooms[roomNo]["roomDescription"]}</dl>
+                          </div>
+                        </dl>
+                      </article>
+                    </div>
+                  </li>
+                )}    
               </ul>
             )}
           </div>

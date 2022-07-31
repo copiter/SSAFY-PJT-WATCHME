@@ -720,7 +720,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[5]["id"])}>
+                    <div onClick={() => enteringRoom(rooms[6]["id"])}>
                       <article>
                         <div
                           className="group-specs"

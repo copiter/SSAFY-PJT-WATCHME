@@ -102,7 +102,7 @@ fetch(url, {
         <div className="form-frame">
           <div className="room-image">
             
-          {fileImage && ( <img alt="sample" src={fileImage}style={{position:"absolute", margin: "auto" ,width:"50px",height:"50px",borderRadius:"50%" 
+          {fileImage && ( <img alt="sample" src={fileImage}style={{position:"absolute", marginTop: "55px" ,width:"150px",height:"150px",borderRadius:"50%" 
               }} /> )}
             {/*룸 이미지, 좌측부분 */}
             <input

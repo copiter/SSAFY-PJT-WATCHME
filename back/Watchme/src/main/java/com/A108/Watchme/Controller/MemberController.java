@@ -11,6 +11,7 @@ import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
 import com.A108.Watchme.VO.Entity.RefreshToken;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.auth.AuthDetails;
 import io.swagger.annotations.*;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,10 +104,10 @@ public class MemberController {
     @PostMapping("/social-signup")
     @ResponseBody
     public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
-                                    HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = true) Cookie authCookie) throws ParseException {
-
+                                    HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = false) Cookie authCookie, Authentication authentication) throws ParseException {
+        AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
+        System.out.println(authDetails.getAttributes());
         HttpSession httpSession = request.getSession(false);
-
         if(httpSession!=null){
             ApiResponse apiResponse = memberService.memberInsert(socialSignUpRequestDTO, httpSession);
             String token = apiResponse.getResponseData().get("refreshToken").toString();

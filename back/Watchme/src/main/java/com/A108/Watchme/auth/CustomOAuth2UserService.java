@@ -1,8 +1,11 @@
 package com.A108.Watchme.auth;
 
+import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.member.MemberInfo;
+import com.A108.Watchme.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -12,13 +15,17 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-
+import javax.servlet.http.Cookie;
+import java.util.Map;
 
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
+    private final MemberInfoRepository memberInfoRepository;
+
+    private final JwtProvider jwtProvider;
 
 
     @Override
@@ -33,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) {
-            throw new InternalAuthenticationServiceException(e.getMessage(), e.getCause());
+            throw new InternalAuthenticationServiceException(e.getMessage(), e.getCause()   );
         }
     }
 
@@ -49,7 +56,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if(savedMember != null){
             if(savedMember.getProviderType().equals(providerType)){
-                //jwt return;
+                // 로그인 처리 해주는 로직
+                MemberInfo memberInfo = memberInfoRepository.findById(savedMember.getId()).get();
+                String accessToken = jwtProvider.createAccessToken(savedMember.getId());
+                Map<String, String> refreshToken = jwtProvider.createRefreshToken(savedMember.getId());
+                Cookie cookie = new Cookie("refreshToken",refreshToken.get("refreshToken"));
+                cookie.setHttpOnly(true);
+                cookie.setSecure(true);
+
+
+                AuthDetails authDetails = new AuthDetails(providerType, oAuth2UserInfo.getAttributes(), memberInfo.getName(), memberInfo.getImageLink(), accessToken);
             }
                 throw new OAuthProviderMissMatchException(
                         savedMember.getProviderType() + "로 가입된계정이 있습니다.");

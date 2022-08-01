@@ -80,6 +80,8 @@ public class WebSecurityConfigure {
                 .and()
                 .oauth2Login()
                 .defaultSuccessUrl("/slogin")
+                .successHandler(oAuth2AuthenticationSuccessHandler())
+                .failureHandler(oAuth2AuthenticationFailureHandler())
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
                 .and()
@@ -87,10 +89,9 @@ public class WebSecurityConfigure {
                 .userService(customOAuth2UserService)
                 .and()
                 .redirectionEndpoint()
-                .baseUri("/*/oauth2/code/*")
+                .baseUri("/login/oauth2/code/kakao")
                 .and()
-                .successHandler(oAuth2AuthenticationSuccessHandler())
-                .failureHandler(oAuth2AuthenticationFailureHandler());
+                .tokenEndpoint();
 
         return http.build();
     }

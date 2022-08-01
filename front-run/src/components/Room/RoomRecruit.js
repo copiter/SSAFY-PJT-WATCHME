@@ -219,20 +219,6 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
             <li onClick={ctgChange} value={4}>자격증</li>
             <li onClick={ctgChange} value={5} >기타</li>
           </ul>
-
-          {/* handleChange 확인 */}
-          {/* <select
-            name="roomTag"
-            value={inputs.roomTag || ""}
-            onChange={handleChange}
-          >
-            <option value="">All</option>
-            <option value="공무원">공무원</option>
-            <option value="취업">취업</option>
-            <option value="수능">수능</option>
-            <option value="자격증">자격증</option>
-            <option value="기타">기타</option>
-          </select> */}
           <div className="header__right">
             <Link className="header__link" to="/RoomCreate">
               공개룸 만들기
@@ -247,9 +233,8 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
         {/* 그룹들 모여 있는 부분. 나중에 component화 예정 */}
         <div className="module__rooms">
-          <ul className="rooms__whole">
-            <li>
-              <div onClick={()=>enteringRoom(rooms[0]["id"])} >
+          <ul className="rooms__whole" value={0}>
+            <li value={0} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
                 <article>
                   <div className="group-specs">
                     {/* 미팅#가 background가 되거나
@@ -293,235 +278,228 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                     </div>
                   </dl>
                 </article>
-              </div>
             </li>
-            <li>
-              <div onClick={()=>enteringRoom(rooms[1]["id"])} >
-                <article>
-                  <div className="group-specs">
-                    {/*미팅# 내부에 기능들 표기됨*/}
-                    <img
-                      src={
-                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
-                          ? "#"
-                          : rooms[roomNo]["roomImage"]
-                      }
-                      alt="#" className="imgSrc" 
-                    />
-                    <div className="group-specs__rules">
-                      <span>📝 규칙</span>
-                      <ul>
-                        <li>✔ 휴대폰 인식</li>
-                        <li>✔ 얼굴 인식</li>
-                        <li>✔ 캠 켜기</li>
-                      </ul>
-                    </div>
+            <li value={1} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
+              <article>
+                <div className="group-specs">
+                  {/*미팅# 내부에 기능들 표기됨*/}
+                  <img
+                    src={
+                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                        ? "#"
+                        : rooms[roomNo]["roomImage"]
+                    }
+                    alt="#" className="imgSrc" 
+                  />
+                  <div className="group-specs__rules">
+                    <span>📝 규칙</span>
+                    <ul>
+                      <li>✔ 휴대폰 인식</li>
+                      <li>✔ 얼굴 인식</li>
+                      <li>✔ 캠 켜기</li>
+                    </ul>
                   </div>
+                </div>
 
-                  <dl className="group-info">
-                    <div className="category member-no">
-                      <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["ctgName"]}</dl>
-                      <dt className="sr-only">인원수</dt>
-                      <dl>
-                        &#128509;
-                        {rooms[roomNo]["nowNum"]}/
-                        {rooms[roomNo]["maxNum"]}
-                      </dl>
-                    </div>
-                    <div>
-                      <dt className="sr-only">이름</dt>
-                      <dl>{rooms[roomNo]["roomName"]}</dl>
-                    </div>
-                    <div className="info-content">
-                      <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["description"]}</dl>
-                    </div>
-                  </dl>
-                </article>
-              </div>
+                <dl className="group-info">
+                  <div className="category member-no">
+                    <dt className="sr-only">카테고리</dt>
+                    <dl>{rooms[roomNo]["ctgName"]}</dl>
+                    <dt className="sr-only">인원수</dt>
+                    <dl>
+                      &#128509;
+                      {rooms[roomNo]["nowNum"]}/
+                      {rooms[roomNo]["maxNum"]}
+                    </dl>
+                  </div>
+                  <div>
+                    <dt className="sr-only">이름</dt>
+                    <dl>{rooms[roomNo]["roomName"]}</dl>
+                  </div>
+                  <div className="info-content">
+                    <dt className="sr-only">세부설명</dt>
+                    <dl>{rooms[roomNo]["description"]}</dl>
+                  </div>
+                </dl>
+              </article>
             </li>
-            <li>
-              <div onClick={()=>enteringRoom(rooms[2]["id"])} >
-                <article>
-                  <div className="group-specs">
-                    {/*미팅# 내부에 기능들 표기됨*/}
-                    <img
-                      src={
-                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
-                          ? "#"
-                          : rooms[roomNo]["roomImage"]
-                      }
-                      alt="#" className="imgSrc"
-                    />
-                    <div className="group-specs__rules">
-                      <span>📝 규칙</span>
-                      <ul>
-                        <li>✔ 휴대폰 인식</li>
-                        <li>✔ 얼굴 인식</li>
-                        <li>✔ 캠 켜기</li>
-                      </ul>
-                    </div>
+            <li value={2} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
+              <article>
+                <div className="group-specs">
+                  {/*미팅# 내부에 기능들 표기됨*/}
+                  <img
+                    src={
+                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                        ? "#"
+                        : rooms[roomNo]["roomImage"]
+                    }
+                    alt="#" className="imgSrc"
+                  />
+                  <div className="group-specs__rules">
+                    <span>📝 규칙</span>
+                    <ul>
+                      <li>✔ 휴대폰 인식</li>
+                      <li>✔ 얼굴 인식</li>
+                      <li>✔ 캠 켜기</li>
+                    </ul>
                   </div>
+                </div>
 
-                  <dl className="group-info">
-                    <div className="category member-no">
-                      <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["ctgName"]}</dl>
-                      <dt className="sr-only">인원수</dt>
-                      <dl>
-                        &#128509;
-                        {rooms[roomNo]["nowNum"]}/
-                        {rooms[roomNo]["maxNum"]}
-                      </dl>
-                    </div>
-                    <div>
-                      <dt className="sr-only">이름</dt>
-                      <dl>{rooms[roomNo]["roomName"]}</dl>
-                    </div>
-                    <div className="info-content">
-                      <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["description"]}</dl>
-                    </div>
-                  </dl>
-                </article>
-              </div>
+                <dl className="group-info">
+                  <div className="category member-no">
+                    <dt className="sr-only">카테고리</dt>
+                    <dl>{rooms[roomNo]["ctgName"]}</dl>
+                    <dt className="sr-only">인원수</dt>
+                    <dl>
+                      &#128509;
+                      {rooms[roomNo]["nowNum"]}/
+                      {rooms[roomNo]["maxNum"]}
+                    </dl>
+                  </div>
+                  <div>
+                    <dt className="sr-only">이름</dt>
+                    <dl>{rooms[roomNo]["roomName"]}</dl>
+                  </div>
+                  <div className="info-content">
+                    <dt className="sr-only">세부설명</dt>
+                    <dl>{rooms[roomNo]["description"]}</dl>
+                  </div>
+                </dl>
+              </article>
             </li>
-            <li>
-              <div onClick={()=>enteringRoom(rooms[3]["id"])} >
-                <article>
-                  <div className="group-specs">
-                    {/*미팅# 내부에 기능들 표기됨*/}
-                    <img
-                      src={
-                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
-                          ? "#"
-                          : rooms[roomNo]["roomImage"]
-                      }
-                      alt="#" className="imgSrc"
-                    />
-                    <div className="group-specs__rules">
-                      <span>📝 규칙</span>
-                      <ul>
-                        <li>✔ 휴대폰 인식</li>
-                        <li>✔ 얼굴 인식</li>
-                        <li>✔ 캠 켜기</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <dl className="group-info">
-                    <div className="category member-no">
-                      <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["ctgName"]}</dl>
-                      <dt className="sr-only">인원수</dt>
-                      <dl>
-                        &#128509;
-                        {rooms[roomNo]["nowNum"]}/
-                        {rooms[roomNo]["maxNum"]}
-                      </dl>
-                    </div>
-                    <div>
-                      <dt className="sr-only">이름</dt>
-                      <dl>{rooms[roomNo]["roomName"]}</dl>
-                    </div>
-                    <div className="info-content">
-                      <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["description"]}</dl>
-                    </div>
-                  </dl>
-                </article>
+          </ul>
+          <ul className="rooms__whole" value={1}>
+            <li value={3} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
+            <article>
+              <div className="group-specs">
+                {/*미팅# 내부에 기능들 표기됨*/}
+                <img
+                  src={
+                    rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                      ? "#"
+                      : rooms[roomNo]["roomImage"]
+                  }
+                  alt="#" className="imgSrc"
+                />
+                <div className="group-specs__rules">
+                  <span>📝 규칙</span>
+                  <ul>
+                    <li>✔ 휴대폰 인식</li>
+                    <li>✔ 얼굴 인식</li>
+                    <li>✔ 캠 켜기</li>
+                  </ul>
+                </div>
               </div>
-            </li>  <li>
-              <div onClick={()=>enteringRoom(rooms[4]["id"])} >
-                <article>
-                  <div className="group-specs">
-                    {/*미팅# 내부에 기능들 표기됨*/}
-                    <img
-                      src={
-                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
-                          ? "#"
-                          : rooms[roomNo]["roomImage"]
-                      }
-                      alt="#" className="imgSrc"
-                    />
-                    <div className="group-specs__rules">
-                      <span>📝 규칙</span>
-                      <ul>
-                        <li>✔ 휴대폰 인식</li>
-                        <li>✔ 얼굴 인식</li>
-                        <li>✔ 캠 켜기</li>
-                      </ul>
-                    </div>
-                  </div>
 
-                  <dl className="group-info">
-                    <div className="category member-no">
-                      <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["ctgName"]}</dl>
-                      <dt className="sr-only">인원수</dt>
-                      <dl>
-                        &#128509;
-                        {rooms[roomNo]["nowNum"]}/
-                        {rooms[roomNo]["maxNum"]}
-                      </dl>
-                    </div>
-                    <div>
-                      <dt className="sr-only">이름</dt>
-                      <dl>{rooms[roomNo]["roomName"]}</dl>
-                    </div>
-                    <div className="info-content">
-                      <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["description"]}</dl>
-                    </div>
+              <dl className="group-info">
+                <div className="category member-no">
+                  <dt className="sr-only">카테고리</dt>
+                  <dl>{rooms[roomNo]["ctgName"]}</dl>
+                  <dt className="sr-only">인원수</dt>
+                  <dl>
+                    &#128509;
+                    {rooms[roomNo]["nowNum"]}/
+                    {rooms[roomNo]["maxNum"]}
                   </dl>
-                </article>
-              </div>
-            </li>  <li>
-              <div onClick={()=>enteringRoom(rooms[5]["id"])} >
-                <article>
-                  <div className="group-specs">
-                    {/*미팅# 내부에 기능들 표기됨*/}
-                    <img
-                      src={
-                        rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
-                          ? "#"
-                          : rooms[roomNo]["roomImage"]
-                      }
-                      alt="#" className="imgSrc"
-                    />
-                    <div className="group-specs__rules">
-                      <span>📝 규칙</span>
-                      <ul>
-                        <li>✔ 휴대폰 인식</li>
-                        <li>✔ 얼굴 인식</li>
-                        <li>✔ 캠 켜기</li>
-                      </ul>
-                    </div>
+                </div>
+                <div>
+                  <dt className="sr-only">이름</dt>
+                  <dl>{rooms[roomNo]["roomName"]}</dl>
+                </div>
+                <div className="info-content">
+                  <dt className="sr-only">세부설명</dt>
+                  <dl>{rooms[roomNo]["description"]}</dl>
+                </div>
+              </dl>
+            </article>
+            </li> 
+            <li value={4} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
+              <article>
+                <div className="group-specs">
+                  {/*미팅# 내부에 기능들 표기됨*/}
+                  <img
+                    src={
+                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                        ? "#"
+                        : rooms[roomNo]["roomImage"]
+                    }
+                    alt="#" className="imgSrc"
+                  />
+                  <div className="group-specs__rules">
+                    <span>📝 규칙</span>
+                    <ul>
+                      <li>✔ 휴대폰 인식</li>
+                      <li>✔ 얼굴 인식</li>
+                      <li>✔ 캠 켜기</li>
+                    </ul>
                   </div>
+                </div>
 
-                  <dl className="group-info">
-                    <div className="category member-no">
-                      <dt className="sr-only">카테고리</dt>
-                      <dl>{rooms[roomNo]["ctgName"]}</dl>
-                      <dt className="sr-only">인원수</dt>
-                      <dl>
-                        &#128509;
-                        {rooms[roomNo]["nowNum"]}/
-                        {rooms[roomNo]["maxNum"]}
-                      </dl>
-                    </div>
-                    <div>
-                      <dt className="sr-only">이름</dt>
-                      <dl>{rooms[roomNo]["roomName"]}</dl>
-                    </div>
-                    <div className="info-content">
-                      <dt className="sr-only">세부설명</dt>
-                      <dl>{rooms[roomNo]["description"]}</dl>
-                    </div>
-                  </dl>
-                </article>
-              </div>
+                <dl className="group-info">
+                  <div className="category member-no">
+                    <dt className="sr-only">카테고리</dt>
+                    <dl>{rooms[roomNo]["ctgName"]}</dl>
+                    <dt className="sr-only">인원수</dt>
+                    <dl>
+                      &#128509;
+                      {rooms[roomNo]["nowNum"]}/
+                      {rooms[roomNo]["maxNum"]}
+                    </dl>
+                  </div>
+                  <div>
+                    <dt className="sr-only">이름</dt>
+                    <dl>{rooms[roomNo]["roomName"]}</dl>
+                  </div>
+                  <div className="info-content">
+                    <dt className="sr-only">세부설명</dt>
+                    <dl>{rooms[roomNo]["description"]}</dl>
+                  </div>
+                </dl>
+              </article>
+            </li>  
+            <li value={5} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
+              <article>
+                <div className="group-specs">
+                  {/*미팅# 내부에 기능들 표기됨*/}
+                  <img
+                    src={
+                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                        ? "#"
+                        : rooms[roomNo]["roomImage"]
+                    }
+                    alt="#" className="imgSrc"
+                  />
+                  <div className="group-specs__rules">
+                    <span>📝 규칙</span>
+                    <ul>
+                      <li>✔ 휴대폰 인식</li>
+                      <li>✔ 얼굴 인식</li>
+                      <li>✔ 캠 켜기</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <dl className="group-info">
+                  <div className="category member-no">
+                    <dt className="sr-only">카테고리</dt>
+                    <dl>{rooms[roomNo]["ctgName"]}</dl>
+                    <dt className="sr-only">인원수</dt>
+                    <dl>
+                      &#128509;
+                      {rooms[roomNo]["nowNum"]}/
+                      {rooms[roomNo]["maxNum"]}
+                    </dl>
+                  </div>
+                  <div>
+                    <dt className="sr-only">이름</dt>
+                    <dl>{rooms[roomNo]["roomName"]}</dl>
+                  </div>
+                  <div className="info-content">
+                    <dt className="sr-only">세부설명</dt>
+                    <dl>{rooms[roomNo]["description"]}</dl>
+                  </div>
+                </dl>
+              </article>
             </li>
           </ul>
         </div>

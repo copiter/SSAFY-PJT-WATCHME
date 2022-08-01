@@ -47,6 +47,7 @@ function SocialLogin() {
     })
       .then((response) => {
         if (response.ok) {
+          console.log(response.json());
           return response.json();
         } else {
           response.json().then((data) => {
@@ -58,9 +59,8 @@ function SocialLogin() {
       .then((result) => {
         if (result != null) {
           authCtx.login();
-          alert("로그인 되었습니다");
           navigate("/");
-          window.location.reload();
+     //     window.location.reload();
         }
       })
       .catch((err) => {

@@ -97,7 +97,7 @@ const Login = () => {
             <img src={kakao} alt="카카오" width={28} />
             <span>카카오로 로그인</span>
           </div>
-        </a>
+        </a>        
         <a
           href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=https://watchme2.shop/api/login/oauth2/code/naver`}
         >

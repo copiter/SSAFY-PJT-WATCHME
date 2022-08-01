@@ -51,6 +51,7 @@ function CreateRoom() {
       new Blob([JSON.stringify(inputs)], { type: "application/json" })
     );
 
+    console.log(url);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -106,9 +107,9 @@ function CreateRoom() {
                 src={fileImage}
                 style={{
                   position: "absolute",
-                  margin: "auto",
-                  width: "50px",
-                  height: "50px",
+                  marginTop: "55px",
+                  width: "150px",
+                  height: "150px",
                   borderRadius: "50%",
                 }}
               />

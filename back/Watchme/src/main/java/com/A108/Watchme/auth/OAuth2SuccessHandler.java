@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -17,24 +18,111 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+
 @Slf4j
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private HttpSession httpSession;
+    private final OAuth2AuthorizationRequest authorizationRequestRepository;
+
+    protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+                .map(Cookie::getValue);
 
 
+        if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
+            throw new IllegalArgumentException("Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+        }
+        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-//        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getEmail());
-//        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getName());
-//        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getProviderType());
-        System.out.println("hey");
-        AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
-        httpSession = request.getSession();
-        httpSession.setAttribute("email",authDetails.getAttributes().get("email").toString());
-        httpSession.setAttribute("providerType",authDetails.getProviderType());
-        httpSession.setAttribute("image",authDetails.getImgUrl());
-        response.sendRedirect("https://watchme2.shop/slogin");
+        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
+        ProviderType providerType = ProviderType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
+
+        OidcUser user = ((OidcUser) authentication.getPrincipal());
+        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
+        Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
+
+        RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
+
+        Date now = new Date();
+        AuthToken accessToken = tokenProvider.createAuthToken(
+                userInfo.getId(),
+                roleType.getCode(),
+                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+        );
+
+        // refresh 토큰 설정
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+        AuthToken refreshToken = tokenProvider.createAuthToken(
+                appProperties.getAuth().getTokenSecret(),
+                new Date(now.getTime() + refreshTokenExpiry)
+        );
+
+        // DB 저장
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userInfo.getId());
+        if (userRefreshToken != null) {
+            userRefreshToken.setRefreshToken(refreshToken.getToken());
+        } else {
+            userRefreshToken = new UserRefreshToken(userInfo.getId(), refreshToken.getToken());
+            userRefreshTokenRepository.saveAndFlush(userRefreshToken);
+        }
+
+        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+        return UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("token", accessToken.getToken())
+                .build().toUriString();
     }
+
+    protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
+        super.clearAuthenticationAttributes(request);
+        authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
+    }
+
+    private boolean hasAuthority(Collection<? extends GrantedAuthority> authorities, String authority) {
+        if (authorities == null) {
+            return false;
+        }
+
+        for (GrantedAuthority grantedAuthority : authorities) {
+            if (authority.equals(grantedAuthority.getAuthority())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAuthorizedRedirectUri(String uri) {
+        URI clientRedirectUri = URI.create(uri);
+
+        return appProperties.getOauth2().getAuthorizedRedirectUris()
+                .stream()
+                .anyMatch(authorizedRedirectUri -> {
+                    // Only validate host and port. Let the clients use different paths if they want to
+                    URI authorizedURI = URI.create(authorizedRedirectUri);
+                    if(authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
+                            && authorizedURI.getPort() == clientRedirectUri.getPort()) {
+                        return true;
+                    }
+                    return false;
+                });
+    }
+
+//    @Override
+//    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+////        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getEmail());
+////        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getName());
+////        System.out.println(objectMapper.convertValue(authentication.getDetails(), OAuthUser.class).getProviderType());
+//        System.out.println("hey");
+//        AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
+//        httpSession = request.getSession();
+//        httpSession.setAttribute("email",authDetails.getAttributes().get("email").toString());
+//        httpSession.setAttribute("providerType",authDetails.getProviderType());
+//        httpSession.setAttribute("image",authDetails.getImgUrl());
+//        response.sendRedirect("https://watchme2.shop/slogin");
+//    }
 }

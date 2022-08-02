@@ -24,7 +24,6 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
-
     private final JwtProvider jwtProvider;
 
 

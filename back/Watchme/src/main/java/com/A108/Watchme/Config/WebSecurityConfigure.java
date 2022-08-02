@@ -21,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -39,6 +40,8 @@ public class WebSecurityConfigure {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+    private final AuthorizationRequestRepository authorizationRequestRepository;
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -57,12 +60,17 @@ public class WebSecurityConfigure {
     public AuthenticationFailureHandler oAuth2AuthenticationFailureHandler(){
         return oAuth2AuthenticationFailureHandler;
     }
+
+    @Bean
+    public AuthorizationRequestRepository authorizationRequestRepository(){
+        return authorizationRequestRepository;
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
         http
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
@@ -80,18 +88,23 @@ public class WebSecurityConfigure {
                 .and()
                 .oauth2Login()
                 .defaultSuccessUrl("/slogin")
-                .successHandler(oAuth2AuthenticationSuccessHandler())
-                .failureHandler(oAuth2AuthenticationFailureHandler())
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
+                .and()
+                .redirectionEndpoint()
+                .baseUri("/login/oauth2/code/*")
+                .and()
+                .tokenEndpoint()
                 .and()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService)
                 .and()
-                .redirectionEndpoint()
-                .baseUri("/login/oauth2/code/kakao")
+                .successHandler(oAuth2AuthenticationSuccessHandler())
+                .failureHandler(oAuth2AuthenticationFailureHandler())
                 .and()
-                .tokenEndpoint();
+                .oauth2Client()
+                .authorizationCodeGrant()
+                .authorizationRequestRepository(this.authorizationRequestRepository);
 
         return http.build();
     }

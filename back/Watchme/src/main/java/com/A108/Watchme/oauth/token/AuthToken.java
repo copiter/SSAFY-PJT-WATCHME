@@ -55,6 +55,7 @@ public class AuthToken {
     }
 
     public boolean validate() {
+        System.out.println(this.getTokenClaims());
         return this.getTokenClaims() != null;
     }
 

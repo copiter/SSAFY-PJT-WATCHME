@@ -16,4 +16,4 @@ app:
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris:
-      - https://watchme2.shop/login/test
+      - https://watchme2.shop/login

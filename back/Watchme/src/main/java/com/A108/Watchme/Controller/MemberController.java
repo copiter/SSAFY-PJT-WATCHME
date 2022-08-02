@@ -56,12 +56,7 @@ public class MemberController {
     public ApiResponse login(@RequestBody @Validated LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
 
         ApiResponse apiResponse = memberService.login(request,response, loginRequestDTO);
-        String token = apiResponse.getResponseData().get("refreshToken").toString();
-        Cookie cookie = new Cookie("refreshToken", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        response.addCookie(cookie);
-        apiResponse.getResponseData().remove("refreshToken");
+        System.out.println(apiResponse.getResponseData());
         return apiResponse;
     }
     @PostMapping("/logout")

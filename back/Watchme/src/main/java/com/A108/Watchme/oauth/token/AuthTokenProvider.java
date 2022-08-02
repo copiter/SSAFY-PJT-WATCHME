@@ -48,8 +48,8 @@ public class AuthTokenProvider {
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-            log.debug("claims subject := [{}]", claims.getSubject());
-            User principal = new User(claims.getSubject(), "", authorities);
+            log.debug("claims subject := [{}]", claims.get("memberId"));
+            User principal = new User(claims.get("memberId").toString(), "", authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         } else {

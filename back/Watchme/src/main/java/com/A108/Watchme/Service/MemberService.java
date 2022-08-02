@@ -81,7 +81,7 @@ public class MemberService {
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        System.out.println(((UserPrincipal) authentication.getPrincipal()).getRoleType());
         Date now = new Date();
         Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
 

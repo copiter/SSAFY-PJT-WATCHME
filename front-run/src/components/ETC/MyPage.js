@@ -1,12 +1,52 @@
-import React from "react";
-import "./MyPage.css";
-import userInfor from "../json/jsons"
+import React from "react"; 
+import { useState, useContext,useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function MyPage() {
+import "./MyPage.css";
+import { FetchUrl } from "../../store/communication";
+
+import userInfor from "../json/member.json"
+
+
 
   
-  let userInformation=userInfor["responseData"]["member"];
+
+function MyPage() {
+  const FETCH_URL = useContext(FetchUrl);
+  
+	const [userInformation, setUserInforMation] = useState(userInfor["responseData"]["member"])
+  
+
+  const url = `${FETCH_URL}/members`;
+
+
+	useEffect(() => {
+    fetch(url)
+   .then((response) => {
+     if(response.bodyUsed)
+     {
+       console.log("재사용됨");
+
+     }
+     else if(response.ok)
+     {
+       return response.json();
+     }
+     else{
+
+       console.log("C4");
+     }
+   })
+   .then((result)=>{
+    setUserInforMation(result["responseData"]["member"])
+   })
+   .catch((err) => {
+     console.log("ERROR");
+   });
+ }, [])
+
+
+
 
   return (
   <div className="">

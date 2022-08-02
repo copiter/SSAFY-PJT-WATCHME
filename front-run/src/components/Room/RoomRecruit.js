@@ -1,13 +1,13 @@
 import React from "react";
-import { Link,useNavigate } from "react-router-dom";
 import { useState, useContext,useEffect } from "react";
-import { FetchUrl } from "../../store/communication";
+import { Link,useNavigate } from "react-router-dom";
 
 import "./RoomRecruit.css";
+import { FetchUrl } from "../../store/communication";
+
 import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
-
 import roomJsons from "../json/roomReq.json"
 
 let page = 0;
@@ -17,7 +17,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
   const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
-    categoryname: "",
+    category: "",
     roomSearch: "",
   });
 
@@ -41,7 +41,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 	const [rooms, setRooms] = useState(roomJsons["responseData"]["rooms"])
   
 	useEffect(() => {
-     fetch(url+"?categoryname=&page=")
+     fetch(url+"?category=&page=&keyword="+inputs["keyword"])
     .then((response) => {
       if(response.bodyUsed)
       {
@@ -67,10 +67,10 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
  
 
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event) => {//제출하기 실제 값 적용안됨
     event.preventDefault();
-    fetch(url+"?categoryname="+inputs["categoryname"]+"&page="
-    //+"&roomSearch=" +
+    console.log(url+"?category="+inputs["category"]+"&page="+"&keyword="+inputs["keyword"]);
+    fetch(url+"?category="+inputs["category"]+"&page="+"&keyword="
     //inputs["roomSearch"]
     )
     .then((response) => {
@@ -97,10 +97,10 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
   
   };
 
-  const addMore = (event) => {
+  const addMore = (event) => {//값 입력 안받은상태임
     page++;
-    console.log(url+"?categoryname="+inputs["categoryname"]+"&page="+page);
-    fetch(url+"?categoryname="+inputs["categoryname"]+"&page="
+    console.log("실제로 들어가야하는 방식 : "+url+"?category="+inputs["category"]+"&page="+page+"&keyword="+inputs["keyword"]);
+    fetch(url+"?category="+inputs["category"]+"&page="+"keyword="
     //page
 
         //+"&roomSearch=" +
@@ -129,15 +129,15 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
     });
   };
 
-  const ctgChange=(event)=>{
+  const ctgChange=(event)=>{//카테고리 변동(LI라서 이방법 사용)
     event.preventDefault();
     const ARR=["전부","공무원","취업","수능","자격증","기타"];
 
       
-    setInputs((values) => ({ ...values, categoryname: ARR[event.target.value] }));  
+    setInputs((values) => ({ ...values, category: ARR[event.target.value] }));  
   }
 
-  function enteringRoom(id){
+  function enteringRoom(id){//방들어가기 문제없이 작동
     const urls= `${FETCH_URL}/room/join/`;
 
     

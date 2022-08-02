@@ -80,7 +80,7 @@ const Login = () => {
           required
           ref={passwordInputRef}
         />
-        <div><Link to="findID">아이디</Link>/<Link to="findPWD">비밀번호 찾기</Link></div>
+        <div><Link to="/findID">아이디</Link>/<Link to="/findPWD">비밀번호 찾기</Link></div>
         <button className="submit-btn">로그인</button>
       </form>
 

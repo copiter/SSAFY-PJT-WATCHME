@@ -1,29 +1,26 @@
-package com.A108.Watchme.auth;
+package com.A108.Watchme.oauth.service;
 
-import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Repository.MemberRepository;
-import com.A108.Watchme.VO.ENUM.ErrorCode;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.oauth.entity.UserPrincipal;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
-public class PrincipalDetailService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MemberRepository memberRepository;
+    private final MemberRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email);
-        if(member==null){
-            throw new AuthenticationException(ErrorCode.UsernameOrPasswordNotFoundException);
+        Member user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("Can not find username.");
         }
-        return new PrincipalDetails(member);
+        return UserPrincipal.create(user);
     }
 }

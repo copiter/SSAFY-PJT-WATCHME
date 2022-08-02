@@ -9,16 +9,11 @@ import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
-import com.A108.Watchme.VO.Entity.RefreshToken;
-import com.A108.Watchme.VO.Entity.member.Member;
-import com.A108.Watchme.auth.AuthDetails;
 import io.swagger.annotations.*;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,7 +55,7 @@ public class MemberController {
     @ResponseBody
     public ApiResponse login(@RequestBody @Validated LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
 
-        ApiResponse apiResponse = memberService.login(loginRequestDTO);
+        ApiResponse apiResponse = memberService.login(request,response, loginRequestDTO);
         String token = apiResponse.getResponseData().get("refreshToken").toString();
         Cookie cookie = new Cookie("refreshToken", token);
         cookie.setHttpOnly(true);
@@ -95,31 +90,16 @@ public class MemberController {
 
         return apiResponse;
     }
-    @PostMapping("/newtoken")
-    @ResponseBody
-    public ApiResponse newAccessToken(@RequestBody @Validated NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request) {
-        return memberService.newAccessToken(newTokenRequestDTO, request);
-    }
+//    @PostMapping("/newtoken")
+//    @ResponseBody
+//    public ApiResponse newAccessToken(@RequestBody @Validated NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request) {
+//        return memberService.newAccessToken(newTokenRequestDTO, request);
+//    }
 
     @PostMapping("/social-signup")
     @ResponseBody
     public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
-                                    HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = false) Cookie authCookie, Authentication authentication) throws ParseException {
-        AuthDetails authDetails = (AuthDetails) authentication.getPrincipal();
-        System.out.println(authDetails.getAttributes());
-        HttpSession httpSession = request.getSession(false);
-        if(httpSession!=null){
-            ApiResponse apiResponse = memberService.memberInsert(socialSignUpRequestDTO, httpSession);
-            String token = apiResponse.getResponseData().get("refreshToken").toString();
-            Cookie cookie = new Cookie("refreshToken", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            response.addCookie(cookie);
-            apiResponse.getResponseData().remove("refreshToken");
-            return apiResponse;
-        }
-        else{
-            throw new RuntimeException("잘못된 접근");
-        }
+                                    HttpServletResponse response, Authentication authentication) throws ParseException {
+        return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
     }
 }

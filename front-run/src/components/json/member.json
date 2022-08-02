@@ -2,28 +2,31 @@
     "code": 200,
     "message": "SUCCESS GET MEMBER INFO",
     "responseData": {
-        "member": {
-            "id": 3,
-            "email": "fe26ming@gmail.com",
-            "nickName": "박박철민",
-            "status": "YES",
-            "role": "MEMBER",
-            "providerType": "EMAIL",
-            "memberInfo": {
-                "id": 3,
-                "gender": "M",
-                "birth": 962928000000,
-                "name": "박철민",
-                "point": 0,
-                "score": 0,
-                "imageLink": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png",
-                "studyTime": null,
-                "studyTimeDay": 0,
-                "studyTimeWeek": null,
-                "studyTimeMonth": null
+        "penalty": [
+            {
+                "ruleName": "SLEEP",
+                "createdAt": "2022년 10월 25일 화요일",
+                "score": 5
             },
-            "memberGroupList": []
+            {
+                "ruleName": "SLEEP",
+                "createdAt": "2022년 10월 25일 화요일",
+                "score": 6
+            }
+        ],
+        "member": {
+            "nickName": "nick1",
+            "profileImage": "img1",
+            "point": 1,
+            "description": null,
+            "studyTimeToday": 456,
+            "studyTimeWeek": 54,
+            "studyTimeMonth": 231,
+            "studyTimeTotal": 416
         },
-        "panlty": []
+        "rules": [
+            "SLEEP",
+            "PHONE"
+        ]
     }
 }

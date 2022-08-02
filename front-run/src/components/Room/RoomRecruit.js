@@ -15,7 +15,6 @@ let page = 0;
 function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
   const FETCH_URL = useContext(FetchUrl);
   const navigate = useNavigate();
-
   const [inputs, setInputs] = useState({
     category: "",
     roomSearch: "",
@@ -23,6 +22,9 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
 
 
+	const [rooms, setRooms] = useState(roomJsons["responseData"]["rooms"])
+  
+  const inputLength=rooms.length;
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -32,16 +34,14 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
 
   //URL
-  const url = `${FETCH_URL}/room/recruit`;
+  const url = `${FETCH_URL}/room`;
   //Otpion
 
   let roomNo = 0;
   
-
-	const [rooms, setRooms] = useState(roomJsons["responseData"]["rooms"])
-  
 	useEffect(() => {
-     fetch(url+"?category=&page=&keyword="+inputs["keyword"])
+    console.log(url+"?category=&page=&keyword=");
+    fetch(url+"?category=&page=&keyword=")
     .then((response) => {
       if(response.bodyUsed)
       {
@@ -50,6 +50,8 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
       else if(response.ok)
       {
+        console.log(response);
+        console.log(response.json())
         return response.json();
       }
       else{
@@ -58,7 +60,9 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
     })
     .then((result)=>{
+      console.log(result);
        setRooms(result["responseData"]["rooms"])
+       console.log("T1");
     })
     .catch((err) => {
       console.log("ERROR");
@@ -66,11 +70,10 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 	}, [])
  
 
-
   const handleSubmit = (event) => {//제출하기 실제 값 적용안됨
     event.preventDefault();
-    console.log(url+"?category="+inputs["category"]+"&page="+"&keyword="+inputs["keyword"]);
-    fetch(url+"?category="+inputs["category"]+"&page="+"&keyword="
+    console.log(url+"?category="+inputs["category"]+"&page="+"&keyword=석인방");
+    fetch(url+"?category="+inputs["category"]+"&page="+"&keyword=석인방"
     //inputs["roomSearch"]
     )
     .then((response) => {
@@ -81,6 +84,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
       else if(response.ok)
       {
+        console.log("ㅅㄷㄴㅅ");
         return response.json();
       }
       else{
@@ -89,6 +93,8 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
     })
     .then((result)=>{
+      console.log(1);
+      console.log(result["responseData"]["rooms"]);
        setRooms(result["responseData"]["rooms"])
     })
     .catch((err) => {
@@ -234,7 +240,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
         {/* 그룹들 모여 있는 부분. 나중에 component화 예정 */}
         <div className="module__rooms">
           <ul className="rooms__whole" value={0}>
-            <li value={0} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
+            {inputLength>roomNo&&<li value={0} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
                 <article>
                   <div className="group-specs">
                     {/* 미팅#가 background가 되거나
@@ -278,14 +284,14 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                     </div>
                   </dl>
                 </article>
-            </li>
-            <li value={1} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
+            </li>}
+            {inputLength>++roomNo&&<li value={1} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
               <article>
                 <div className="group-specs">
                   {/*미팅# 내부에 기능들 표기됨*/}
                   <img
                     src={
-                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                      rooms[roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
                         ? "#"
                         : rooms[roomNo]["roomImage"]
                     }
@@ -322,14 +328,14 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                   </div>
                 </dl>
               </article>
-            </li>
-            <li value={2} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
+            </li>}
+            {inputLength>++roomNo&&<li value={2} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >
               <article>
                 <div className="group-specs">
                   {/*미팅# 내부에 기능들 표기됨*/}
                   <img
                     src={
-                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                      rooms[roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
                         ? "#"
                         : rooms[roomNo]["roomImage"]
                     }
@@ -366,16 +372,16 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                   </div>
                 </dl>
               </article>
-            </li>
+            </li>}
           </ul>
           <ul className="rooms__whole" value={1}>
-            <li value={3} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
+            {inputLength>++roomNo&&<li value={3} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
             <article>
               <div className="group-specs">
                 {/*미팅# 내부에 기능들 표기됨*/}
                 <img
                   src={
-                    rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                    rooms[roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
                       ? "#"
                       : rooms[roomNo]["roomImage"]
                   }
@@ -412,14 +418,14 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                 </div>
               </dl>
             </article>
-            </li> 
-            <li value={4} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
+            </li> }
+            {inputLength>++roomNo&&<li value={4} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
               <article>
                 <div className="group-specs">
                   {/*미팅# 내부에 기능들 표기됨*/}
                   <img
                     src={
-                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                      rooms[roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
                         ? "#"
                         : rooms[roomNo]["roomImage"]
                     }
@@ -456,14 +462,14 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                   </div>
                 </dl>
               </article>
-            </li>  
-            <li value={5} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
+            </li> }
+            {inputLength>++roomNo&&<li value={5} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} > 
               <article>
                 <div className="group-specs">
                   {/*미팅# 내부에 기능들 표기됨*/}
                   <img
                     src={
-                      rooms[++roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
+                      rooms[roomNo]["roomImage"] === "none"||rooms[roomNo]["roomImage"] === ""
                         ? "#"
                         : rooms[roomNo]["roomImage"]
                     }
@@ -500,7 +506,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
                   </div>
                 </dl>
               </article>
-            </li>
+            </li>}
           </ul>
         </div>
         <button type="button" id="more-btn" name="roompage" onClick={addMore}>

@@ -23,7 +23,7 @@ import MyGroups from "./components/Group/MyGroups"; //그룹정보
 import MainPage from "./components/MainPage/MainPage";
 import NotFound from "./pages/NotFound";
 import About from "./components/ETC/About";
-import MyPage from "./components/ETC/MyPage";
+import MyPage from "./components/MyPage/MyPage";
 
 function App() {
   return (

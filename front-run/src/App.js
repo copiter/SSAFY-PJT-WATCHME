@@ -5,6 +5,8 @@ import Layout from "./components/layout/Layout";
 import Login from "./components/ClientManagement/Login";
 import SocialLogin from "./components/ClientManagement/SocialLogin";
 import SignUp from "./components/ClientManagement/SignUp";
+import FindID from "./components/ClientManagement/FindIDPWD/FindID";
+import FindPWD from "./components/ClientManagement/FindIDPWD/FindPWD";
 
 //공개미팅룸관련
 import RoomRecruit from "./components/Room/RoomRecruit"; //룸탐색
@@ -31,6 +33,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/slogin" element={<SocialLogin />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/FindID" element={<FindID />} />
+        <Route path="/FindPWD" element={<FindPWD />} />
         <Route path="/RoomRecruit" element={<RoomRecruit />} />
         <Route path="/RoomCreate" element={<RoomCreate />} />
         <Route path="/RoomDetail/:id" element={<RoomDetail />} />

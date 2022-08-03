@@ -53,8 +53,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private MemberInfoRepository memberInfoRepository;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String email = ((UserPrincipal)authentication.getPrincipal()).getName();
+        String email = authentication.getName();
+        System.out.println(authentication.getName());
+        System.out.println(authentication.getPrincipal());
         Member member = memberRepository.findByEmail(email);
+
         MemberInfo memberInfo = memberInfoRepository.findById(member.getId()).get();
 
         // 정보입력을 위한 이동

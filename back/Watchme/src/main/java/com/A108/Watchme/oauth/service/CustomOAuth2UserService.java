@@ -2,7 +2,10 @@ package com.A108.Watchme.oauth.service;
 
 import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
+import com.A108.Watchme.VO.ENUM.Gender;
 import com.A108.Watchme.VO.ENUM.ProviderType;
+import com.A108.Watchme.VO.ENUM.Role;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.oauth.entity.RoleType;
@@ -19,23 +22,22 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
-    BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User user = super.loadUser(userRequest);
 
         try {
-            return this.process(userRequest, user);
+            return (OAuth2User) process(userRequest, user);
         } catch (AuthenticationException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -48,6 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ProviderType providerType = ProviderType.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
+
         Member savedUser = memberRepository.findByEmail(userInfo.getEmail());
 
         // 동일한 이메일로 가입한 계정이 있으면
@@ -77,6 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         // 신규 가입 계정인 경우
         else {
+            System.out.println("신규가입");
             savedUser = createUser(userInfo, providerType);
         }
 
@@ -84,18 +88,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private Member createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
-        String encPw = bCryptPasswordEncoder.encode("1234");
         LocalDateTime now = LocalDateTime.now();
-        Member member = Member.builder()
+        Member member = memberRepository.save(Member.builder()
                 .email(userInfo.getEmail())
                 .nickName(userInfo.getNickName())
+                .role(Role.MEMBER)
+                .pwd("12345")
+                .status(Status.YES)
                 .providerType(providerType)
-                .pwd(encPw)
-                .build();
-        Member newMember = memberRepository.save(member);
-        MemberInfo memberInfo = MemberInfo.builder().id(member.getId()).build();
+                .build());
 
+        memberInfoRepository.save(MemberInfo.builder()
+                .member(member)
+                .gender(Gender.M)
+                .name("xpt")
+                .birth(new Date())
+                .point(0)
+                .imageLink(userInfo.getImageUrl())
+                .score(0)
+                .build());
 
-        return memberRepository.saveAndFlush(member);
+        return member;
     }
 }

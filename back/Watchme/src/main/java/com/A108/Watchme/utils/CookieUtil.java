@@ -1,15 +1,18 @@
 package com.A108.Watchme.utils;
 
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.util.SerializationUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Optional;
 
 public class CookieUtil {
-
+    static int count = 0;
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
 
@@ -27,6 +30,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+//        cookie.setValue(LocalDateTime.now().toString());
         cookie.setMaxAge(maxAge);
 
         response.addCookie(cookie);

@@ -1,13 +1,13 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import React, { Component } from "react";
-import "./RoomDetail.css";
+import "./App.css";
 import UserVideoComponent from "./UserVideoComponent";
 
 const OPENVIDU_SERVER_URL = "https://" + window.location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
-class RoomDetail extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
 
@@ -20,11 +20,9 @@ class RoomDetail extends Component {
       subscribers: [],
       videoState: true, //보이도록
       audioState: true, //마이크 on
-      screenShare: true, //화면공유 버튼
     };
 
     this.joinSession = this.joinSession.bind(this);
-    this.getUserPermission = this.getUserPermission.bind(this);
     this.leaveSession = this.leaveSession.bind(this);
     this.videoHandlerOn = this.videoHandlerOn.bind(this);
     this.videoHandlerOff = this.videoHandlerOff.bind(this);
@@ -81,18 +79,6 @@ class RoomDetail extends Component {
     }
   }
 
-  async getUserPermission() {
-    try {
-      var devices = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-    } catch (e) {
-      alert("서비스 사용을 위해 카메라와 마이크 권한이 필요합니다.");
-      this.getUserPermission();
-    }
-  }
-
   joinSession() {
     // --- 1) Get an OpenVidu object ---
 
@@ -144,13 +130,7 @@ class RoomDetail extends Component {
           mySession
             .connect(token, { clientData: this.state.myUserName })
             .then(async () => {
-              //브라우저 비디오, 오디오 권한 설정
-              this.getUserPermission();
-
-              // console.log("디바이스", devices)
-
               var devices = await this.OV.getDevices();
-
               var videoDevices = devices.filter(
                 (device) => device.kind === "videoinput"
               );
@@ -252,12 +232,11 @@ class RoomDetail extends Component {
     }
   }
 
-  //화면 공유 기능
   async screenShare() {
     //기존 정보 저장
-    const latestPublisher = this.state.publisher;
+    var defaultPublisher = this.state.publisher;
 
-    //screenshare를 위한 publisher 생성
+    //screenshare를 위한 publish 생성
     var newPublisher = this.OV.initPublisher(undefined, {
       videoSource: "screen",
     });
@@ -268,9 +247,7 @@ class RoomDetail extends Component {
     this.setState({
       mainStreamManager: newPublisher,
       publisher: newPublisher,
-      screenShare: false,
     });
-
     console.log("Session screen connected");
 
     //화면 공유 중지 누른 뒤 로직
@@ -280,10 +257,7 @@ class RoomDetail extends Component {
       .addEventListener("ended", () => {
         console.log('User pressed the "Stop sharing" button');
         this.state.session.unpublish(newPublisher);
-        this.state.session.publish(latestPublisher);
-        this.setState({
-          screenShare: true,
-        });
+        this.state.session.publish(defaultPublisher);
       });
   }
 
@@ -291,32 +265,27 @@ class RoomDetail extends Component {
   videoHandlerOn() {
     this.setState({
       videoState: true,
-      screenShare: true,
     });
     this.state.publisher.publishVideo(true);
   }
   videoHandlerOff() {
     this.setState({
       videoState: false,
-      screenShare: false,
     });
     this.state.publisher.publishVideo(false);
   }
   //Audio ON / OFF
   audioHandlerOn() {
-    this.state.publisher.publishAudio(true);
-
-    // Update the state with the new subscribers
     this.setState({
       audioState: true,
     });
+    this.state.publisher.publishAudio(true);
   }
   audioHandlerOff() {
-    this.state.publisher.publishAudio(false);
-
     this.setState({
       audioState: false,
     });
+    this.state.publisher.publishAudio(false);
   }
 
   render() {
@@ -395,16 +364,13 @@ class RoomDetail extends Component {
               {!this.state.audioState && (
                 <button onClick={this.audioHandlerOn}>Audio ON</button>
               )}
-              {this.state.screenShare && (
-                <button onClick={this.screenShare}>화면공유</button>
-              )}
+              <button onClick={this.screenShare}>화면공유</button>
             </div>
 
             {this.state.mainStreamManager !== undefined ? (
               <div id="main-video" className="col-md-6">
                 <UserVideoComponent
                   streamManager={this.state.mainStreamManager}
-                  audioState={this.state.audioState}
                 />
                 <input
                   className="btn btn-large btn-success"
@@ -531,4 +497,4 @@ class RoomDetail extends Component {
   }
 }
 
-export default RoomDetail;
+export default App;

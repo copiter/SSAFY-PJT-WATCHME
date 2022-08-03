@@ -1,13 +1,14 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import React, { Component } from "react";
-import "./App.css";
+import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
 
 const OPENVIDU_SERVER_URL = "https://" + window.location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
+console.log(window.location.hostname);
 
-class App extends Component {
+class RoomDetail extends Component {
   constructor(props) {
     super(props);
 
@@ -22,8 +23,6 @@ class App extends Component {
 
     this.joinSession = this.joinSession.bind(this);
     this.leaveSession = this.leaveSession.bind(this);
-    this.videoHandler = this.videoHandler.bind(this);
-    this.audioHandler = this.audioHandler.bind(this);
     this.switchCamera = this.switchCamera.bind(this);
     this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
@@ -33,6 +32,7 @@ class App extends Component {
 
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
+    window.addEventListener("load", this.joinSession);
   }
 
   componentWillUnmount() {
@@ -187,6 +187,8 @@ class App extends Component {
       mainStreamManager: undefined,
       publisher: undefined,
     });
+
+    window.history.go(-1);
   }
 
   async switchCamera() {
@@ -227,100 +229,35 @@ class App extends Component {
     }
   }
 
-  //Video On / OFF
-  async videoHandler() {
-    console.log("퍼블리셔", this.state.publisher);
-    this.state.publisher.publishVideo(false);
-  }
-  //Audio ON / OFF
-  async audioHandler() {
-    this.state.publisher.publishAudio(false);
-  }
-
   render() {
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
 
     return (
-      <div className="container">
-        {this.state.session === undefined ? (
-          <div id="join">
-            <div id="img-div">
-              <img
-                src="resources/images/openvidu_grey_bg_transp_cropped.png"
-                alt="OpenVidu logo"
-              />
-            </div>
-            <div id="join-dialog" className="jumbotron vertical-center">
-              <h1> Join a video session </h1>
-              <form className="form-group" onSubmit={this.joinSession}>
-                <p>
-                  <label>Participant: </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    id="userName"
-                    value={myUserName}
-                    onChange={this.handleChangeUserName}
-                    required
-                  />
-                </p>
-                <p>
-                  <label> Session: </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    id="sessionId"
-                    value={mySessionId}
-                    onChange={this.handleChangeSessionId}
-                    required
-                  />
-                </p>
-                <p className="text-center">
-                  <input
-                    className="btn btn-lg btn-success"
-                    name="commit"
-                    type="submit"
-                    value="JOIN"
-                  />
-                </p>
-              </form>
-            </div>
-          </div>
-        ) : null}
-
-        {this.state.session !== undefined ? (
-          <div id="session">
-            <div id="session-header">
-              <h1 id="session-title">{mySessionId}</h1>
-              <input
-                className="btn btn-large btn-danger"
-                type="button"
-                id="buttonLeaveSession"
-                onClick={this.leaveSession}
-                value="Leave session"
-              />
-
-              <button onClick={this.videoHandler}>Video ON</button>
-
-              {/* {!videoState && (
-                <button onClick={this.videoHandler}>Video OFF</button>
-              )}
-              {audioState && (
-                <button onClick={this.audioHandler}>Audio ON</button>
-              )}
-              {!audioState && (
-                <button onClick={this.audioHandler}>Audio OFF</button>
-              )} */}
-            </div>
-
+      <div id="session">
+        <div id="session-header">
+          <input
+            type="button"
+            id="buttonLeaveSession"
+            onClick={this.leaveSession}
+            value="&lt; 미팅룸 나가기"
+          />
+          <h1 id="session-title">{mySessionId}</h1>
+          <input
+            type="button"
+            id="buttonOwnerSetting"
+            onClick={this.leaveSession}
+            value="방장설정"
+          />
+        </div>
+        <div id="session-body">
+          <div id="video-grid">
             {this.state.mainStreamManager !== undefined ? (
-              <div id="main-video" className="col-md-6">
+              <div id="main-video">
                 <UserVideoComponent
                   streamManager={this.state.mainStreamManager}
                 />
                 <input
-                  className="btn btn-large btn-success"
                   type="button"
                   id="buttonSwitchCamera"
                   onClick={this.switchCamera}
@@ -328,29 +265,30 @@ class App extends Component {
                 />
               </div>
             ) : null}
-            <div id="video-container" className="col-md-6">
-              {this.state.publisher !== undefined ? (
-                <div
-                  className="stream-container col-md-6 col-xs-6"
-                  onClick={() =>
-                    this.handleMainVideoStream(this.state.publisher)
-                  }
-                >
-                  <UserVideoComponent streamManager={this.state.publisher} />
-                </div>
-              ) : null}
-              {this.state.subscribers.map((sub, i) => (
-                <div
-                  key={i}
-                  className="stream-container col-md-6 col-xs-6"
-                  onClick={() => this.handleMainVideoStream(sub)}
-                >
-                  <UserVideoComponent streamManager={sub} />
-                </div>
-              ))}
-            </div>
+            {this.state.publisher !== undefined ? (
+              <div
+                className="stream-container"
+                onClick={() => this.handleMainVideoStream(this.state.publisher)}
+              >
+                <UserVideoComponent streamManager={this.state.publisher} />
+              </div>
+            ) : null}
+            {this.state.subscribers.map((sub, i) => (
+              <div
+                key={i}
+                className="stream-container"
+                onClick={() => this.handleMainVideoStream(sub)}
+              >
+                <UserVideoComponent streamManager={sub} />
+              </div>
+            ))}
+            {/* <div id="video-container"></div> */}
           </div>
-        ) : null}
+          <div id="session-side">
+            <h2>Client Data</h2>
+            <div id="session-clock">시계</div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -444,4 +382,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default RoomDetail;

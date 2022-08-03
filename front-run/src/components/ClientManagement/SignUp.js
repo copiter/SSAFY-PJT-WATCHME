@@ -62,7 +62,7 @@ function SignUp() {
         navigate("/login"); //로그인 페이지로
       })
       .catch((err) => {
-        alert(err.message);
+        alert("오류가 발새하였습니다");
       });
   };
 

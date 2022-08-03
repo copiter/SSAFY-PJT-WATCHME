@@ -10,7 +10,7 @@ import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import roomJsons from "../json/roomReq.json"
 
-let page = 0;
+let page = 1;
 
 function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
   const FETCH_URL = useContext(FetchUrl);
@@ -39,9 +39,8 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
   let roomNo = 0;
   
-	useEffect(() => {
-    console.log(url+"?category=&page=&keyword=");
-    fetch(url+"?category=&page=&keyword=")
+	useEffect(() => { 
+    fetch(url)
     .then((response) => {
       if(response.bodyUsed)
       {
@@ -50,8 +49,6 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
       else if(response.ok)
       {
-        console.log(response);
-        console.log(response.json())
         return response.json();
       }
       else{
@@ -60,9 +57,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
     })
     .then((result)=>{
-      console.log(result);
        setRooms(result["responseData"]["rooms"])
-       console.log("T1");
     })
     .catch((err) => {
       console.log("ERROR");
@@ -72,10 +67,18 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
   const handleSubmit = (event) => {//제출하기 실제 값 적용안됨
     event.preventDefault();
-    console.log(url+"?category="+inputs["category"]+"&page="+"&keyword=석인방");
-    fetch(url+"?category="+inputs["category"]+"&page="+"&keyword=석인방"
-    //inputs["roomSearch"]
+    console.log(url+"?"+
+    
+      (inputs.category===""?"":"category="+inputs.category+"&")
+      +(page===""||page===1?"":"page="+page+"&")
+      +"keyword=석인방"
+      );
+    fetch(url+"?"+
+    (inputs.category===""?"":"category="+inputs.category+"&")
+    +(page===""||page===1?"":"page="+page+"&")
+    +"keyword=석인방&page=1"
     )
+    
     .then((response) => {
       if(response.bodyUsed)
       {

@@ -44,8 +44,11 @@ const Login = () => {
           return response.json();
         } else {
           response.json().then((data) => {
-            let errorMessage = "Authentication failed!";
-            throw new Error(errorMessage);
+            let errorMessage = data.error;
+            throw new Error();
+          })
+          .catch((error)=>{
+            alert("아이디와 비밀번호를 확인하세요")
           });
         }
       })
@@ -57,7 +60,8 @@ const Login = () => {
         window.location.reload();
       })
       .catch((err) => {
-        alert(err.message);
+        let errorMessage = "오류가 발생하였습니다";
+        throw new Error(errorMessage);
       });
   };
 

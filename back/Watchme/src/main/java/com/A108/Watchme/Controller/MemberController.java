@@ -119,7 +119,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/find-email")
+    @PostMapping("/find-email")
     @ResponseBody
     public ApiResponse findEmail(@RequestBody FindEmailRequestDTO findEmailRequestDTO){
         System.out.println(findEmailRequestDTO.getNickName());

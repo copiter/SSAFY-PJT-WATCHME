@@ -169,7 +169,10 @@ public class MemberService {
 
     public ApiResponse findEmail(FindEmailRequestDTO findEmailRequestDTO) {
         ApiResponse result = new ApiResponse();
+
+        System.out.println(findEmailRequestDTO.getNickName());
         Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
+
         if(member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())){
             result.setMessage("FIND EMAIL FAIL");
             result.setCode(400);

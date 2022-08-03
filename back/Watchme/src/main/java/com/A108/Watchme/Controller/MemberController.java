@@ -1,9 +1,6 @@
 package com.A108.Watchme.Controller;
 
-import com.A108.Watchme.DTO.LoginRequestDTO;
-import com.A108.Watchme.DTO.NewTokenRequestDTO;
-import com.A108.Watchme.DTO.SignUpRequestDTO;
-import com.A108.Watchme.DTO.SocialSignUpRequestDTO;
+import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
@@ -120,5 +117,13 @@ public class MemberController {
         else{
             throw new RuntimeException("잘못된 접근");
         }
+    }
+
+    @GetMapping("/find-email")
+    @ResponseBody
+    public ApiResponse findEmail(@RequestBody FindEmailRequestDTO findEmailRequestDTO){
+        System.out.println(findEmailRequestDTO.getNickName());
+        ApiResponse result = memberService.findEmail(findEmailRequestDTO);
+        return result;
     }
 }

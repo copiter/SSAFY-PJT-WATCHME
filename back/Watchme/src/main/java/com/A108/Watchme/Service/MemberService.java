@@ -1,9 +1,6 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.LoginRequestDTO;
-import com.A108.Watchme.DTO.NewTokenRequestDTO;
-import com.A108.Watchme.DTO.SignUpRequestDTO;
-import com.A108.Watchme.DTO.SocialSignUpRequestDTO;
+import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.MemberInfoRepository;
@@ -168,5 +165,22 @@ public class MemberService {
         result.setResponseData("accessToken", createToken.get("accessToken"));
         result.setResponseData("refreshToken", createToken.get("refreshToken"));
         return result;
+    }
+
+    public ApiResponse findEmail(FindEmailRequestDTO findEmailRequestDTO) {
+        ApiResponse result = new ApiResponse();
+        Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
+        if(member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())){
+            result.setMessage("FIND EMAIL FAIL");
+            result.setCode(400);
+        }
+        else {
+            result.setMessage("FIND EMAIL SUCCESS");
+            result.setResponseData("email", member.getEmail());
+            result.setCode(200);
+        }
+
+        return result;
+
     }
 }

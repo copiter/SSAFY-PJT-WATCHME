@@ -7,12 +7,12 @@ import { Link } from "react-router-dom";
   
 function FindID() {
 
-  const url = `${useContext(FetchUrl)}/findID`;
+  const url = `${useContext(FetchUrl)}/find-email`;
 
 
   const [inputs, setInputs] = useState({
-    myName: "",
-    phoneNumber: 1,
+    name: "",
+    nickName: "",
   });
 
 
@@ -20,15 +20,15 @@ function FindID() {
   // Function handling submit button
   const submitHandler = (event) => {
     event.preventDefault();
-    console.log(url);
-    console.log([JSON.stringify(inputs)]);
-    fetch(url,{
-      method:"POST",
-      body:[JSON.stringify(inputs)],
-      headers:{type: "application/json"
-      }
-    })
+
+    fetch(url+"?name="+inputs.name+"&nickName="+inputs.nickName)
     .then((response)=>{
+      return response.json();
+
+    })
+    .then((result)=>{
+      console.log(url+"?name="+inputs.name+"&nickName="+inputs.nickName);
+      console.log(result);
 
     })
     .catch((err)=>{
@@ -57,15 +57,15 @@ function FindID() {
         <input
             className="input-box"
             type="text"
-            name="myName"
+            name="name"
             onChange={handleChange}
             placeholder="이름을 입력하세요" /> 
         <input
           className="input-box"
-          type="number"
+          type="text"
           onChange={handleChange}
-          name="phoneNumber"
-          placeholder="전화번호를 입력하세요"
+          name="nickName"
+          placeholder="닉네임을 입력하세요"
           accept="number"
           />
         <button className="submit-btn">확인</button>

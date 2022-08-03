@@ -56,7 +56,6 @@ function MainPage() {
     };
     getDatas();
   }, []);
-
   rooms = responseData["rooms"];
   groups = responseData["groups"];
 

@@ -14,14 +14,27 @@ import userInfor from "../json/member.json"
 function MyPage() {
   const FETCH_URL = useContext(FetchUrl);
   
-	const [userInformation, setUserInforMation] = useState(userInfor["responseData"]["member"])
+	const [userInformation, setUserInforMation] = useState(userInfor.responseData.member)
   
 
   const url = `${FETCH_URL}/members`;
 
 
 	useEffect(() => {
-    fetch(url)
+
+    function getCookie(name) {
+      const cookie = document.cookie
+        .split(";")
+        .map((cookie) => cookie.split("="))
+        .filter((cookie) => cookie[0] === name);
+      return cookie[0][1];
+    }
+    fetch(url,{
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+
+    })
    .then((response) => {
      if(response.bodyUsed)
      {
@@ -30,15 +43,15 @@ function MyPage() {
      }
      else if(response.ok)
      {
-       return response.json();
+      return response.json();
      }
      else{
 
-       console.log("C4");
+       console.log("ELSE");
      }
    })
    .then((result)=>{
-    setUserInforMation(result["responseData"]["member"])
+    setUserInforMation(result.responseData.member)
    })
    .catch((err) => {
      console.log("ERROR");
@@ -52,14 +65,14 @@ function MyPage() {
   <div className="">
     <div className="Left">
       <div>
-        <img src={userInformation["profileImage"]===""||userInformation["profileImage"]==="none"?"#":userInformation["profileImage"]} alt="#"/>
+        <img src={userInformation.profileImage===""||userInformation.profileImage==="none"?"#":userInformation.profileImage} alt="#"/>
         <ul>
-          <li>{userInformation["nickName"]}</li>
-          <li>{userInformation["description"]}</li>
+          <li>{userInformation.nickName}</li>
+          <li>{userInformation.description}</li>
         </ul>
       </div>
       <ul>
-        <li>105000 포인트</li>
+        <li>{userInformation.point} 포인트</li>
         <li>⚡충전하기</li>
         <li>💰전환하기</li>
         <li>⚡사용내역</li>
@@ -81,15 +94,16 @@ function MyPage() {
             <li>이번 달 공부시간</li>
             <li>총 공부시간</li>
           </ul>
-        </div>
-        <div className="studyRight"> 
-          <ul>
-            <li>{parseInt(userInformation["studyTimeToday"]/60)?parseInt(userInformation["studyTimeToday"]/60)+"시간":""} {userInformation["studyTimeToday"]%60?userInformation["studyTimeToday"]%60+"분":""}</li>
-            <li>{parseInt(userInformation["studyTimeWeek"]/60)?parseInt(userInformation["studyTimeWeek"]/60)+"시간":""} {userInformation["studyTimeWeek"]%60?userInformation["studyTimeWeek"]%60+"분":""}</li>
-            <li>{parseInt(userInformation["studyTimeMonth"]/60)?parseInt(userInformation["studyTimeMonth"]/60)+"시간":""} {userInformation["studyTimeMonth"]%60?userInformation["studyTimeMonth"]%60+"분":""}</li>
-            <li>{parseInt(userInformation["studyTimeTotal"]/60)?parseInt(userInformation["studyTimeTotal"]/60)+"시간":""} {userInformation["studyTimeTotal"]%60?userInformation["studyTimeTotal"]%60+"분":""}</li>   
+          <ul>{console.log(userInformation)}
+            <li>{parseInt(userInformation.studyTimeToday/60)?parseInt(userInformation.studyTimeToday/60)+"시간":""} {userInformation.studyTimeToday%60?userInformation.studyTimeToday%60+"분":""}{userInformation.studyTimeToday%60===""||userInformation.studyTimeToday%60===0?"이제 시작해보죠":""}</li>
+            <li>{parseInt(userInformation.studyTimeWeek/60)?parseInt(userInformation.studyTimeWeek/60)+"시간":""} {userInformation.studyTimeWeek%60?userInformation.studyTimeWeek%60+"분":""}</li>
+            <li>{parseInt(userInformation.studyTimeMonth/60)?parseInt(userInformation.studyTimeMonth/60)+"시간":""} {userInformation.studyTimeMonth%60?userInformation.studyTimeMonth%60+"분":""}</li>
+            <li>{parseInt(userInformation.studyTimeTotal/60)?parseInt(userInformation.studyTimeTotal/60)+"시간":""} {userInformation.studyTimeTotal%60?userInformation.studyTimeTotal%60+"분":""}</li>   
           </ul>
          </div>
+        </div>
+        <div className="studyRight"> 
+          
       </div>
       <div className="Down">
         <div className="subTitle">나의 패널티</div>

@@ -11,9 +11,8 @@ function FindPWD() {
 
 
   const [inputs, setInputs] = useState({
-    myName: "",
-    phoneNumber: "",
-    email:""
+    email:"",
+    name: ""
   });
 
 
@@ -23,13 +22,15 @@ function FindPWD() {
     event.preventDefault();
     console.log(url);
     console.log([JSON.stringify(inputs)]);
-    fetch(url,{
-      method:"POST",
-      body:[JSON.stringify(inputs)],
-      headers:{type: "application/json"
-      }
-    })
+    
+    fetch(url+"?name="+inputs.name+"&email="+inputs.email)
     .then((response)=>{
+      return response.json();
+
+    })
+    .then((result)=>{
+      console.log(url+"?name="+inputs.name+"&email="+inputs.email);
+      console.log(result);
 
     })
     .catch((err)=>{
@@ -61,22 +62,13 @@ function FindPWD() {
           onChange={handleChange}
           name="email"
           placeholder="이메일주소를 입력하세요"
-          accept="number"
           />
         <input
             className="input-box"
             type="text"
-            name="myName"
+            name="name"
             onChange={handleChange}
             placeholder="이름을 입력하세요" /> 
-        <input
-          className="input-box"
-          type="number"
-          onChange={handleChange}
-          name="phoneNumber"
-          placeholder="전화번호를 입력하세요"
-          accept="number"
-          />
         <button className="submit-btn">확인</button>
       </form>
 

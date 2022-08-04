@@ -2,12 +2,13 @@ import React from "react";
 import "./FindPWD.css";
 import {  useContext ,useState} from "react";
 import { FetchUrl } from "../../../store/communication";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate } from "react-router-dom";
 
   
 function FindPWD() {
 
-  const url = `${useContext(FetchUrl)}/FindPWD`;
+  const url = `${useContext(FetchUrl)}/find-password`;
+  const navigate = useNavigate();
 
 
   const [inputs, setInputs] = useState({
@@ -19,23 +20,53 @@ function FindPWD() {
 
   // Function handling submit button
   const submitHandler = (event) => {
-    event.preventDefault();
-    console.log(url);
-    console.log([JSON.stringify(inputs)]);
+    if(inputs.name===""){
+      alert("이름을 입력하세요");
+
+    }
+    else if(inputs.email===""){
+      alert("이메일을 입력하세요");
+    }
+    else{
+      console.log(JSON.stringify({
+        name:inputs.name,
+        nickName:inputs.nickName
+      }))
+      event.preventDefault();
+      fetch(url, {
+          method:"POST",
+          body:JSON.stringify({
+            name:inputs.name,
+            nickName:inputs.nickName
+          }),
+          headers: {
+            "content-type": "application/json",
+          },
+        })
+      .then((response)=>{
+        console.log(response);
+        return response.json();
+      })
+      .then((result)=>{
+        console.log(result);
+        if(result.message==="이메일 입력이 잘못되었습니다."){alert("잘못된 정보입니다");}
+        else if(result.message==="EMAIL SEND SUCCESS"){
+  
+          alert("이메일로 비빌번호가 전송되었습니다.");
+          navigate("/login");
+  ////////////////////////////성공시 여기입니다.
+        }
+        else{
+          alert("ERROR");
+  
+        }
+  
+      })
+      .catch((err)=>{
+        console.log("ERRROR");
+      });
+    }
     
-    fetch(url+"?name="+inputs.name+"&email="+inputs.email)
-    .then((response)=>{
-      return response.json();
-
-    })
-    .then((result)=>{
-      console.log(url+"?name="+inputs.name+"&email="+inputs.email);
-      console.log(result);
-
-    })
-    .catch((err)=>{
-      console.log("ERRROR");
-    });
    
   };
   const handleChange = (event) => {

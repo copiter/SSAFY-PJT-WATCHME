@@ -18,6 +18,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
   const [inputs, setInputs] = useState({
     category: "",
     roomSearch: "",
+    keyword:""
   });
 
 
@@ -34,7 +35,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
 
   //URL
-  const url = `${FETCH_URL}/room`;
+  const url = `${FETCH_URL}/rooms`;
   //Otpion
 
   let roomNo = 0;
@@ -53,7 +54,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
       else{
 
-        console.log("C4");
+        console.log("기본Case4");
       }
     })
     .then((result)=>{
@@ -70,13 +71,11 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
     console.log(url+"?"+
     
       (inputs.category===""?"":"category="+inputs.category+"&")
-      +(page===""||page===1?"":"page="+page+"&")
-      +"keyword=석인방"
+      +(inputs.keyword===""?"":"keyword="+inputs.keyword)
       );
     fetch(url+"?"+
     (inputs.category===""?"":"category="+inputs.category+"&")
-    +(page===""||page===1?"":"page="+page+"&")
-    +"keyword=석인방&page=1"
+    +(inputs.keyword===""?"":"keyword="+inputs.keyword)
     )
     
     .then((response) => {
@@ -87,12 +86,11 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
       }
       else if(response.ok)
       {
-        console.log("ㅅㄷㄴㅅ");
         return response.json();
       }
       else{
 
-        console.log("C4");
+        console.log("제출Case4");
       }
     })
     .then((result)=>{
@@ -108,12 +106,15 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
   const addMore = (event) => {//값 입력 안받은상태임
     page++;
-    console.log("실제로 들어가야하는 방식 : "+url+"?category="+inputs["category"]+"&page="+page+"&keyword="+inputs["keyword"]);
-    fetch(url+"?category="+inputs["category"]+"&page="+"keyword="
-    //page
-
-        //+"&roomSearch=" +
-        //inputs["roomSearch"]
+    console.log("실제로 들어가야하는 방식 : "(url+"?"+
+    (inputs.category===""?"":"category="+inputs.category+"&")
+    +(page===""||page===1?"":"page="+page+"&")
+    +"keyword=석인방"
+    ))
+    fetch(url+"?"+
+    (inputs.category===""?"":"category="+inputs.category+"&")
+    +(page===""||page===1?"":"page="+page+"&")
+    +"keyword=석인방"
     )
     .then((response) => {
       if(response.bodyUsed)
@@ -203,8 +204,8 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
           <div className="search__input">
             <input
               type="text"
-              name="roomSearch"
-              value={inputs.roomSearch || ""}
+              name="keyword"
+              value={inputs.keyword || ""}
               onChange={handleChange}
               placeholder="찾는 공개룸을 입력하세요"
             />
@@ -221,12 +222,12 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
           {/* select tag -> ul tag 로 변경했습니다 
               NavLink 사용해도 괜찮을 것 같습니다 */}
           <ul className="header__tags">
-            <li onClick={ctgChange} value={0}>All</li>
-            <li className="active" onClick={ctgChange} value={1}>공무원</li>
-            <li onClick={ctgChange} value={2}>취업</li>
-            <li onClick={ctgChange} value={3}>수능</li>
-            <li onClick={ctgChange} value={4}>자격증</li>
-            <li onClick={ctgChange} value={5} >기타</li>
+            <li className={inputs.category===""||inputs.category==="all"?"active":""}onClick={ctgChange} value={0}>All</li>
+            <li className={inputs.category==="공무원"?"active":""} onClick={ctgChange} value={1}>공무원</li>
+            <li className={inputs.category==="취업"?"active":""}onClick={ctgChange} value={2}>취업</li>
+            <li className={inputs.category==="수능"?"active":""}onClick={ctgChange} value={3}>수능</li>
+            <li className={inputs.category==="자격증"?"active":""}onClick={ctgChange} value={4}>자격증</li>
+            <li className={inputs.category==="기타"?"active":""}onClick={ctgChange} value={5} >기타</li>
           </ul>
           <div className="header__right">
             <Link className="header__link" to="/RoomCreate">

@@ -7,6 +7,8 @@ import SocialLogin from "./components/ClientManagement/SocialLogin";
 import SignUp from "./components/ClientManagement/SignUp";
 import FindID from "./components/ClientManagement/FindIDPWD/FindID";
 import FindPWD from "./components/ClientManagement/FindIDPWD/FindPWD";
+import PWDCheck from "./components/ClientManagement/ChangePWD/PWDCheck";
+import ChangePWD from "./components/ClientManagement/ChangePWD/ChangePWD";
 
 //공개미팅룸관련
 import RoomRecruit from "./components/Room/RoomRecruit"; //룸탐색
@@ -35,6 +37,8 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/FindID" element={<FindID />} />
         <Route path="/FindPWD" element={<FindPWD />} />
+        <Route path="/PWDCheck" element={<PWDCheck />} />
+        <Route path="/ChangePWD" element={<ChangePWD />} />
         <Route path="/RoomRecruit" element={<RoomRecruit />} />
         <Route path="/RoomCreate" element={<RoomCreate />} />
         <Route path="/RoomDetail/:id" element={<RoomDetail />} />

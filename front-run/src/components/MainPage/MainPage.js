@@ -7,7 +7,6 @@ import jsons from "../json/jsons";
 import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
 import mystudy__infor__tmp from "../../img/Icons/mystudy__infor__tmp.png";
-
 //유일한 쿠키 조회
 function getCookie(name) {
   if (!document.cookie) {

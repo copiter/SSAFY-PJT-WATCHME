@@ -5,7 +5,7 @@ import { FetchUrl } from "../../store/communication";
 
 import "./RoomCreate.css";
 
-function CreateRoom() {
+function RoomCreate() {
   //방생성 요청 보내기
   const [inputs, setInputs] = useState({
     roomName: "",
@@ -77,8 +77,8 @@ function CreateRoom() {
           console.log("방생성 완료");
           console.log(result);
           console.log("CK");
-          console.log(result["responseData"]["roomId"]);
-          navigate("/RoomDetail/:" + result["responseData"]["roomId"]);
+          console.log(result.responseData.roomId);
+          navigate("/RoomDetail/:" + result.responseData.roomId);
           window.location.reload(); //리다이렉션관련
         }
       })
@@ -227,4 +227,4 @@ function CreateRoom() {
   );
 }
 
-export default CreateRoom;
+export default RoomCreate;

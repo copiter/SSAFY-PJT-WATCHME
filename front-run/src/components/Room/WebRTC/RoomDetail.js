@@ -3,6 +3,7 @@ import { OpenVidu } from "openvidu-browser";
 import React, { Component } from "react";
 import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
+import ChatComponent from "./chat/ChatComponent";
 
 const OPENVIDU_SERVER_URL = "https://" + window.location.hostname + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
@@ -21,6 +22,7 @@ class RoomDetail extends Component {
       videoState: true, //보이도록
       audioState: true, //마이크 on
       screenShare: true, //화면공유 버튼
+      chatDisplay: "none",
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -36,10 +38,13 @@ class RoomDetail extends Component {
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
     this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
+    this.toggleChat = this.toggleChat.bind(this);
+    this.checkNotification = this.checkNotification.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
+    // this.joinSession();
   }
 
   componentWillUnmount() {
@@ -81,17 +86,7 @@ class RoomDetail extends Component {
     }
   }
 
-  async getUserPermission() {
-    try {
-      var devices = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-    } catch (e) {
-      alert("서비스 사용을 위해 카메라와 마이크 권한이 필요합니다.");
-      this.getUserPermission();
-    }
-  }
+  async getUserPermission() {}
 
   joinSession() {
     // --- 1) Get an OpenVidu object ---
@@ -145,11 +140,18 @@ class RoomDetail extends Component {
             .connect(token, { clientData: this.state.myUserName })
             .then(async () => {
               //브라우저 비디오, 오디오 권한 설정
-              this.getUserPermission();
+              try {
+                var devices = await navigator.mediaDevices.getUserMedia({
+                  video: true,
+                  audio: true,
+                });
+              } catch (e) {
+                alert(
+                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요"
+                );
+              }
 
-              // console.log("디바이스", devices)
-
-              var devices = await this.OV.getDevices();
+              devices = await this.OV.getDevices();
 
               var videoDevices = devices.filter(
                 (device) => device.kind === "videoinput"
@@ -173,6 +175,8 @@ class RoomDetail extends Component {
               // --- 6) Publish your stream ---
 
               mySession.publish(publisher);
+
+              console.log("퍼블리셔", publisher);
 
               // Set the main video in the page to display our webcam and store our Publisher
               this.setState({
@@ -319,9 +323,30 @@ class RoomDetail extends Component {
     });
   }
 
+  toggleChat(property) {
+    let display = property;
+
+    if (display === undefined) {
+      display = this.state.chatDisplay === "none" ? "block" : "none";
+    }
+    if (display === "block") {
+      this.setState({ chatDisplay: display, messageReceived: false });
+    } else {
+      console.log("chat", display);
+      this.setState({ chatDisplay: display });
+    }
+  }
+
+  checkNotification(event) {
+    this.setState({
+      messageReceived: this.state.chatDisplay === "none",
+    });
+  }
+
   render() {
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
+    var chatDisplay = { display: this.state.chatDisplay };
 
     return (
       <div className="container">
@@ -435,6 +460,23 @@ class RoomDetail extends Component {
                   <UserVideoComponent streamManager={sub} />
                 </div>
               ))}
+            </div>
+            <div id="chat-container">
+              <button onClick={() => this.toggleChat()}>채팅열기</button>
+              {this.state.publisher !== undefined &&
+                this.state.publisher.stream !== undefined && (
+                  <div
+                    className="OT_root OT_publisher custom-class"
+                    style={chatDisplay}
+                  >
+                    <ChatComponent
+                      user={this.state.publisher}
+                      chatDisplay={this.state.chatDisplay}
+                      close={this.toggleChat}
+                      messageReceived={this.checkNotification}
+                    />
+                  </div>
+                )}
             </div>
           </div>
         ) : null}

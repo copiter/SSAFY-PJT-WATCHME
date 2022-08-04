@@ -11,7 +11,7 @@ import FindPWD from "./components/ClientManagement/FindIDPWD/FindPWD";
 //공개미팅룸관련
 import RoomRecruit from "./components/Room/RoomRecruit"; //룸탐색
 import RoomCreate from "./components/Room/RoomCreate"; //룸생성
-import RoomDetail from "./components/Room/RoomDetail"; //룸생성
+import RoomDetail from "./components/Room/WebRTC/RoomDetail"; //룸생성
 
 //그룹관련
 import GroupRecruit from "./components/Group/GroupRecruit"; //그룹탐색
@@ -37,7 +37,7 @@ function App() {
         <Route path="/FindPWD" element={<FindPWD />} />
         <Route path="/RoomRecruit" element={<RoomRecruit />} />
         <Route path="/RoomCreate" element={<RoomCreate />} />
-        <Route path="/RoomDetail/:id" element={<RoomDetail />} />
+        <Route path="/RoomDetail" element={<RoomDetail />} />
         <Route path="/GroupRecruit" element={<GroupRecruit />} />
         <Route path="/GroupCreate" element={<GroupCreate />} />
         <Route path="/GroupDetail" element={<GroupDetail />} />

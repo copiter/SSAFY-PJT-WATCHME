@@ -1,32 +1,38 @@
 {
-    "code": 200,
-    "message": "SUCCESS GET MEMBER INFO",
     "responseData": {
-        "penalty": [
-            {
-                "ruleName": "SLEEP",
-                "createdAt": "2022년 10월 25일 화요일",
-                "score": 5
+        "code": 200,
+        "message": "SUCCESS GET MEMBER INFO",
+        "responseData": {
+            "studyByDay": [
+                130,
+                80,
+                180,
+                220
+            ],
+            "penalty": {
+                "SLEEP": 5,
+                "PHONE": 2
             },
-            {
-                "ruleName": "SLEEP",
-                "createdAt": "2022년 10월 25일 화요일",
-                "score": 6
-            }
-        ],
-        "member": {
-            "nickName": "nick1",
-            "profileImage": "img1",
-            "point": 1,
-            "description": null,
-            "studyTimeToday": 456,
-            "studyTimeWeek": 54,
-            "studyTimeMonth": 231,
-            "studyTimeTotal": 416
-        },
-        "rules": [
-            "SLEEP",
-            "PHONE"
-        ]
+            "member": {
+                "nickName": "테스트",
+                "profileImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/%EA%B7%80%EC%97%AC%EC%9B%80.jpg",
+                "point": 1,
+                "description": null,
+                "studyTimeToday": 0,
+                "studyTimeWeek": 54,
+                "studyTimeMonth": 231,
+                "studyTimeTotal": 416
+            },
+            "penaltyByDay": [
+                10,
+                15,
+                12,
+                25
+            ],
+            "rules": [
+                "SLEEP",
+                "PHONE"
+            ]
+        }
     }
 }

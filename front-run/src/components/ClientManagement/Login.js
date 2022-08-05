@@ -43,13 +43,15 @@ const Login = () => {
         if (response.ok) {
           return response.json();
         } else {
-          response.json().then((data) => {
-            let errorMessage = data.error;
-            throw new Error();
-          })
-          .catch((error)=>{
-            alert("아이디와 비밀번호를 확인하세요")
-          });
+          response
+            .json()
+            .then((data) => {
+              let errorMessage = data.error;
+              throw new Error();
+            })
+            .catch((error) => {
+              alert("아이디와 비밀번호를 확인하세요");
+            });
         }
       })
       .then((result) => {
@@ -84,7 +86,10 @@ const Login = () => {
           required
           ref={passwordInputRef}
         />
-        <div><Link to="/findID">아이디</Link>/<Link to="/findPWD">비밀번호 찾기</Link></div>
+        <div>
+          <Link to="/findID">아이디</Link>/
+          <Link to="/findPWD">비밀번호 찾기</Link>
+        </div>
         <button className="submit-btn">로그인</button>
       </form>
 
@@ -102,7 +107,7 @@ const Login = () => {
             <img src={kakao} alt="카카오" width={28} />
             <span>카카오로 로그인</span>
           </div>
-        </a>        
+        </a>
         <a
           href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=
           https://watchme2.shop/api/login/oauth2/code/naver`}

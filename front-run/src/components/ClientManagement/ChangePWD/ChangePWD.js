@@ -1,23 +1,27 @@
-import React from "react"; 
-import "./FindID.css";
-import {  useContext ,useState} from "react";
+import React from "react";
+import "./ChangePWD.css";
+import { useContext, useState ,useEffect} from "react";
 import { FetchUrl } from "../../../store/communication";
-import { Link ,useNavigate} from "react-router-dom";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
 
-  
-function FindID() {
-
-  const url = `${useContext(FetchUrl)}/find-email`;
-  const navigate = useNavigate();
-
-
+function ChangePWD() {
+  const url = `${useContext(FetchUrl)}`;
   const [inputs, setInputs] = useState({
-    name: "",
-    nickName: "",
+    pwd: "",
+    emailkey: "",
   });
 
+  const navigate = useNavigate();
+  const [searchParams,setSearchParams] = useSearchParams();
+	useEffect(() => { 
+    setInputs((values)=>({ ...values, "emailkey": searchParams.get('emailKey')}));
+	}, [])
 
-  // Function handling submit button
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setInputs((values) => ({ ...values, [name]: value }));
+  };
   const submitHandler = (event) => {
     console.log(JSON.stringify({
       name:inputs.name,
@@ -57,17 +61,8 @@ function FindID() {
     });
    
   };
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
-
-
-
-
-  return(
-
+console.log(inputs);
+  return (
     <div className="login">
         <div className="login-title">아이디찾기
           <div>
@@ -99,7 +94,7 @@ function FindID() {
           
       </div>
     </div>
-  )
+  );
 }
 
-export default FindID;
+export default ChangePWD;

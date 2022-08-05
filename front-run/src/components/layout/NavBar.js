@@ -3,24 +3,17 @@ import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 
 import "./NavBar.css";
+import logo from "../../img/logo.png";
+import tmp_picture from "../../img/tmp_picture.PNG";
 
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !sessionStorage.hasOwnProperty("isLoggedIn")
-      ? false
-      : sessionStorage.getItem("isLoggedIn")
-      ? true
-      : false
-  );
 
-  useEffect(() => {
-    // window.location.reload();
-  }, [setIsLoggedIn]);
+  const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
 
   const logoutHandler = () => {
-    setIsLoggedIn(false);
     authCtx.logout();
+    setIsLoggedIn(false);
   };
 
   return (
@@ -28,8 +21,10 @@ const NavBar = () => {
       <div className="navbar__left">
         <Link to="/">
           <div className="nav-logo">
-            <img src="#none" alt="로고" />
-            WATCH ME
+            <div>
+              <img src={logo} alt="로고" height="30px" />
+            </div>
+            <h2>WATCH ME</h2>
           </div>
         </Link>
         <nav className="nav-list">
@@ -52,8 +47,12 @@ const NavBar = () => {
           <div className="dropdown__login">
             {/* 프로필사진, 이름 */}
             <div className="user-info">
-              <img src="#none" alt="profile" className="nav-profile-picture" />
-              <span className="nav-username">Username</span>
+              <img
+                src={authCtx.userData.profileImage}
+                alt="profile"
+                id="nav-profile-picture"
+              />
+              <span className="nav-username">{authCtx.userData.nickName}</span>
             </div>
 
             {/* dropdown */}

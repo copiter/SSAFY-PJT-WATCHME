@@ -20,32 +20,32 @@ function SignUp() {
   const nickNameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
+  const imageInputRef=useRef();
 
   const submitHandler = (event) => {
     event.preventDefault();
+    const data={
+      email: emailInputRef.current.value,
+      password: passwordInputRef.current.value,
+      name: nameInputRef.current.value,
+      nickName: nickNameInputRef.current.value,
+      gender: sexInputRef.current.value,
+      birth: birthdayInputRef.current.value,
+    };
 
-    const enteredEmail = emailInputRef.current.value;
-    const enteredPassword = passwordInputRef.current.value;
-    const enteredName = nameInputRef.current.value;
-    const enteredNickName = nickNameInputRef.current.value;
-    const enteredSex = sexInputRef.current.value;
-    const enteredBirthday = birthdayInputRef.current.value;
+    const files=imageInputRef.current.files[0];
+    const formData = new FormData();
+    formData.append('files', files);
+    formData.append("data", new Blob([JSON.stringify(data)], {type: "application/json"}))
+   
+    //myjsons->application.josn
+    
 
     const url = `${FETCH_URL}/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",
-      body: JSON.stringify({
-        email: enteredEmail,
-        password: enteredPassword,
-        name: enteredName,
-        nickName: enteredNickName,
-        gender: enteredSex,
-        birth: enteredBirthday,
-      }),
-      headers: {
-        "content-type": "application/json",
-      },
+      body: formData
     })
       .then((response) => {
         if (response.ok) {
@@ -62,21 +62,34 @@ function SignUp() {
         navigate("/login"); //로그인 페이지로
       })
       .catch((err) => {
-        alert(err.message);
+        alert("오류가 발새하였습니다");
       });
   };
 
+
+  const [fileImage, setFileImage] = useState("");
+  const saveFileImage = (event) =>{
+    setFileImage(URL.createObjectURL(event.target.files[0]));
+
+  };
   return (
     <Fragment>
       <div className="signup">
-        <form onSubmit={submitHandler}>
+        <form onSubmit={submitHandler} method="post" >
           <div className="signup-top">
-            <div className="signup-top__word">SIGN UP</div>
+            <div className="signup-top__worfd">SIGN UP</div>
           </div>
           <div className="signup-form">
             <div className="signup-left">
-              <div className="signup-left-image"></div>
+              <div className="signup-left-image"> 
+                {fileImage && ( <img alt="sample" src={fileImage}style={{ margin: "auto" ,width:"100%",height:"100%",borderRadius:"50%"
+              }} /> )}
+              </div>
+              <input  name="imggeUpload" type="file" accept="image/*" onChange={saveFileImage}  ref={imageInputRef}/>
+              
               <button className="signup-left-addimage">프로필 사진 추가</button>
+
+             
             </div>
             <div className="signup-right">
               <div className="line">

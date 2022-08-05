@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 
 import "./RoomCreate.css";
-import RoomDetail from "./RoomDetail";
 
 function RoomCreate() {
   //방생성 요청 보내기

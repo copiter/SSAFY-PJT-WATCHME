@@ -60,13 +60,12 @@ a {
 
 #nav-profile-picture {
   border-radius: 50%;
-  width: 25px;
+  width: 40px;
 }
 
 .dropdown__login .user-info {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
 }
 
 .navbar .nav-username {

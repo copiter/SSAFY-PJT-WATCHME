@@ -52,6 +52,17 @@ a {
   flex-direction: row;
 }
 
+#nav-profile-picture {
+  border-radius: 50%;
+  width: 25px;
+}
+
+.dropdown__login .user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 .navbar .nav-username {
   margin-left: 10px;
 }

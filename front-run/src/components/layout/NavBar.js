@@ -21,10 +21,7 @@ const NavBar = () => {
       <div className="navbar__left">
         <Link to="/">
           <div className="nav-logo">
-            <div>
-              <img src={logo} alt="로고" height="30px" />
-            </div>
-            <h2>WATCH ME</h2>
+            <img src={logo} alt="로고" height="30px" />
           </div>
         </Link>
         <nav className="nav-list">

@@ -156,20 +156,6 @@ function GroupCreate() {
                   accept="number"
                   placeholder="인원수를 선택하세요(1~25)"
                 />
-                <select
-                  name="categoryName"
-                  value={inputs.categoryName || ""}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>
-                    카테고리를 선택하세요
-                  </option>
-                  <option value="공무원">공무원</option>
-                  <option value="취업">취업</option>
-                  <option value="수능">수능</option>
-                  <option value="자격증">자격증</option>
-                  <option value="기타">기타</option>
-                </select>
               </div>
               <div className="line">
                 <span>비공개</span>
@@ -185,7 +171,7 @@ function GroupCreate() {
 
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input
-                  type="text"
+                  type="password"
                   name="groupPwd"
                   value={inputs.groupPwd || ""}
                   onChange={handleChange}
@@ -195,36 +181,48 @@ function GroupCreate() {
                 />
               </div>
             </div>
-
-            <div className="input-rules">
+                {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
+                <input
+                  type="date"
+                  name="groupPwd"
+                  value={inputs.groupEndDate || ""}
+                  onChange={handleChange}
+                  placeholder="기간"
+                />
+           <div className="input-rules">
               {/*규칙입니다. 현재 진행파트아닙니다. */}
               <div className="rules-title">📝 규칙</div>
               <div className="rules-box">
                 {/*규칙 미정이라서 편하신대로 임시본으로 넣으시면됩니다.*/}
                 <label>
                   <input type="checkbox" />
-                  공부루틴 설정
+                  공무원
                 </label>
                 <label>
                   <input type="checkbox" />
-                  딴짓 감지
+                  취업
                 </label>
                 <label>
                   <input type="checkbox" />
-                  얼굴인식
+                  수능
                 </label>
                 <label>
                   <input type="checkbox" />
-                  화면공유
+                  기타
                 </label>
               </div>
             </div>
             <button type="submit">생성하기</button>
           </div>
         </div>
+        
       </form>
     </div>
   );
 }
 
 export default GroupCreate;
+
+
+
+

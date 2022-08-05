@@ -68,11 +68,6 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
 
   const handleSubmit = (event) => {//제출하기 실제 값 적용안됨
     event.preventDefault();
-    console.log(url+"?"+
-    
-      (inputs.category===""?"":"category="+inputs.category+"&")
-      +(inputs.keyword===""?"":"keyword="+inputs.keyword)
-      );
     fetch(url+"?"+
     (inputs.category===""?"":"category="+inputs.category+"&")
     +(inputs.keyword===""?"":"keyword="+inputs.keyword)
@@ -144,7 +139,37 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
     const ARR=["전부","공무원","취업","수능","자격증","기타"];
 
       
-    setInputs((values) => ({ ...values, category: ARR[event.target.value] }));  
+    setInputs((values) => ({ ...values, category:  ARR[event.target.value]}));   
+    console.log(ARR[event.target.value]);
+     fetch(url+"?"+
+    (ARR[event.target.value]===""?"":"category="+ARR[event.target.value]+"&")
+    +(inputs.keyword===""?"":"keyword="+inputs.keyword)
+    )
+    
+    .then((response) => {
+      if(response.bodyUsed)
+      {
+        console.log("재사용됨");
+
+      }
+      else if(response.ok)
+      {
+        return response.json();
+      }
+      else{
+
+        console.log("제출Case4");
+      }
+    })
+    .then((result)=>{
+      console.log(1);
+      console.log(result["responseData"]["rooms"]);
+       setRooms(result["responseData"]["rooms"])
+    })
+    .catch((err) => {
+      console.log("ERROR");
+    });
+  
   }
 
   function enteringRoom(id){//방들어가기 문제없이 작동

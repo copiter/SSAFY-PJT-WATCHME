@@ -9,6 +9,8 @@ import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import jsons from "../json/jsons";
 
+import jsons from "../json/jsons";
+
 let roomPageNo = 0;
 
 function RoomRecruit() {
@@ -36,6 +38,15 @@ function RoomRecruit() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    console.log(
+      url +
+        "?roomCategory=" +
+        inputs["roomCategory"] +
+        "&roomSearch=" +
+        inputs["roomSearch"] +
+        "&pageNo=0"
+    );
 
     fetch(
       url +

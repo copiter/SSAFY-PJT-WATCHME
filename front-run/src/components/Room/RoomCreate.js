@@ -1,24 +1,23 @@
 import React from "react";
-import { useState,useContext } from "react";
-import { Link,useNavigate  } from "react-router-dom";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 
 import "./RoomCreate.css";
+import RoomDetail from "./RoomDetail";
 
 function CreateRoom() {
-  
   //방생성 요청 보내기
   const [inputs, setInputs] = useState({
-    "roomName":"",
-    "roomImage":"",
-    "roomDiscription":"",
-    "roomMemNoMex":"",
-    "roomPublic":"Private",
-    "roomCategory":"public_official",
-    "roomPassword":""
+    roomName: "",
+    roomImage: "",
+    roomDiscription: "",
+    roomMemNoMex: "",
+    roomPublic: "Private",
+    roomCategory: "public_official",
+    roomPassword: "",
   });
-  const navigate=useNavigate()
-
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -26,42 +25,47 @@ function CreateRoom() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
-
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/RoomCreate`;
   //Otpion
-  const requestOptions ={
-    method: "POST", 
-    headers: {"content-type": "application/json",},
+  const requestOptions = {
+    method: "POST",
+    headers: { "content-type": "application/json" },
     body: JSON.stringify(inputs),
-  } 
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(requestOptions);
-    fetch(url, requestOptions)
-    .then(response => response.json())//보내기 문제없으면 넘어감
-    .then((response) => {
-      if (response.ok) {return response.json();//ok떨어지면 바로 종료.
-      } else {
-        response.json().then((data) => { 
-          let errorMessage = "";
-          throw new Error(errorMessage);
-        });
-      }
-    })
-    .then((result) => {
-      if (result != null) {
-        console.log("방생성 완료")
-        navigate("/");
-        window.location.reload();//리다이렉션관련
-      }
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
 
-  }
+    //임시로 navigate test
+    // navigate("/RoomDetail");
+    // window.location.reload();
+
+    // console.log(requestOptions);
+    fetch(url, requestOptions)
+      .then((response) => response.json()) //보내기 문제없으면 넘어감
+      .then((response) => {
+        if (response.ok) {
+          return response.json(); //ok떨어지면 바로 종료.
+        } else {
+          response.json().then((data) => {
+            let errorMessage = "";
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((result) => {
+        if (result != null) {
+          console.log("방생성 완료");
+          navigate("/RoomDetail");
+          // window.location.reload(); //리다이렉션관련
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">

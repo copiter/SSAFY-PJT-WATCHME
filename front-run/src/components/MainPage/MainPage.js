@@ -5,6 +5,7 @@ import "./MainPage.css";
 import { Link } from "react-router-dom";
 import jsons from "../json/jsons";
 import { FetchUrl } from "../../store/communication";
+
 import AuthContext from "../../store/auth-context";
 import mystudy__infor__tmp from "../../img/Icons/mystudy__infor__tmp.png";
 
@@ -715,7 +716,7 @@ function MainPage() {
                             </ul>
                           </div>
                         </div>
-
+                        >>>>>>> front
                         <dl className="group-info">
                           <div className="category member-no">
                             <dt className="sr-only">카테고리</dt>

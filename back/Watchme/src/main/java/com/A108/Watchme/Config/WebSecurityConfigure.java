@@ -58,10 +58,6 @@ public class WebSecurityConfigure {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(){
-        return new CustomUserDetailsService(memberRepository, memberInfoRepository);
-    }
-    @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }

@@ -24,6 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("Can not find username.");
         }
-        return UserPrincipal.create(user, info.getImageLink());
+        return UserPrincipal.create(user);
     }
 }

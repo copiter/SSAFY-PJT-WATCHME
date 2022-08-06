@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Optional;
@@ -46,6 +47,7 @@ public class MemberService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
         ApiResponse result = new ApiResponse();
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
@@ -97,9 +99,9 @@ public class MemberService {
 
         // 원래 RefreshToken이 있으면 갱신해줘야함
         if(oldRefreshToken.isPresent()){
-           oldRefreshToken.get().builder().token(refreshToken.getToken())
-                    .email(member.getEmail())
-                    .build();
+            RefreshToken  token = refreshTokenRepository.findById(oldRefreshToken.get().getId()).get();
+            token.setToken(refreshToken.getToken());
+            refreshTokenRepository.save(token);
         }
         // 없으면 생성
         else{

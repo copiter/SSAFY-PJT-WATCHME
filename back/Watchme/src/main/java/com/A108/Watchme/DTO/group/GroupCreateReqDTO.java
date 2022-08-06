@@ -1,4 +1,4 @@
-package com.A108.Watchme.DTO;
+package com.A108.Watchme.DTO.group;
 
 import lombok.Builder;
 import lombok.Getter;

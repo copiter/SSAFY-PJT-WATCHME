@@ -1,4 +1,4 @@
-package com.A108.Watchme.DTO;
+package com.A108.Watchme.DTO.room;
 
 import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.Entity.Category;

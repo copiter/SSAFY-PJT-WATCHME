@@ -151,7 +151,9 @@ public class MemberService {
 
         // 원래 RefreshToken이 있으면 갱신해줘야함
         if(oldRefreshToken.isPresent()){
-            RefreshToken token = oldRefreshToken.get();
+            RefreshToken  token = refreshTokenRepository.findById(oldRefreshToken.get().getId()).get();
+            token.setToken(refreshToken.getToken());
+            refreshTokenRepository.save(token);
         }
         // 없으면 생성
         else{

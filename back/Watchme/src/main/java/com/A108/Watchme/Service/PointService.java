@@ -25,8 +25,8 @@ import javax.transaction.Transactional;
 public class PointService {
     private MemberRepository memberRepository;
 
-    @Transactional
-    public KakaoPayRes kakaoPayReady(Long id, int point) {
+    public KakaoPayRes kakaoPayReady(Long id, Integer point) {
+        System.out.println("hello");
         KakaoPayReq kakaoPayReq = KakaoPayReq.builder()
                 .cid("TC0ONETIME")
                 .partner_order_id("포인트 결제")
@@ -35,9 +35,9 @@ public class PointService {
                 .quantity(1)
                 .total_amount(point)
                 .tax_free_amount(0)
-                .approval_url("https://www.naver.com")
-                .fail_url("https://www.google.com")
-                .cancel_url("https://www.nexon.com")
+                .approval_url("http://localhost:81")
+                .fail_url("http://localhost:81")
+                .cancel_url("http://localhost:81")
                 .build();
 
         RestTemplate rt = new RestTemplate();
@@ -85,7 +85,7 @@ public class PointService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid", "TC0ONETIME");
         params.add("tid", kakaoPayApproveReq.getTid());
-        params.add("partner_order_id", "1");
+        params.add("partner_order_id", "포인트 결제");
         params.add("partner_user_id", Long.toString(id));
         params.add("pg_token", pg_token);
 

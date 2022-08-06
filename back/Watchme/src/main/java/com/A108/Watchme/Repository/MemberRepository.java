@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
     public Member findByEmail(String email);
-    List<Member> findByEmailAndNickName(String email, String NickName);
+    public List<Member> findByEmailAndNickName(String email, String NickName);
+
+    public Member findByNickName(String nickName);
 }

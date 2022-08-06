@@ -1,0 +1,14 @@
+package com.A108.Watchme.Repository;
+
+import com.A108.Watchme.VO.Entity.log.PenaltyLog;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface PenaltyLogRegistory extends JpaRepository<PenaltyLog, Long> {
+    List<PenaltyLog> findAllByMemberId(Long id);
+
+}

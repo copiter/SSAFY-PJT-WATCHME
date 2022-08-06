@@ -4,4 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class AcceptApplyReqDTO {
+    private String nickName;
 }

@@ -6,57 +6,56 @@ import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
-import com.A108.Watchme.VO.ENUM.ErrorCode;
 import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.ENUM.Role;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.RefreshToken;
-import com.A108.Watchme.jwt.JwtProvider;
+import com.A108.Watchme.oauth.entity.UserPrincipal;
+import com.A108.Watchme.oauth.token.AuthToken;
+import com.A108.Watchme.oauth.token.AuthTokenProvider;
+import com.A108.Watchme.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class MemberService {
+    private final static long THREE_DAYS_MSEC = 259200000;
+    private final static String REFRESH_TOKEN = "refresh_token";
+
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManager authenticationManager;
-    private final JwtProvider jwtProvider;
+    private final AppProperties appProperties;
+    private final AuthTokenProvider tokenProvider;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
         ApiResponse result = new ApiResponse();
-
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
-
-
         Member member = memberRepository.save(Member.builder()
-                    .email(signUpRequestDTO.getEmail())
-                    .nickName(signUpRequestDTO.getNickName())
-                    .role(Role.MEMBER)
-                    .pwd(encPassword)
-                    .status(Status.YES)
-                    .providerType(ProviderType.EMAIL)
-                    .build());
+                .email(signUpRequestDTO.getEmail())
+                .nickName(signUpRequestDTO.getNickName())
+                .role(Role.MEMBER)
+                .pwd(encPassword)
+                .status(Status.YES)
+                .providerType(ProviderType.EMAIL)
+                .build());
 
         memberInfoRepository.save(MemberInfo.builder()
                 .member(member)
@@ -73,97 +72,102 @@ public class MemberService {
         return result;
     }
 
-    public ApiResponse login(LoginRequestDTO loginRequestDTO) {
+    public ApiResponse login(HttpServletRequest request, HttpServletResponse response, LoginRequestDTO loginRequestDTO) {
         ApiResponse result = new ApiResponse();
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println(((UserPrincipal) authentication.getPrincipal()).getRoleType());
+        Date now = new Date();
+        Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
-            );
+        AuthToken accessToken = tokenProvider.createAuthToken(member.getId(),
+                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode()
+                , new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
 
-            Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
-            Map createToken = createTokenReturn(member.getId());
-            result.setMessage("LOGIN SUCCESS");
-            result.setResponseData("accessToken", createToken.get("accessToken"));
-            result.setResponseData("refreshToken", createToken.get("refreshToken"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new AuthenticationException(ErrorCode.UsernameOrPasswordNotFoundException);
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+        AuthToken refreshToken = tokenProvider.createAuthToken(
+                appProperties.getAuth().getTokenSecret(),
+                new Date(now.getTime() + refreshTokenExpiry)
+        );
+
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.getEmail());
+
+        // 원래 RefreshToken이 있으면 갱신해줘야함
+        if(oldRefreshToken.isPresent()){
+            RefreshToken token = oldRefreshToken.get();
+            refreshTokenRepository.save(token.builder()
+                    .token(refreshToken.getToken())
+                    .email(member.getEmail())
+                    .build());
+        }
+        // 없으면 생성
+        else{
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .token(refreshToken.getToken())
+                    .email(member.getEmail())
+                    .build());
         }
 
+        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+        result.setCode(200);
+        result.setMessage("LOGIN SUCCESS");
+        result.setResponseData("accessToken", accessToken.getToken());
         return result;
     }
-
-    public ApiResponse newAccessToken(NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request){
+    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ParseException {
         ApiResponse result = new ApiResponse();
-        String refreshToken = newTokenRequestDTO.getToken();
 
-        // AccessToken은 만료되었지만 RefreshToken은 만료되지 않은 경우
-        if(jwtProvider.validateJwtToken(request, refreshToken)){
-            Long memberId = jwtProvider.getMemberId(refreshToken);
+        String email = ((UserPrincipal) authentication.getPrincipal()).getName();
+        Member member= memberRepository.findByEmail(email);
 
-            Map createToken = null;
-            try {
-                createToken = createTokenReturn(memberId);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            result.setResponseData("accessToken", createToken.get("accessToken"));
-            result.setResponseData("refreshToken", createToken.get("refreshToken"));
-        }else{
-            // RefreshToken 또한 만료된 경우는 로그인을 다시 진행해야 한다.
-            result.setResponseData("code", ErrorCode.ReLogin.getCode());
-            result.setResponseData("message", ErrorCode.ReLogin.getMessage());
-            result.setResponseData("HttpStatus", ErrorCode.ReLogin.getStatus());
-        }
-        return result;
-    }
-
-    private Map<String, String> createTokenReturn(Long memberId) throws ParseException {
-        Map result = new HashMap();
-
-        String accessToken = jwtProvider.createAccessToken(memberId);
-        String refreshToken = jwtProvider.createRefreshToken(memberId).get("refreshToken");
-        SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date expiredAt = fm.parse(jwtProvider.createRefreshToken(memberId).get("refreshTokenExpirationAt"));
-        RefreshToken insertRefreshToken = RefreshToken.builder()
-                .token(refreshToken)
-                .expiredAt(expiredAt)
-                .build();
-
-        refreshTokenRepository.save(insertRefreshToken);
-
-        result.put("accessToken", accessToken);
-        result.put("refreshToken", insertRefreshToken.getToken());
-        return result;
-    }
-
-    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpSession httpSession) throws ParseException {
-        ApiResponse result = new ApiResponse();
-        ProviderType providerType = (ProviderType) httpSession.getAttribute("providerType");
-        String encPassword = bCryptPasswordEncoder.encode("1234");
-        Member member = memberRepository.save(Member.builder()
-                .email(httpSession.getAttribute("email").toString())
-                .nickName(socialSignUpRequestDTO.getNickName())
-                .role(Role.MEMBER)
-                .pwd(encPassword)
-                .status(Status.YES)
-                .providerType(providerType)
-                .build());
-
+        Date now = new Date();
         memberInfoRepository.save(MemberInfo.builder()
                 .member(member)
                 .gender(socialSignUpRequestDTO.getGender())
                 .name(socialSignUpRequestDTO.getName())
                 .birth(socialSignUpRequestDTO.getBirth())
                 .point(0)
-                .imageLink(httpSession.getAttribute("image").toString())
                 .score(0)
                 .build());
-        Map createToken = createTokenReturn(member.getId());
-        result.setMessage("LOGIN SUCCESS");
-        result.setResponseData("accessToken", createToken.get("accessToken"));
-        result.setResponseData("refreshToken", createToken.get("refreshToken"));
+
+        AuthToken accessToken = tokenProvider.createAuthToken(member.getId(),
+                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode()
+                , new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
+
+        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+        AuthToken refreshToken = tokenProvider.createAuthToken(
+                appProperties.getAuth().getTokenSecret(),
+                new Date(now.getTime() + refreshTokenExpiry)
+        );
+
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.getEmail());
+
+        // 원래 RefreshToken이 있으면 갱신해줘야함
+        if(oldRefreshToken.isPresent()){
+            RefreshToken token = oldRefreshToken.get();
+        }
+        // 없으면 생성
+        else{
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .token(refreshToken.getToken())
+                    .email(member.getEmail())
+                    .build());
+        }
+
+        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+
+        result.setMessage("SOCAIL LOGIN SUCCESS");
+        result.setCode(200);
+        result.setResponseData("accessToken", accessToken.getToken());
         return result;
     }
 

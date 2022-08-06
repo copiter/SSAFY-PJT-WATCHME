@@ -6,15 +6,12 @@ import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
-import com.A108.Watchme.VO.Entity.RefreshToken;
-import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.utils.CookieUtil;
 import io.swagger.annotations.*;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +26,7 @@ import java.text.ParseException;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+    private final static String REFRESH_TOKEN = "refresh_token";
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -56,67 +54,27 @@ public class MemberController {
     @ResponseBody
     public ApiResponse login(@RequestBody @Validated LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
 
-        ApiResponse apiResponse = memberService.login(loginRequestDTO);
-        String token = apiResponse.getResponseData().get("refreshToken").toString();
-        Cookie cookie = new Cookie("refreshToken", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        response.addCookie(cookie);
-        apiResponse.getResponseData().remove("refreshToken");
+        ApiResponse apiResponse = memberService.login(request,response, loginRequestDTO);
+        System.out.println(apiResponse.getResponseData());
         return apiResponse;
     }
     @PostMapping("/logout")
     @ResponseBody
     public ApiResponse logout(HttpServletRequest request,
-                              HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = false) Cookie authCookie,
-                              @CookieValue(value="refreshToken", required = false) Cookie cookie){
-
+                              HttpServletResponse response, Authentication authentication){
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         ApiResponse apiResponse = new ApiResponse();
-        HttpSession httpSession = request.getSession(false);
-        // 소셜로그인인 경우
-        if(httpSession!= null){
-            httpSession.invalidate();
-        }
-        // 일반 로그인의 경우
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                refreshTokenRepository.deleteAllByToken(cookie.getValue());
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        apiResponse.setCode(200);
         apiResponse.setMessage("LOGOUT SUCCESS");
+        apiResponse.setCode(200);
 
         return apiResponse;
-    }
-    @PostMapping("/newtoken")
-    @ResponseBody
-    public ApiResponse newAccessToken(@RequestBody @Validated NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request) {
-        return memberService.newAccessToken(newTokenRequestDTO, request);
     }
 
     @PostMapping("/social-signup")
     @ResponseBody
     public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
-                                    HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = true) Cookie authCookie) throws ParseException {
-
-        HttpSession httpSession = request.getSession(false);
-
-        if(httpSession!=null){
-            ApiResponse apiResponse = memberService.memberInsert(socialSignUpRequestDTO, httpSession);
-            String token = apiResponse.getResponseData().get("refreshToken").toString();
-            Cookie cookie = new Cookie("refreshToken", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            response.addCookie(cookie);
-            apiResponse.getResponseData().remove("refreshToken");
-            return apiResponse;
-        }
-        else{
-            throw new RuntimeException("잘못된 접근");
-        }
+                                    HttpServletResponse response, Authentication authentication) throws ParseException {
+        return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
     }
 
     @PostMapping("/find-email")

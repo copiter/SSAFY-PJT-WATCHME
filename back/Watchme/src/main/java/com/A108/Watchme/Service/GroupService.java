@@ -98,9 +98,9 @@ public class GroupService {
                                     .build()
                             );
                         }
-                        result.setResponseData("applieds", getApplys);
+                        result.setResponseData("appliers", getApplys);
                         result.setCode(200);
-                        result.setMessage("GROUP APPLY LIST SUCESS");
+                        result.setMessage("GROUP APPLY LIST SUCCESS");
                     } else {
                         // 그룹 리더가 아님
                         result.setCode(400);

@@ -80,7 +80,7 @@ public class GroupService {
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
 
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                    if (currUser.getUsername().equals(group.get().getLeader())) {
+                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
                         // 그룹 리더임
                         List<GroupApplyLog> applyLogs = groupApplyLogRegistory.findAllByGroupId(groupId);
                         List<GroupApplyDTO> getApplys = new LinkedList<>();
@@ -198,7 +198,7 @@ public class GroupService {
 
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                if (currUser.getUsername().equals(group.get().getLeader())) {
+                if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
 
                     Member member = memberRepository.findByNickName(acceptApplyReqDTO.getNickName());
                     Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
@@ -249,7 +249,7 @@ public class GroupService {
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
 
-                    if (currUser.getUsername().equals(group.get().getLeader())) {
+                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
 
                         Member member = memberRepository.findByNickName(declineApplyReqDTO.getNickName());
 
@@ -336,7 +336,7 @@ public class GroupService {
 
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                    if (currUser.getUsername().equals(group.get().getLeader())) {
+                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
 
                         Member member = memberRepository.findByNickName(leaderTossReqDTO.getNickName());
 
@@ -376,7 +376,7 @@ public class GroupService {
 
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                    if (currUser.getUsername().equals(group.get().getLeader())) {
+                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
                         Member member = memberRepository.findByNickName(groupKickReqDTO.getNickName());
 
                         Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);

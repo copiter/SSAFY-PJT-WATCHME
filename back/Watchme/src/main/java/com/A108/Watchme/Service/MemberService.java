@@ -1,5 +1,6 @@
 package com.A108.Watchme.Service;
 
+import com.A108.Watchme.Config.properties.AppProperties;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Http.ApiResponse;
@@ -78,7 +79,6 @@ public class MemberService {
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(((UserPrincipal) authentication.getPrincipal()).getRoleType());
         Date now = new Date();
         Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
 
@@ -97,11 +97,9 @@ public class MemberService {
 
         // 원래 RefreshToken이 있으면 갱신해줘야함
         if(oldRefreshToken.isPresent()){
-            RefreshToken token = oldRefreshToken.get();
-            refreshTokenRepository.save(token.builder()
-                    .token(refreshToken.getToken())
+           oldRefreshToken.get().builder().token(refreshToken.getToken())
                     .email(member.getEmail())
-                    .build());
+                    .build();
         }
         // 없으면 생성
         else{

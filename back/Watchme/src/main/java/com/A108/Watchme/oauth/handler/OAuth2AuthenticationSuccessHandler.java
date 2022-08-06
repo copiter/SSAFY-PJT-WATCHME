@@ -114,15 +114,22 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         );
 
         // DB 저장
-        RefreshToken userRefreshToken = refreshTokenRepository.findByEmail(userInfo.getEmail());
-        if (userRefreshToken != null) {
-            userRefreshToken.setToken(refreshToken.getToken());
-        } else {
-            userRefreshToken = RefreshToken.builder()
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(userInfo.getEmail());
+
+        // 원래 RefreshToken이 있으면 갱신해줘야함
+        if(oldRefreshToken.isPresent()){
+            RefreshToken token = oldRefreshToken.get();
+            refreshTokenRepository.save(token.builder()
                     .token(refreshToken.getToken())
                     .email(userInfo.getEmail())
-                            .build();
-            refreshTokenRepository.saveAndFlush(userRefreshToken);
+                    .build());
+        }
+        // 없으면 생성
+        else{
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .token(refreshToken.getToken())
+                    .email(userInfo.getEmail())
+                    .build());
         }
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;

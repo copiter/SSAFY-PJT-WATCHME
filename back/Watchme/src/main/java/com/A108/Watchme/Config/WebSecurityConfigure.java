@@ -3,6 +3,8 @@ package com.A108.Watchme.Config;
 import com.A108.Watchme.Config.properties.AppProperties;
 import com.A108.Watchme.Exception.WebAccessDeniedHandler;
 
+import com.A108.Watchme.Repository.MemberInfoRepository;
+import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.oauth.exception.RestAuthenticationEntryPoint;
 import com.A108.Watchme.oauth.filter.TokenAuthenticationFilter;
@@ -26,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -33,16 +36,20 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import org.springframework.web.filter.CorsFilter;
 
+import java.lang.reflect.Member;
+
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfigure {
-    private final CorsFilter corsFilter;
     private final AuthTokenProvider authTokenProvider;
+
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private MemberInfoRepository memberInfoRepository;
+    private final MemberRepository memberRepository;
     private final AppProperties appProperties;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
-    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -50,7 +57,10 @@ public class WebSecurityConfigure {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return new CustomUserDetailsService(memberRepository, memberInfoRepository);
+    }
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -59,10 +69,12 @@ public class WebSecurityConfigure {
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
+                memberRepository,
                 authTokenProvider,
                 appProperties,
                 refreshTokenRepository,
-                oAuth2AuthorizationRequestBasedOnCookieRepository()
+                oAuth2AuthorizationRequestBasedOnCookieRepository(),
+                memberInfoRepository
         );
     }
     @Bean
@@ -79,13 +91,15 @@ public class WebSecurityConfigure {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
         http
+                .cors()
+                .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable()
                 .httpBasic().disable()
                 .addFilterBefore(new TokenAuthenticationFilter(authTokenProvider), UsernamePasswordAuthenticationFilter.class)
-                .addFilter(corsFilter) // @CrossOrigin(인증 X), 시큐리티 필터에 등록해줘야함.
+//                .addFilter(corsFilter) // @CrossOrigin(인증 X), 시큐리티 필터에 등록해줘야함.
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .accessDeniedHandler(tokenAccessDeniedHandler)
@@ -99,6 +113,7 @@ public class WebSecurityConfigure {
                 .oauth2Login()
                 .authorizationEndpoint()
                 .baseUri("/oauth2/authorization")
+                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
                 .redirectionEndpoint()
                 .baseUri("/*/oauth2/code/*")
@@ -108,6 +123,8 @@ public class WebSecurityConfigure {
                 .and()
                 .successHandler(oAuth2AuthenticationSuccessHandler())
                 .failureHandler(oAuth2AuthenticationFailureHandler());
+
+
 
 
         return http.build();

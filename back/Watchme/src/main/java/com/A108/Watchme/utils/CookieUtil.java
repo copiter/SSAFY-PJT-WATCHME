@@ -2,7 +2,7 @@ package com.A108.Watchme.utils;
 
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.util.SerializationUtils;
-
+import org.springframework.http.ResponseCookie;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +27,20 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-//        cookie.setValue(LocalDateTime.now().toString());
-        cookie.setMaxAge(maxAge);
-
-        response.addCookie(cookie);
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setPath("/");
+//        cookie.setHttpOnly(true);
+//
+////        cookie.setValue(LocalDateTime.now().toString());
+//        cookie.setMaxAge(maxAge);
+        ResponseCookie cookie1 =ResponseCookie.from(name,value)
+                .domain("")
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(maxAge)
+                .build();
+        response.addHeader("Set-Cookie",cookie1.toString());
     }
 
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

@@ -43,40 +43,50 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private MemberRepository memberRepository;
-
+    private final MemberRepository memberRepository;
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
     private final RefreshTokenRepository refreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
-    private MemberInfoRepository memberInfoRepository;
+    private final MemberInfoRepository memberInfoRepository;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String email = authentication.getName();
         System.out.println(authentication.getName());
         System.out.println(authentication.getPrincipal());
+
         Member member = memberRepository.findByEmail(email);
+        System.out.println(member.getId());
+        Optional<MemberInfo> memberInfo = memberInfoRepository.findById(member.getId());
+        if(memberInfo.isPresent()){
+            // 정보입력을 위한 이동
+            if(memberInfo.get().getName()==null){
+                getRedirectStrategy().sendRedirect(request, response, "https://watchme2.shop/slogin");
+            }
 
-        MemberInfo memberInfo = memberInfoRepository.findById(member.getId()).get();
+            // 그렇지 않은 경우 정상 로그인
+            else {
+                String targetUrl = determineTargetUrl(request, response, authentication);
 
-        // 정보입력을 위한 이동
-        if(memberInfo.getName()==null){
+                if (response.isCommitted()) {
+                    logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+                    return;
+                }
+
+                clearAuthenticationAttributes(request, response);
+                getRedirectStrategy().sendRedirect(request, response, targetUrl);
+            }
+        }
+
+        else{
+            memberInfoRepository.save(MemberInfo.builder()
+                    .member(member)
+                    .imageLink(((UserPrincipal) authentication.getPrincipal()).getImageUrl())
+                    .build());
             getRedirectStrategy().sendRedirect(request, response, "https://watchme2.shop/slogin");
         }
 
-        // 그렇지 않은 경우 정상 로그인
-        else {
-            String targetUrl = determineTargetUrl(request, response, authentication);
-
-            if (response.isCommitted()) {
-                logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
-                return;
-            }
-
-            clearAuthenticationAttributes(request, response);
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
-        }
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

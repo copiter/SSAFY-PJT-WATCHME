@@ -9,6 +9,7 @@ import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
+import com.A108.Watchme.utils.CookieUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,6 +29,7 @@ import java.text.ParseException;
 public class MemberController {
     @Autowired
     private MemberService memberService;
+    private final static String REFRESH_TOKEN = "refresh_token";
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -62,34 +64,14 @@ public class MemberController {
     @PostMapping("/logout")
     @ResponseBody
     public ApiResponse logout(HttpServletRequest request,
-                              HttpServletResponse response, @CookieValue(value = "JSESSIONID", required = false) Cookie authCookie,
-                              @CookieValue(value="refreshToken", required = false) Cookie cookie){
-
+                              HttpServletResponse response, Authentication authentication){
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         ApiResponse apiResponse = new ApiResponse();
-        HttpSession httpSession = request.getSession(false);
-        // 소셜로그인인 경우
-        if(httpSession!= null){
-            httpSession.invalidate();
-        }
-        // 일반 로그인의 경우
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                refreshTokenRepository.deleteAllByToken(cookie.getValue());
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        apiResponse.setCode(200);
         apiResponse.setMessage("LOGOUT SUCCESS");
+        apiResponse.setCode(200);
 
         return apiResponse;
     }
-//    @PostMapping("/newtoken")
-//    @ResponseBody
-//    public ApiResponse newAccessToken(@RequestBody @Validated NewTokenRequestDTO newTokenRequestDTO, HttpServletRequest request) {
-//        return memberService.newAccessToken(newTokenRequestDTO, request);
-//    }
 
     @PostMapping("/social-signup")
     @ResponseBody

@@ -57,11 +57,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println(authentication.getPrincipal());
 
         Member member = memberRepository.findByEmail(email);
-        System.out.println(member.getId());
-        Optional<MemberInfo> memberInfo = memberInfoRepository.findById(member.getId());
-        if(memberInfo.isPresent()){
+        MemberInfo memberInfo = member.getMemberInfo();
             // 정보입력을 위한 이동
-            if(memberInfo.get().getName()==null){
+            if(memberInfo.getName()==null){
                 getRedirectStrategy().sendRedirect(request, response, "https://watchme2.shop/slogin");
             }
 
@@ -77,16 +75,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 clearAuthenticationAttributes(request, response);
                 getRedirectStrategy().sendRedirect(request, response, targetUrl);
             }
-        }
-
-        else{
-            memberInfoRepository.save(MemberInfo.builder()
-                    .member(member)
-                    .imageLink(((UserPrincipal) authentication.getPrincipal()).getImageUrl())
-                    .build());
-            getRedirectStrategy().sendRedirect(request, response, "https://watchme2.shop/slogin");
-        }
-
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

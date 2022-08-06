@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -75,8 +76,6 @@ public class MemberService {
 
     public ApiResponse login(HttpServletRequest request, HttpServletResponse response, LoginRequestDTO loginRequestDTO) {
         ApiResponse result = new ApiResponse();
-
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword())
         );
@@ -96,10 +95,23 @@ public class MemberService {
                 new Date(now.getTime() + refreshTokenExpiry)
         );
 
-        refreshTokenRepository.save(RefreshToken.builder()
-                .token(refreshToken.getToken())
-                .email(loginRequestDTO.getEmail())
-                .build());
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.getEmail());
+
+        // 원래 RefreshToken이 있으면 갱신해줘야함
+        if(oldRefreshToken.isPresent()){
+            RefreshToken token = oldRefreshToken.get();
+            refreshTokenRepository.save(token.builder()
+                    .token(refreshToken.getToken())
+                    .email(member.getEmail())
+                    .build());
+        }
+        // 없으면 생성
+        else{
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .token(refreshToken.getToken())
+                    .email(member.getEmail())
+                    .build());
+        }
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
@@ -110,7 +122,6 @@ public class MemberService {
         result.setResponseData("accessToken", accessToken.getToken());
         return result;
     }
-
     public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ParseException {
         ApiResponse result = new ApiResponse();
 
@@ -138,10 +149,19 @@ public class MemberService {
                 new Date(now.getTime() + refreshTokenExpiry)
         );
 
-        refreshTokenRepository.save(RefreshToken.builder()
-                .token(refreshToken.getToken())
-                .email(member.getEmail())
-                .build());
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.getEmail());
+
+        // 원래 RefreshToken이 있으면 갱신해줘야함
+        if(oldRefreshToken.isPresent()){
+            RefreshToken token = oldRefreshToken.get();
+        }
+        // 없으면 생성
+        else{
+            refreshTokenRepository.save(RefreshToken.builder()
+                    .token(refreshToken.getToken())
+                    .email(member.getEmail())
+                    .build());
+        }
 
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);

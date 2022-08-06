@@ -81,13 +81,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private Member createUser(OAuth2UserInfo userInfo, ProviderType providerType) {
-        Member member = memberRepository.save(Member.builder()
+        Member member = Member.builder()
                 .email(userInfo.getEmail())
                 .nickName(userInfo.getNickName())
                 .role(Role.MEMBER)
                 .pwd("12345")
                 .status(Status.YES)
                 .providerType(providerType)
+                .build();
+        memberInfoRepository.save(MemberInfo.builder()
+                .member(member)
+                .imageLink(userInfo.getImageUrl())
                 .build());
         return member;
     }

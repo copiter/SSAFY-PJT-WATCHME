@@ -18,27 +18,6 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 
     @Override
     public OAuth2AuthorizationRequest loadAuthorizationRequest(HttpServletRequest request) {
-//        System.out.println(request.getRequestURI());
-//        System.out.println("load authorization request");
-        Cookie[] cookies = request.getCookies();
-//        System.out.println("hyeo cookie here? " + cookies);
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                System.out.println("TIME------------------------------------------");
-                System.out.println(cookie.getValue());
-            }
-        }
-        System.out.println(request.getRequestURI());
-        System.out.println(request.getHeader("Set-Cookie"));
-        System.out.println(CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME).toString());
-        System.out.println(CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME));
-//        System.out.println(CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-//                .map(cookie -> CookieUtil.deserialize(cookie, String.class))
-//                .orElse(null));
-        System.out.println("TIME2------------------------------------------");
-        System.out.println(CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
-                .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class))
-                .orElse(null));
         return CookieUtil.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME)
                 .map(cookie -> CookieUtil.deserialize(cookie, OAuth2AuthorizationRequest.class))
                 .orElse(null);
@@ -47,19 +26,13 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
         if (authorizationRequest == null) {
-            System.out.println("author = null");
             CookieUtil.deleteCookie(request, response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME);
             CookieUtil.deleteCookie(request, response, REDIRECT_URI_PARAM_COOKIE_NAME);
             CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
             return;
         }
-        System.out.println(request.getRequestURI());
-        System.out.println("repository has a request");
-        System.out.println(CookieUtil.serialize(authorizationRequest));
         CookieUtil.addCookie(response, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME, CookieUtil.serialize(authorizationRequest), cookieExpireSeconds);
         String redirectUriAfterLogin = request.getParameter(REDIRECT_URI_PARAM_COOKIE_NAME);
-        System.out.println(redirectUriAfterLogin);
-        System.out.println(request.getRequestURI());
         if (StringUtils.isNotBlank(redirectUriAfterLogin)) {
             CookieUtil.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, cookieExpireSeconds);
         }
@@ -67,7 +40,7 @@ public class OAuth2AuthorizationRequestBasedOnCookieRepository implements Author
 
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request) {
-        return this.loadAuthorizationRequest(request);
+        return null;
     }
 
 

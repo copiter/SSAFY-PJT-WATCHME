@@ -1,9 +1,6 @@
 package com.A108.Watchme.Controller;
 
-import com.A108.Watchme.DTO.LoginRequestDTO;
-import com.A108.Watchme.DTO.NewTokenRequestDTO;
-import com.A108.Watchme.DTO.SignUpRequestDTO;
-import com.A108.Watchme.DTO.SocialSignUpRequestDTO;
+import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
@@ -78,5 +75,13 @@ public class MemberController {
     public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
                                     HttpServletResponse response, Authentication authentication) throws ParseException {
         return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
+    }
+
+    @PostMapping("/find-email")
+    @ResponseBody
+    public ApiResponse findEmail(@RequestBody FindEmailRequestDTO findEmailRequestDTO){
+        System.out.println(findEmailRequestDTO.getNickName());
+        ApiResponse result = memberService.findEmail(findEmailRequestDTO);
+        return result;
     }
 }

@@ -1,4 +1,7 @@
-package com.A108.Watchme.auth;
+package com.A108.Watchme.oauth.info.impl;
+
+
+import com.A108.Watchme.oauth.info.OAuth2UserInfo;
 
 import java.util.Map;
 
@@ -9,8 +12,8 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getId() {
-        return (String) attributes.get("sub");
+    public String getNickName() {
+       return (String)attributes.get("name");
     }
 
     @Override
@@ -19,13 +22,7 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
     }
 
     @Override
-    public String getName() {
-        return (String) attributes.get("name");
-    }
-
-    @Override
     public String getImageUrl() {
         return (String) attributes.get("picture");
     }
-
 }

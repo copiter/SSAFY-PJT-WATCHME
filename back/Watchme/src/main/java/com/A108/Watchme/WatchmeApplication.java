@@ -14,7 +14,8 @@ public class WatchmeApplication {
 
 	public static final String APPLICATION_LOCATIONS = "spring.config.location="
 			+ "classpath:application.properties,"
-			+ "classpath:aws.yml";
+			+ "classpath:aws.yml,"
+			+ "classpath:oauth.yml";
 ////	@Bean
 //	public S3Client client() {
 //		return S3Client.create();
@@ -27,13 +28,12 @@ public class WatchmeApplication {
 //				.build();
 //	}
 
+
 	public static void main(String[] args) {
 
 		new SpringApplicationBuilder(WatchmeApplication.class)
 				.properties(APPLICATION_LOCATIONS)
 				.run(args);
 	}
-
-
 
 }

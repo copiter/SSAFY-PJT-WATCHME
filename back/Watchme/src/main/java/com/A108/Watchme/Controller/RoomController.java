@@ -1,6 +1,7 @@
 package com.A108.Watchme.Controller;
 
-import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.room.GetRoomResDTO;
+import com.A108.Watchme.DTO.room.PostRoomReqDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.RoomService;
 import io.swagger.annotations.*;

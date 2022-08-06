@@ -1,7 +1,7 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.GetRoomResDTO;
-import com.A108.Watchme.DTO.PostRoomReqDTO;
+import com.A108.Watchme.DTO.room.GetRoomResDTO;
+import com.A108.Watchme.DTO.room.PostRoomReqDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.CategoryList;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;

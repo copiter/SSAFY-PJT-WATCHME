@@ -4,6 +4,7 @@ import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -28,9 +29,9 @@ public class MemberRoomLog {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_at")
-    private LocalDateTime startAt;
+    private DateTime startAt;
 
     @Column(name="study_time")
     private Integer studyTime;

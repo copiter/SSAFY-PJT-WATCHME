@@ -12,6 +12,7 @@ import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import lombok.RequiredArgsConstructor;
+import org.joda.time.DateTime;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,8 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -149,6 +152,7 @@ public class RoomService {
     public void joinRoom(Long roomId){
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            LocalDateTime localDateTime = LocalDateTime.now();
             if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
                 Member member = memberRepository.findByEmail(currUser.getUsername());
@@ -156,6 +160,7 @@ public class RoomService {
                 mrlRepository.save(new MemberRoomLog().builder()
                         .room(roomRepository.findById(roomId).get())
                         .member(member)
+                        .startAt(DateTime.now())
                         .build()
                 );
             }

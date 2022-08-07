@@ -35,7 +35,6 @@ public class RoomService {
     private final MRLRepository mrlRepository;
     private final RoomInfoRepository roomInfoRepository;
     private final CategoryRepository categoryRepository;
-
     private final S3Uploader s3Uploader;
 
     public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images, HttpServletRequest request) {
@@ -163,5 +162,36 @@ public class RoomService {
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public ApiResponse kickMember(Long roomId, Long memberId) {
+        // Member가 방장인지 조회
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        Long owner_id = roomRepository.findById(roomId).get().getId();
+
+        // 방장인 경우
+        if(id == owner_id){
+            // 연결 종료시키는 방법..?
+        }
+        return null;
+        //
+    }
+
+    // 방떠날시 룸로그 정보 저장해줘야함.
+    public ApiResponse endRoom(Long roomId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        //떠날때 룸로그 정보 가져올때 어떻게 해야하는지?
+        mrlRepository.save(MemberRoomLog.builder()
+                .build());
+
+        return null;
+    }
+
+    public ApiResponse updateRoom(Long roomId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        return null;
     }
 }

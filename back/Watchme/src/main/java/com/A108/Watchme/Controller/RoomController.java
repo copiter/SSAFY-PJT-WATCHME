@@ -19,6 +19,7 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+
     @ApiOperation(value="룸 생성", notes="룸 생성 성공시 200코드를 반환합니다.")
     @PostMapping(value = "/addRoom", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse addRoom(@RequestPart PostRoomReqDTO postRoomReqDTO, @RequestPart(required = false) MultipartFile images, HttpServletRequest request) {
@@ -48,5 +49,10 @@ public class RoomController {
         return roomService.joinRooms(Long.valueOf(roomId));
     }
 
+    // 강제퇴장
+    @PostMapping("/room/{roomId}/kick/{memberId}")
+    public ApiResponse kickMember(@PathVariable(value = "roomId") int roomId, @PathVariable(value = "memberId") int memberId){
+        return roomService.kickMember(Long.valueOf(roomId), Long.valueOf(memberId));
+    }
 }
 

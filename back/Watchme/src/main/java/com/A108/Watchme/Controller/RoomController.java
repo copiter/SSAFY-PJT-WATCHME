@@ -1,6 +1,7 @@
 package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.Room.JoinRoomDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.RoomService;
@@ -38,9 +39,9 @@ public class RoomController {
         return roomService.getRoomList(ctgName, pages, keyword);
     }
 
-    @PostMapping("/room/join/{roomId}")
-    public ApiResponse joinRoom(@PathVariable(value ="roomId")  int roomId){
-        return roomService.joinRoom(Long.valueOf(roomId));
+    @PostMapping("/rooms/join/{roomId}")
+    public ApiResponse joinRoom(@PathVariable(value ="roomId")  int roomId,  @RequestBody(required = false) JoinRoomDTO joinRoomDTO){
+        return roomService.joinRoom(Long.valueOf(roomId), joinRoomDTO);
     }
 
     // 강제퇴장
@@ -61,8 +62,8 @@ public class RoomController {
 
     // 방 수정
     @PostMapping("/rooms/{roomId}/update")
-    public ApiResponse updateRooms(@PathVariable(value = "roomId") int roomId, @RequestPart RoomUpdateDTO roomUpdateDTO,
-                                   @RequestPart(required = false) MultipartFile images){
+    public ApiResponse updateRooms(@PathVariable(value = "roomId") int roomId, @RequestPart(value ="roomUpdateDTO") RoomUpdateDTO roomUpdateDTO,
+                                   @RequestPart(value="images", required = false) MultipartFile images){
         Long id = Long.valueOf(roomId);
         return roomService.updateRoom(id, roomUpdateDTO, images);
     }

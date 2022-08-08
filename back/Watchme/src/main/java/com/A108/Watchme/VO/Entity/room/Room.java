@@ -7,6 +7,7 @@ import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.nimbusds.openid.connect.sdk.Display;
 import lombok.*;
 
 import javax.persistence.*;
@@ -45,6 +46,7 @@ public class Room {
     @OneToOne
     @JoinColumn(name = "room_ctg")
     private Category roomCtg;
+
 
 
 }

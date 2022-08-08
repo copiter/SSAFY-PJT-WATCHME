@@ -33,8 +33,9 @@ public class MemberRoomLog {
     @Column(name = "status")
     private Status status;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "joined_at")
-    private DateTime joinedAt;
+    private Date joinedAt;
 
     @Column(name="study_time")
     private Integer studyTime;

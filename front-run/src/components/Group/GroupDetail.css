@@ -1,0 +1,141 @@
+/* 그룹 참가 버튼 */
+#group-detail__joinBtn {
+  visibility: hidden;
+}
+#group-detail__joinBtn button {
+  width: 100%;
+  height: 46px;
+
+  border: 0;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.2);
+
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+}
+#group-detail__joinBtn button:active {
+  opacity: 0.9;
+}
+#join_submit {
+  color: #000;
+  background-color: #4fd1d9;
+}
+#join_cancel {
+  color: #fff;
+  background-color: #dc3545;
+}
+/* 그룹참가 버튼 끝 */
+
+#group-detail {
+  width: 1300px;
+  height: 610px;
+  margin: 47px auto 60px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+}
+
+#group-detail__sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+  width: 25%;
+  height: 100%;
+  background-color: #eff0f2;
+
+  border-radius: 8px;
+}
+
+#group-detail__sidebar__info {
+  padding: 0 25px;
+}
+#group-detail__sidebar__info img {
+  display: block;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  margin: 47px auto 25px;
+}
+#group-detail__sidebar__info > span {
+  display: block;
+  margin: 0 auto;
+
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}
+#group-detail__desc {
+  margin: 40px 0 20px;
+}
+#group-detail__desc > span {
+  font-weight: 700;
+  font-size: 18px;
+
+  color: #484848;
+}
+#group-detail__desc > p {
+  margin-top: 15px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  color: #9a9a9a;
+}
+
+#group-detail__etc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#group-detail__etc__ctg {
+  display: flex;
+  gap: 3px;
+}
+.group-detail__etc__ctg-item {
+  padding: 5px 8px;
+  background: rgba(79, 209, 217, 0.57);
+  border-radius: 10px;
+
+  font-size: 13px;
+  line-height: 13px;
+
+  color: rgba(60, 12, 12, 0.61);
+}
+
+#group-detail__sidebar__nav {
+  margin: 0 0 13px 25px;
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+.group-detail__nav-home {
+  height: 40px;
+  padding-right: 25px;
+
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 40px;
+  color: #9a9a9a;
+}
+
+.group-detail__nav-home:hover,
+.group-detail__nav-home.nav_active {
+  background: #9a9a9a;
+  color: #fff;
+  border-radius: 5px 0px 0px 5px;
+  transition: 0.3s ease;
+  cursor: pointer;
+}

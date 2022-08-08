@@ -5,6 +5,7 @@ import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.Getter;
 import lombok.Setter;
+import org.joda.time.DateTime;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -17,5 +18,5 @@ public class PostRoomReqDTO {
     private String description;
     private String categoryName;
     private Integer num;
-    private Date endTime;
+    private DateTime endTime;
     private Integer display;}

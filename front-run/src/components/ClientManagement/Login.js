@@ -43,10 +43,15 @@ const Login = () => {
         if (response.ok) {
           return response.json();
         } else {
-          response.json().then((data) => {
-            let errorMessage = "Authentication failed!";
-            throw new Error(errorMessage);
-          });
+          response
+            .json()
+            .then((data) => {
+              let errorMessage = data.error;
+              throw new Error();
+            })
+            .catch((error) => {
+              alert("아이디와 비밀번호를 확인하세요");
+            });
         }
       })
       .then((result) => {
@@ -57,7 +62,8 @@ const Login = () => {
         window.location.reload();
       })
       .catch((err) => {
-        alert(err.message);
+        let errorMessage = "오류가 발생하였습니다";
+        throw new Error(errorMessage);
       });
   };
 
@@ -80,7 +86,10 @@ const Login = () => {
           required
           ref={passwordInputRef}
         />
-        <a href="#none">아이디/비밀번호 찾기</a>
+        <div>
+          <Link to="/findID">아이디</Link>/
+          <Link to="/findPWD">비밀번호 찾기</Link>
+        </div>
         <button className="submit-btn">로그인</button>
       </form>
 
@@ -91,7 +100,8 @@ const Login = () => {
           <div className="email">이메일로 회원가입</div>
         </Link>
         <a
-          href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=https://watchme2.shop/api/login/oauth2/code/kakao`}
+          href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=
+          https://watchme2.shop/api/login/authorization/kakao?redirect_uri=https://watchme2.shop/slogin`}
         >
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
@@ -99,7 +109,8 @@ const Login = () => {
           </div>
         </a>
         <a
-          href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=https://watchme2.shop/api/login/oauth2/code/naver`}
+          href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=
+          https://watchme2.shop/api/login/oauth2/code/naver`}
         >
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
@@ -107,7 +118,8 @@ const Login = () => {
           </div>
         </a>
         <a
-          href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=https://watchme2.shop/api/login/oauth2/code/google`}
+          href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=	
+          https://watchme2.shop/api/login/authorization/google`}
         >
           <div className="google">
             <img src={google} alt="구글" width={40} />

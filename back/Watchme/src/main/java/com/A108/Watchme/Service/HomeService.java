@@ -16,6 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,19 +36,16 @@ public class HomeService {
 
 
 
-    public ApiResponse main() {
+    public ApiResponse main(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
         ApiResponse result = new ApiResponse();
+        System.out.println("-----------------------------------");
 
-        try{
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println(authentication.getName());
             if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")){
 
                 UserDetails currUser = (UserDetails)authentication.getPrincipal();
 
-                Member member = memberRepository.findByEmail(currUser.getUsername());
-                member.setPwd(null);
+                Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
 
                 MemberDataDTO resMember = MemberDataDTO.builder()
                         .email(member.getEmail())
@@ -75,6 +76,7 @@ public class HomeService {
                             .groupCategory(mg.getGroup().getCategory().stream().map(x->x.getCategory().getName()).collect(Collectors.toList()))
                             .build());
                 }
+
 
                 result.setResponseData("member", resMember);
                 result.setResponseData("myGroups", resMyGroups);
@@ -130,12 +132,6 @@ public class HomeService {
 
             result.setMessage("homeview success");
             result.setCode(200);
-
-        } catch(Exception e){
-            e.printStackTrace();
-            result.setCode(400);
-            result.setMessage("homeview fail");
-        }
 
         return result;
     }

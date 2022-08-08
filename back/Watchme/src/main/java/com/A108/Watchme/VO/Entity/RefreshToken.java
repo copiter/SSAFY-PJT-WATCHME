@@ -13,6 +13,6 @@ public class RefreshToken {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="refresh_id")
     private Long id;
+    private String email;
     private String token;
-    private Date expiredAt;
 }

@@ -2,334 +2,263 @@ a {
   color: none;
   text-decoration: none;
 }
-#outer {
-  position: absolute;
-  left: 10%;
-}
+
 #mainpage__myinfor {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 90px;
-  position: relative;
+  width: 100%;
   height: 370px;
-  width: 1440px;
-  border-radius: 0px;
+
+  margin: 0 auto;
+  padding: 0 10px;
 
   background-color: #eff0f2;
+
+  display: flex;
+  align-items: center;
 }
+
+#mypage__myinfor__width {
+  width: 1240px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 #mypage__myinfor__title {
-  position: absolute;
   width: 600px;
   height: 49px;
-  left: 118px;
-  top: 25px;
 
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 800;
   font-size: 40px;
-  line-height: 49px;
-  /* identical to box height */
-
-  text-align: center;
 
   color: #404040;
 }
 
+#mypage__myinfor__contents {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  margin-top: 25px;
+}
+
 .mypage__myinfor__sub-title {
-  position: absolute;
-  height: 48px;
-  left: 34px;
-  top: 6px;
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 700;
   font-size: 28px;
-  line-height: 48px;
+  line-height: 49px;
   color: #484848;
 }
-#mypage__myinfor__create-room {
-  position: absolute;
-  width: 221px;
-  height: 260px;
-  left: 84px;
-  top: 100px;
-}
-#mypage__myinfor__create-room__create {
-  position: absolute;
+
+#mypage__myinfor__create-room__create:before {
+  display: block;
   width: 160px;
   height: 160px;
-  left: 34px;
-  top: 60px;
-
-  background: #e0e2e6;
   border-radius: 8px;
-}
-
-#rooml {
-  position: absolute;
-  width: 5px;
-  height: 80px;
-  left: 80px;
-  top: 40px;
-
-  background: black;
-}
-#room- {
-  position: absolute;
-  width: 80px;
-  height: 5px;
-  top: 80px;
-  left: 40px;
-
-  background: black;
-}
-#mypage__myinfor__mystduy-group {
-  position: absolute;
-  width: 416px;
-  height: 260px;
-  left: 339px;
-  top: 90px;
-}
-.mypage__myinfor__mystduy-group-image {
-  position: absolute;
-  width: 160px;
-  height: 160px;
-  top: 60px;
   background-color: #e0e2e6;
-  border-radius: 8px;
-}
-.mypage__myinfor__mystduy-group__img {
-  position: absolute;
-  width: 32.62px;
-  height: 32.62px;
-  left: 8px;
-  top: 87px;
-  border-radius: 50%;
-  background-color: #c2c6cc;
-}
-.mypage__myinfor__mystduy-group__Title {
-  position: absolute;
-  left: 8px;
-  top: 112px;
 
-  font-family: "Montserrat";
-  font-style: normal;
+  content: "\002B";
+  font-size: 160px;
+  line-height: 140px;
+  text-align: center;
+  color: #9a9a9a;
+}
+
+#mypage__myinfor__groups {
+  position: relative;
+  width: 340px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#mypage__myinfor__groups a {
+  display: inline-block;
+}
+
+/* 나중에 그리드로 구현!!! whaleonstudy 참고 */
+#mypage__myinfor__groups a span {
+  text-overflow: ellipsis;
+  position: absolute;
+  z-index: 1;
   font-weight: 700;
   font-size: 17px;
   line-height: 48px;
   /* identical to box height, or 282% */
 
-  color: #484848;
-}
-#mypage__myinfor__mystduy-group1 {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0px;
-  gap: 30px;
-
-  position: absolute;
-  left: 40px;
-  top: 65px;
-}
-#mypage__myinfor__mystduy-group2 {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0px;
-  gap: 30px;
-  position: absolute;
-  left: 219px;
-  top: 65px;
-}
-
-#mypage__myinfor__mystduy {
-  position: absolute;
-  width: 515px;
-  height: 260px;
-  left: 808px;
-  top: 90px;
-}
-#mypage__myinfor__mystduy__infor {
-  position: absolute;
-  width: 515px;
-  height: 160px;
+  color: #000;
+  bottom: 0px;
   left: 20px;
-  top: 60px;
+}
+
+.mypage__myinfor__mystudy-group-image {
+  width: 160px;
+  height: 160px;
+  border-radius: 8px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mypage__myinfor__mystudy-group__img {
+  width: 160px;
+  height: 160px;
+
+  filter: contrast(50%);
+}
+
+.mypage__myinfor__mystudy-group__Title {
+  position: absolute;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 48px;
+  /* identical to box height, or 282% */
+
+  color: #000;
+  z-index: 1;
+  bottom: 0px;
+  left: 20px;
+}
+#mypage__myinfor__mystudy-group1 {
+  position: relative;
+}
+#mypage__myinfor__mystudy-group2 {
+  position: relative;
+}
+
+/* 나의 공부시간 */
+#mypage__myinfor__mystudy {
+  box-sizing: content-box;
+  width: 515px;
+  padding: 0 26px;
+}
+#mypage__myinfor__mystudy__infor {
+  width: 535px;
+  height: 160px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 
   background-color: #e0e2e6;
   border-radius: 8px;
 }
-#left {
-  position: absolute;
-  width: 200px;
-  height: 140px;
-  left: 214px;
-  top: 10px;
-
-  font-family: "Poppins";
-  font-style: normal;
+#mypage__myinfor__mystudy__infor__text {
+  width: 262px;
+  letter-spacing: 0.75px;
+  color: #292929;
+}
+#mypage__myinfor__mystudy__infor__text li {
+  display: flex;
+  justify-content: space-between;
+  line-height: 2;
+}
+.mystudy__infor__text-left {
   font-weight: 400;
   font-size: 16px;
-  line-height: 28px;
-  /* or 175% */
-
-  display: flex;
-  align-items: center;
-  letter-spacing: 0.75px;
 
   color: #858585;
 }
-#right {
-  position: absolute;
-  height: 140px;
-  left: 362px;
-  top: 9px;
 
-  font-family: "Poppins";
-  font-style: normal;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 28px;
-  /* or 175% */
-
-  display: flex;
-  align-items: center;
-  text-align: right;
-  letter-spacing: 0.75px;
-
-  color: #292929;
-}
-
+/* 로그인 */
 #mainpage_study-groups {
-  position: relative;
-  margin-top: 50px;
-  margin-left: auto;
-  margin-right: auto;
-  height: 480px;
+  margin: 70px auto 0;
   width: 1240px;
-  border-radius: 0px;
 }
 .section__top {
-  position: relative;
-  height: 130px;
-  width: 1225px;
-  left: 15px;
-  top: 0px;
-  border-radius: 0px;
+  display: flex;
+  justify-content: space-between;
 }
-.section__top__text {
-  position: absolute;
-  width: 355px;
-  height: 96px;
-  left: -3px;
-  top: 0px;
 
-  font-family: "Montserrat";
-  font-style: normal;
+.section__top a {
+  display: inline-block;
+  align-self: flex-end;
+}
+
+.section__top__text {
   font-weight: 700;
   font-size: 36px;
   line-height: 48px;
-  /* or 133% */
   color: #484848;
 }
+
 .section__top__btn {
-  position: absolute;
   background: #ffffff;
-  height: 48.1234130859375px;
-  width: 141.77133178710938px;
-  left: 1060px;
-  top: 37px;
+  height: 48px;
+  width: 142px;
   border-radius: 13px;
+
+  font-weight: 600;
+  font-size: 14px;
+  color: #484848;
+  text-align: center;
 }
-.section__top__rec {
-  position: absolute;
+
+#mainpage__study-groups__groups::before {
+  display: inline-block;
+  content: "";
+  background-color: #000;
   width: 140px;
   height: 6px;
-  left: -1px;
-  top: 127px;
+  margin: 31px 0 60px;
+}
 
-  background: #484848;
-  border-radius: 3px;
+/* 메인페이지 */
+#mainpage__study-groups__groups > ul {
+  display: flex;
+  justify-content: space-between;
 }
-#mainpage__study-groups__groups {
-  position: absolute;
-  width: 1205px;
-  height: 280px;
-  left: 16px;
-  top: 200px;
-}
-.groups__circle {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  left: 22px;
-  top: 130px;
 
-  background-color: #c2c6cc;
+.groups__img {
+  display: inline-block;
+  width: 278px;
+  height: 278px;
+  border-radius: 8px;
+  /* filter: contrast(50%); */
 }
+
+.groups__group-info {
+  display: flex;
+  justify-content: space-between;
+
+  position: absolute;
+  left: 14px;
+  bottom: 15px;
+  width: 250px;
+  z-index: 100;
+
+  line-height: 1.5;
+  /* filter: contrast(100%); */
+}
+.group-info__left {
+  margin-right: 5px;
+}
+
 .groups__group-name {
-  position: absolute;
-  width: 257.08px;
-  height: 42px;
-  left: 21.92px;
-  top: 203px;
-
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 700;
   font-size: 17px;
-  line-height: 48px;
   /* or 282% */
-  color: #484848;
+  color: #000;
 }
 .groups__group-descript {
-  position: absolute;
-  width: 257.08px;
-  height: 22px;
-  left: 21.92px;
-  top: 242px;
-
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 500;
   font-size: 13px;
   line-height: 16px;
 
-  color: #9a9a9a;
+  color: #fff;
 }
 .groups__mem-no-rec {
-  position: absolute;
-  width: 53px;
+  align-self: flex-end;
+
+  width: 60px;
   height: 18px;
-  left: 225px;
-  top: 241px;
+
   background: #c2c6cc;
   border-radius: 5px;
   text-align: center;
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 700;
   font-size: 10px;
-  line-height: 16px;
+  line-height: 18px;
 }
-#mainpage__study-groups__groups__1 {
-  position: absolute;
-}
-#mainpage__study-groups__groups__2 {
-  position: absolute;
-  left: 300px;
-}
-#mainpage__study-groups__groups__3 {
-  position: absolute;
-  left: 600px;
-}
-#mainpage__study-groups__groups__4 {
-  position: absolute;
-  left: 900px;
-}
+
 .mainpage__study-groups__groups {
   width: 278px;
   height: 278px;
@@ -337,74 +266,151 @@ a {
   border-radius: 8px;
 }
 
+/* 메인페이지 배너 */
 #mainpage__banner {
-  position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top:50px;
-  height: 400px;
-  width: 1240px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
+  margin: 130px auto 130px;
+  padding: 60px;
+
+  width: 1120px;
+  height: 280px;
+
+  /* background: #e0e2e6; */
   background: #eff0f2;
   border-radius: 12px;
 }
+#banner__left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 #mainpage__banner__title {
-  position: absolute;
-  width: 500px;
-  height: 200px;
-  left: 71px;
-  top: 70px;
-
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 700;
   font-size: 38px;
   line-height: 52px;
-  /* or 137% */
+  margin-bottom: 50px;
 
   color: #484848;
 }
 #mainpage__banner__main {
-  position: absolute;
-  width: 495px;
-  height: 234px;
-  left: 650px;
-  top: 90px;
-
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 800;
   font-size: 64px;
   line-height: 78px;
   text-align: right;
+  letter-spacing: 3px;
 
   color: #535353;
 }
 #mainpage__banner__description {
-  position: absolute;
-  width: 373px;
-  height: 119px;
-  left: 71px;
-  top: 225px;
-
-  font-family: "Montserrat";
-  font-style: normal;
-  font-weight: 500;
+  font-weight: 300;
   font-size: 16px;
   line-height: 20px;
-  /* or 125% */
+  letter-spacing: 1px;
 
   color: #9a9a9a;
 }
 
+/* 공개룸 소개 */
+
 #mainpage__meeting-rooms {
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 50px;
+  margin: 50px auto 0;
   width: 1240px;
   height: 1170px;
 }
+
+#mainpage__meeting-rooms__rooms::before {
+  display: inline-block;
+  content: "";
+  background-color: #000;
+  width: 140px;
+  height: 6px;
+  margin: 31px 0 60px;
+}
+
+.rooms__img {
+  /* width: 329px; */
+  /* height: 329px; */
+  border-radius: 8px;
+  filter: contrast(50%);
+}
+
+/* .rooms__whole {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+} */
+/* 
+.rooms__whole article {
+  display: inline-block;
+  margin: 0 55px 30px 0;
+} */
+/* 
+.rooms__whole li .group-specs {
+  position: relative;
+
+  width: 350px;
+  height: 340px;
+  background: #e0e2e6;
+  border-radius: 12px;
+  padding: 41px 27px;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.group-specs .group-specs__rules {
+  display: none;
+}
+.group-specs__rules span {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.group-specs__rules li {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.group-specs:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.group-specs:hover .group-specs__rules {
+  display: block;
+  z-index: 1;
+}
+
+.group-info {
+  margin: 10px 12.5px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 2;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.group-info div {
+  display: inline;
+}
+
+.group-info .info-content {
+  font-weight: 500;
+  font-size: 14px;
+  color: #9a9a9a;
+}
+
+.group-info .category {
+  display: flex;
+  justify-content: space-between;
+} */
+
+/*
 #mainpage__meeting-rooms__rooms {
   position: absolute;
   width: 1240px;
@@ -514,4 +520,4 @@ a {
 #mainpage__meeting-rooms__rooms__6 {
   left: 833px;
   top: 480px;
-}
+} */

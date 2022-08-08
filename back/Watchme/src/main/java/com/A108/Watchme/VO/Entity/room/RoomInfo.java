@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
+import org.springframework.data.jpa.repository.Temporal;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -31,6 +33,7 @@ public class RoomInfo {
 
     private Integer currMember;
     private Timestamp createdAt;
+
     private Date endAt;
 
     private Integer maxMember;

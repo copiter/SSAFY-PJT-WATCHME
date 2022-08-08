@@ -1,3 +1,12 @@
+
+.imgSrc
+{
+  position: absolute;
+  width: 87%;
+  height: 82%;
+}
+
+
 .sr-only {
   position: absolute;
   left: -9999px;
@@ -169,23 +178,23 @@
   flex-direction: column;
 } */
 
-.module__rooms .rooms__whole {
+.rooms__whole {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .rooms__whole article {
   display: inline-block;
-  margin: 0 55px 30px 0;
+  margin: 0 30px 30px 0;
 }
 
 .rooms__whole li .group-specs {
   position: relative;
 
-  width: 382px;
-  height: 340px;
+  width: 329px;
+  height: 285px;
   background: #e0e2e6;
   border-radius: 12px;
   padding: 41px 27px;

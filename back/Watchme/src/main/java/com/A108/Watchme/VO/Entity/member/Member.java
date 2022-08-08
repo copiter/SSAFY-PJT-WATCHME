@@ -39,14 +39,14 @@ public class Member{
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "member", fetch = FetchType.EAGER)
     @JsonManagedReference
     private MemberInfo memberInfo;
 
 //    @OneToMany(mappedBy = "leader")
 //    private List<Group> leadList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member")
     @JsonManagedReference
     private List<MemberGroup> memberGroupList;
 }

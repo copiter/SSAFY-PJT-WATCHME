@@ -1,7 +1,10 @@
 package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.group.GroupCreateReqDTO;
+import com.A108.Watchme.DTO.group.GroupKickReqDTO;
 import com.A108.Watchme.DTO.group.GroupReqDTO;
+import com.A108.Watchme.DTO.group.GroupUpdateReqDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;

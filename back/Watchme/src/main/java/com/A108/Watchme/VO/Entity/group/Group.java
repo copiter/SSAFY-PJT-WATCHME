@@ -58,4 +58,6 @@ public class Group {
     private List<GroupCategory> category;
 
     private Integer view;
+
+    private Integer display;
 }

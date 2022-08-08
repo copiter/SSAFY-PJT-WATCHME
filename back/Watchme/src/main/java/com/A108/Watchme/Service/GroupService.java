@@ -1,18 +1,22 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.*;
-import com.A108.Watchme.DTO.group.GetGroupsDTO;
-import com.A108.Watchme.DTO.group.GroupApplyDTO;
+import com.A108.Watchme.DTO.group.*;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.CategoryList;
+import com.A108.Watchme.VO.ENUM.RoomStatus;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.group.GroupCategory;
+import com.A108.Watchme.VO.Entity.group.GroupInfo;
 import com.A108.Watchme.VO.Entity.log.GroupApplyLog;
 import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.room.Room;
+import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -37,11 +41,13 @@ public class GroupService {
 
     private final CategoryRepository categoryRepository;
     private final GroupCategoryRepository groupCategoryRepository;
+    private final GroupInfoRepository groupInfoRepos;
     private final GroupApplyLogRegistory groupApplyLogRegistory;
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final MemberRepository memberRepository;
     private final MemberGroupRepository memberGroupRepository;
 
+    private final S3Uploader s3Uploader;
 
     public ApiResponse getGroupList(String groupCtg, String keyword, int page, int active, HttpServletRequest request) {
         ApiResponse apiResponse = new ApiResponse();
@@ -56,18 +62,154 @@ public class GroupService {
     }
 
     public ApiResponse createGroup(GroupCreateReqDTO groupCreateReqDTO, MultipartFile image, HttpServletRequest request) {
-        ApiResponse apiResponse = new ApiResponse();
-        return apiResponse;
+        ApiResponse result = new ApiResponse();
+
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
+
+            if (currUser.isPresent()) {
+
+                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
+
+                try {
+                    url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : GroupBuilder
+                // 1.group 기본 저장
+                Group newGroup = Group.builder()
+                        .groupName(groupCreateReqDTO.getName())
+                        .leader(currUser.get())
+                        .status(Status.YES)
+                        .view(0)
+                        .build();
+
+                GroupInfo newGroupInfo = groupInfoRepos.save(GroupInfo.builder()
+                        .group(newGroup)
+                        .imageLink(url)
+                        .description(groupCreateReqDTO.getDescription())
+                        .currMember(1)
+                        .maxMember(Integer.parseInt(groupCreateReqDTO.getMaxMember()))
+                        .pwd(groupCreateReqDTO.getPwd())
+                        .build());
+
+
+                // 2.MemberGroup save
+                memberGroupRepository.save(MemberGroup.builder()
+                        .group(newGroupInfo.getGroup())
+                        .member(newGroupInfo.getGroup().getLeader())
+                        .build());
+
+
+                // 3.GroupCategory
+
+                for (String ctg :
+                        groupCreateReqDTO.getCtg()) {
+                    groupCategoryRepository.save(GroupCategory.builder()
+                            .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
+                            .group(newGroupInfo.getGroup())
+                            .build());
+                }
+
+
+                result.setCode(200);
+                result.setMessage("SUCCESS ADD&JOIN ROOM");
+                result.setResponseData("groupId", newGroupInfo.getGroup().getId());
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setCode(500);
+        }
+
+        return result;
     }
 
     public ApiResponse updateGroup(Long groupId, GroupUpdateReqDTO groupUpdateReqDTO, MultipartFile image, HttpServletRequest request) {
-        ApiResponse apiResponse = new ApiResponse();
-        return apiResponse;
+        ApiResponse result = new ApiResponse();
+
+        try {
+            Optional<Group> check = groupRepository.findById(groupId);
+
+            if (check.isPresent()) {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
+
+
+                Group group = check.get();
+
+                String url = group.getGroupInfo().getImageLink();
+
+                try {
+                    url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // TODO : Update Group
+                // 그룹 카테고리 삭제
+                List<GroupCategory> groupCategoryList = groupCategoryRepository.findAllByGroupId(groupId);
+                groupCategoryRepository.deleteAllInBatch(groupCategoryList);
+
+                List<GroupCategory> categoryList = new LinkedList<>();
+
+                for (String ctg :
+                        groupUpdateReqDTO.getCtg()) {
+                    categoryList.add(GroupCategory.builder()
+                            .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
+                            .group(group)
+                            .build());
+                }
+
+                group.setGroupName(groupUpdateReqDTO.getName());
+                group.setCategory(categoryList);
+                group.setDisplay(groupUpdateReqDTO.getDisplay());
+
+                GroupInfo groupInfo = groupInfoRepos.findById(groupId).get();
+                groupInfo.setDescription(groupUpdateReqDTO.getDescription());
+                groupInfo.setMaxMember(Integer.parseInt(groupUpdateReqDTO.getMaxMember()));
+                groupInfo.setPwd(groupUpdateReqDTO.getPwd());
+
+
+                groupRepository.save(group);
+                groupInfoRepos.save(groupInfo);
+
+                result.setCode(200);
+                result.setMessage("SUCCESS GROUP UPDATE");
+
+            } else {
+                throw new Exception("no such group");
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.setCode(500);
+        }
+
+        return result;
     }
 
     public ApiResponse deleteGroup(Long groupId) {
-        ApiResponse apiResponse = new ApiResponse();
-        return apiResponse;
+        ApiResponse result = new ApiResponse();
+
+        Optional<Group> check = groupRepository.findById(groupId);
+
+        if (check.isPresent()) {
+            check.get().setStatus(Status.NO);
+
+            result.setCode(200);
+            result.setMessage("GROUP DELETE SUCCESS");
+        } else {
+            result.setCode(400);
+            result.setMessage("NO SUCH GROUP");
+        }
+
+        return result;
     }
 
     public ApiResponse getApplyList(Long groupId) {
@@ -135,7 +277,7 @@ public class GroupService {
                 groupApplyLogRegistory.save(GroupApplyLog.builder()
                         .member(member)
                         .group(group.get())
-                        .apply_date( new Date())
+                        .apply_date(new Date())
                         .status(0)
                         .build()
                 );
@@ -298,11 +440,11 @@ public class GroupService {
                     Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
 
 
-                    if(groupApplyLog != null){
+                    if (groupApplyLog != null) {
                         groupApplyLog.get().setStatus(5);
                         groupApplyLog.get().setUpdate_date(new Date());
 
-                        Optional<MemberGroup> memberGroup =  memberGroupRepository.findByMemberIdAndGroupId(member.getId(), groupId);
+                        Optional<MemberGroup> memberGroup = memberGroupRepository.findByMemberIdAndGroupId(member.getId(), groupId);
                         memberGroupRepository.delete(memberGroup.get());
 
                         result.setCode(200);

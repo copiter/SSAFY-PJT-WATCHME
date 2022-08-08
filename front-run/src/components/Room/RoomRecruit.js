@@ -142,7 +142,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
     setInputs((values) => ({ ...values, category:  ARR[event.target.value]}));   
     console.log(ARR[event.target.value]);
      fetch(url+"?"+
-    (ARR[event.target.value]===""?"":"category="+ARR[event.target.value]+"&")
+    (ARR[event.target.value]===""||ARR[event.target.value]==="all"?"":"category="+ARR[event.target.value]+"&")
     +(inputs.keyword===""?"":"keyword="+inputs.keyword)
     )
     
@@ -267,6 +267,7 @@ function RoomRecruit() {//Search 못맞춰서 작동 안됩니다...
         </div>
 
         {/* 그룹들 모여 있는 부분. 나중에 component화 예정 */}
+        
         <div className="module__rooms">
           <ul className="rooms__whole" value={0}>
             {inputLength>roomNo&&<li value={0} onClick={(e)=>enteringRoom(rooms[e.currentTarget.value]["id"])} >

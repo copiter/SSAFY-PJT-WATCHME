@@ -1,11 +1,11 @@
 import React from "react";
 import { useState, useContext, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 
-import "./GroupCreate.css";
+import "./GroupReform.css";
 
-function GroupCreate() {
+function GroupReform() {
 
 
   const handleChangeSelect = event => { 
@@ -28,16 +28,15 @@ function GroupCreate() {
 
 
 
-
-
-
+  //방생성 요청 보내기
   const [inputs, setInputs] = useState({
     name: "",
     description: "",
     maxMember: 0,
     ctg: [false,false,false,false], 
     display: 1,
-    pwd:""
+    pwd:"",
+    imgLink:""
   });
   const navigate = useNavigate();
 
@@ -60,18 +59,59 @@ function GroupCreate() {
 
   const imgeRef = useRef();
 
+
+
+
+
+
+  function getCookie(name) {
+    const cookie = document.cookie
+      .split(";")
+      .map((cookie) => cookie.split("="))
+      .filter((cookie) => cookie[0] === name);
+    return cookie[0][1];
+  }
+  
+  const id=useParams().id;
+  fetch(url+"/"+id+"/update-form", {
+    headers: {
+      accessToken: getCookie("accessToken"),
+    },
+  })
+  .then((response) => {
+    if (response.ok) {
+      return response.json(); //ok떨어지면 바로 종료.
+    } else {
+      response.json().then((data) => {
+        let errorMessage = "";
+        throw new Error(errorMessage);
+      });
+    }
+  })
+  .then((result) => {
+    if (result != null) {
+      setInputs(result.responseData.group);
+    }
+  })
+  .then(()=>{
+    
+  })
+  .catch((err) => {
+    console.log("ERR");
+  });
+
+
+
+
+
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
 
     const formData = new FormData();
+    console.log(inputs);
     formData.append("images", imgeRef.current.files[0]);
     let ctgs=[];
     let i=0;
@@ -101,12 +141,13 @@ function GroupCreate() {
       display: inputs.display,
       pwd:inputs.pwd,
     }
+    console.log(outputs);
     formData.append(
       "postGroupReqDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
-    fetch(url, {
+    fetch(url+"/"+id+"/update", {
       method: "POST",
       body: formData,
       headers: {
@@ -147,12 +188,10 @@ function GroupCreate() {
   };
   return (
     <div className="body-frame">
-      <Link to="/GroupRecruit" className="back-to-recruit">
-        &lt; 목록으로 돌아가기
+      <Link to="/MyGroup" className="back-to-recruit">
+        &lt; 그룹페이지로
       </Link>
-      <Link to="/GroupReform/:1">
-      groupReform test
-      </Link>
+
       <form onSubmit={handleSubmit}>
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
@@ -175,6 +214,7 @@ function GroupCreate() {
               type="file"
               name="img"
               accept="image/*"
+              value={inputs.imgLink || ""}
               onChange={saveFileImage}
               className="group-image__upload"
               ref={imgeRef}
@@ -267,7 +307,7 @@ function GroupCreate() {
   );
 }
 
-export default GroupCreate;
+export default GroupReform;
 
 
 

@@ -1,8 +1,8 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.GroupDataDTO;
+import com.A108.Watchme.DTO.group.GroupDataDTO;
 import com.A108.Watchme.DTO.MemberDataDTO;
-import com.A108.Watchme.DTO.RoomDataDTO;
+import com.A108.Watchme.DTO.room.RoomDataDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.Entity.MemberGroup;

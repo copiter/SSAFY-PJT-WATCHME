@@ -30,4 +30,6 @@ public class GroupInfo {
 
     private Integer maxMember;
 
+    private String pwd;
+
 }

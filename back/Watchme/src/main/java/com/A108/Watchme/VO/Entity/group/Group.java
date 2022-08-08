@@ -27,9 +27,9 @@ public class Group {
     @Column(name = "group_name", length = 45)
     private String groupName;
 
-//    @ManyToOne
-//    @JoinColumn(name="leader_id")
-//    private Member leader;
+    @ManyToOne
+    @JoinColumn(name="leader_id")
+    private Member leader;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
@@ -58,4 +58,6 @@ public class Group {
     private List<GroupCategory> category;
 
     private Integer view;
+
+    private Integer display;
 }

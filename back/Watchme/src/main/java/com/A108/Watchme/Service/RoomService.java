@@ -1,7 +1,7 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.GetRoomResDTO;
-import com.A108.Watchme.DTO.PostRoomReqDTO;
+import com.A108.Watchme.DTO.room.GetRoomResDTO;
+import com.A108.Watchme.DTO.room.PostRoomReqDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;

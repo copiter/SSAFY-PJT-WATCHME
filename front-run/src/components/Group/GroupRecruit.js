@@ -8,7 +8,7 @@ import { FetchUrl } from "../../store/communication";
 import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
-import groupJsons from "../json/groupReq.json"
+import groupJsons from "../json/groupRec.json"
 
 let page = 1;
 

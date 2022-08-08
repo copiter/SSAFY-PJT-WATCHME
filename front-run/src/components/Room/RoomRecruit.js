@@ -8,7 +8,7 @@ import { FetchUrl } from "../../store/communication";
 import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
-import roomJsons from "../json/roomReq.json"
+import roomJsons from "../json/roomRec.json"
 
 let page = 1;
 

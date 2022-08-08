@@ -1,0 +1,128 @@
+{
+    "code": 200,
+    "message": "GETgroupS SUCCESS",
+    "responseData": {
+        "groups": [
+            {
+                "id": 15,
+                "groupName": "토익 950점 맞기",
+                "groupStatus": "MODE3",
+                "ctgName": "자격증",
+                "maxNum": 4,
+                "nowNum": 4,
+                "endTime": "09월 30일 12시 10분",
+                "description": "950 +++",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/temp_1651503695288100.png",
+                "secret": false
+            },
+            {
+                "id": 4,
+                "groupName": "공무원 자율 스터디룸",
+                "groupStatus": "MODE1",
+                "ctgName": "수능",
+                "maxNum": 15,
+                "nowNum": 8,
+                "endTime": "09월 30일 12시 10분",
+                "description": "공무원이 됩시다!",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/%EA%B3%B5%EB%AC%B4%EC%9B%90.jpg",
+                "secret": false
+            },
+            {
+                "id": 5,
+                "groupName": "역삼역 열공러",
+                "groupStatus": "MODE2",
+                "ctgName": "공무원",
+                "maxNum": 20,
+                "nowNum": 11,
+                "endTime": "09월 30일 12시 10분",
+                "description": "거꾸로해도 역삼역",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/IE002963950_STD.jpg",
+                "secret": true
+            },
+            {
+                "id": 15,
+                "groupName": "토익 950점 맞기",
+                "groupStatus": "MODE3",
+                "ctgName": "자격증",
+                "maxNum": 4,
+                "nowNum": 4,
+                "endTime": "09월 30일 12시 10분",
+                "description": "950 +++",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/temp_1651503695288100.png",
+                "secret": false
+            },
+            {
+                "id": 6,
+                "groupName": "공인회계사 합격",
+                "groupStatus": "MODE3",
+                "ctgName": "자격증",
+                "maxNum": 20,
+                "nowNum": 12,
+                "endTime": "09월 30일 12시 10분",
+                "description": "CPA",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/cpa.png",
+                "secret": false
+            },
+            {
+                "id": 7,
+                "groupName": "우리는 경찰",
+                "groupStatus": "MODE2",
+                "ctgName": "수능",
+                "maxNum": 20,
+                "nowNum": 3,
+                "endTime": "09월 30일 12시 10분",
+                "description": "경찰이 될래요!",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/ti441a1004.jpg",
+                "secret": false
+            },
+            {
+                "id": 17,
+                "groupName": "새벽공부반",
+                "groupStatus": "MODE3",
+                "ctgName": "공무원",
+                "maxNum": 10,
+                "nowNum": 3,
+                "endTime": "09월 30일 12시 10분",
+                "description": "새벽에 공부할사람",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/david-monje-565450-unsplash.jpg",
+                "secret": false
+            },
+            {
+                "id": 12,
+                "groupName": "강남 특목고 입시반",
+                "groupStatus": "MODE3",
+                "ctgName": "수능",
+                "maxNum": 7,
+                "nowNum": 6,
+                "endTime": "09월 30일 12시 10분",
+                "description": "강남 사는사람만",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/%EA%B0%95%EB%82%A8%EC%95%84%ED%8C%8C%ED%8A%B8.jpg",
+                "secret": true
+            },
+            {
+                "id": 16,
+                "groupName": "경시생 필합에서 최합까지",
+                "groupStatus": "MODE2",
+                "ctgName": "수능",
+                "maxNum": 11,
+                "nowNum": 5,
+                "endTime": "09월 30일 12시 10분",
+                "description": "나라 지키는 경찰",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/temp_1651503695288100.png",
+                "secret": false
+            },
+            {
+                "id": 11,
+                "groupName": "영어회화 자율 스터디",
+                "groupStatus": "MODE2",
+                "ctgName": "수능",
+                "maxNum": 6,
+                "nowNum": 6,
+                "endTime": "09월 30일 12시 10분",
+                "description": "OPIC마스터 하실분",
+                "groupImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/david-monje-565450-unsplash.jpg",
+                "secret": false
+            }
+        ]
+    }
+}

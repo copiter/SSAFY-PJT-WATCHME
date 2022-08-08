@@ -29,7 +29,6 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
     private final String password;
     private final ProviderType providerType;
     private final RoleType roleType;
-    private final String imageUrl;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
@@ -88,21 +87,20 @@ public class UserPrincipal implements OAuth2User, UserDetails, OidcUser {
         return null;
     }
 
-    public static UserPrincipal create(Member member, String imageUrl) {
+    public static UserPrincipal create(Member member) {
         return new UserPrincipal(
                 member.getId(),
                 member.getEmail(),
                 member.getPwd(),
                 member.getProviderType(),
                 RoleType.USER,
-                imageUrl,
                 Collections.singletonList(new SimpleGrantedAuthority(RoleType.USER.getCode()))
 
         );
     }
 
     public static UserPrincipal create(Member member, Map<String, Object> attributes, String imageUrl) {
-        UserPrincipal userPrincipal = create(member, imageUrl);
+        UserPrincipal userPrincipal = create(member);
         userPrincipal.setAttributes(attributes);
         return userPrincipal;
     }

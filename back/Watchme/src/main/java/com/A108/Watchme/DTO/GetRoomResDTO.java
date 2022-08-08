@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.MatchesPattern;
 import java.util.Date;
 
-@ApiModel
 @Getter
 @Setter
 @Builder

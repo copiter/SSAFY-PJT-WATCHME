@@ -1,11 +1,15 @@
 package com.A108.Watchme.VO.Entity.log;
 
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -26,9 +30,11 @@ public class MemberRoomLog {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "start_at")
-    private Date startAt;
+    @Column(name = "status")
+    private Status status;
+
+    @Column(name = "joined_at")
+    private DateTime joinedAt;
 
     @Column(name="study_time")
     private Integer studyTime;

@@ -555,4 +555,30 @@ public class GroupService {
 
         return result;
     }
+
+    public ApiResponse updateForm(Long groupId, HttpServletRequest request) {
+        ApiResponse result = new ApiResponse();
+
+        Optional<Group> check = groupRepository.findById(groupId);
+
+        if(check.isPresent()){
+            Group group = check.get();
+
+            result.setResponseData("group",UpdateFormResDTO.builder()
+                    .id(group.getId())
+                    .name(group.getGroupName())
+                    .description(group.getGroupInfo().getDescription())
+                    .maxMember(group.getGroupInfo().getMaxMember())
+                    .ctg(group.getCategory().stream().map(x->x.getCategory().getName().toString()).collect(Collectors.toList()))
+                    .pwd(group.getGroupInfo().getPwd())
+                    .display(group.getDisplay())
+                    .imgLink(group.getGroupInfo().getImageLink())
+                    .build());
+
+            result.setCode(200);
+            result.setMessage("UPDATE-FORM SUCCESS");
+        }
+
+        return result;
+    }
 }

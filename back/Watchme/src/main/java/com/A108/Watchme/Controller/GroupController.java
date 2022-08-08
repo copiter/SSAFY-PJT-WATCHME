@@ -47,6 +47,11 @@ public class GroupController {
         return groupService.deleteGroup(groupId);
     }
 
+    @GetMapping("/{groupId}/update-form")
+    public ApiResponse updateForm(@PathVariable(value = "groupId") Long groupId, HttpServletRequest request){
+        return groupService.updateForm(groupId,request);
+    }
+
     @GetMapping("/{groupId}/applies")
     public ApiResponse getApplyList(@PathVariable(value = "groupId") Long groupId, HttpServletRequest request) {
         return groupService.getApplyList(groupId);

@@ -11,7 +11,7 @@ import java.util.List;
 public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
 
     List<MemberRoomLog> findBymember_id(Long memberId);
-    List<MemberRoomLog> findByStartAtAfter(Timestamp date);
+//    List<MemberRoomLog> findByStartAtAfter(Timestamp date);
 //    List<MemberRoomLog> findBymember_idBystart_atAfter(Long id, Date date);
-
+    MemberRoomLog findByMemberIdAndRoomId(Long memberId, Long roomId);
 }

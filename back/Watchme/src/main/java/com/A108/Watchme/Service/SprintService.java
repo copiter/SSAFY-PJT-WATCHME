@@ -15,6 +15,8 @@ public class SprintService {
 
     public ApiResponse deleteSprint(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        Long idd = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+
+        return null;
     }
 }

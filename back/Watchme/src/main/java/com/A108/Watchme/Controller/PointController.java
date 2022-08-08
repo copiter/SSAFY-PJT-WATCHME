@@ -54,6 +54,15 @@ public class PointController {
         apiResponse.setMessage("PAY READY SUCCESS");
         return apiResponse;
     }
+
+    @PostMapping("/points/return")
+    public ApiResponse apiResponse(@RequestParam(required = false, value="value") int value) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long id = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        return null;
+    }
+
 }
 
 

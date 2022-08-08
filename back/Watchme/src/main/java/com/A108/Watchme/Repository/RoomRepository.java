@@ -15,4 +15,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Page<Room> findAllByOrderByViewDesc(Pageable pageable);
 
     Page<Room> findAllByRoomCtg(Category roomCtg, Pageable pageable);
+
+    Page<Room> findAllByRoomNameContaining(String title, Pageable pageable);
+
+    Page<Room> findAllByRoomCtgAndRoomNameContaining(Category roomCtg, String title, Pageable pageable);
 }

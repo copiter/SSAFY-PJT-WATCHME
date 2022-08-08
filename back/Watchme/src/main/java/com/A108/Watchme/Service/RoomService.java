@@ -2,16 +2,19 @@ package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.GetRoomResDTO;
 import com.A108.Watchme.DTO.PostRoomReqDTO;
+import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.RoomStatus;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -75,7 +78,7 @@ public class RoomService {
                         .room(room)
                         .maxMember(postRoomReqDTO.getNum())
                         .currMember(0)
-                        .endAt(postRoomReqDTO.getEndTime())
+                        .endAt(postRoomReqDTO.getEndTime().toDate())
                         .description(postRoomReqDTO.getDescription())
                         .imageLink(url)
                         .build();
@@ -83,7 +86,7 @@ public class RoomService {
 
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
-                joinRoom(room.getId());
+                joinRoomFunc(room.getId());
                 System.out.println("TEST2");
                 result.setCode(200);
                 result.setMessage("SUCCESS ADD&JOIN ROOM");
@@ -100,22 +103,43 @@ public class RoomService {
     }
 
 
-    public ApiResponse getRoom(String ctgName, int page) {
+    public ApiResponse getRoomList(String ctgName, int page, String keyword) {
         ApiResponse result = new ApiResponse();
+
+        System.out.println("roomService getRoomList : keyword = "+keyword);
+
         PageRequest pageRequest = PageRequest.of(page - 1, 10);
         List<Room> roomList;
-        if(ctgName!=null){
+
+        if (ctgName != null) {
+
             CategoryList name = CategoryList.valueOf(ctgName);
+
             Category category = categoryRepository.findByName(name);
-            roomList = roomRepository.findAllByRoomCtg(category, pageRequest).stream().collect(Collectors.toList());
+
+            if (keyword == null) {
+                System.out.println("ctg");
+                roomList = roomRepository.findAllByRoomCtg(category, pageRequest).stream().collect(Collectors.toList());
+            } else {
+                System.out.println("ctg&search");
+                roomList = roomRepository.findAllByRoomCtgAndRoomNameContaining(category, keyword, pageRequest).stream().collect(Collectors.toList());
+            }
+
         }
-        else{
-            roomList = roomRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+        else {
+            if (keyword == null) {
+                System.out.println("nullAndnull");
+                roomList = roomRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+            } else {
+                System.out.println("search");
+                roomList = roomRepository.findAllByRoomNameContaining(keyword, pageRequest).stream().collect(Collectors.toList());
+            }
+
         }
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {
-             getRooms.add(new GetRoomResDTO().builder()
+            getRooms.add(new GetRoomResDTO().builder()
                     .id(room.getId())
                     .roomImage(room.getRoomInfo().getImageLink())
                     .roomName(room.getRoomName())
@@ -136,10 +160,10 @@ public class RoomService {
     }
 
 
-    public ApiResponse joinRooms(Long roomId) {
+    public ApiResponse joinRoom(Long roomId) {
         ApiResponse result = new ApiResponse();
         try{
-            joinRoom(roomId);
+            joinRoomFunc(roomId);
             result.setMessage("JOIN SUCCESS");
             result.setCode(200);
         } catch (Exception e) {
@@ -149,10 +173,9 @@ public class RoomService {
 
         return result;
     }
-    public void joinRoom(Long roomId){
+    public void joinRoomFunc(Long roomId){
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            LocalDateTime localDateTime = LocalDateTime.now();
             if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
                 Member member = memberRepository.findByEmail(currUser.getUsername());
@@ -160,7 +183,8 @@ public class RoomService {
                 mrlRepository.save(new MemberRoomLog().builder()
                         .room(roomRepository.findById(roomId).get())
                         .member(member)
-                        .startAt(DateTime.now())
+                        .status(Status.NO) // 시간이 정산되었는지 여부
+                        .joinedAt(DateTime.now())
                         .build()
                 );
             }
@@ -169,15 +193,24 @@ public class RoomService {
         }
     }
 
+    public void outRoomFunc(Long roomId, Long memberId){
+        MemberRoomLog memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId);
+        // Status가 NO인 경우에만
+        if(memberRoomLog.getStatus().equals(Status.NO)){
+        Long diff = DateTime.now().toDate().getTime() - memberRoomLog.getJoinedAt().toDate().getTime();
+            int addTime = (int) (diff/(60*1000)%60);
+            memberRoomLog.setStudyTime(memberRoomLog.getStudyTime() + addTime);
+        }
+    }
     public ApiResponse kickMember(Long roomId, Long memberId) {
         // Member가 방장인지 조회
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-        Long owner_id = roomRepository.findById(roomId).get().getId();
+        Long owner_id = roomRepository.findById(roomId).get().getMember().getId();
 
         // 방장인 경우
         if(id == owner_id){
-            // 연결 종료시키는 방법..?
+            outRoomFunc(memberId, roomId);
         }
         return null;
         //
@@ -187,16 +220,56 @@ public class RoomService {
     public ApiResponse endRoom(Long roomId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-        //떠날때 룸로그 정보 가져올때 어떻게 해야하는지?
-        mrlRepository.save(MemberRoomLog.builder()
-                .build());
+
 
         return null;
     }
 
-    public ApiResponse updateRoom(Long roomId){
+    public ApiResponse updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO, MultipartFile images){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-        return null;
+        CategoryList name = CategoryList.valueOf(roomUpdateDTO.getRoomCategory());
+        Category category = categoryRepository.findByName(name);
+        Room room = roomRepository.findById(roomId).get();
+        String url = room.getRoomInfo().getImageLink();
+        if(!images.isEmpty()){
+            try{
+                url = s3Uploader.upload(images,"Watchme");
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        if(memberId == room.getMember().getId()){
+            room.setRoomCtg(category);
+            room.setRoomName(roomUpdateDTO.getRoomName());
+            RoomInfo roomInfo = room.getRoomInfo();
+            roomInfo = RoomInfo.builder()
+                    .description(roomUpdateDTO.getRoomDescription())
+                    .imageLink(url)
+                    .endAt(roomUpdateDTO.getEndAT().toDate())
+                    .maxMember(roomUpdateDTO.getRoomMemberMaxNo())
+                    .pwd(roomUpdateDTO.getPwd())
+                    .build();
+            room.setRoomInfo(roomInfo);
+
+        }
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(200);
+        apiResponse.setMessage("UPDATE SUCCESS");
+        return apiResponse;
+    }
+
+    public ApiResponse outRoom(Long roomId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+
+        outRoomFunc(memberId, roomId);
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(200);
+        apiResponse.setMessage("OUT SUCCESS");
+
+
+        return apiResponse;
     }
 }

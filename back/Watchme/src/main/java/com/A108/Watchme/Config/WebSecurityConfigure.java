@@ -47,6 +47,8 @@ public class WebSecurityConfigure {
     private final CustomOAuth2UserService customOAuth2UserService;
     private MemberInfoRepository memberInfoRepository;
     private final MemberRepository memberRepository;
+
+    private final CorsConfig corsConfig;
     private final AppProperties appProperties;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
@@ -56,6 +58,7 @@ public class WebSecurityConfigure {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -95,7 +98,7 @@ public class WebSecurityConfigure {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .addFilterBefore(new TokenAuthenticationFilter(authTokenProvider), UsernamePasswordAuthenticationFilter.class)
-//                .addFilter(corsFilter) // @CrossOrigin(인증 X), 시큐리티 필터에 등록해줘야함.
+                .addFilter(corsConfig.corsFilter()) // @CrossOrigin(인증 X), 시큐리티 필터에 등록해줘야함.
                 .exceptionHandling()
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .accessDeniedHandler(tokenAccessDeniedHandler)

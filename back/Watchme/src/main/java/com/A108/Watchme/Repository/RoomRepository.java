@@ -1,5 +1,6 @@
 package com.A108.Watchme.Repository;
 
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.room.Room;
 import org.springframework.data.domain.Page;
@@ -12,11 +13,11 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
 
-    Page<Room> findAllByOrderByViewDesc(Pageable pageable);
+    Page<Room> findAllByRoomStatusOrderByViewDesc(Pageable pageable, Status status);
 
-    Page<Room> findAllByRoomCtg(Category roomCtg, Pageable pageable);
+    Page<Room> findAllByRoomCtgAndRoomStatus(Category roomCtg, Pageable pageable, Status status);
 
-    Page<Room> findAllByRoomNameContaining(String title, Pageable pageable);
+    Page<Room> findAllByRoomStatusAndRoomNameContaining(String title, Pageable pageable, Status status);
 
-    Page<Room> findAllByRoomCtgAndRoomNameContaining(Category roomCtg, String title, Pageable pageable);
+    Page<Room> findAllByRoomCtgAndRoomStatusAndRoomNameContaining(Category roomCtg, String title, Pageable pageable, Status status);
 }

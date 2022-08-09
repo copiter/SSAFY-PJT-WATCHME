@@ -5,6 +5,7 @@ import com.A108.Watchme.DTO.MemberDataDTO;
 import com.A108.Watchme.DTO.RoomDataDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.member.Member;
@@ -27,7 +28,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class HomeService {
-
     private final MemberRepository memberRepository;
     private final RoomRepository roomRepository;
     private final GroupRepository groupRepository;
@@ -89,7 +89,7 @@ public class HomeService {
             List<RoomDataDTO> resRoom = new LinkedList<>();
 
 
-            List<Room> roomList = roomRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+            List<Room> roomList = roomRepository.findAllByRoomStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
             for (Room room :
                     roomList) {
                 System.out.println("roomList = " + room.toString());

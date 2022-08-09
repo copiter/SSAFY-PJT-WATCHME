@@ -1,6 +1,7 @@
 package com.A108.Watchme.VO.Entity.room;
 
 import com.A108.Watchme.VO.ENUM.RoomStatus;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.group.GroupCategory;
 import com.A108.Watchme.VO.Entity.member.Member;
@@ -26,6 +27,8 @@ public class Room {
     @Column(name = "room_name", length = 45)
     private String roomName;
 
+    @Enumerated(EnumType.STRING)
+    private Status roomStatus;
 
     @Enumerated(EnumType.STRING)
     private RoomStatus status;

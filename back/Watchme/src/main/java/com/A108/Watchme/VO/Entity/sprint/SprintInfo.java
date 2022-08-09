@@ -21,12 +21,16 @@ public class SprintInfo {
     @Column(name = "end_at")
     private Date endAt;
 
-    @Column(name = "sprint_score")
-    private Integer sprintScore;
-
+    @Column(name = "fee")
     private Integer fee;
+
+    @Column(name="goal")
+    private String goal;
 
     @Column(name = "sprint_img")
     private String img;
+
+    @Column(name = "penalty_money")
+    private Integer penaltyMoney;
 
 }

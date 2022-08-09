@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,6 +75,7 @@ public class RoomService {
                         .member(member)
                         .roomCtg(category)
                         .status(RoomStatus.valueOf(postRoomReqDTO.getStatus()))
+                        .roomStatus(Status.YES)
                         .view(0)
                         .build();
 
@@ -124,19 +126,19 @@ public class RoomService {
 
             if (keyword == null) {
                 System.out.println("ctg");
-                roomList = roomRepository.findAllByRoomCtg(category, pageRequest).stream().collect(Collectors.toList());
+                roomList = roomRepository.findAllByRoomCtgAndRoomStatus(category, pageRequest, Status.YES).stream().collect(Collectors.toList());
             } else {
                 System.out.println("ctg&search");
-                roomList = roomRepository.findAllByRoomCtgAndRoomNameContaining(category, keyword, pageRequest).stream().collect(Collectors.toList());
+                roomList = roomRepository.findAllByRoomCtgAndRoomStatusAndRoomNameContaining(category, keyword, pageRequest, Status.YES).stream().collect(Collectors.toList());
             }
 
         } else {
             if (keyword == null) {
                 System.out.println("nullAndnull");
-                roomList = roomRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+                roomList = roomRepository.findAllByRoomStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
             } else {
                 System.out.println("search");
-                roomList = roomRepository.findAllByRoomNameContaining(keyword, pageRequest).stream().collect(Collectors.toList());
+                roomList = roomRepository.findAllByRoomStatusAndRoomNameContaining(keyword, pageRequest, Status.YES).stream().collect(Collectors.toList());
             }
 
         }
@@ -167,7 +169,12 @@ public class RoomService {
     public ApiResponse joinRoom(Long roomId, JoinRoomDTO joinRoomDTO) {
         ApiResponse result = new ApiResponse();
         try {
-            Integer roomPwd = roomRepository.findById(roomId).get().getRoomInfo().getPwd();
+            Room room = roomRepository.findById(roomId).get();
+            if(!room.getRoomStatus().toString().equals("YES")){
+                result.setMessage("INVALID ACCESS");
+                result.setCode(513);
+            }
+            Integer roomPwd = room.getRoomInfo().getPwd();
             int pwd;
             if(joinRoomDTO==null){
                 pwd = -1;
@@ -204,26 +211,40 @@ public class RoomService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
             UserDetails currUser = (UserDetails) authentication.getPrincipal();
-            Member member = memberRepository.findByEmail(currUser.getUsername());
+            Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
 
-            mrlRepository.save(new MemberRoomLog().builder()
-                    .room(roomRepository.findById(roomId).get())
-                    .member(member)
-                    .status(Status.NO) // 시간이 정산되었는지 여부
-                    .joinedAt(DateTime.now().toDate())
-                    .build()
-            );
+            Optional<MemberRoomLog> memberRoomLog = mrlRepository.findByMemberIdAndRoomId(member.getId(), roomId);
+            if(memberRoomLog.isPresent()){
+                memberRoomLog.get().setJoinedAt(DateTime.now().toDate());
+                mrlRepository.save(memberRoomLog.get());
+            }
+            else{
+                mrlRepository.save(new MemberRoomLog().builder()
+                        .room(roomRepository.findById(roomId).get())
+                        .member(member)
+                        .status(Status.NO) // 시간이 정산되었는지 여부
+                        .joinedAt(DateTime.now().toDate())
+                        .build()
+                );
+            }
+
         }
     }
 
     public void outRoomFunc(Long roomId, Long memberId) {
-        MemberRoomLog memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId);
+        MemberRoomLog memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
         // Status가 NO인 경우에만
         roomPeople(roomId, -1);
         if (memberRoomLog.getStatus().equals(Status.NO)) {
             Long diff = DateTime.now().toDate().getTime() - memberRoomLog.getJoinedAt().getTime();
             int addTime = (int) (diff / (60 * 1000) % 60);
-            memberRoomLog.setStudyTime(memberRoomLog.getStudyTime() + addTime);
+            int time = 0;
+            if(memberRoomLog.getStudyTime()!=null){
+                time = memberRoomLog.getStudyTime();
+            }
+            memberRoomLog.setStudyTime(time + addTime);
+            memberRoomLog.setStatus(Status.YES);
+            mrlRepository.save(memberRoomLog);
         }
     }
 
@@ -256,6 +277,7 @@ public class RoomService {
         CategoryList name = CategoryList.valueOf(roomUpdateDTO.getRoomCategory());
         Category category = categoryRepository.findByName(name);
         Room room = roomRepository.findById(roomId).get();
+        RoomInfo roomInfo = room.getRoomInfo();
         String url = room.getRoomInfo().getImageLink();
         ApiResponse apiResponse = new ApiResponse();
         if (images!=null) {
@@ -272,16 +294,14 @@ public class RoomService {
                 room.setRoomCtg(category);
                 room.setRoomName(roomUpdateDTO.getRoomName());
                 room.setStatus(RoomStatus.valueOf(roomUpdateDTO.getStatus()));
-                RoomInfo roomInfo = room.getRoomInfo();
-                roomInfo = RoomInfo.builder()
-                        .description(roomUpdateDTO.getRoomDescription())
-                        .room(room)
-                        .imageLink(url)
-                        .endAt(format.parse(roomUpdateDTO.getEndAt()))
-                        .maxMember(roomUpdateDTO.getRoomMemberMaxNo())
-                        .pwd(roomUpdateDTO.getPwd())
-                        .build();
+                roomInfo.setDescription(roomUpdateDTO.getRoomDescription());
+                roomInfo.setImageLink(url);
+                roomInfo.setEndAt(format.parse(roomUpdateDTO.getEndAt()));
+                roomInfo.setMaxMember(roomUpdateDTO.getRoomMemberMaxNo());
+                roomInfo.setPwd(roomUpdateDTO.getPwd());
+                roomInfo.setDisplay(roomInfo.getDisplay());
                 roomInfoRepository.save(roomInfo);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -295,8 +315,7 @@ public class RoomService {
     public ApiResponse outRoom(Long roomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-
-        outRoomFunc(memberId, roomId);
+        outRoomFunc(roomId, memberId);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode(200);
         apiResponse.setMessage("OUT SUCCESS");
@@ -308,7 +327,11 @@ public class RoomService {
     public boolean roomPeople(Long roomId, int num) {
         Room room = roomRepository.findById(roomId).get();
         if (room.getRoomInfo().getMaxMember() > (room.getRoomInfo().getCurrMember() + num)) {
-            room.getRoomInfo().setCurrMember(room.getRoomInfo().getMaxMember() + num);
+            room.getRoomInfo().setCurrMember(room.getRoomInfo().getCurrMember() + num);
+            // 마지막사람이 나가면 닫아줌
+            if(room.getRoomInfo().getCurrMember()==0){
+                room.setRoomStatus(Status.NO);
+            }
             return true;
         }
         return false;

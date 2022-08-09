@@ -16,11 +16,9 @@ public class Sprint {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sprint_id")
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
-
     @OneToOne
     @JoinColumn(name="room_id")
     private Room room;
@@ -30,9 +28,6 @@ public class Sprint {
 
     @Column(name = "sum_point")
     private Integer sumPoint;
-
-    @OneToMany(mappedBy = "sprint")
-    List<SprintRule> sprintRuleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "sprint")
     List<PointLog> pointLogList = new ArrayList<>();

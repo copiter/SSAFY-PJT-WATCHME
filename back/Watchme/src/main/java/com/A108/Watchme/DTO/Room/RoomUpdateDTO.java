@@ -16,4 +16,5 @@ public class RoomUpdateDTO {
     private String roomDescription;
     private Integer roomMemberMaxNo;
     private String roomCategory;
+    private int display;
 }

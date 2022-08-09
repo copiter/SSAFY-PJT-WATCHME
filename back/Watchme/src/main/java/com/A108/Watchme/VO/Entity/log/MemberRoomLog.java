@@ -30,6 +30,7 @@ public class MemberRoomLog {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
 

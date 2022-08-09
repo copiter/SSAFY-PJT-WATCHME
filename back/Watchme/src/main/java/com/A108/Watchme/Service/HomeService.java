@@ -89,7 +89,7 @@ public class HomeService {
             List<RoomDataDTO> resRoom = new LinkedList<>();
 
 
-            List<Room> roomList = roomRepository.findAllByRoomStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
+            List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
             for (Room room :
                     roomList) {
                 System.out.println("roomList = " + room.toString());

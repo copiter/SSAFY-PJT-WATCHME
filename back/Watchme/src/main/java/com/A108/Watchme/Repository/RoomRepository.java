@@ -13,11 +13,11 @@ import java.util.List;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
 
-    Page<Room> findAllByRoomStatusOrderByViewDesc(Pageable pageable, Status status);
+    Page<Room> findAllByStatusOrderByViewDesc(Pageable pageable, Status status);
 
-    Page<Room> findAllByRoomCtgAndRoomStatus(Category roomCtg, Pageable pageable, Status status);
+    Page<Room> findAllByRoomCtgAndStatus(Category roomCtg, Pageable pageable, Status status);
 
-    Page<Room> findAllByRoomStatusAndRoomNameContaining(String title, Pageable pageable, Status status);
+    Page<Room> findAllByStatusAndRoomNameContaining(String title, Pageable pageable, Status status);
 
-    Page<Room> findAllByRoomCtgAndRoomStatusAndRoomNameContaining(Category roomCtg, String title, Pageable pageable, Status status);
+    Page<Room> findAllByRoomCtgAndStatusAndRoomNameContaining(Category roomCtg, Status status,  String title, Pageable pageable);
 }

@@ -1,18 +1,14 @@
 package com.A108.Watchme.VO.Entity.room;
 
-import com.A108.Watchme.VO.ENUM.RoomStatus;
+import com.A108.Watchme.VO.ENUM.Mode;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
-import com.A108.Watchme.VO.Entity.group.GroupCategory;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.nimbusds.openid.connect.sdk.Display;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -28,10 +24,10 @@ public class Room {
     private String roomName;
 
     @Enumerated(EnumType.STRING)
-    private Status roomStatus;
+    private Status status;
 
     @Enumerated(EnumType.STRING)
-    private RoomStatus status;
+    private Mode mode;
 
     private Integer view;
 

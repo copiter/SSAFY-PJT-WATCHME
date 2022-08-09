@@ -5,7 +5,8 @@ import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
 import ChatComponent from "./chat/ChatComponent";
 
-const OPENVIDU_SERVER_URL = "https://" + window.location.hostname + ":4443";
+const OPENVIDU_SERVER_URL = "http://" + window.location.hostname + ":4443";
+// const OPENVIDU_SERVER_URL = "watchme2.shop" + ":4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 class RoomDetail extends Component {

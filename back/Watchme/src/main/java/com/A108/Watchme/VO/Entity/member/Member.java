@@ -39,7 +39,7 @@ public class Member{
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", fetch = FetchType.EAGER)
     @JsonManagedReference
     private MemberInfo memberInfo;
 

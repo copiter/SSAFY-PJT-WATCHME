@@ -4,14 +4,18 @@ import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.room.Room;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Sprint {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,5 +43,8 @@ public class Sprint {
 
     @OneToMany(mappedBy = "sprint")
     List<PointLog> pointLogList = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
 }

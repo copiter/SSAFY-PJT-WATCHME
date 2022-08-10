@@ -201,8 +201,23 @@ public class GroupService {
                         .build());
 
 
-                // TODO : sprints 석인님이 작업하신 것으로 변경해야 됨
+                // sprints
+                List<SprintResDTO> sprints = new LinkedList<>();
 
+                group.getSprints().stream().map(x -> sprints.add(
+                        SprintResDTO.builder()
+                                .name(x.getName())
+                                .status(new Date().after(x.getSprintInfo().getEndAt()) ? 2 : new Date().after(x.getSprintInfo().getStartAt()) ? 1 : 0)
+                                .description(x.getSprintInfo().getDescription())
+                                .goal(x.getSprintInfo().getGoal())
+                                .startAt(x.getSprintInfo().getStartAt())
+                                .endAt(x.getSprintInfo().getEndAt())
+//                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
+                                .fee(x.getSprintInfo().getFee())
+//                                .routineStartAt(x.getSprintInfo().getRoutineStartAt())
+//                                .routineEndAt(x.getSprintInfo().getRoutineEndAt())
+                                .build()
+                ));
 
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

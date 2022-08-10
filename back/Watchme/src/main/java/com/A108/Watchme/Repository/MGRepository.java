@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MGRepository extends JpaRepository<MemberGroup, Long> {
 
-    public List<MemberGroup> findByMember_id(Long id);
+    List<MemberGroup> findByMemberId(Long id);
 
+    Optional<MemberGroup> findByMemberIdAndGroupId(Long memberId, Long id);
 }

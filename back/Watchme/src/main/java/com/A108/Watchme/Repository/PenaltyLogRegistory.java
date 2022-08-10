@@ -19,4 +19,6 @@ public interface PenaltyLogRegistory extends JpaRepository<PenaltyLog, Long> {
 //            "from Penalty_log p where p.member_id=:memberId and p.room_id=:roomId")
     Integer countByMemberIdAndRoomId(Long memberId, Long roomId);
 
+    Integer countByRoomId(Long roomId);
+
 }

@@ -206,7 +206,7 @@ public class GroupService {
                     // myData.studyTime
                     List<Long> roomIdList = group.getSprints().stream().map(x -> x.getRoom().getId()).collect(Collectors.toList());
 
-                    List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberIdAndRoomId(currMember.getId(), roomIdList);
+                    List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberIdAndRoomIdIn(currMember.getId(), roomIdList);
                     int studyTime = 0;
 
                     for (MemberRoomLog mrl :
@@ -216,7 +216,7 @@ public class GroupService {
 
                     // myData.penalty
                     List<Integer> penalty = new ArrayList<>(RuleName.values().length);
-                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSr_id(currMember.getId(), group.getSprints());
+                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSprintIn(currMember.getId(), group.getSprints());
 
                     for (RuleName rule:
                     RuleName.values()) {
@@ -233,7 +233,7 @@ public class GroupService {
                             .build()
                     );
 
-                    List<MemberRoomLog> groupRoomLogList = mrlRepository.findByRoomId(roomIdList);
+                    List<MemberRoomLog> groupRoomLogList = mrlRepository.findByRoomIdIn(roomIdList);
 
                     int sumTime = 0;
                     for (MemberRoomLog mrl :

@@ -10,15 +10,22 @@ import java.util.List;
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 public class SprintResDTO {
-    private Integer status;
+    private Long sprintId;
     private String name;
     private String description;
     private String goal;
-    private Date startAt;
-    private Date endAt;
-    private List<String> sprintRuleList;
+    private String mode;
+    private String status;
+    private String sprintImg;
     private Integer fee;
-    private Timestamp routineStartAt;
-    private Timestamp routineEndAt;
-
+    private Integer penaltyMoney;
+    private String startAt;
+    private String endAt;
+    private String routineStartAt;
+    private String routineEndAt;
+    private String kingName;
+    private Integer kingPenalty;
+    private Integer kingStudy;
+    private Integer studySum;
+    private Integer penaltySum;
 }

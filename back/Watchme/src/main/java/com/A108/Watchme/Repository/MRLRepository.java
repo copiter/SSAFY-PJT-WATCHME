@@ -31,6 +31,5 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
             "FROM MemberRoomLog mrl " +
             "WHERE room_id= ?1")
     Optional<Integer> getSprintData(Long roomId);
-
     Optional<MemberRoomLog> findTopByRoomIdOrderByStudyTimeDesc(Long roomId);
 }

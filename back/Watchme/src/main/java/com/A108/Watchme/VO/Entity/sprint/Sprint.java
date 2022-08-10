@@ -34,6 +34,9 @@ public class Sprint {
     @Column(name = "sum_point")
     private Integer sumPoint;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @OneToOne
     @JoinColumn(name = "sprint_info")
     private SprintInfo sprintInfo;

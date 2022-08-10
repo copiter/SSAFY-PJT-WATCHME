@@ -37,10 +37,10 @@ public class GroupApplyLog {
     @Column(name = "update_date")
     private Date update_date;
 
-    // 0 : 보류 중
-    // 1 : 허가
-    // 2 : 거절
-    // 4 : 취소
-    // 5 : 탈퇴
+
+    // 0 : 보류
+    // 1 : 승인
+    // 2 : 밴
+
     private int status;
 }

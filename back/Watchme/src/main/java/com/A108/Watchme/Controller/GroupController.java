@@ -85,7 +85,7 @@ public class GroupController {
         return groupService.declineApply(groupId, declineApplyReqDTO);
     }
 
-    @PostMapping("/{groupId}/applies/leave")
+    @PostMapping("/{groupId}/leave")
     public ApiResponse leaveGroup(@PathVariable(value = "groupId") Long groupId, HttpServletRequest request) {
         return groupService.leaveGroup(groupId);
     }

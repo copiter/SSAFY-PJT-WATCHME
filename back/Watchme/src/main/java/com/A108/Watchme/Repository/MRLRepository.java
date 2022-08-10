@@ -16,17 +16,11 @@ import java.util.Optional;
 @Repository
 public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
 
-    List<MemberRoomLog> findByMemberId(Long memberId);
-
-//    @Query("SELECT nick_name as nickName, count(nick_name) as penalty\n" +
-//            "FROM penalty_log inner join (SELECT member.member_id, nick_name\n" +
-//            "                            FROM  member\n" +
-//            "                            left join member_room_log mrl on member.member_id = mrl.member_id\n" +
-//            "                            where room_id=:roomId and mrl.status='NO') as m2 on m2.member_id = penalty_log.member_id\n" +
-//            "GROUP BY nick_name")
-//    List<RoomDetMemDTO> getMembersPenalty(@Param("roomId") Long roomId);
-    List<MemberRoomLog> findByRoomIdAndStatus(Long roomId, Status status);
-//    List<MemberRoomLog> findByStartAtAfter(Timestamp date);
+    List<MemberRoomLog> findBymember_id(Long memberId);
+    List<MemberRoomLog> findByStartAtAfter(Timestamp date);
 //    List<MemberRoomLog> findBymember_idBystart_atAfter(Long id, Date date);
+    List<MemberRoomLog> findByRoomId(List<Long> roomId);
     Optional<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, Long roomId);
+
+    List<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, List<Long> roomId);
 }

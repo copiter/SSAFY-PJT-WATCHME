@@ -1,0 +1,24 @@
+package com.A108.Watchme.DTO.group.getGroup;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Date;
+import java.util.List;
+
+@Setter
+@AllArgsConstructor @NoArgsConstructor
+@Builder
+public class GroupResDTO {
+    private String name;
+    private String description;
+    private Integer currMember;
+    private Integer maxMember;
+    private List<String> ctg;
+    private String imgLink;
+    private Date createAt;
+    private Integer display;
+    private Integer view;
+}

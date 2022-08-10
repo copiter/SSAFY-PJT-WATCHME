@@ -1,4 +1,4 @@
-package com.A108.Watchme.DTO;
+package com.A108.Watchme.DTO.room;
 
 import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.Mode;
@@ -6,6 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+<<<<<<< HEAD:back/Watchme/src/main/java/com/A108/Watchme/DTO/GetRoomResDTO.java
+=======
+import javax.annotation.MatchesPattern;
+import java.util.Date;
+
+>>>>>>> origin/FEAT-API-Group:back/Watchme/src/main/java/com/A108/Watchme/DTO/room/GetRoomResDTO.java
 @Getter
 @Setter
 @Builder

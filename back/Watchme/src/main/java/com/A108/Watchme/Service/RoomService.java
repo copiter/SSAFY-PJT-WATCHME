@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +92,7 @@ public class RoomService {
 
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
-                joinRoomFunc(room.getId());
+                joinRoomFuncFunc(room.getId());
                 System.out.println("TEST2");
                 result.setCode(200);
                 result.setMessage("SUCCESS ADD&JOIN ROOM");
@@ -108,7 +109,7 @@ public class RoomService {
     }
 
 
-    public ApiResponse getRoomList(String ctgName, int page, String keyword) {
+    public ApiResponse getRoomListList(String ctgName, int page, String keyword, String keyword) {
         ApiResponse result = new ApiResponse();
 
         System.out.println("roomService getRoomList : keyword = " + keyword);
@@ -119,6 +120,7 @@ public class RoomService {
         if (ctgName != null) {
 
             CategoryList name = CategoryList.valueOf(ctgName);
+
 
             Category category = categoryRepository.findByName(name);
 

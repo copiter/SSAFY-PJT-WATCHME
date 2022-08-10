@@ -29,6 +29,10 @@ public class Sprint {
     @Column(name = "sum_point")
     private Integer sumPoint;
 
+    @OneToOne
+    @JoinColumn(name = "sprint_info")
+    private SprintInfo sprintInfo;
+
     @OneToMany(mappedBy = "sprint")
     List<PointLog> pointLogList = new ArrayList<>();
 

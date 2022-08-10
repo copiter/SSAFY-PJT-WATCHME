@@ -12,5 +12,5 @@ public class MyDataResDTO {
     private Integer role;
     private Integer studyTime;
     private List<Integer> penalty;
-    private Date joinDate;
+    private String joinDate;
 }

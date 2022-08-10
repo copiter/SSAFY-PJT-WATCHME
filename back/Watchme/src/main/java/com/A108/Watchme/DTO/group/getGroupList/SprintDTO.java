@@ -11,7 +11,7 @@ public class SprintDTO {
 
     private String name;
     private String description;
-    private Date startAt;
-    private Date endAt;
+    private String startAt;
+    private String endAt;
 
 }

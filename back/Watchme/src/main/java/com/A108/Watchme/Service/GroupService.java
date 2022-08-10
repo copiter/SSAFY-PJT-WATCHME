@@ -55,6 +55,9 @@ public class GroupService {
     public ApiResponse getGroupList(String ctgName, String keyword, Integer page, Integer active, HttpServletRequest request) {
         ApiResponse result = new ApiResponse();
 
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+
         List<Group> groupList = new LinkedList<>();
 
         if (page == null) {
@@ -117,7 +120,7 @@ public class GroupService {
 
         for (Group g : groupList) {
             // endAt이 null인 (즉, 진행중인) sprint(들)을 collect
-            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getEndAt() == null).collect(Collectors.toList());
+            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getEndAt().after(new Date())).collect(Collectors.toList());
 
             if (!sprint.isEmpty()) {
                 Sprint currSprint = sprint.get(0);
@@ -129,15 +132,15 @@ public class GroupService {
                         .maxMember(g.getGroupInfo().getMaxMember())
                         .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                         .imgLink(g.getGroupInfo().getImageLink())
-                        .createdAt(g.getCreatedAt())
+                        .createdAt(format.format(g.getCreatedAt()))
                         .display(g.getDisplay())
                         .view(g.getView())
                         .sprint(
                                 SprintDTO.builder()
                                         .name(currSprint.getName())
                                         .description(currSprint.getSprintInfo().getDescription())
-                                        .startAt(currSprint.getSprintInfo().getStartAt())
-                                        .endAt(currSprint.getSprintInfo().getEndAt())
+                                        .startAt(format.format(currSprint.getSprintInfo().getStartAt()))
+                                        .endAt(format.format(currSprint.getSprintInfo().getEndAt()))
                                         .build()
                         )
                         .build()
@@ -151,7 +154,7 @@ public class GroupService {
                         .maxMember(g.getGroupInfo().getMaxMember())
                         .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                         .imgLink(g.getGroupInfo().getImageLink())
-                        .createdAt(g.getCreatedAt())
+                        .createdAt(format.format(g.getCreatedAt()))
                         .display(g.getDisplay())
                         .view(g.getView())
                         .build()
@@ -171,6 +174,9 @@ public class GroupService {
     public ApiResponse getGroup(Long groupId, String pwd) {
         ApiResponse result = new ApiResponse();
 
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+
         Optional<Group> check = groupRepository.findById(groupId);
 
         // 그룹 존재여부 체크
@@ -189,22 +195,20 @@ public class GroupService {
                         .maxMember(group.getGroupInfo().getMaxMember())
                         .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                         .imgLink(group.getGroupInfo().getImageLink())
-                        .createAt(group.getCreatedAt())
+                        .createAt(format.format(group.getCreatedAt()))
                         .display(group.getDisplay())
                         .view(group.getView())
                         .build());
 
 
                 // TODO : sprints 석인님이 작업하신 것으로 변경해야 됨
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+
 
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                ApiResponse apiResponse = new ApiResponse();
 
                 Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
 
-                List<SprintResDTO> sprintGetResDTOList = new LinkedList<>();
+                List<SprintResDTO> sprintResDTOList = new LinkedList<>();
 
                 List<Sprint> sprintList = sprintRepository.findAllByGroupId(groupId);
 
@@ -228,7 +232,7 @@ public class GroupService {
 
                     int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
 
-                    SprintResDTO sprintGetResDTO = new SprintResDTO().builder()
+                    SprintResDTO sprintResDTO = new SprintResDTO().builder()
                             .sprintId(sprint.getId())
                             .sprintImg(sprint.getSprintInfo().getImg())
                             .name(sprint.getName())
@@ -247,12 +251,11 @@ public class GroupService {
                             .studySum(sumTime)
                             .penaltySum(sumPenalty)
                             .build();
-                    sprintGetResDTOList.add(sprintGetResDTO);
+                    sprintResDTOList.add(sprintResDTO);
 
                 }
 
-
-                apiResponse.setResponseData("sprints", sprintGetResDTOList);
+                result.setResponseData("sprints", sprintResDTOList);
 
 
                 // leader
@@ -332,11 +335,13 @@ public class GroupService {
                             .role(currMember.getEmail().equals(leader.getEmail()) ? GroupRole.LEADER.ordinal() : GroupRole.MEMBER.ordinal())
                             .studyTime(studyTime)
                             .penalty(penalty)
-                            .joinDate(currMemberGroup.getCreatedAt())
+                            .joinDate(format.format(currMemberGroup.getCreatedAt()))
                             .build()
                     );
 
+                    //groupdata
                     List<MemberRoomLog> groupRoomLogList = mrlRepository.findByRoomIdIn(roomIdList);
+                    GroupDataResDTO groupDataResDTO;
 
                     int sumTime = 0;
                     for (MemberRoomLog mrl :
@@ -346,16 +351,17 @@ public class GroupService {
 
                     if (group.getLeader().getId().equals(currMember.getId())) {
                         int assignee = (int) groupApplyLogRegistory.countByGroupIdAndStatus(groupId, 0);
-                        GroupDataResDTO.builder()
+                        groupDataResDTO = GroupDataResDTO.builder()
                                 .sumTime(sumTime)
                                 .assignee(assignee)
                                 .build();
                     } else {
-                        GroupDataResDTO.builder()
+                        groupDataResDTO = GroupDataResDTO.builder()
                                 .sumTime(sumTime)
                                 .build();
                     }
 
+                    result.setResponseData("groupData",groupDataResDTO);
 
                     result.setCode(200);
                     result.setMessage("GET GROUP SUCCESS");

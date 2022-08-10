@@ -17,7 +17,7 @@ public class GroupListResDTO {
     private Integer maxMember;
     private List<String> ctg;
     private String imgLink;
-    private Date createdAt;
+    private String createdAt;
     private Integer display;
     private Integer view;
     private SprintDTO sprint;

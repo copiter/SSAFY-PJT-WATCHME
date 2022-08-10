@@ -8,6 +8,7 @@ import com.A108.Watchme.VO.ENUM.Mode;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
+import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
@@ -36,6 +37,8 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MRLRepository mrlRepository;
+
+    private final PenaltyLogRegistory penaltyLogRegistory;
     private final RoomInfoRepository roomInfoRepository;
     private final CategoryRepository categoryRepository;
     private final S3Uploader s3Uploader;
@@ -133,7 +136,7 @@ public class RoomService {
                 roomList = roomRepository.findAllByStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
             } else {
                 System.out.println("search");
-                roomList = roomRepository.findAllByStatusAndRoomNameContaining(keyword, pageRequest, Status.YES).stream().collect(Collectors.toList());
+                roomList = roomRepository.findAllByStatusAndRoomNameContaining(Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
             }
 
         }
@@ -340,13 +343,15 @@ public class RoomService {
 
         Room room = roomRepository.findById(roomId).get();
         MemberRoomLog memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+//        PenaltyLog
         RoomDetMyDTO roomDetMyDTO = new RoomDetMyDTO();
-        roomDetMyDTO.setStartTime(format.format(memberRoomLog.getJoinedAt().toString()));
+        System.out.println(memberRoomLog.getJoinedAt().toString());
+        roomDetMyDTO.setStartTime(format.format(memberRoomLog.getJoinedAt()));
         roomDetMyDTO.setName(room.getRoomName());
         roomDetMyDTO.setMode(room.getMode());
         roomDetMyDTO.setLeaderName(room.getMember().getNickName());
         roomDetMyDTO.setLeaderTrue((room.getMember().getId().equals(memberId))? 1 : 0);
-
+        roomDetMyDTO.setPenalty(penaltyLogRegistory.countByMemberIdAndRoomId(memberId, roomId));
         apiResponse.setCode(200);
         apiResponse.setMessage("GET ROOM MYDET SUCCESS");
         apiResponse.setResponseData("room", roomDetMyDTO);
@@ -357,15 +362,51 @@ public class RoomService {
     public ApiResponse getRoomMem(Long roomId) {
         ApiResponse apiResponse = new ApiResponse();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-
+        List<RoomDetMemDTO> memDTOList = new LinkedList<>();
         Room room = roomRepository.findById(roomId).get();
         // 공부시간이 정산되지 않았으면 status가 NO임 => 공부중인 상태
         List<MemberRoomLog> memberRoomLogs = mrlRepository.findByRoomIdAndStatus(roomId, Status.NO);
         for(MemberRoomLog memberRoomLog : memberRoomLogs){
-            memberRoomLog.getMember().getNickName();
+            Member member = memberRoomLog.getMember();
+            int penalty = penaltyLogRegistory.countByMemberIdAndRoomId(member.getId(), roomId);
+
+            memDTOList.add(new RoomDetMemDTO (member.getMemberInfo().getImageLink(), member.getNickName(), penalty));
 
         }
-        return null;
+        apiResponse.setCode(200);
+        apiResponse.setMessage("GET SUCCESS ROMMMEM");
+        apiResponse.setResponseData("logs", memDTOList);
+        return apiResponse;
+    }
+
+    public ApiResponse getRoomSetting(Long id) {
+        ApiResponse apiResponse = new ApiResponse();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        Room room = roomRepository.findById(id).get();
+        Long owner_id = room.getMember().getId();
+        if(owner_id != memberId){
+            apiResponse.setCode(507);
+            apiResponse.setMessage("INVALID AUTHENTICATION");
+            return apiResponse;
+        }
+        RoomDetSettingDTO roomDetSettingDTO = (RoomDetSettingDTO.builder()
+                .mode(room.getMode().toString())
+                .roomName(room.getRoomName())
+                .categoryName(room.getRoomCtg().toString())
+                .display(room.getRoomInfo().getDisplay())
+                .description(room.getRoomInfo().getDescription())
+                .roomPwd((room.getRoomInfo().getPwd()==null)? -1:room.getRoomInfo().getPwd())
+                .img(room.getRoomInfo().getImageLink())
+                .num(room.getRoomInfo().getMaxMember())
+                .endTime(format.format(room.getRoomInfo().getEndAt()))
+                .build());
+        apiResponse.setCode(200);
+        apiResponse.setMessage("SUCCESS GET SETTING");
+        apiResponse.setResponseData("room", roomDetSettingDTO);
+
+        return apiResponse;
+
     }
 }

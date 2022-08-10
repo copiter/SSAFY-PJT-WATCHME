@@ -17,7 +17,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     Page<Room> findAllByRoomCtgAndStatus(Category roomCtg, Pageable pageable, Status status);
 
-    Page<Room> findAllByStatusAndRoomNameContaining(String title, Pageable pageable, Status status);
+    Page<Room> findAllByStatusAndRoomNameContaining(Status status, String title, Pageable pageable);
 
     Page<Room> findAllByRoomCtgAndStatusAndRoomNameContaining(Category roomCtg, Status status,  String title, Pageable pageable);
 }

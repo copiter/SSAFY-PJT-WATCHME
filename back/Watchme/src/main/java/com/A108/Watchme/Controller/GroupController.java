@@ -23,8 +23,8 @@ public class GroupController {
     private GroupService groupService;
 
     @GetMapping
-    public ApiResponse getGroupList(@RequestParam(value = "ctg") String category, @RequestParam(value = "keyword") String keyword, @RequestParam(value = "page") int page, @RequestParam(value = "active") int active, HttpServletRequest request){
-        return groupService.getGroupList(category, keyword, page, active, request);
+    public ApiResponse getGroupList(@RequestParam(value = "ctg") String ctgName, @RequestParam(value = "keyword") String keyword, @RequestParam(value = "page") Integer page, @RequestParam(value = "active") int active, HttpServletRequest request){
+        return groupService.getGroupList(ctgName, keyword, page, active, request);
     }
 
     @PostMapping("/{groupId}")

@@ -18,5 +18,10 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     Page<Group> findAllByOrderByViewDesc(Pageable pageable);
 
+    Page<Group> findAllByCategory_category(Category category, Pageable pageable);
+
+    Page<Group> findAllByCategory_categoryAndGroupNameContaining(Category category, String keyword, Pageable pageable);
+
+    Page<Group> findAllByGroupNameContaining(String keyword, Pageable pageable);
 
 }

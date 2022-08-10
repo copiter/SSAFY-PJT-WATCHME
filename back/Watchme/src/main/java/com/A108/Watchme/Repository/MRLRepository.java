@@ -13,5 +13,9 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
     List<MemberRoomLog> findBymember_id(Long memberId);
 //    List<MemberRoomLog> findByStartAtAfter(Timestamp date);
 //    List<MemberRoomLog> findBymember_idBystart_atAfter(Long id, Date date);
+    List<MemberRoomLog> findByRoomId(List<Long> roomId);
+
     MemberRoomLog findByMemberIdAndRoomId(Long memberId, Long roomId);
+
+    List<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, List<Long> roomId);
 }

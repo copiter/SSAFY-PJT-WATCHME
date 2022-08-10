@@ -50,4 +50,6 @@ public class MemberInfo{
     @Column(name = "study_time_month")
     private Integer studyTimeMonth;
 
+    private String description;
+
 }

@@ -2,6 +2,7 @@ package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.Room.*;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.Mode;
@@ -86,13 +87,12 @@ public class RoomService {
                         .imageLink(url)
                         .display(postRoomReqDTO.getDisplay())
                         .build();
-                System.out.println("TEST1");
 
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
                 joinRoomFunc(room.getId());
                 System.out.println("TEST2");
-                result.setCode(200);
+                result.setCode();
                 result.setMessage("SUCCESS ADD&JOIN ROOM");
                 result.setResponseData("roomId", room.getId());
 

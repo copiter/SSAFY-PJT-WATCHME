@@ -100,7 +100,8 @@ public class SprintService {
                     .pointValue(sprint.get().getSprintInfo().getFee())
                     .build());
         }
-
+        apiResponse.setCode(200);
+        apiResponse.setMessage("DELETE SUCCESS");
         return apiResponse;
     }
 

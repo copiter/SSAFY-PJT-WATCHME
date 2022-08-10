@@ -22,8 +22,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,8 +46,8 @@ public class MemberService {
     private final AuthenticationManager authenticationManager;
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
@@ -175,8 +177,6 @@ public class MemberService {
 
     public ApiResponse findEmail(FindEmailRequestDTO findEmailRequestDTO) {
         ApiResponse result = new ApiResponse();
-
-        System.out.println(findEmailRequestDTO.getNickName());
         Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
 
         if(member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())){
@@ -191,5 +191,46 @@ public class MemberService {
 
         return result;
 
+    }
+
+    @Transactional
+    public ApiResponse memberUpdate(UpdateRequestDTO updateRequestDTO, MultipartFile image) {
+        ApiResponse result = new ApiResponse();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+                System.out.println("heelo");
+
+                Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
+
+                if(currUser.isPresent()) {
+                    String url = currUser.get().getMemberInfo().getImageLink();
+                    try {
+                        url = s3Uploader.upload(image, "Watchme");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        currUser.get().setNickName(updateRequestDTO.getNickName());
+                        currUser.get().getMemberInfo().setName(updateRequestDTO.getName());
+                        currUser.get().getMemberInfo().setBirth(updateRequestDTO.getBirth());
+                        currUser.get().getMemberInfo().setGender(updateRequestDTO.getGender());
+                        currUser.get().getMemberInfo().setDescription(updateRequestDTO.getDescription());
+                        memberRepository.save(currUser.get());
+                        memberInfoRepository.save(currUser.get().getMemberInfo());
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    result.setCode(200);
+                    result.setMessage("UPDATE SUCCESS");
+
+                }
+            }
+        }catch (Exception e){
+            result.setCode(400);
+            result.setMessage("LOGIN USER ONLY");
+        }
+
+        return result;
     }
 }

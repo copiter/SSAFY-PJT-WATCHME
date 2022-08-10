@@ -62,7 +62,7 @@ public class HomeService {
 
 
                 List<GroupDataDTO> resMyGroups = new LinkedList<>();
-                List<MemberGroup> memberGroupList = mgRepository.findByMember_id(member.getId());
+                List<MemberGroup> memberGroupList = mgRepository.findByMemberId(member.getId());
                 for (MemberGroup mg :
                         memberGroupList) {
                     resMyGroups.add(GroupDataDTO.builder()

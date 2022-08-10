@@ -2,14 +2,15 @@ package com.A108.Watchme.DTO.Sprint;
 
 import com.A108.Watchme.VO.ENUM.Mode;
 import com.A108.Watchme.VO.ENUM.Status;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class SprintGetResDTO {
     private Long sprintId;
-    private Long roomId;
     private String sprintName;
     private String description;
     private String goal;
@@ -26,5 +27,6 @@ public class SprintGetResDTO {
     private Integer kingPenalty;
     private Integer studySum;
     private Integer penaltySum;
-
+    private Integer myStudy;
+    private Integer myPenalty;
 }

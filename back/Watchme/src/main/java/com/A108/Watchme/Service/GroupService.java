@@ -157,8 +157,8 @@ public class GroupService {
                                 .endAt(x.getSprintInfo().getEndAt())
 //                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
                                 .fee(x.getSprintInfo().getFee())
-                                .routineStartAt(x.getSprintInfo().getRoutineStartAt())
-                                .routineEndAt(x.getSprintInfo().getRoutineEndAt())
+//                                .routineStartAt(x.getSprintInfo().getRoutineStartAt())
+//                                .routineEndAt(x.getSprintInfo().getRoutineEndAt())
                                 .build()
                 ));
 

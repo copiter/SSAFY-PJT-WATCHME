@@ -1,12 +1,11 @@
 package com.A108.Watchme.Controller;
 
+import com.A108.Watchme.DTO.Sprint.SprintPostDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class SprintController {
@@ -19,11 +18,17 @@ public class SprintController {
 
         return sprintService.deleteSprint(id);
     }
-
     @GetMapping("/sprints/{groupId}")
     ApiResponse getSprintList(@PathVariable(value = "groupId") int groupId){
         Long id = Long.valueOf(groupId);
-    return null;
-//        return sprintService.getSprints(groupId);
+    return sprintService.getSprints(id);
+    }
+
+    // 스프린트 생성
+    @PostMapping("/sprints/{groupId}")
+    ApiResponse createSprint(@PathVariable(value = "groupId") int groupId, @RequestPart(value="sprintPostDTO") SprintPostDTO sprintPostDTO,
+                             @RequestPart(required = false, value = "images") MultipartFile images){
+        Long id = Long.valueOf(groupId);
+        return sprintService.createSprints(id,images, sprintPostDTO);
     }
 }

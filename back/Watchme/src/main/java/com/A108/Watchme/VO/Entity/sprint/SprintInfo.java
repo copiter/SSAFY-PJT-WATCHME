@@ -3,7 +3,7 @@ package com.A108.Watchme.VO.Entity.sprint;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.Timestamp;
 
 @Entity
@@ -25,11 +25,13 @@ public class SprintInfo {
     @Column(name = "end_at")
     private Date endAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "routineStart_at")
-    private Timestamp routineStartAt;
+    private Date routineStartAt;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "routineEnd_at")
-    private Timestamp routineEndAt;
+    private Date routineEndAt;
 
     @Column(name = "sprint_score")
     private Integer sprintScore;

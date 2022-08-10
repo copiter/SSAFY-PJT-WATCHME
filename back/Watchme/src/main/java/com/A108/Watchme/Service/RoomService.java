@@ -391,10 +391,11 @@ public class RoomService {
             apiResponse.setMessage("INVALID AUTHENTICATION");
             return apiResponse;
         }
+
         RoomDetSettingDTO roomDetSettingDTO = (RoomDetSettingDTO.builder()
                 .mode(room.getMode().toString())
                 .roomName(room.getRoomName())
-                .categoryName(room.getRoomCtg().toString())
+                .categoryName(room.getRoomCtg().getName().toString())
                 .display(room.getRoomInfo().getDisplay())
                 .description(room.getRoomInfo().getDescription())
                 .roomPwd((room.getRoomInfo().getPwd()==null)? -1:room.getRoomInfo().getPwd())

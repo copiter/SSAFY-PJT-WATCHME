@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface MGRepository extends JpaRepository<MemberGroup, Long> {
 
-    public List<MemberGroup> findByMember_id(Long id);
+    List<MemberGroup> findByMemberId(Long id);
 
 }

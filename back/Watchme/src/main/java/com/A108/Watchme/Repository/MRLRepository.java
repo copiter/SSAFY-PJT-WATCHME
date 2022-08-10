@@ -1,6 +1,7 @@
 package com.A108.Watchme.Repository;
 
 import com.A108.Watchme.DTO.Room.RoomDetMemDTO;
+import com.A108.Watchme.DTO.Sprint.SprintData;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.Member;
@@ -25,4 +26,9 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
     List<MemberRoomLog> findByMemberIdAndRoomIdIn(Long memberId, List<Long> roomId);
 
     List<MemberRoomLog> findByRoomIdAndStatus(Long roomId, Status status);
+
+    @Query(value = "SELECT new com.A108.Watchme.DTO.SprintData(SUM(study_time)) " +
+            "FROM MemberRoomLog mrl " +
+            "WHERE mrl.room_id=:roomId", nativeQuery = true)
+    Optional<SprintData> getSprintData(@Param(value = "roomId") Long roomId);
 }

@@ -46,31 +46,44 @@
     "myData": {
       "role": "anonymous",
       "studyTime": 62343,
-      "penaltyScore": 145,
+      "penalty": [13, 234],
       "joinDate": "2022-10-16"
     },
     "sprints": [
       {
-        "name": "1차 스프린트",
+        "sprintId": "256",
+        "name": "3차 스프린트",
         "description": "최선을 다해서 함께 스프린트 완주합시다. 5급 공무원은 나의 것!",
         "goal": "주 50시간은 최소로 해보자",
+        "mode": "MODE2",
+        "status": "YES",
+        "sprintImg": "https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+        "fee": 5000,
+        "penaltyMoney": 500,
         "startAt": "2022-09-01",
         "endAt": "2022-09-30",
-        "sprintRuleList": ["딴짓감지", "스마트폰 감지"],
-        "fee": 5000,
         "routineStartAt": "09:00",
         "routineEndAt": "18:00"
       },
       {
+        "sprintId": "234",
         "name": "2차 스프린트",
-        "description": "죽을 힘을 다해서 함께 스프린트 완주합시다. 5급 공무원은 나의 것!",
+        "description": "죽을 힘을 다해서 함께 스프린트 완주합시다. 2차시험 뽀삽시다!",
         "goal": "주 55시간은 최소로 해보자",
-        "startAt": "2022-10-01",
-        "endAt": "2022-10-31",
-        "sprintRuleList": ["딴짓감지", "스마트폰 감지"],
+        "mode": "MODE1",
+        "status": "ING",
+        "sprintImg": "https://images.unsplash.com/photo-1659864944999-d1453d2f5003?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
         "fee": 5000,
+        "penaltyMoney": 500,
+        "startAt": "2022-08-01",
+        "endAt": "2022-08-31",
         "routineStartAt": "09:00",
-        "routineEndAt": "18:00"
+        "routineEndAt": "18:00",
+        "kingName": "춘식쓰",
+        "kingPenalty": 30,
+        "kingStudy": 4503,
+        "studySum": 50294,
+        "penaltySum": 687
       }
     ],
     "leader": {

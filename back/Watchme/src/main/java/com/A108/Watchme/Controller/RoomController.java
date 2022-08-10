@@ -78,6 +78,13 @@ public class RoomController {
         return roomService.getRoomMem(id);
     }
 
+    // 방 입장 후 방 설정 조회
+    @GetMapping("/rooms/{roomId}/settings")
+    public ApiResponse getRoomSettings(@PathVariable(value = "roomId") int roomId) {
+        Long id = Long.valueOf(roomId);
+        return roomService.getRoomSetting(id);
+    }
+
     // 룸 수정 API
     @PostMapping("/rooms/{roomId}/update")
     public ApiResponse updateRooms(@PathVariable(value = "roomId") int roomId, @RequestPart(value ="roomUpdateDTO") RoomUpdateDTO roomUpdateDTO,

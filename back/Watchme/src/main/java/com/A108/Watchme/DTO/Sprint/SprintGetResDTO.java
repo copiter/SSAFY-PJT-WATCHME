@@ -26,5 +26,7 @@ public class SprintGetResDTO {
     private Integer kingPenalty;
     private Integer studySum;
     private Integer penaltySum;
+    private Integer myStudy;
+    private Integer myPenalty;
 
 }

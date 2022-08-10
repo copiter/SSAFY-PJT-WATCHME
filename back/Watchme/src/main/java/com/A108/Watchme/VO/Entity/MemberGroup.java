@@ -29,6 +29,7 @@ public class MemberGroup {
     @JsonBackReference
     private Member member;
 
+    @Enumerated(EnumType.STRING)
     private GroupRole groupRole;
 
     @Temporal(TemporalType.TIMESTAMP)

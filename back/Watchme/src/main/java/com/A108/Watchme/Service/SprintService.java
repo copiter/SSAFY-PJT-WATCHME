@@ -1,6 +1,5 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;

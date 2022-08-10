@@ -23,13 +23,16 @@ public class GroupController {
     private GroupService groupService;
 
     @GetMapping
-    public ApiResponse getGroupList(@RequestParam(value = "ctg") String ctgName, @RequestParam(value = "keyword") String keyword, @RequestParam(value = "page") Integer page, @RequestParam(value = "active") int active, HttpServletRequest request){
+    public ApiResponse getGroupList(@RequestParam(value = "ctg",required = false) String ctgName, @RequestParam(value = "keyword",required = false) String keyword, @RequestParam(value = "page",required = false) Integer page, @RequestParam(value = "active", required = false) Integer active, HttpServletRequest request){
         return groupService.getGroupList(ctgName, keyword, page, active, request);
     }
 
     @PostMapping("/{groupId}")
-    public ApiResponse getGroup(@RequestBody GroupReqDTO groupReqDTO, @PathVariable(value = "groupId") Long groupId){
-        return groupService.getGroup(groupId, groupReqDTO.getPwd());
+    public ApiResponse getGroup(@RequestBody(required = false) GroupReqDTO groupReqDTO, @PathVariable(value = "groupId") Long groupId){
+        if(groupReqDTO!=null){
+            return groupService.getGroup(groupId, groupReqDTO.getPwd());
+        }
+        return groupService.getGroup(groupId, null);
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -54,6 +57,11 @@ public class GroupController {
 
     @GetMapping("/{groupId}/applies")
     public ApiResponse getApplyList(@PathVariable(value = "groupId") Long groupId, HttpServletRequest request) {
+        return groupService.getApplyList(groupId);
+    }
+
+    @GetMapping("/{groupId}/members")
+    public ApiResponse getGroupMemberList(@PathVariable(value = "groupId") Long groupId, HttpServletRequest request) {
         return groupService.getApplyList(groupId);
     }
 

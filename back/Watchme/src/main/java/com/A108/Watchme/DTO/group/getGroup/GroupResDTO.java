@@ -1,14 +1,11 @@
 package com.A108.Watchme.DTO.group.getGroup;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
 
-@Setter
+@Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 public class GroupResDTO {

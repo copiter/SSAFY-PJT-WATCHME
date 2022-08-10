@@ -2,35 +2,37 @@ package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.group.*;
+import com.A108.Watchme.DTO.group.getGroup.*;
+import com.A108.Watchme.DTO.group.getGroupList.GroupListResDTO;
+import com.A108.Watchme.DTO.group.getGroupList.SprintDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
-import com.A108.Watchme.VO.ENUM.CategoryList;
-import com.A108.Watchme.VO.ENUM.RoomStatus;
-import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.ENUM.*;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.MemberGroup;
+import com.A108.Watchme.VO.Entity.Rule;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.group.GroupCategory;
 import com.A108.Watchme.VO.Entity.group.GroupInfo;
 import com.A108.Watchme.VO.Entity.log.GroupApplyLog;
+import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
+import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.html.Option;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,19 +48,230 @@ public class GroupService {
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final MemberRepository memberRepository;
     private final MemberGroupRepository memberGroupRepository;
+    private final MRLRepository mrlRepository;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final S3Uploader s3Uploader;
 
-    public ApiResponse getGroupList(String groupCtg, String keyword, int page, int active, HttpServletRequest request) {
-        ApiResponse apiResponse = new ApiResponse();
-        PageRequest pageRequest = PageRequest.of(-1, 10);
+    public ApiResponse getGroupList(String ctgName, String keyword, Integer page, int active, HttpServletRequest request) {
+        ApiResponse result = new ApiResponse();
 
-        return apiResponse;
+        List<Group> groupList;
+
+        if (page == null) {
+            page = 1;
+        }
+        PageRequest pageRequest = PageRequest.of(page - 1, 10);
+
+        if (ctgName != null) {
+            Category category = categoryRepository.findByName(CategoryList.valueOf(ctgName));
+
+            if (keyword == null) {
+                System.out.println("ctg");
+                groupList = groupRepository.findAllByCategory_category(category, pageRequest).stream().collect(Collectors.toList());
+            } else {
+                System.out.println("ctg&keyword");
+                groupList = groupRepository.findAllByCategory_categoryAndGroupNameContaining(category, keyword, pageRequest).stream().collect(Collectors.toList());
+            }
+
+        } else {
+            if (keyword == null) {
+                System.out.println("nullAndnull");
+                groupList = groupRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+            } else {
+                System.out.println("keyword");
+                groupList = groupRepository.findAllByGroupNameContaining(keyword, pageRequest).stream().collect(Collectors.toList());
+            }
+
+        }
+
+        List<GroupListResDTO> getRoomList = new LinkedList<>();
+        for (Group g : groupList) {
+            // endAt이 null이 아닌 sprint(들)을 collect
+            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getEndAt() != null).collect(Collectors.toList());
+            Sprint currSprint = sprint.get(0);
+            getRoomList.add(GroupListResDTO.builder()
+                    .id(g.getId())
+                    .name(g.getGroupName())
+                    .description(g.getGroupInfo().getDescription())
+                    .currMember(g.getGroupInfo().getCurrMember())
+                    .maxMember(g.getGroupInfo().getMaxMember())
+                    .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
+                    .imgLink(g.getGroupInfo().getImageLink())
+                    .createdAt(g.getCreatedAt())
+                    .display(g.getDisplay())
+                    .view(g.getView())
+                    .sprint(
+                            SprintDTO.builder()
+                                    .name(currSprint.getName())
+                                    .description(currSprint.getSprintInfo().getDescription())
+                                    .startAt(currSprint.getSprintInfo().getStartAt())
+                                    .endAt(currSprint.getSprintInfo().getEndAt())
+                                    .build()
+                    )
+                    .build()
+            );
+        }
+
+        result.setResponseData("rooms", getRoomList);
+        result.setMessage("GETROOMS SUCCESS");
+        result.setCode(200);
+        return result;
     }
 
     public ApiResponse getGroup(Long groupId, String pwd) {
-        ApiResponse apiResponse = new ApiResponse();
-        return apiResponse;
+        ApiResponse result = new ApiResponse();
+
+        Optional<Group> check = groupRepository.findById(groupId);
+
+        if (check.isPresent()) {
+
+            if (bCryptPasswordEncoder.matches(pwd, check.get().getGroupInfo().getPwd())) {
+
+                Group group = check.get();
+
+                //group
+                result.setResponseData("group", GroupResDTO.builder()
+                        .name(group.getGroupName())
+                        .description(group.getGroupInfo().getDescription())
+                        .currMember(group.getGroupInfo().getCurrMember())
+                        .maxMember(group.getGroupInfo().getMaxMember())
+                        .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
+                        .imgLink(group.getGroupInfo().getImageLink())
+                        .createAt(group.getCreatedAt())
+                        .display(group.getDisplay())
+                        .view(group.getView())
+                        .build());
+
+
+                // sprints
+                List<SprintResDTO> sprints = new LinkedList<>();
+
+                group.getSprints().stream().map(x -> sprints.add(
+                        SprintResDTO.builder()
+                                .name(x.getName())
+                                .status(new Date().after(x.getSprintInfo().getEndAt()) ? 2 : new Date().after(x.getSprintInfo().getStartAt()) ? 1 : 0)
+                                .description(x.getSprintInfo().getDescription())
+                                .goal(x.getSprintInfo().getGoal())
+                                .startAt(x.getSprintInfo().getStartAt())
+                                .endAt(x.getSprintInfo().getEndAt())
+                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
+                                .fee(x.getSprintInfo().getFee())
+                                .routineStartAt(x.getSprintInfo().getRoutineStartAt())
+                                .routineEndAt(x.getSprintInfo().getRoutineEndAt())
+                                .build()
+                ));
+
+                result.setResponseData("sprints", sprints);
+
+
+                // leader
+                Member leader = group.getLeader();
+
+                result.setResponseData("leader", GroupMemberResDTO.builder()
+                        .nickName(leader.getNickName())
+                        .imgLink(leader.getMemberInfo().getImageLink())
+                        .role(GroupRole.LEADER.ordinal())
+                        .build());
+
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                UserDetails accessAccount = (UserDetails) authentication.getPrincipal();
+
+                Optional<Member> checkMember = memberRepository.findById(Long.parseLong(accessAccount.getUsername()));
+                List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).collect(Collectors.toList());
+
+                if (checkMember.isPresent() && groupMembers.stream().anyMatch(x -> x.getEmail().equals(checkMember.get().getEmail()))) {
+                    // 그룹원 + 그룹장
+                    Member currMember = checkMember.get();
+
+
+                    // members
+                    List<GroupMemberResDTO> members = new LinkedList<>();
+
+                    for (Member m : groupMembers) {
+
+                        members.add(GroupMemberResDTO.builder()
+                                .nickName(m.getNickName())
+                                .imgLink(m.getMemberInfo().getImageLink())
+                                .role(m.getNickName().equals(leader.getNickName()) ? GroupRole.LEADER.ordinal() : GroupRole.MEMBER.ordinal())
+                                .build()
+                        );
+                    }
+
+                    result.setResponseData("members", members);
+
+
+                    // myData
+                    // myData.studyTime
+                    List<Long> roomIdList = group.getSprints().stream().map(x -> x.getRoom().getId()).collect(Collectors.toList());
+
+                    List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberIdAndRoomId(currMember.getId(), roomIdList);
+                    int studyTime = 0;
+
+                    for (MemberRoomLog mrl :
+                            memberRoomLogList) {
+                        studyTime += mrl.getStudyTime();
+                    }
+
+                    // myData.penalty
+                    List<Integer> penalty = new ArrayList<>(RuleName.values().length);
+                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSprint(currMember.getId(), group.getSprints());
+
+                    for (RuleName rule:
+                    RuleName.values()) {
+                        penalty.add(rule.ordinal(),(int)(long)penaltyLogList.stream().filter(x-> x.getRule().getRuleName().ordinal()==rule.ordinal()).count());
+                    }
+
+                    MemberGroup currMemberGroup = memberGroupRepository.findByMemberIdAndGroupId(currMember.getId(),groupId).get();
+
+                    result.setResponseData("myData", MyDataResDTO.builder()
+                            .role(accessAccount.getUsername().equals(leader.getEmail()) ? GroupRole.LEADER.ordinal() : GroupRole.MEMBER.ordinal())
+                            .studyTime(studyTime)
+                            .penalty(penalty)
+                            .joinDate(currMemberGroup.getCreatedAt())
+                            .build()
+                    );
+
+                    List<MemberRoomLog> groupRoomLogList = mrlRepository.findByRoomId(roomIdList);
+
+                    int sumTime = 0;
+                    for (MemberRoomLog mrl :
+                            groupRoomLogList) {
+                        sumTime += mrl.getStudyTime();
+                    }
+
+                    if (group.getLeader().getId().equals(currMember.getId())) {
+                        int assignee = (int) groupApplyLogRegistory.countByGroupIdAndStatus(groupId,0);
+                        GroupDataResDTO.builder()
+                                .sumTime(sumTime)
+                                .assignee(assignee)
+                                .build();
+                    } else{
+                        GroupDataResDTO.builder()
+                                .sumTime(sumTime)
+                                .build();
+                    }
+
+                } else {
+
+                    result.setResponseData("myData", MyDataResDTO.builder()
+                            .role(GroupRole.ANONYMOUS.ordinal())
+                            .build());
+
+                }
+
+                result.setCode(200);
+                result.setMessage("GET GROUP SUCCESS");
+            } else {
+                result.setCode(307);
+                result.setMessage("Wrong Password");
+            }
+            result.setCode(400);
+            result.setMessage("no such group");
+        }
+
+        return result;
     }
 
     public ApiResponse createGroup(GroupCreateReqDTO groupCreateReqDTO, MultipartFile image, HttpServletRequest request) {
@@ -561,15 +774,15 @@ public class GroupService {
 
         Optional<Group> check = groupRepository.findById(groupId);
 
-        if(check.isPresent()){
+        if (check.isPresent()) {
             Group group = check.get();
 
-            result.setResponseData("group",UpdateFormResDTO.builder()
+            result.setResponseData("group", UpdateFormResDTO.builder()
                     .id(group.getId())
                     .name(group.getGroupName())
                     .description(group.getGroupInfo().getDescription())
                     .maxMember(group.getGroupInfo().getMaxMember())
-                    .ctg(group.getCategory().stream().map(x->x.getCategory().getName().toString()).collect(Collectors.toList()))
+                    .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                     .pwd(group.getGroupInfo().getPwd())
                     .display(group.getDisplay())
                     .imgLink(group.getGroupInfo().getImageLink())

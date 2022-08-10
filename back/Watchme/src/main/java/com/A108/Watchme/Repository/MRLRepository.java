@@ -25,4 +25,10 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
     List<MemberRoomLog> findByMemberIdAndRoomIdIn(Long memberId, List<Long> roomId);
 
     List<MemberRoomLog> findByRoomIdAndStatus(Long roomId, Status status);
+
+    @Query(value = "SELECT SUM(mrl.studyTime) " +
+            "FROM MemberRoomLog mrl " +
+            "WHERE room_id= ?1")
+    Optional<Integer> getSprintData(Long roomId);
+    Optional<MemberRoomLog> findTopByRoomIdOrderByStudyTimeDesc(Long roomId);
 }

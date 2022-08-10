@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface PenaltyLogRegistory extends JpaRepository<PenaltyLog, Long> {
     List<PenaltyLog> findAllByMemberId(Long id);
-
+    Integer countByRoomId(Long roomId);
     List<PenaltyLog> findAllByMemberIdAndSprintIn(Long id, List<Sprint> sprints);
 
 //    @Query(value = "select new Integer(count(p.penalty_log_id))" +

@@ -1,5 +1,6 @@
 package com.A108.Watchme.VO.Entity;
 
+import com.A108.Watchme.VO.ENUM.GroupRole;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -27,6 +28,8 @@ public class MemberGroup {
     @JoinColumn(name = "member_id")
     @JsonBackReference
     private Member member;
+
+    private GroupRole groupRole;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")

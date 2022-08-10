@@ -31,4 +31,18 @@ public class SprintController {
         Long id = Long.valueOf(groupId);
         return sprintService.createSprints(id,images, sprintPostDTO);
     }
+
+    // 스프린트 참가
+    @PostMapping("sprints/{sprintId}/join")
+    ApiResponse joinSprint(@PathVariable(value="sprintId") int sprintId){
+        Long sid = Long.valueOf(sprintId);
+        return sprintService.joinSprints(sid);
+    }
+
+    // 스프린트 시작
+    @PostMapping("sprints/{sprintId}/start")
+    ApiResponse startSprint(@PathVariable(value="sprintId") int sprintId){
+        Long sid = Long.valueOf(sprintId);
+        return sprintService.startSprints(sid);
+    }
 }

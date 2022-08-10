@@ -10,8 +10,10 @@ import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.Mode;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
+import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
+import com.A108.Watchme.VO.Entity.log.MemberSprintLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
@@ -40,12 +42,16 @@ public class SprintService {
     private final RoomInfoRepository roomInfoRepository;
     private final SprintRepository sprintRepository;
     private final CategoryRepository categoryRepository;
+    private final MGRepository mgRepository;
     private final MRLRepository mrlRepository;
     private final MemberRepository memberRepository;
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final SprintInfoRepository sprintInfoRepository;
     private final GroupRepository groupRepository;
     private final S3Uploader s3Uploader;
+
+    RoomService roomService;
+    private final MSLRepository mslRepository;
     public ApiResponse deleteSprint(Long groupId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
@@ -138,13 +144,25 @@ public class SprintService {
         Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
         List<SprintGetResDTO> sprintGetResDTOList = new LinkedList<>();
         List<Sprint> sprintList = sprintRepository.findAllByGroupId(groupId);
+
             for(Sprint sprint: sprintList) {
                 Optional<MemberRoomLog> myData = mrlRepository.findByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
-                Optional<SprintData> sprintData = mrlRepository.getSprintData(sprint.getRoom().getId());
+                Optional<Integer> summ = mrlRepository.getSprintData(sprint.getRoom().getId());
+                Optional<MemberRoomLog> memberRoomLog = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
+
                 int sumTime = 0;
-                if(sprintData.isPresent()){
-                    System.out.println(sprintData.get().getSumTime());
-                    sumTime=sprintData.get().getSumTime();
+                if(summ.isPresent()) {
+                    System.out.println(summ.get());
+                    sumTime = summ.get();
+                }
+                String nickName=sprint.getGroup().getLeader().getNickName();
+                Integer kingTime=0;
+                Integer count=0;
+
+                if(memberRoomLog.isPresent()){
+                    nickName = memberRoomLog.get().getMember().getNickName();
+                    kingTime = memberRoomLog.get().getStudyTime();
+                    count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.get().getMember().getId(), sprint.getRoom().getId());
                 }
                 int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
                 int myTime = 0;
@@ -152,6 +170,8 @@ public class SprintService {
                 if(myData.isPresent()){
                     myTime = myData.get().getStudyTime();
                 }
+
+
                 SprintGetResDTO sprintGetResDTO = new SprintGetResDTO().builder()
                         .sprintId(sprint.getId())
                         .sprintImg(sprint.getSprintInfo().getImg())
@@ -165,19 +185,106 @@ public class SprintService {
                         .routineEndAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
                         .routineStartAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
                         .status(sprint.getStatus())
-//                        .kingName()
-//                        .kingPenalty()
-//                        .kingStudy()
+                        .kingName(nickName)
+                        .kingPenalty(count)
+                        .kingStudy(kingTime)
                         .studySum(sumTime)
                         .penaltySum(sumPenalty)
                         .myPenalty(myPenalty)
                         .myStudy(myTime)
+                        .fee(sprint.getSprintInfo().getFee())
                         .build();
+                sprintGetResDTOList.add(sprintGetResDTO);
 
             }
 
 
+            apiResponse.setCode(200);
+            apiResponse.setMessage("SUCCESS");
+            apiResponse.setResponseData("sprints", sprintGetResDTOList);
 
-        return null;
+            return apiResponse;
+
+
     }
+    public ApiResponse joinSprints(Long sprintId){
+        Sprint sprint = sprintRepository.findById(sprintId).get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        ApiResponse apiResponse = new ApiResponse();
+
+        // 참가 가능일때만
+        if(!sprint.getStatus().equals(Status.YES)){
+            apiResponse.setCode(511);
+            apiResponse.setMessage("JOIN IMPOSSIBLE");
+            return apiResponse;
+        }
+        // 그룹원인지 확인
+        Optional<MemberGroup> memberGroup = mgRepository.findByMemberIdAndGroupId(memberId, sprint.getGroup().getId());
+        if(!memberGroup.isPresent()){
+            apiResponse.setCode(512);
+            apiResponse.setMessage("NOT GROUP MEMBER");
+            return apiResponse;
+        }
+
+        // 포인트 있을시에만
+        Member member = memberRepository.findById(memberId).get();
+        int point = member.getMemberInfo().getPoint();
+        if(point < sprint.getSprintInfo().getFee()){
+            apiResponse.setCode(513);
+            apiResponse.setMessage("NOT ENOUGH POINT");
+            return apiResponse;
+        }
+
+
+
+        // 스프린트에 참가 로그 남김
+        Optional<MemberSprintLog> memberSprintLog = mslRepository.findByMemberIdAndSprintId(memberId, sprintId);
+        if(memberSprintLog.isPresent()){
+            apiResponse.setCode(514);
+            apiResponse.setMessage("ALREADY JOIN");
+            return apiResponse;
+        }
+        mslRepository.save(MemberSprintLog.builder()
+                .sprint(sprint)
+                .member(member)
+                .build());
+        // 포인트 차감
+        member.getMemberInfo().setPoint(member.getMemberInfo().getPoint()-sprint.getSprintInfo().getFee());
+
+        apiResponse.setCode(200);
+        apiResponse.setMessage("JOIN SUCCESS");
+        return apiResponse;
+
+    }
+
+    public ApiResponse startSprints(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId).get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        ApiResponse apiResponse = new ApiResponse();
+
+        // 진행 중 일때만
+        if(!sprint.getStatus().equals(Status.ING)){
+            apiResponse.setCode(511);
+            apiResponse.setMessage("JOIN IMPOSSIBLE");
+            return apiResponse;
+        }
+        // 신청했는지 확인
+        Optional<MemberSprintLog> memberSprintLog = mslRepository.findByMemberIdAndSprintId(memberId, sprintId);
+        if(!memberSprintLog.isPresent()){
+            apiResponse.setCode(512);
+            apiResponse.setMessage("NOT APPLY");
+            return apiResponse;
+        }
+
+        roomService.joinRoomFunc(memberSprintLog.get().getSprint().getRoom().getId());
+        apiResponse.setCode(200);
+        apiResponse.setMessage("SUCCESS");
+
+        return apiResponse;
+    }
+
+
+
 }

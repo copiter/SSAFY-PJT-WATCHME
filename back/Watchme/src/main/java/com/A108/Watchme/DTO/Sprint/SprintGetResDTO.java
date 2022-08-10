@@ -29,4 +29,5 @@ public class SprintGetResDTO {
     private Integer penaltySum;
     private Integer myStudy;
     private Integer myPenalty;
+    private Integer fee;
 }

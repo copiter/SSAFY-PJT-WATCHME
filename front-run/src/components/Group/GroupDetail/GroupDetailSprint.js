@@ -13,7 +13,7 @@ function GroupDetailSprint(props) {
   const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
 
   //fetch
-  const url = `${props.href}/sprints/${props.groupId}`;
+  const url = `${props.href}/sprints`;
   // useEffect(() => {
   //   const config = {
   //     method: "GET",
@@ -22,7 +22,7 @@ function GroupDetailSprint(props) {
   //     },
   //   };
   //   const getDatas = async () => {
-  //     // const response = await fetch(url, config);
+  //     // const response = await fetch(`${url}/${props.groupId}`, config);
   //     const response = await fetch(url);
   //     const data = await response.json();
   //     setSprints(data);
@@ -49,7 +49,7 @@ function GroupDetailSprint(props) {
     if (!ask) {
       return;
     }
-    fetch(`${url}/${sprintJoin.sprintId}`, {
+    fetch(`${url}/${sprintJoin.sprintId}/join`, {
       method: "POST",
       headers: {
         accessToken: getCookie("accessToken"),
@@ -63,7 +63,7 @@ function GroupDetailSprint(props) {
       });
   }
   function sprintOnGoingHandler() {
-    fetch(`${url}/${sprintOngoing.sprintId}/join`, {
+    fetch(`${url}/${sprintOngoing.sprintId}/start`, {
       method: "POST",
       headers: {
         accessToken: getCookie("accessToken"),

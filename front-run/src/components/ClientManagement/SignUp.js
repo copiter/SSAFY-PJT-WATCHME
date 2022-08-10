@@ -20,11 +20,11 @@ function SignUp() {
   const nickNameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
-  const imageInputRef=useRef();
+  const imageInputRef = useRef();
 
   const submitHandler = (event) => {
     event.preventDefault();
-    const data={
+    const data = {
       email: emailInputRef.current.value,
       password: passwordInputRef.current.value,
       name: nameInputRef.current.value,
@@ -33,19 +33,21 @@ function SignUp() {
       birth: birthdayInputRef.current.value,
     };
 
-    const files=imageInputRef.current.files[0];
+    const files = imageInputRef.current.files[0];
     const formData = new FormData();
-    formData.append('files', files);
-    formData.append("data", new Blob([JSON.stringify(data)], {type: "application/json"}))
-   
+    formData.append("files", files);
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], { type: "application/json" })
+    );
+
     //myjsons->application.josn
-    
 
     const url = `${FETCH_URL}/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",
-      body: formData
+      body: formData,
     })
       .then((response) => {
         if (response.ok) {
@@ -66,30 +68,42 @@ function SignUp() {
       });
   };
 
-
   const [fileImage, setFileImage] = useState("");
-  const saveFileImage = (event) =>{
+  const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
-
   };
   return (
     <Fragment>
       <div className="signup">
-        <form onSubmit={submitHandler} method="post" >
+        <form onSubmit={submitHandler} method="post">
           <div className="signup-top">
             <div className="signup-top__worfd">SIGN UP</div>
           </div>
           <div className="signup-form">
             <div className="signup-left">
-              <div className="signup-left-image"> 
-                {fileImage && ( <img alt="sample" src={fileImage}style={{ margin: "auto" ,width:"100%",height:"100%",borderRadius:"50%"
-              }} /> )}
+              <div className="signup-left-image">
+                {fileImage && (
+                  <img
+                    alt="sample"
+                    src={fileImage}
+                    style={{
+                      margin: "auto",
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "50%",
+                    }}
+                  />
+                )}
               </div>
-              <input  name="imggeUpload" type="file" accept="image/*" onChange={saveFileImage}  ref={imageInputRef}/>
-              
-              <button className="signup-left-addimage">프로필 사진 추가</button>
+              <input
+                name="imggeUpload"
+                type="file"
+                accept="image/*"
+                onChange={saveFileImage}
+                ref={imageInputRef}
+              />
 
-             
+              <button className="signup-left-addimage">프로필 사진 추가</button>
             </div>
             <div className="signup-right">
               <div className="line">

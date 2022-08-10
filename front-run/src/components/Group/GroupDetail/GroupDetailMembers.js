@@ -36,7 +36,7 @@ function GroupDetailMembers(props) {
   }
 
   function confirmJoinHandler(e) {
-    const nickName = e.target.parentNode.outerText.split("\n")[0];
+    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
     const ask = window.confirm(`[${nickName}]님을 가입 승인하시겠습니까?`);
     if (!ask) {
       return;
@@ -62,8 +62,35 @@ function GroupDetailMembers(props) {
     getDatas();
   }
 
+  function refuseJoinHandler(e) {
+    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
+    const ask = window.confirm(`[${nickName}]님을 반려하시겠습니까?`);
+    if (!ask) {
+      return;
+    }
+    //가입 승인
+    const config = {
+      method: "POST",
+      body: {
+        nickName: nickName,
+      },
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    };
+    const getDatas = async () => {
+      try {
+        await fetch(url + "/applies/decline", config);
+        alert("반려되었습니다");
+      } catch (e) {
+        alert("반려 실패 " + e);
+      }
+    };
+    getDatas();
+  }
+
   function expulsionHandler(e) {
-    const nickName = e.target.parentNode.outerText.split("\n")[0];
+    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
     const ask = window.confirm(`[${nickName}]님을 강퇴 하시겠습니까?`);
     if (!ask) {
       return;
@@ -85,6 +112,36 @@ function GroupDetailMembers(props) {
         alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
       } catch (e) {
         alert(`탈퇴 실패 ` + e);
+      }
+    };
+    getDatas();
+  }
+
+  function transferHandler(e) {
+    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
+    const ask = window.confirm(
+      `[${nickName}]님으로 리더 권한을 이전 하시겠습니까?`
+    );
+    if (!ask) {
+      return;
+    }
+
+    //권한 이양
+    const config = {
+      method: "POST",
+      body: {
+        nickName: nickName,
+      },
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    };
+    const getDatas = async () => {
+      try {
+        await fetch(url + "/leader-toss", config);
+        alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
+      } catch (e) {
+        alert(`권한 이전 실패 ` + e);
       }
     };
     getDatas();
@@ -131,12 +188,20 @@ function GroupDetailMembers(props) {
                 </div>
               </div>
               {role === "leader" && (
-                <button
-                  className="group-detail__members-btn appliers"
-                  onClick={confirmJoinHandler}
-                >
-                  승인
-                </button>
+                <div className="members-btn">
+                  <button
+                    className="group-detail__members-btn appliers"
+                    onClick={confirmJoinHandler}
+                  >
+                    승인
+                  </button>
+                  <button
+                    className="group-detail__members-btn"
+                    onClick={refuseJoinHandler}
+                  >
+                    반려
+                  </button>
+                </div>
               )}
             </li>
           ))}
@@ -170,12 +235,20 @@ function GroupDetailMembers(props) {
                 </div>
               </div>
               {role === "leader" && (
-                <button
-                  className="group-detail__members-btn"
-                  onClick={expulsionHandler}
-                >
-                  강퇴
-                </button>
+                <div className="members-btn">
+                  <button
+                    className="group-detail__members-btn"
+                    onClick={expulsionHandler}
+                  >
+                    강퇴
+                  </button>
+                  <button
+                    className="group-detail__members-btn handover"
+                    onClick={transferHandler}
+                  >
+                    이전
+                  </button>
+                </div>
               )}
             </li>
           ))}

@@ -1,5 +1,7 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import crown from "../../../img/Icons/crown.png";
 import "./GroupDetailHome.css";
 
@@ -82,7 +84,7 @@ const GroupDetailHome = (props) => {
         <div id="group-detail__sprint-summary">
           <div id="sprint-summary-title">
             <strong>진행중인 스프린트</strong>
-            <a href="#none">스프린트 만들기</a>
+            <Link to="/SprintCreate/${groupId}">스프린트 만들기</Link>
           </div>
           <div id="sprint-summary-card">
             {resData.sprints.length === 0 && (
@@ -98,7 +100,7 @@ const GroupDetailHome = (props) => {
                     <ul>
                       <li>{`🕑 ${sprint.routineStartAt} ~ ${sprint.routineEndAt} 참여 필수`}</li>
                       <li>⏳ {sprint.description}</li>
-                      <li>{mode[+sprint.mode.slice(-1)]}</li>
+                      <li>#{mode[+sprint.mode.slice(-1)]}</li>
                       <li>{`💸 참가비 ${sprint.fee}원`}</li>
                     </ul>
                   </div>

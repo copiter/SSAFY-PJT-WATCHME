@@ -53,7 +53,7 @@ function App() {
         <Route path="/GroupDetail/:id" element={<GroupDetail />} />
         <Route path="/GroupRecruit" element={<GroupRecruit />} />
         <Route path="/GroupReform/:id" element={<GroupReform />} />
-        <Route path="/SprintCreate" element={<SprintCreate />} />
+        <Route path="/SprintCreate/:id" element={<SprintCreate />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/PointAdd" element={<PointAdd />} />
         <Route path="/PointRefund" element={<PointRefund />} />

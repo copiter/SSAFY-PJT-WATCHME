@@ -38,6 +38,21 @@
 
   cursor: pointer;
 }
+.members-btn {
+  display: inline-block;
+  position: relative;
+}
+.group-detail__members-btn.handover {
+  display: block;
+  background: #4fd1d9;
+  color: #000;
+  position: absolute;
+  z-index: 1;
+}
+.group-detail__members-btn:hover .group-detail__members-btn.handover {
+  display: block;
+}
+
 .group-detail__members-btn.appliers {
   background: #4fd1d9;
   color: #000;
@@ -50,6 +65,7 @@
 .group-detail__members-btn:active {
   transform: scale(0.98);
 }
+
 #group-detail__members-content {
   margin-top: 28px;
   height: 93%;

@@ -44,14 +44,6 @@ function GroupDetail(props) {
   //   getDatas();
   // }, []);
 
-  //role에 따라 변경
-  if (resData.myData.role === "anonymous") {
-  } else if (resData.myData.role === "crew") {
-    //그룹원인 경우
-  } else if (resData.myData.role === "leader") {
-    //리더인 경우
-  }
-
   function joinHandler() {
     const config = {
       method: "POST",
@@ -175,7 +167,9 @@ function GroupDetail(props) {
 
         {/* Main Contents : home, sprint, members*/}
         <>
-          {navBar === 0 && <GroupDetailHome resData={resData} />}
+          {navBar === 0 && (
+            <GroupDetailHome resData={resData} groupId={groupId} />
+          )}
           {navBar === 1 && (
             <GroupDetailSprint href={FETCH_URL} groupId={groupId} />
           )}

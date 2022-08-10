@@ -2,7 +2,6 @@ package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.group.GroupDataDTO;
 import com.A108.Watchme.DTO.MemberDataDTO;
-import com.A108.Watchme.DTO.room.RoomDataDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.Status;
@@ -86,7 +85,7 @@ public class HomeService {
 
             PageRequest pageRequest = PageRequest.of(0,5);
 
-            List<RoomDataDTO> resRoom = new LinkedList<>();
+            List<com.A108.Watchme.DTO.room.RoomDataDTO> resRoom = new LinkedList<>();
 
 
             List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
@@ -96,7 +95,7 @@ public class HomeService {
             }
             for (Room room :
                     roomList) {
-                resRoom.add(RoomDataDTO.builder()
+                resRoom.add(com.A108.Watchme.DTO.room.RoomDataDTO.builder()
                         .ID(room.getId())
                         .URL(room.getId().toString())
                         .roomName(room.getRoomName())

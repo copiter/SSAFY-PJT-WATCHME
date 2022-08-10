@@ -34,10 +34,11 @@ public class GroupController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse createGroup(@RequestPart GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request){
+        System.out.println(groupCreateReqDTO);
         return groupService.createGroup(groupCreateReqDTO, image, request);
     }
 
-    @PostMapping("/{groupId}/udpate")
+    @PostMapping("/{groupId}/update")
     public ApiResponse updateGroup(@PathVariable(value = "groupId") Long groupId, @RequestPart GroupUpdateReqDTO groupUpdateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request) {
         return groupService.updateGroup(groupId, groupUpdateReqDTO, image, request);
     }

@@ -291,14 +291,16 @@ public class GroupService {
                     e.printStackTrace();
                 }
 
+                System.out.println("image 처리완료");
+
                 // TODO : GroupBuilder
                 // 1.group 기본 저장
-                Group newGroup = Group.builder()
+                Group newGroup = groupRepository.save(Group.builder()
                         .groupName(groupCreateReqDTO.getName())
                         .leader(currUser.get())
                         .status(Status.YES)
                         .view(0)
-                        .build();
+                        .build());
 
                 GroupInfo newGroupInfo = groupInfoRepos.save(GroupInfo.builder()
                         .group(newGroup)

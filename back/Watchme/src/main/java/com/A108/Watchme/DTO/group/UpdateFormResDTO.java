@@ -1,15 +1,14 @@
 package com.A108.Watchme.DTO.group;
 
 import com.A108.Watchme.VO.ENUM.CategoryList;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
-@Setter
+@AllArgsConstructor @NoArgsConstructor
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class UpdateFormResDTO {
     private Long id;
     private String name;

@@ -1,4 +1,4 @@
-package com.A108.Watchme.DTO.room;
+package com.A108.Watchme.DTO.Room;
 
 import lombok.Getter;
 import lombok.Setter;

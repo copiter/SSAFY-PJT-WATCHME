@@ -1,11 +1,6 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.GetRoomResDTO;
-import com.A108.Watchme.DTO.PostRoomReqDTO;
-import com.A108.Watchme.DTO.Room.JoinRoomDTO;
-import com.A108.Watchme.DTO.Room.RoomDetMemDTO;
-import com.A108.Watchme.DTO.Room.RoomDetMyDTO;
-import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
+import com.A108.Watchme.DTO.Room.*;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.CategoryList;
@@ -92,7 +87,7 @@ public class RoomService {
 
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
-                joinRoomFuncFunc(room.getId());
+                joinRoomFunc(room.getId());
                 System.out.println("TEST2");
                 result.setCode(200);
                 result.setMessage("SUCCESS ADD&JOIN ROOM");
@@ -109,7 +104,7 @@ public class RoomService {
     }
 
 
-    public ApiResponse getRoomListList(String ctgName, int page, String keyword, String keyword) {
+    public ApiResponse getRoomList(String ctgName, int page, String keyword) {
         ApiResponse result = new ApiResponse();
 
         System.out.println("roomService getRoomList : keyword = " + keyword);

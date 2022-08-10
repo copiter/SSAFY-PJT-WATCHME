@@ -155,7 +155,7 @@ public class GroupService {
                                 .goal(x.getSprintInfo().getGoal())
                                 .startAt(x.getSprintInfo().getStartAt())
                                 .endAt(x.getSprintInfo().getEndAt())
-                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
+//                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
                                 .fee(x.getSprintInfo().getFee())
                                 .routineStartAt(x.getSprintInfo().getRoutineStartAt())
                                 .routineEndAt(x.getSprintInfo().getRoutineEndAt())
@@ -216,7 +216,7 @@ public class GroupService {
 
                     // myData.penalty
                     List<Integer> penalty = new ArrayList<>(RuleName.values().length);
-                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSprint(currMember.getId(), group.getSprints());
+                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSr_id(currMember.getId(), group.getSprints());
 
                     for (RuleName rule:
                     RuleName.values()) {

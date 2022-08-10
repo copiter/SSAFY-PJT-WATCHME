@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -28,7 +29,7 @@ public class Room {
     private Status status;
 
     @OneToMany(mappedBy = "room")
-    private PenaltyLog penaltyLog;
+    private List<PenaltyLog> penaltyLog;
 
     @Enumerated(EnumType.STRING)
     private Mode mode;

@@ -34,8 +34,6 @@ public class SprintInfo {
     @Column(name = "sprint_score")
     private Integer sprintScore;
 
-    private String goal;
-
     private Integer fee;
 
     @Column(name="goal")

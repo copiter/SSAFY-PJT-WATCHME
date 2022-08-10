@@ -12,6 +12,6 @@ import java.util.List;
 public interface PenaltyLogRegistory extends JpaRepository<PenaltyLog, Long> {
     List<PenaltyLog> findAllByMemberId(Long id);
 
-    List<PenaltyLog> findAllByMemberIdAndSprint(Long id, List<Sprint> sprintList);
+    List<PenaltyLog> findAllByMemberIdAndSr_id(Long id, List<Sprint> sprintList);
 
 }

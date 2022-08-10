@@ -9,7 +9,6 @@ import com.A108.Watchme.VO.Entity.RefreshToken;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.oauth.entity.RoleType;
-import com.A108.Watchme.oauth.entity.UserPrincipal;
 import com.A108.Watchme.oauth.info.OAuth2UserInfo;
 import com.A108.Watchme.oauth.info.OAuth2UserInfoFactory;
 import com.A108.Watchme.oauth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
@@ -60,7 +59,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         MemberInfo memberInfo = member.getMemberInfo();
             // 정보입력을 위한 이동
             if(memberInfo.getName()==null){
-                getRedirectStrategy().sendRedirect(request, response, "https://watchme2.shop/slogin");
+                getRedirectStrategy().sendRedirect(request, response, "https://watchme1.shop/slogin");
             }
 
             // 그렇지 않은 경우 정상 로그인

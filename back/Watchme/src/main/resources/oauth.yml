@@ -16,5 +16,4 @@ app:
     refreshTokenExpiry: 604800000
   oauth2:
     authorizedRedirectUris:
-      - https://watchme2.shop
-      - https://watchme2.shop:81/oauth2/callback/naver
+      - https://watchme1.shop

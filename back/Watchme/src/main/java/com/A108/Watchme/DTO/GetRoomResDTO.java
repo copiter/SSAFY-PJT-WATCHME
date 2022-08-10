@@ -1,16 +1,10 @@
 package com.A108.Watchme.DTO;
 
 import com.A108.Watchme.VO.ENUM.CategoryList;
-import com.A108.Watchme.VO.ENUM.RoomStatus;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.A108.Watchme.VO.ENUM.Mode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.MatchesPattern;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -23,7 +17,7 @@ public class GetRoomResDTO {
     @Schema(description = "방 이름")
     private String roomName;
     @Schema(description = "방 모드", example = "TAG1, TAG2, TAG3")
-    private RoomStatus roomStatus;
+    private Mode mode;
     @Schema(description = "방 카테고리 이름")
     private CategoryList ctgName;
     @Schema(description = "방 최대 인원")

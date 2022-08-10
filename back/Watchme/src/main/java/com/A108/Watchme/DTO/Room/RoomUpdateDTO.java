@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 @Setter
 public class RoomUpdateDTO {
     private String roomName;
-    private String status;
+    private String mode;
     private Integer pwd;
     private String endAt;
     private String roomDescription;

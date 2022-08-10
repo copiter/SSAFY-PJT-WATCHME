@@ -2,6 +2,7 @@ package com.A108.Watchme.VO.Entity.log;
 
 import com.A108.Watchme.VO.Entity.Rule;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.*;
 
@@ -22,6 +23,10 @@ public class PenaltyLog {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @ManyToOne
+    @JoinColumn(name= "room_id")
+    private Room room;
 
     @ManyToOne
     @JoinColumn(name = "rule_id")

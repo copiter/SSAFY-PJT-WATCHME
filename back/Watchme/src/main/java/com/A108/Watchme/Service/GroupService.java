@@ -508,7 +508,7 @@ public class GroupService {
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
 
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
+                    if (currUser.getUsername().equals("" +group.get().getLeader().getId())) {
                         // 그룹 리더임
                         List<GroupApplyLog> applyLogs = groupApplyLogRegistory.findAllByGroupId(groupId);
                         List<GroupApplyDTO> getApplys = new LinkedList<>();
@@ -556,20 +556,33 @@ public class GroupService {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                Member member = memberRepository.findByEmail(currUser.getUsername());
+                Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
 
                 Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
 
-                groupApplyLogRegistory.save(GroupApplyLog.builder()
-                        .member(member)
-                        .group(group.get())
-                        .apply_date(new Date())
-                        .status(0)
-                        .build()
-                );
-                result.setCode(200);
-                result.setMessage("GROUP JOIN APPLY SUCCESS");
+                if(groupApplyLog.isEmpty()){
 
+                    groupApplyLogRegistory.save(GroupApplyLog.builder()
+                            .member(member)
+                            .group(group.get())
+                            .apply_date(new Date())
+                            .status(0)
+                            .build()
+                    );
+                    result.setCode(200);
+                    result.setMessage("GROUP JOIN APPLY SUCCESS");
+                }
+                else {
+                    if(groupApplyLog.get().getStatus()==2){
+                        result.setCode(400);
+                        result.setMessage("BANNED MEMBER CAN REAPPLY");
+                    }
+                    else {
+                        // 승인이거나 보류 중
+                        result.setCode(400);
+                        result.setMessage("ALREADY APPLIED");
+                    }
+                }
             } catch (Exception e) {
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
@@ -589,16 +602,14 @@ public class GroupService {
         if (group != null) {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                Member member = memberRepository.findByEmail(currUser.getUsername());
 
+                Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
                 Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
 
-                if (groupApplyLog != null) {
-                    groupApplyLog.get().setStatus(4);
-                    groupApplyLog.get().setUpdate_date(new Date());
-
+                if (groupApplyLog.isPresent()) {
+                    // 로그에서 삭제
+                    groupApplyLogRegistory.delete(groupApplyLog.get());
                     result.setCode(200);
                     result.setMessage("GROUP APPLY CANCLE SUCCESS");
                 } else {
@@ -623,15 +634,14 @@ public class GroupService {
         if (group != null) {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
                 UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
+                if (currUser.getUsername().equals("" +group.get().getLeader().getId())) {
 
                     Member member = memberRepository.findByNickName(acceptApplyReqDTO.getNickName());
                     Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
 
-                    if (groupApplyLog != null) {
+                    if (groupApplyLog.isPresent()) {
                         groupApplyLog.get().setStatus(1);
                         groupApplyLog.get().setUpdate_date(new Date());
 
@@ -639,8 +649,11 @@ public class GroupService {
                                 .member(member)
                                 .group(group.get())
                                 .createdAt(new Date())
+                                .groupRole(GroupRole.MEMBER)
                                 .build()
                         );
+
+                        groupApplyLogRegistory.save(groupApplyLog.get());
 
                         result.setCode(200);
                         result.setMessage("GROUP APPLY ACCEPT SUCCESS");
@@ -677,17 +690,22 @@ public class GroupService {
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
 
-                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
+                    if (currUser.getUsername().equals("" + group.get().getLeader().getId())) {
 
                         Member member = memberRepository.findByNickName(declineApplyReqDTO.getNickName());
 
                         Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
-                        if (groupApplyLog != null) {
-                            groupApplyLog.get().setStatus(2);
-                            groupApplyLog.get().setUpdate_date(new Date());
+                        if (groupApplyLog.isPresent()) {
 
-                            result.setCode(200);
-                            result.setMessage("GROUP APPLY ACCEPT SUCCESS");
+                            if(groupApplyLog.get().getStatus() == 1){
+                                result.setCode(400);
+                                result.setMessage("ALREADY JOINED");
+                            }
+                            else {
+                                groupApplyLogRegistory.delete(groupApplyLog.get());
+                                result.setCode(200);
+                                result.setMessage("GROUP APPLY DECLINE SUCCESS");
+                            }
                         } else {
                             result.setCode(400);
                             result.setMessage("THERE IS NO APPLY");
@@ -700,6 +718,7 @@ public class GroupService {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
             }
@@ -712,6 +731,8 @@ public class GroupService {
     }
 
     public ApiResponse leaveGroup(Long groupId) {
+
+        // 방장이 나갈경우는 어떻게 하는가?
         ApiResponse result = new ApiResponse();
         Optional<Group> group = groupRepository.findById(groupId);
 
@@ -721,20 +742,26 @@ public class GroupService {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                    Member member = memberRepository.findByEmail(currUser.getUsername());
+                    Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
 
                     Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
 
+                    if (groupApplyLog.isPresent()) {
 
-                    if (groupApplyLog != null) {
-                        groupApplyLog.get().setStatus(5);
-                        groupApplyLog.get().setUpdate_date(new Date());
+                        if(groupApplyLog.get().getStatus()==1) {
+                            groupApplyLogRegistory.delete(groupApplyLog.get());
 
-                        Optional<MemberGroup> memberGroup = memberGroupRepository.findByMemberIdAndGroupId(member.getId(), groupId);
-                        memberGroupRepository.delete(memberGroup.get());
+                            Optional<MemberGroup> memberGroup = memberGroupRepository.findByMemberIdAndGroupId(member.getId(), groupId);
+                            memberGroupRepository.delete(memberGroup.get());
 
-                        result.setCode(200);
-                        result.setMessage("GROUP LEAVE SUCCESS");
+                            result.setCode(200);
+                            result.setMessage("GROUP LEAVE SUCCESS");
+                        }
+
+                        else {
+                            result.setCode(400);
+                            result.setMessage("NOT GROUP MEMBER");
+                        }
 
                     } else {
                         result.setCode(400);
@@ -764,16 +791,25 @@ public class GroupService {
 
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
-
+                    if (currUser.getUsername().equals("" + group.get().getLeader().getId())) {
                         Member member = memberRepository.findByNickName(leaderTossReqDTO.getNickName());
 
                         // 방장 바뀐 것도 로그로 남겨야 하는가?
                         group.get().setLeader(member);
 
-                        result.setCode(200);
-                        result.setMessage("GROUP LEADER CHANGE SUCCESS");
+                        // 현재 넘겨받는 사람이 리더인지 아닌지 봐야한다.
+                        Optional<MemberGroup> memberGroup = memberGroupRepository.findByGroupIdAndMemberId(groupId, member.getId());
 
+                        if(memberGroup.isPresent()) {
+                            memberGroup.get().setGroupRole(GroupRole.LEADER);
+                            memberGroupRepository.save(memberGroup.get());
+                            result.setCode(200);
+                            result.setMessage("GROUP LEADER CHANGE SUCCESS");
+                        }
+                        else {
+                            result.setCode(400);
+                            result.setMessage(leaderTossReqDTO.getNickName() + " IS NOT GROUP MEMBER");
+                        }
 
                     } else {
                         // 그룹 리더가 아님
@@ -782,6 +818,7 @@ public class GroupService {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
             }
@@ -804,21 +841,20 @@ public class GroupService {
 
                     UserDetails currUser = (UserDetails) authentication.getPrincipal();
 
-                    if (currUser.getUsername().equals(group.get().getLeader().getEmail())) {
+                    if (currUser.getUsername().equals("" + group.get().getLeader().getId())) {
                         Member member = memberRepository.findByNickName(groupKickReqDTO.getNickName());
 
                         Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
-
                         Optional<MemberGroup> memberGroup = memberGroupRepository.findByMemberIdAndGroupId(member.getId(), groupId);
 
-                        if (groupApplyLog != null && memberGroup != null) {
-                            groupApplyLog.get().setStatus(5);
+                        if (groupApplyLog.isPresent() && memberGroup.isPresent()) {
+                            groupApplyLog.get().setStatus(2);
                             groupApplyLog.get().setUpdate_date(new Date());
 
                             memberGroupRepository.delete(memberGroup.get());
 
                             result.setCode(200);
-                            result.setMessage("GROUP APPLY ACCEPT SUCCESS");
+                            result.setMessage("GROUP MEMBER KICK SUCCESS");
                         } else {
                             result.setCode(400);
                             result.setMessage("CAN'T FIND ON DB");
@@ -831,6 +867,7 @@ public class GroupService {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
             }

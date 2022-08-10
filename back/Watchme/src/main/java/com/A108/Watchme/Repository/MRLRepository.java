@@ -16,11 +16,13 @@ import java.util.Optional;
 @Repository
 public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
 
-    List<MemberRoomLog> findBymember_id(Long memberId);
-    List<MemberRoomLog> findByStartAtAfter(Timestamp date);
+    List<MemberRoomLog> findByMemberId(Long memberId);
+    List<MemberRoomLog> findByJoinedAtAfter(Timestamp date);
 //    List<MemberRoomLog> findBymember_idBystart_atAfter(Long id, Date date);
-    List<MemberRoomLog> findByRoomId(List<Long> roomId);
+    List<MemberRoomLog> findByRoomIdIn(List<Long> roomId);
     Optional<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, Long roomId);
 
-    List<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, List<Long> roomId);
+    List<MemberRoomLog> findByMemberIdAndRoomIdIn(Long memberId, List<Long> roomId);
+
+    List<MemberRoomLog> findByRoomIdAndStatus(Long roomId, Status status);
 }

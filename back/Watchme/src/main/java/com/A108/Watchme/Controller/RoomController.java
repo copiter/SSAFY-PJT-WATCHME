@@ -2,6 +2,7 @@ package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Room.JoinRoomDTO;
+import com.A108.Watchme.DTO.Room.PostRoomReqDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.RoomService;

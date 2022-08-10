@@ -1,6 +1,5 @@
 package com.A108.Watchme.DTO.group.getGroupList;
 
-import com.A108.Watchme.DTO.SprintDTO;
 import lombok.*;
 
 import java.util.Date;

@@ -1,6 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.DTO.group.*;
 import com.A108.Watchme.DTO.group.getGroup.*;
 import com.A108.Watchme.DTO.group.getGroupList.GroupListResDTO;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,7 @@ public class GroupService {
     private final MemberRepository memberRepository;
     private final MemberGroupRepository memberGroupRepository;
     private final MRLRepository mrlRepository;
+    private final SprintRepository sprintRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final S3Uploader s3Uploader;
@@ -193,25 +196,63 @@ public class GroupService {
 
 
                 // TODO : sprints 석인님이 작업하신 것으로 변경해야 됨
-//                List<SprintResDTO> sprints = new LinkedList<>();
-//
-//                group.getSprints().stream().forEach(x -> sprints.add(
-//                        SprintResDTO.builder()
-//                                .name(x.getName())
-//                                .status(new Date().after(x.getSprintInfo().getEndAt()) ? 2 : new Date().after(x.getSprintInfo().getStartAt()) ? 1 : 0)
-//                                .description(x.getSprintInfo().getDescription())
-//                                .goal(x.getSprintInfo().getGoal())
-//                                .startAt(x.getSprintInfo().getStartAt())
-//                                .endAt(x.getSprintInfo().getEndAt())
-////                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
-//                                .fee(x.getSprintInfo().getFee())
-//                                .routineStartAt(x.getSprintInfo().getRoutineStartAt())
-//                                .routineEndAt(x.getSprintInfo().getRoutineEndAt())
-//                                .build()
-//                        )
-//                );
-//
-//                result.setResponseData("sprints", sprints);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                ApiResponse apiResponse = new ApiResponse();
+
+                Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+                List<SprintResDTO> sprintGetResDTOList = new LinkedList<>();
+
+                List<Sprint> sprintList = sprintRepository.findAllByGroupId(groupId);
+
+                for (Sprint sprint : sprintList) {
+                    Optional<Integer> sum = mrlRepository.getSprintData(sprint.getRoom().getId());
+                    Optional<MemberRoomLog> memberRoomLog = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
+
+                    int sumTime = 0;
+                    if (sum.isPresent()) {
+                        sumTime = sum.get();
+                    }
+                    String nickName = sprint.getGroup().getLeader().getNickName();
+                    Integer kingTime = 0;
+                    Integer count = 0;
+
+                    if (memberRoomLog.isPresent()) {
+                        nickName = memberRoomLog.get().getMember().getNickName();
+                        kingTime = memberRoomLog.get().getStudyTime();
+                        count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.get().getMember().getId(), sprint.getRoom().getId());
+                    }
+
+                    int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
+
+                    SprintResDTO sprintGetResDTO = new SprintResDTO().builder()
+                            .sprintId(sprint.getId())
+                            .sprintImg(sprint.getSprintInfo().getImg())
+                            .name(sprint.getName())
+                            .description(sprint.getSprintInfo().getDescription())
+                            .goal(sprint.getSprintInfo().getGoal())
+                            .mode(sprint.getRoom().getMode().toString())
+                            .endAt(format.format(sprint.getSprintInfo().getEndAt()))
+                            .penaltyMoney(sprint.getSprintInfo().getPenaltyMoney())
+                            .startAt(format.format(sprint.getSprintInfo().getStartAt()))
+                            .routineEndAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
+                            .routineStartAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
+                            .status(sprint.getStatus().toString())
+                            .kingName(nickName)
+                            .kingPenalty(count)
+                            .kingStudy(kingTime)
+                            .studySum(sumTime)
+                            .penaltySum(sumPenalty)
+                            .build();
+                    sprintGetResDTOList.add(sprintGetResDTO);
+
+                }
+
+
+                apiResponse.setResponseData("sprints", sprintGetResDTOList);
 
 
                 // leader
@@ -225,7 +266,6 @@ public class GroupService {
 
 
                 // 접속자 체크
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 // 비로그인
                 if (authentication.getPrincipal().equals("anonymousUser")) {
 
@@ -320,7 +360,7 @@ public class GroupService {
                     result.setCode(200);
                     result.setMessage("GET GROUP SUCCESS");
 
-                } else{
+                } else {
                     result.setResponseData("myData", MyDataResDTO.builder()
                             .role(GroupRole.ANONYMOUS.ordinal())
                             .build());

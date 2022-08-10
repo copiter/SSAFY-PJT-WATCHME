@@ -1,5 +1,6 @@
 package com.A108.Watchme.VO.Entity.sprint;
 
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.room.Room;
@@ -28,6 +29,9 @@ public class Sprint {
 
     @Column(name = "sum_point")
     private Integer sumPoint;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @OneToOne
     @JoinColumn(name = "sprint_info")

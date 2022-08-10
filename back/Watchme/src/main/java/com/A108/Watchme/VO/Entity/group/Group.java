@@ -42,7 +42,7 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "group")
     private List<Sprint> sprints;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)

@@ -45,4 +45,10 @@ public class SprintController {
         Long sid = Long.valueOf(sprintId);
         return sprintService.startSprints(sid);
     }
+
+//    @PostMapping("sprints/{sprintId}/delete")
+//    ApiResponse deleteSprint(@PathVariable(value="sprintId") int sprintId){
+//        Long sid = Long.valueOf(sprintId);
+//        return sprintService.startSprints(sid);
+//    }
 }

@@ -14,12 +14,14 @@ import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.log.MemberSprintLog;
+import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import com.A108.Watchme.VO.Entity.sprint.SprintInfo;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.TypedQuery;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -50,13 +53,55 @@ public class SprintService {
     private final GroupRepository groupRepository;
     private final S3Uploader s3Uploader;
 
+    private final PointLogRepository pointLogRepository;
+
     RoomService roomService;
     private final MSLRepository mslRepository;
-    public ApiResponse deleteSprint(Long groupId) {
+    public ApiResponse deleteSprint(Long sprintId) {
+        ApiResponse apiResponse = new ApiResponse();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
 
-        return null;
+        Optional<Sprint> sprint = sprintRepository.findById(sprintId);
+
+        if(!sprint.isPresent()){
+            apiResponse.setCode(400);
+            apiResponse.setMessage("THERE IS NO SPRINT");
+            return apiResponse;
+        }
+
+        // 이미 시작한 거면 삭제 X
+        if(!sprint.get().getStatus().equals(Status.YES)){
+            apiResponse.setCode(400);
+            apiResponse.setMessage("ALREADY STARTED");
+            return apiResponse;
+        }
+
+        // 리더가 아닌 경우
+        if (sprint.get().getGroup().getLeader().getId() != memberId) {
+            apiResponse.setCode(507);
+            apiResponse.setMessage("INVALID AUTHENTICATION");
+            return apiResponse;
+        }
+
+        sprint.get().setStatus(Status.DELETE);
+
+
+        List<MemberSprintLog> mslList = mslRepository.findAllBySprintId(sprintId);
+
+        for(MemberSprintLog msl : mslList){
+            msl.getMember().getMemberInfo().setPoint(
+                    msl.getMember().getMemberInfo().getPoint() + sprint.get().getSprintInfo().getFee());
+
+            pointLogRepository.save(PointLog.builder()
+                    .sprint(sprint.get())
+                    .member(msl.getMember())
+                    .createdAt(new Date())
+                    .pointValue(sprint.get().getSprintInfo().getFee())
+                    .build());
+        }
+
+        return apiResponse;
     }
 
     public ApiResponse createSprints(Long groupId, MultipartFile images, SprintPostDTO sprintPostDTO) {
@@ -128,6 +173,9 @@ public class SprintService {
 
                 sprintRepository.save(sprint);
                 sprintInfoRepository.save(sprintInfo);
+
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -251,6 +299,13 @@ public class SprintService {
                 .build());
         // 포인트 차감
         member.getMemberInfo().setPoint(member.getMemberInfo().getPoint()-sprint.getSprintInfo().getFee());
+
+        pointLogRepository.save(PointLog.builder()
+                .sprint(sprint)
+                .member(member)
+                .createdAt(new Date())
+                .pointValue(-1 * sprint.getSprintInfo().getFee())
+                .build());
 
         apiResponse.setCode(200);
         apiResponse.setMessage("JOIN SUCCESS");

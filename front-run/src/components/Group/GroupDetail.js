@@ -15,9 +15,13 @@ function GroupDetail(props) {
   const [navBar, setNavBar] = useState(0);
   const [isJoinCheck, setIsJoinCheck] = useState(false);
 
+  //groupId 구하기
+  const pathnameArr = window.location.pathname.split("/");
+  const groupId = pathnameArr[pathnameArr.length - 1];
+
   //데이터 요청
   const FETCH_URL = useContext(FetchUrl);
-  const url = `${FETCH_URL}/groups/1`; //임시로 넣어줌
+  const url = `${FETCH_URL}/groups/${groupId}`; //임시로 넣어줌
   // const url = `${FETCH_URL}/groups/${props.id}`;
   // const url = "http://localhost:5000/responseData/";
   // useEffect(() => {
@@ -42,9 +46,6 @@ function GroupDetail(props) {
 
   //role에 따라 변경
   if (resData.myData.role === "anonymous") {
-    console.log(window.document.getElementById("group-detail__joinBtn"));
-    document.getElementById("group-detail__joinBtn").style.visibility =
-      "visible";
   } else if (resData.myData.role === "crew") {
     //그룹원인 경우
   } else if (resData.myData.role === "leader") {
@@ -107,19 +108,20 @@ function GroupDetail(props) {
 
   return (
     <>
-      {/* 만일 anonymous인 경우 visibility: visible */}
-      <div id="group-detail__joinBtn">
-        {!isJoinCheck && (
-          <button id="join_submit" onClick={joinHandler}>
-            그룹 참가하기 🏹
-          </button>
-        )}
-        {isJoinCheck && (
-          <button id="join_cancel" onClick={joinCancelHandler}>
-            그룹 참가 취소
-          </button>
-        )}
-      </div>
+      {resData.myData.role === "anonymous" && (
+        <div id="group-detail__joinBtn">
+          {!isJoinCheck && (
+            <button id="join_submit" onClick={joinHandler}>
+              그룹 참가하기 🏹
+            </button>
+          )}
+          {isJoinCheck && (
+            <button id="join_cancel" onClick={joinCancelHandler}>
+              그룹 참가 취소
+            </button>
+          )}
+        </div>
+      )}
       <div id="group-detail">
         <div id="group-detail__sidebar">
           <div id="group-detail__sidebar__info">
@@ -174,7 +176,9 @@ function GroupDetail(props) {
         {/* Main Contents : home, sprint, members*/}
         <>
           {navBar === 0 && <GroupDetailHome resData={resData} />}
-          {navBar === 1 && <GroupDetailSprint />}
+          {navBar === 1 && (
+            <GroupDetailSprint href={FETCH_URL} groupId={groupId} />
+          )}
           {navBar === 2 && (
             <GroupDetailMembers myData={resData.myData} url={url} />
           )}

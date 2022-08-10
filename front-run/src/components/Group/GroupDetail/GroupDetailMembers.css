@@ -2,7 +2,7 @@
   box-sizing: border-box;
   width: 75%;
   /* height: 100%; */
-  margin-left: 25px;
+  padding-left: 25px;
 }
 
 #group-detail__members-title {
@@ -117,7 +117,7 @@
   line-height: 20px;
 }
 .group-detail__members-item-achieve > div {
-  width: 180px;
+  width: 200px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

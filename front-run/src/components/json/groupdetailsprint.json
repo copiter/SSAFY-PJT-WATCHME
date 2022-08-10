@@ -34,7 +34,9 @@
         "kingPenalty": 30,
         "kingStudy": 4503,
         "studySum": 50294,
-        "penaltySum": 687
+        "penaltySum": 687,
+        "myStudy": 456,
+        "myPenalty": 9
       },
       {
         "sprintId": "221",
@@ -43,7 +45,7 @@
         "goal": "주 55시간은 최소로 해보자",
         "mode": "MODE1",
         "status": "NO",
-        "sprintImg": "https://images.unsplash.com/photo-1659864944999-d1453d2f5003?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+        "sprintImg": "https://images.unsplash.com/photo-1534724364725-325f10a8e182?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         "fee": 5000,
         "startAt": "2022-07-01",
         "endAt": "2022-07-31",
@@ -51,7 +53,8 @@
         "routineEndAt": "18:00",
         "kingName": "napina",
         "kingStudy": 9873,
-        "studySum": 100932
+        "studySum": 100932,
+        "penaltySum": 112
       },
       {
         "sprintId": "132",
@@ -60,13 +63,15 @@
         "goal": "주 40시간은 최소로 해보자",
         "mode": "MODE2",
         "status": "NO",
-        "sprintImg": "https://images.unsplash.com/photo-1659864944999-d1453d2f5003?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+        "sprintImg": "https://images.unsplash.com/photo-1501837303764-ada599fdac6c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         "fee": 5000,
         "penaltyMoney": 500,
         "startAt": "2022-06-01",
         "endAt": "2022-06-30",
         "routineStartAt": "09:00",
         "routineEndAt": "18:00",
+        "myStudy": 134,
+        "myPenalty": 12,
         "kingName": "shineofspring",
         "kingPenalty": 10,
         "kingStudy": 2484,

@@ -1,7 +1,4 @@
 /* 그룹 참가 버튼 */
-#group-detail__joinBtn {
-  visibility: hidden;
-}
 #group-detail__joinBtn button {
   width: 100%;
   height: 46px;

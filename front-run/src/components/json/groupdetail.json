@@ -44,7 +44,7 @@
       }
     ],
     "myData": {
-      "role": "anonymous",
+      "role": "leader",
       "studyTime": 62343,
       "penalty": [13, 234],
       "joinDate": "2022-10-16"
@@ -78,12 +78,7 @@
         "startAt": "2022-08-01",
         "endAt": "2022-08-31",
         "routineStartAt": "09:00",
-        "routineEndAt": "18:00",
-        "kingName": "춘식쓰",
-        "kingPenalty": 30,
-        "kingStudy": 4503,
-        "studySum": 50294,
-        "penaltySum": 687
+        "routineEndAt": "18:00"
       }
     ],
     "leader": {

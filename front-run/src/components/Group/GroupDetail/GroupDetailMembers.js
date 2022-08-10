@@ -125,7 +125,9 @@ function GroupDetailMembers(props) {
                 </div>
                 <div>
                   <span>페널티 횟수</span>
-                  <span className="medium-text">{`${applier.penaltyScore}회`}</span>
+                  <span className="medium-text">
+                    {`📱${applier.penalty[0]} / 😴${applier.penalty[1]}`}
+                  </span>
                 </div>
               </div>
               {role === "leader" && (
@@ -162,7 +164,9 @@ function GroupDetailMembers(props) {
                 </div>
                 <div>
                   <span>페널티 횟수</span>
-                  <span className="medium-text">{`${member.penaltyScore}회`}</span>
+                  <span className="medium-text">
+                    {`📱${member.penalty[0]} / 😴${member.penalty[1]}`}
+                  </span>{" "}
                 </div>
               </div>
               {role === "leader" && (

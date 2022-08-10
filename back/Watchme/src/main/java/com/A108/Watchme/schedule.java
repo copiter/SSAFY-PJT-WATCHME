@@ -35,7 +35,7 @@ public class schedule {
         ttime.setTime(cal.getTime().getTime());
 
         for (MemberInfo mI : memberInfoList) {
-            List<MemberRoomLog> memberRoomLogList = mrlRepository.findBymember_id(mI.getId()).stream().filter((m)->m.getJoinedAt().before(ttime)).collect(Collectors.toList());
+            List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberId(mI.getId()).stream().filter((m)->m.getJoinedAt().before(ttime)).collect(Collectors.toList());
 
             Integer studyTimeDay = 0;
 
@@ -63,7 +63,7 @@ public class schedule {
         ttime.setTime(cal.getTime().getTime());
 
         for (MemberInfo mI : memberInfoList) {
-            List<MemberRoomLog> memberRoomLogList = mrlRepository.findBymember_id(mI.getId()).stream().filter((m)->m.getJoinedAt().before(ttime)).collect(Collectors.toList());
+            List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberId(mI.getId()).stream().filter((m)->m.getJoinedAt().before(ttime)).collect(Collectors.toList());
 
             Integer studyTimeDay = 0;
 
@@ -91,7 +91,7 @@ public class schedule {
         ttime.setTime(cal.getTime().getTime());
 
         for (MemberInfo mI : memberInfoList) {
-            List<MemberRoomLog> memberRoomLogList = mrlRepository.findBymember_id(mI.getId()).stream().filter((m)->m.getJoinedAt().before(ttime)).collect(Collectors.toList());
+            List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberId(mI.getId()).stream().filter((m)->m.getJoinedAt().before(ttime)).collect(Collectors.toList());
 
             Integer studyTimeDay = 0;
 

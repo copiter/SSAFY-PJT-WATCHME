@@ -3,6 +3,7 @@ package com.A108.Watchme.VO.Entity.room;
 import com.A108.Watchme.VO.ENUM.Mode;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
+import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -25,6 +26,9 @@ public class Room {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToMany(mappedBy = "room")
+    private PenaltyLog penaltyLog;
 
     @Enumerated(EnumType.STRING)
     private Mode mode;

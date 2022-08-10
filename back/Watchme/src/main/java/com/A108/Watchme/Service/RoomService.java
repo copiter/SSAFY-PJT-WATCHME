@@ -3,6 +3,8 @@ package com.A108.Watchme.Service;
 import com.A108.Watchme.DTO.GetRoomResDTO;
 import com.A108.Watchme.DTO.PostRoomReqDTO;
 import com.A108.Watchme.DTO.Room.JoinRoomDTO;
+import com.A108.Watchme.DTO.Room.RoomDetMemDTO;
+import com.A108.Watchme.DTO.Room.RoomDetMyDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoomService {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM월 dd일 HH시 mm분");
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MRLRepository mrlRepository;
@@ -332,5 +334,41 @@ public class RoomService {
         }
         return false;
 
+    }
+
+    public ApiResponse getRoomDet(Long roomId) {
+        ApiResponse apiResponse = new ApiResponse();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        Room room = roomRepository.findById(roomId).get();
+        MemberRoomLog memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+        RoomDetMyDTO roomDetMyDTO = new RoomDetMyDTO();
+        roomDetMyDTO.setStartTime(format.format(memberRoomLog.getJoinedAt().toString()));
+        roomDetMyDTO.setName(room.getRoomName());
+        roomDetMyDTO.setMode(room.getMode());
+        roomDetMyDTO.setLeaderName(room.getMember().getNickName());
+        roomDetMyDTO.setLeaderTrue((room.getMember().getId().equals(memberId))? 1 : 0);
+
+        apiResponse.setCode(200);
+        apiResponse.setMessage("GET ROOM MYDET SUCCESS");
+        apiResponse.setResponseData("room", roomDetMyDTO);
+
+        return apiResponse;
+    }
+
+    public ApiResponse getRoomMem(Long roomId) {
+        ApiResponse apiResponse = new ApiResponse();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        Room room = roomRepository.findById(roomId).get();
+        // 공부시간이 정산되지 않았으면 status가 NO임 => 공부중인 상태
+        List<MemberRoomLog> memberRoomLogs = mrlRepository.findByRoomIdAndStatus(roomId, Status.NO);
+        for(MemberRoomLog memberRoomLog : memberRoomLogs){
+            memberRoomLog.getMember().getNickName();
+
+        }
+        return null;
     }
 }

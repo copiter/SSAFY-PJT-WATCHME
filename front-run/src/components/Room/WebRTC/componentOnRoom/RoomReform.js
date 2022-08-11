@@ -1,23 +1,18 @@
 import React from "react";
-import { useState, useContext, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FetchUrl } from "../../store/communication";
+import { useState, useContext, useRef,useEffect } from "react";
+import { useNavigate,useParams } from "react-router-dom";
+import { FetchUrl } from "../../../../store/communication";
 
-import "./RoomCreate.css";
+import "./RoomReform.css";
+//outputs.status
 
-function RoomCreate() {
+function RoomReform() {
   //방생성 요청 보내기
   const [inputs, setInputs] = useState({
-    roomName: "",
-    status: "MODE1", //MODE1, MODE2, MODE3
-    roomPwd: "",
-    description: "",
-    categoryName: "", //TAG1, TAG2, TAG3
-    num: 0,
-    endTime: "",
-    display: 1,
   });
+  const [outputs, setOutputs] = useState();
   const navigate = useNavigate();
+
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -26,35 +21,78 @@ function RoomCreate() {
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
-  const url = `${FETCH_URL}/rooms`;
-  //Otpion
+  
+  const id=useParams().id.substring(1);
+  const url1 = `${FETCH_URL}/rooms/`+id+`/settings`;
+  const url = `${FETCH_URL}/rooms/`+id+`/update`;
+    //Otpion
+
+  const imgeRef = useRef();
   function getCookie(name) {
-      const cookie = document.cookie
+    const cookie = document.cookie
       .split(";")
       .map((cookie) => cookie.split("="))
       .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-  }
-  try{
-    getCookie()
-  }
-  catch{ 
-    navigate("/" );
+    return cookie[0][1];
   }
 
-  const imgeRef = useRef();
+
+  console.log("INPUTS")
+  console.log(inputs);
+
+
+  useEffect(() => {
+  fetch(url1, {
+    headers: {
+      accessToken: getCookie("accessToken"),
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json(); //ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => {
+          console.log("ERR");
+          let errorMessage = "";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+        setInputs(result.responseData.room);
+        //navigate("/RoomDetail/:" + result.responseData.roomId);
+        //window.location.reload(); //리다이렉션관련
+      }
+    })
+    .catch((err) => {
+      console.log("ERR");
+    });
+  }, [])
   const handleSubmit = (event) => {
     event.preventDefault();
 
-
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
-    formData.append(
-      "postRoomReqDTO",
-      new Blob([JSON.stringify(inputs)], { type: "application/json" })
-    );
-
+    setOutputs({
+      roomName: inputs.roomName,
+      mode: inputs.mode, //MODE1, MODE2, MODE3
+      pwd: inputs.roomPwd,
+      roomDescription:inputs.description,
+      roomCategory: inputs.categoryName, 
+      roomMemberMaxNo: inputs.num,
+      endAt: inputs.endTime,
+      display: inputs.display,
+    })
+    console.log("INPUTS")
     console.log(inputs);
+    console.log("OUTPUTS");
+    console.log(outputs);
+    console.log("END");
+    formData.append(
+      "roomUpdateDTO",
+      new Blob([JSON.stringify(outputs)], { type: "application/json" })
+    );
     fetch(url, {
       method: "POST",
       body: formData,
@@ -63,6 +101,7 @@ function RoomCreate() {
       },
     })
       .then((response) => {
+        console.log(response);
         if (response.ok) {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
@@ -75,7 +114,6 @@ function RoomCreate() {
       })
       .then((result) => {
         if (result != null) {
-          alert("방생성이 완료되었습니다.");
           navigate("/RoomDetail/:" + result.responseData.roomId);
           window.location.reload(); //리다이렉션관련
         }
@@ -85,33 +123,28 @@ function RoomCreate() {
       });
   };
 
-  const [fileImage, setFileImage] = useState("");
+  const [fileImage, setFileImage] = useState();
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
   return (
     <div className="body-frame">
-      <Link to="/RoomRecruit" className="back-to-recruit">
-        &lt; 목록으로 돌아가기
-      </Link>
-
       <form onSubmit={handleSubmit}>
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
           <div className="room-image">
-            {fileImage && (
-              <img
-                alt="sample"
-                src={fileImage}
-                style={{
-                  position: "absolute",
-                  marginTop: "55px",
-                  width: "150px",
-                  height: "150px",
-                  borderRadius: "50%",
-                }}
-              />
-            )}
+          <img
+            alt="sample"
+            src={fileImage?fileImage:inputs.img}
+            style={{
+              position: "absolute",
+              marginTop: "55px",
+              width: "150px",
+              height: "150px",
+              borderRadius: "50%",
+              pointerEvents:"none"
+            }}
+            />
             {/*룸 이미지, 좌측부분 */}
             <input
               type="file"
@@ -223,7 +256,7 @@ function RoomCreate() {
                 </label>
               </div>
             </div>
-            <button type="submit">생성하기</button>
+            <button type="submit">수정하기</button>
           </div>
         </div>
       </form>
@@ -231,4 +264,4 @@ function RoomCreate() {
   );
 }
 
-export default RoomCreate;
+export default RoomReform;

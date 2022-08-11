@@ -64,16 +64,7 @@ function MainPage() {
   }
 
   function enteringRoom(id) {
-    const urls = `${FETCH_URL}/room/join/`;
-
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
-    console.log(urls + 15);
+    const urls = `${FETCH_URL}/rooms/`+id+"/join";
     fetch(urls + id, {
       method: "POST",
       headers: {
@@ -85,7 +76,7 @@ function MainPage() {
         if (response.bodyUsed) {
           console.log("재사용됨");
         } else if (response.ok) {
-          console.log("Case2");
+          console.log(response);
           return response.json();
         } else {
           console.log("C4");
@@ -96,7 +87,7 @@ function MainPage() {
         navigate(`/RoomDetail/:${id}`);
       })
       .catch((err) => {
-        alert("로그인후 이용부탁드립니다.");
+        alert("로그f인후 이용부탁드립니다.");
       });
   }
 
@@ -151,7 +142,7 @@ function MainPage() {
                               ? "#"
                               : myGroups[myGroupNo]["groupImage"]
                           }
-                          alt="그룹이미지"
+                          alt="#"
                         />
                       </Link>
                       {myGroups.length > ++myGroupNo && (
@@ -171,7 +162,7 @@ function MainPage() {
                                 ? "#"
                                 : myGroups[myGroupNo]["groupImage"]
                             }
-                            alt="그룹이미지"
+                            alt="#"
                           />
                         </Link>
                       )}
@@ -186,7 +177,7 @@ function MainPage() {
                   <Link to="MyPage">
                     <div id="mypage__myinfor__mystudy__infor">
                       <div id="mypage__myinfor__mystudy__infor__chart">
-                        <img src={mystudy__infor__tmp} width="128px" />
+                        <img src={mystudy__infor__tmp} width="128px" alt="#"/>
                       </div>
                       <ul id="mypage__myinfor__mystudy__infor__text">
                         <li>
@@ -449,7 +440,7 @@ function MainPage() {
             {rooms.length && (
               <ul className="rooms__whole">
                 <li>
-                  <div onClick={() => enteringRoom(rooms[0]["id"])}>
+                  <div onClick={() => isLoggedIn?enteringRoom(rooms[0]["id"]):""}>
                     <article>
                       <div
                         className="group-specs"
@@ -493,7 +484,7 @@ function MainPage() {
                 </li>
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[1]["id"])}>
+                    <div onClick={() => isLoggedIn?enteringRoom(rooms[1]["id"]):""}>
                       <article>
                         <div
                           className="group-specs"
@@ -538,7 +529,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[2]["id"])}>
+                    <div onClick={() => isLoggedIn?enteringRoom(rooms[2]["id"]):""}>
                       <article>
                         <div
                           className="group-specs"
@@ -583,7 +574,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[3]["id"])}>
+                    <div onClick={() => isLoggedIn?enteringRoom(rooms[3]["id"]):""}>
                       <article>
                         <div
                           className="group-specs"
@@ -628,7 +619,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[4]["id"])}>
+                    <div onClick={() => isLoggedIn?enteringRoom(rooms[4]["id"]):""}>
                       <article>
                         <div
                           className="group-specs"
@@ -673,7 +664,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[5]["id"])}>
+                    <div onClick={() => isLoggedIn?enteringRoom(rooms[5]["id"]):""}>
                       <article>
                         <div
                           className="group-specs"
@@ -718,7 +709,7 @@ function MainPage() {
                 )}
                 {rooms.length > ++roomNo && (
                   <li>
-                    <div onClick={() => enteringRoom(rooms[6]["id"])}>
+                    <div onClick={() => isLoggedIn?enteringRoom(rooms[6]["id"]):""}>
                       <article>
                         <div
                           className="group-specs"

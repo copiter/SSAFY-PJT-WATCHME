@@ -84,8 +84,9 @@ public class MemberController {
 
     @GetMapping(value = "/members/mygroup")
     @ResponseBody
-    public ApiResponse memberGroup(){
+    public ApiResponse memberGroup() {
         return memberService.memberGroup();
+    }
 
     @PostMapping("/find-password")
     public ApiResponse findPW(@RequestBody FindPwDTO findPwDTO) {

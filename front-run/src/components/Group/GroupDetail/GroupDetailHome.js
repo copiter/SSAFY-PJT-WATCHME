@@ -84,7 +84,7 @@ const GroupDetailHome = (props) => {
         <div id="group-detail__sprint-summary">
           <div id="sprint-summary-title">
             <strong>진행중인 스프린트</strong>
-            <Link to="/SprintCreate/${groupId}">스프린트 만들기</Link>
+            <Link to={`/SprintCreate/${props.groupId}`}>스프린트 만들기</Link>
           </div>
           <div id="sprint-summary-card">
             {resData.sprints.length === 0 && (

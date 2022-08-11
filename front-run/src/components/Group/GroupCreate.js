@@ -6,38 +6,28 @@ import { FetchUrl } from "../../store/communication";
 import "./GroupCreate.css";
 
 function GroupCreate() {
-
-
-  const handleChangeSelect = event => { 
+  const handleChangeSelect = (event) => {
     const value = event.target.value;
-    
-    if(value==="공무원"){
-      inputs.ctg[0]=!inputs.ctg[0];
-    }
-    else if(value==="취업"){
-      inputs.ctg[1]=!inputs.ctg[1];
-    }else if(value==="수능"){
-      inputs.ctg[2]=!inputs.ctg[2];
-    }else if(value==="기타"){
-      inputs.ctg[3]=!inputs.ctg[3];
+
+    if (value === "공무원") {
+      inputs.ctg[0] = !inputs.ctg[0];
+    } else if (value === "취업") {
+      inputs.ctg[1] = !inputs.ctg[1];
+    } else if (value === "수능") {
+      inputs.ctg[2] = !inputs.ctg[2];
+    } else if (value === "기타") {
+      inputs.ctg[3] = !inputs.ctg[3];
     }
     console.log(inputs.ctg);
   };
-
-
-
-
-
-
-
 
   const [inputs, setInputs] = useState({
     name: "",
     description: "",
     maxMember: 0,
-    ctg: [false,false,false,false], 
+    ctg: [false, false, false, false],
     display: 1,
-    pwd:""
+    pwd: "",
   });
   const navigate = useNavigate();
 
@@ -47,11 +37,11 @@ function GroupCreate() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
   const [isChecked, setIsChecked] = useState(false);
-  const handleChangeCheck = event => { 
-    setIsChecked(current => !current);
+  const handleChangeCheck = (event) => {
+    setIsChecked((current) => !current);
     const name = event.target.name;
-    setInputs((values) => ({ ...values, [name]:isChecked?1:0 }));
-  };  
+    setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
+  };
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
@@ -73,34 +63,33 @@ function GroupCreate() {
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
-    let ctgs=[];
-    let i=0;
-    if(inputs.ctg[0]){
-      ctgs[i]="공무원";
+    let ctgs = [];
+    let i = 0;
+    if (inputs.ctg[0]) {
+      ctgs[i] = "공무원";
       i++;
     }
-    if(inputs.ctg[1]){
-      ctgs[i]="취업";
+    if (inputs.ctg[1]) {
+      ctgs[i] = "취업";
       i++;
     }
-    if(inputs.ctg[2]){
-      ctgs[i]="수능";
+    if (inputs.ctg[2]) {
+      ctgs[i] = "수능";
       i++;
     }
-    if(inputs.ctg[3]){
-      ctgs[i]="기타";
+    if (inputs.ctg[3]) {
+      ctgs[i] = "기타";
       i++;
     }
     //inputs.cgs
-    const outputs=
-    {
+    const outputs = {
       name: inputs.name,
       description: inputs.description,
       maxMember: inputs.maxMember,
-      ctg:ctgs, 
+      ctg: ctgs,
       display: inputs.display,
-      pwd:inputs.pwd,
-    }
+      pwd: inputs.pwd,
+    };
     formData.append(
       "postGroupReqDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
@@ -150,16 +139,14 @@ function GroupCreate() {
       <Link to="/GroupRecruit" className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>
-      <Link to="/GroupReform/:1">
-      groupReform test
-      </Link>
+      <Link to="/GroupReform/:1">groupReform test</Link>
       <form onSubmit={handleSubmit}>
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
           <div className="group-image">
             {fileImage && (
               <img
-              /*이미지 띄워지는곳 */
+                /*이미지 띄워지는곳 */
                 alt="sample"
                 src={fileImage}
                 style={{
@@ -237,38 +224,51 @@ function GroupCreate() {
                 />
               </div>
             </div>
-           <div className="input-rules">
-              <div className="rules-title" name="ctg">카테고리</div>
-              <div className="rules-box" >
+            <div className="input-rules">
+              <div className="rules-title" name="ctg">
+                카테고리
+              </div>
+              <div className="rules-box">
                 <label>
-                  <input type="checkbox" onChange={handleChangeSelect} value="공무원"/>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="공무원"
+                  />
                   공무원
                 </label>
                 <label>
-                  <input type="checkbox" onChange={handleChangeSelect} value="취업"/>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="취업"
+                  />
                   취업
                 </label>
                 <label>
-                  <input type="checkbox" onChange={handleChangeSelect} value="수능"/>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="수능"
+                  />
                   수능
                 </label>
                 <label>
-                  <input type="checkbox" onChange={handleChangeSelect} value="기타"/>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="기타"
+                  />
                   기타
                 </label>
               </div>
             </div>
-            <button type="submit" >생성하기</button>
+            <button type="submit">생성하기</button>
           </div>
         </div>
-        
       </form>
     </div>
   );
 }
 
 export default GroupCreate;
-
-
-
-

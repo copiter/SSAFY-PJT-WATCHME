@@ -14,21 +14,20 @@ function GroupDetailSprint(props) {
 
   //fetch
   const url = `${props.href}/sprints`;
-  // useEffect(() => {
-  //   const config = {
-  //     method: "GET",
-  //     headers: {
-  //       accessToken: getCookie("accessToken"),
-  //     },
-  //   };
-  //   const getDatas = async () => {
-  //     // const response = await fetch(`${url}/${props.groupId}`, config);
-  //     const response = await fetch(url);
-  //     const data = await response.json();
-  //     setSprints(data);
-  //   };
-  //   getDatas();
-  // }, []);
+  useEffect(() => {
+    const config = {
+      method: "GET",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    };
+    const getDatas = async () => {
+      const response = await fetch(`${url}/${props.groupId}`, config);
+      const data = await response.json();
+      setSprints(data.responseData.sprints);
+    };
+    getDatas();
+  }, []);
 
   //sprint 분류
   let sprintJoin,
@@ -56,7 +55,13 @@ function GroupDetailSprint(props) {
       },
     })
       .then((response) => {
-        alert("스프린트에 정상적으로 참가신청 되었습니다");
+        return response.json();
+      })
+      .then((result) => {
+        console.log(result);
+        if (result.code === 200) {
+          alert("스프린트에 정상적으로 참가신청 되었습니다");
+        }
       })
       .catch((err) => {
         alert("참가실패 " + err);
@@ -98,13 +103,15 @@ function GroupDetailSprint(props) {
         </strong>
         <SprintItem sprint={sprintOngoing} handler={sprintOnGoingHandler} />
       </div>
-      <div id="sprint-done">
-        <strong>지난 스프린트</strong>
+      {sprintDone.length > 0 && (
+        <div id="sprint-done">
+          <strong>지난 스프린트</strong>
 
-        {sprintDone.map((sprint, index) => {
-          return <SprintItem sprint={sprint} key={index} />;
-        })}
-      </div>
+          {sprintDone.map((sprint, index) => {
+            return <SprintItem sprint={sprint} key={index} />;
+          })}
+        </div>
+      )}
     </div>
   );
 }

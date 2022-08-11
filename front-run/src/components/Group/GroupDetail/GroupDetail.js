@@ -1,13 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
-import { FetchUrl } from "../../store/communication";
-import getCookie from "../../Cookie";
+import { FetchUrl } from "../../../store/communication";
+import getCookie from "../../../Cookie";
 
 import "./GroupDetail.css";
-import json from "../json/groupdetail.json";
+import json from "../../json/groupdetail.json";
 
-import GroupDetailHome from "./GroupDetail/GroupDetailHome";
-import GroupDetailSprint from "./GroupDetail/GroupDetailSprint";
-import GroupDetailMembers from "./GroupDetail/GroupDetailMembers";
+import GroupDetailHome from "./GroupDetailHome";
+import GroupDetailSprint from "./GroupDetailSprint";
+import GroupDetailMembers from "./GroupDetailMembers";
 
 // props 에 id, pwd 실려서 내려옴
 function GroupDetail(props) {
@@ -17,32 +17,29 @@ function GroupDetail(props) {
 
   //groupId 구하기
   const pathnameArr = window.location.pathname.split("/");
-  const groupId = pathnameArr[pathnameArr.length - 1];
+  const groupId = +pathnameArr[pathnameArr.length - 1];
 
   //데이터 요청
   const FETCH_URL = useContext(FetchUrl);
-  const url = `${FETCH_URL}/groups/${groupId}`; //임시로 넣어줌
-  // const url = `${FETCH_URL}/groups/${props.id}`;
-  // const url = "http://localhost:5000/responseData/";
-  // useEffect(() => {
-  //   const config = {
-  //     method: "POST",
-  //     credentials: "include",
-  //     body: {
-  //       pwd: props.pwd,
-  //     },
-  //     headers: {
-  //       accessToken: getCookie("accessToken"),
-  //     },
-  //   };
-  //   const getDatas = async () => {
-  //     // const response = await fetch(url, config);
-  //     const response = await fetch(url);
-  //     const data = await response.json();
-  //     setResData(data);
-  //   };
-  //   getDatas();
-  // }, []);
+  const url = `${FETCH_URL}/groups/${groupId}`;
+  useEffect(() => {
+    const config = {
+      method: "POST",
+      // body: {
+      //   pwd: props.pwd,
+      // },
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    };
+    const getDatas = async () => {
+      const response = await fetch(url, config);
+      const data = await response.json();
+      console.log(data.responseData);
+      setResData(data.responseData);
+    };
+    getDatas();
+  }, []);
 
   function joinHandler() {
     const config = {
@@ -100,7 +97,7 @@ function GroupDetail(props) {
 
   return (
     <>
-      {resData.myData.role === "anonymous" && (
+      {resData.myData.role === 2 && (
         <div id="group-detail__joinBtn">
           {!isJoinCheck && (
             <button id="join_submit" onClick={joinHandler}>

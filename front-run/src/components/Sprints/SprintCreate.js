@@ -54,7 +54,7 @@ function SprintCreate(props) {
       endAt: endAtInputRef.current.value,
       routineStartAt: routineStartAtInputRef.current.value,
       routineEndAt: routineEndAtInputRef.current.value,
-      fee: feeInputRef.current.value,
+      fee: feeInputRef.current === undefined ? 0 : feeInputRef.current.value,
       penaltyMoney: penaltyMoneyInputRef.current.value,
       mode: modeInputRef.current.value,
     };
@@ -62,7 +62,7 @@ function SprintCreate(props) {
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
     formData.append(
-      "postGroupReqDTO",
+      "data",
       new Blob([JSON.stringify(data)], { type: "application/json" })
     );
 
@@ -77,9 +77,11 @@ function SprintCreate(props) {
         return response.json();
       })
       .then((result) => {
+        console.log(result);
         alert("방이 성공적으로 생성되었습니다");
         navigate(`/GroupDetail/${props.groupId}`);
       })
+      .then((response) => {})
       .catch((err) => {
         console.log(err);
       });

@@ -1,41 +1,48 @@
 {
-  "responseData": [
-    {
-      "group": {
-        "name": "완벽한 그룹 장태경 후핳",
-        "description": "공부를 하고 싶은 자 여기로 모여라. 우리 함께 공부해보자마!!!!!",
-        "ctg": ["공무원", "자격증"],
-        "imgLink": "http://gdimg.gmarket.co.kr/1882934532/still/600?ver=1622428606"
+  "responseData": {
+    "myGroups": [
+      {
+        "myGroup": {
+          "groupId": 1,
+          "name": "완벽한 그룹 장태경 후핳",
+          "description": "공부를 하고 싶은 자 여기로 모여라. 우리 함께 공부해보자마!!!!!",
+          "ctg": ["공무원", "자격증"],
+          "imgLink": "http://gdimg.gmarket.co.kr/1882934532/still/600?ver=1622428606"
+        },
+        "myData": {
+          "studyTime": 62343,
+          "penalty": [0, 120],
+          "joinDate": "2022-05-16"
+        }
       },
-      "myData": {
-        "studyTime": 62343,
-        "penalty": [0, 120],
-        "joinDate": "2022-07-16"
-      }
-    },
-    {
-      "group": {
-        "name": "서울대 뽀시자",
-        "description": "서울대는 못 가는 게 아니라 안 가는 겁니다",
-        "imgLink": "https://images.unsplash.com/photo-1562750803-f5af7079317e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=737&q=80"
+      {
+        "myGroup": {
+          "groupId": 2,
+          "name": "서울대 뽀시자",
+          "description": "서울대는 못 가는 게 아니라 안 가는 겁니다",
+          "ctg": ["수능"],
+          "imgLink": "https://images.unsplash.com/photo-1562750803-f5af7079317e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=737&q=80"
+        },
+        "myData": {
+          "studyTime": 8425,
+          "penalty": [12, 14],
+          "joinDate": "2022-08-16"
+        }
       },
-      "myData": {
-        "studyTime": 8425,
-        "penalty": [12, 14],
-        "joinDate": "2022-08-16"
+      {
+        "myGroup": {
+          "groupId": 30,
+          "name": "SSAFY 입교를 목표로",
+          "description": "500명 안에는 들 수 있겠죠?",
+          "ctg": ["공무원", "자격증", "수능"],
+          "imgLink": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80"
+        },
+        "myData": {
+          "studyTime": 120,
+          "penalty": [84, 358],
+          "joinDate": "2022-06-30"
+        }
       }
-    },
-    {
-      "group": {
-        "name": "SSAFY 입교를 목표로",
-        "description": "500명 안에는 들 수 있겠죠?",
-        "imgLink": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80"
-      },
-      "myData": {
-        "studyTime": 120,
-        "penalty": [84, 358],
-        "joinDate": "2022-09-30"
-      }
-    }
-  ]
+    ]
+  }
 }

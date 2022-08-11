@@ -8,10 +8,7 @@ import com.A108.Watchme.DTO.myPage.WrapperMy;
 import com.A108.Watchme.Exception.AuthenticationException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
-import com.A108.Watchme.VO.ENUM.ProviderType;
-import com.A108.Watchme.VO.ENUM.Role;
-import com.A108.Watchme.VO.ENUM.RuleName;
-import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.ENUM.*;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
@@ -245,11 +242,11 @@ public class MemberService {
                     }
 
                     // myData.penalty
-                    List<Integer> penalty = new ArrayList<>(RuleName.values().length);
+                    List<Integer> penalty = new ArrayList<>(Mode.values().length);
                     /*List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSprintIn(currUser.getId(), g.getSprints());
 
-                    for (RuleName rule :
-                            RuleName.values()) {
+                    for (Mode m :
+                            Mode.values()) {
                         penalty.add(rule.ordinal(), (int) (long) penaltyLogList.stream().filter(x -> x.getRule().getRuleName().ordinal() == rule.ordinal()).count());
                     }*/
 

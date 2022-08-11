@@ -103,13 +103,13 @@ public class MemberController {
         return memberService.memberUpdate(updateRequestDTO, image);
     }
 
-    @GetMapping("/emails-check")
+    @PostMapping("/emails-check")
     @ResponseBody
     public ApiResponse emailCheck(@RequestBody CheckEmailDTO checkEmailDTO){
         return memberService.emailCheck(checkEmailDTO);
     }
 
-    @GetMapping("/nickName-check")
+    @PostMapping("/nickName-check")
     @ResponseBody
     public ApiResponse nickNameCheck(@RequestBody CheckNickNameDTO checkNickNameDTO){
         return memberService.nickNameCheck(checkNickNameDTO);

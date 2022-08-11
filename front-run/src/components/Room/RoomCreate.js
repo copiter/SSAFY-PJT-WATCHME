@@ -123,7 +123,7 @@ function RoomCreate() {
               className="room-image__upload"
               ref={imgeRef}
             />
-            <div className="room-image__message">미팅룸 사진을 올리세요</div>
+            <div className="room-image__message">미팅룸 사진을 올려주세요</div>
           </div>
           <div className="room-infor">
             {/*우측부분*/}

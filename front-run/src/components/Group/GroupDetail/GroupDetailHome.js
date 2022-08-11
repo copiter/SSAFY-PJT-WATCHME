@@ -1,13 +1,17 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import crown from "../../../img/Icons/crown.png";
 import "./GroupDetailHome.css";
 
 const GroupDetailHome = (props) => {
   const resData = props.resData;
   const groupTotalTime = resData.groupData.sumTime;
+  const penalty = resData.myData.penalty;
   const crewsData = resData.members.filter((member) => member.role == 0);
-  const onGoingSprint = resData.sprints[0]; //하나만 들어와야 함.
+
+  const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
 
   return (
     <div id="group-detail__home">
@@ -33,7 +37,7 @@ const GroupDetailHome = (props) => {
             </li>
             <li>
               <small>😥 페널티 받은 횟수 </small>
-              <span>{`${resData.myData.penaltyScore}회`}</span>
+              <span>{`📱${penalty[0]} / 😴${penalty[1]}`}</span>
             </li>
             <li>
               <small>📆 그룹 가입일</small>
@@ -80,23 +84,28 @@ const GroupDetailHome = (props) => {
         <div id="group-detail__sprint-summary">
           <div id="sprint-summary-title">
             <strong>진행중인 스프린트</strong>
-            <a href="#none">스프린트 만들기</a>
+            <Link to={`/SprintCreate/${props.groupId}`}>스프린트 만들기</Link>
           </div>
-          <div id="sprint-summary-content">
-            {resData.sprints === [] && (
-              <p id="sprint-none">진행 중인 스프린트가 없습니다!</p>
+          <div id="sprint-summary-card">
+            {resData.sprints.length === 0 && (
+              <div className="sprint-summary-content">
+                <p id="sprint-none">진행 중인 스프린트가 없습니다!</p>
+              </div>
             )}
-            {resData.sprints !== [] && (
-              <>
-                <p id="sprint-exists-title">{onGoingSprint.name}</p>
-                <ul>
-                  <li>{`🕑 ${onGoingSprint.routineStartAt} ~ ${onGoingSprint.routineEndAt} 참여 필수`}</li>
-                  <li>⏳ {onGoingSprint.description}</li>
-                  <li>{`💸 참가비 ${onGoingSprint.fee}원`}</li>
-                </ul>
-                <span>#{onGoingSprint.sprintRuleList.join(" #")}</span>
-              </>
-            )}
+            {resData.sprints.length > 0 &&
+              resData.sprints.map((sprint, index) => {
+                return (
+                  <div className="sprint-summary-content" key={index}>
+                    <p className="sprint-exists-title">{sprint.name}</p>
+                    <ul>
+                      <li>{`🕑 ${sprint.routineStartAt} ~ ${sprint.routineEndAt} 참여 필수`}</li>
+                      <li>⏳ {sprint.description}</li>
+                      <li>#{mode[+sprint.mode.slice(-1)]}</li>
+                      <li>{`💸 참가비 ${sprint.fee}원`}</li>
+                    </ul>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>

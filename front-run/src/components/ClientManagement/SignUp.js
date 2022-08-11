@@ -2,6 +2,9 @@ import React, { useState, Fragment, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 
+import accept from "../../img/Icons/accept.png";
+import cancel from "../../img/Icons/cancel.png";
+
 import "./SignUp.css";
 
 function SignUp() {
@@ -20,11 +23,21 @@ function SignUp() {
   const nickNameInputRef = useRef();
   const sexInputRef = useRef();
   const birthdayInputRef = useRef();
-  const imageInputRef=useRef();
+  const imageInputRef = useRef();
 
   const submitHandler = (event) => {
     event.preventDefault();
-    const data={
+
+    //중복확인 여부
+    if (isEmailDup || isNickNameDup) {
+      alert("이메일 혹은 닉네임 중복확인이 필요합니다");
+      return;
+    } else if (isEmailDup === null || isNickNameDup === null) {
+      alert("이메일 혹은 닉네임 중복확인이 필요합니다");
+      return;
+    }
+
+    const data = {
       email: emailInputRef.current.value,
       password: passwordInputRef.current.value,
       name: nameInputRef.current.value,
@@ -33,19 +46,21 @@ function SignUp() {
       birth: birthdayInputRef.current.value,
     };
 
-    const files=imageInputRef.current.files[0];
+    const files = imageInputRef.current.files[0];
     const formData = new FormData();
-    formData.append('files', files);
-    formData.append("data", new Blob([JSON.stringify(data)], {type: "application/json"}))
-   
+    formData.append("files", files);
+    formData.append(
+      "data",
+      new Blob([JSON.stringify(data)], { type: "application/json" })
+    );
+
     //myjsons->application.josn
-    
 
     const url = `${FETCH_URL}/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",
-      body: formData
+      body: formData,
     })
       .then((response) => {
         if (response.ok) {
@@ -62,37 +77,98 @@ function SignUp() {
         navigate("/login"); //로그인 페이지로
       })
       .catch((err) => {
-        alert("오류가 발새하였습니다");
+        alert("오류가 발생하였습니다");
       });
   };
 
+  const [isEmailDup, setIsEmailDup] = useState(null);
+  function checkDuplicateEmail() {
+    const email = emailInputRef.current.value;
+    //API
+    const config = {
+      method: "POST",
+      body: JSON.stringify({ email: email }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const getDatas = async () => {
+      try {
+        const response = await fetch(`${FETCH_URL}/emails-check`, config);
+        const result = await response.json();
+        if (result.code === "200") {
+          setIsEmailDup(false);
+        } else {
+          setIsEmailDup(true);
+        }
+      } catch (e) {
+        alert("통신 실패 " + e);
+      }
+    };
+    getDatas();
+  }
+
+  const [isNickNameDup, setIsNickNameDup] = useState(null);
+  function checkDuplicateNickName() {
+    const nickName = nickNameInputRef.current.value;
+    //API
+    const config = {
+      method: "POST",
+      body: JSON.stringify({ nickName: nickName }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const getDatas = async () => {
+      try {
+        const response = await fetch(`${FETCH_URL}/nickName-check`, config);
+        const result = await response.json();
+        if (result.code === "200") {
+          setIsNickNameDup(false);
+        } else {
+          setIsNickNameDup(true);
+        }
+      } catch (e) {
+        alert("통신 실패 " + e);
+      }
+    };
+    getDatas();
+  }
 
   const [fileImage, setFileImage] = useState("");
-  const saveFileImage = (event) =>{
+  const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
-
   };
   return (
     <Fragment>
       <div className="signup">
-        <form onSubmit={submitHandler} method="post" >
+        <form>
           <div className="signup-top">
-            <div className="signup-top__worfd">SIGN UP</div>
+            <div className="signup-top__word">SIGN UP</div>
           </div>
           <div className="signup-form">
             <div className="signup-left">
-              <div className="signup-left-image"> 
-                {fileImage && ( <img alt="sample" src={fileImage}style={{ margin: "auto" ,width:"100%",height:"100%",borderRadius:"50%"
-              }} /> )}
-              </div>
-              <input  name="imggeUpload" type="file" accept="image/*" onChange={saveFileImage}  ref={imageInputRef}/>
-              
-              <button className="signup-left-addimage">프로필 사진 추가</button>
+              <input
+                className="signup-left-image"
+                type="file"
+                accept="image/*"
+                onChange={saveFileImage}
+                ref={imageInputRef}
+              />
+              {fileImage && (
+                <img
+                  className="signup-uploaded-image"
+                  alt="sample"
+                  src={fileImage}
+                />
+              )}
 
-             
+              <span className="signup-left-addimage">
+                프로필 사진을 올려주세요
+              </span>
             </div>
             <div className="signup-right">
-              <div className="line">
+              <div className="line dup-check">
                 <input
                   className="short"
                   type="email"
@@ -100,7 +176,16 @@ function SignUp() {
                   required
                   ref={emailInputRef}
                 />
-                <button className="dup">중복확인</button>
+                {isEmailDup === false && (
+                  <img className="dup-icon" src={accept} alt="중복아님" />
+                )}
+                {isEmailDup === true && (
+                  <img className="dup-icon" src={cancel} alt="중복" />
+                )}
+
+                <button className="dup" onClick={checkDuplicateEmail}>
+                  중복확인
+                </button>
               </div>
               <div className="line">
                 <input
@@ -124,7 +209,7 @@ function SignUp() {
                   ref={nameInputRef}
                 />
               </div>
-              <div className="line">
+              <div className="line dup-check">
                 <input
                   className="short"
                   type="text"
@@ -132,7 +217,15 @@ function SignUp() {
                   required
                   ref={nickNameInputRef}
                 />
-                <button className="dup">중복확인</button>
+                {isNickNameDup === false && (
+                  <img className="dup-icon" src={accept} alt="중복아님" />
+                )}
+                {isNickNameDup === true && (
+                  <img className="dup-icon" src={cancel} alt="중복" />
+                )}
+                <button className="dup" onClick={checkDuplicateNickName}>
+                  중복확인
+                </button>
               </div>
               <div className="line">
                 <select
@@ -158,7 +251,11 @@ function SignUp() {
                   ref={birthdayInputRef}
                 />
               </div>
-              <button className="submitting" type="submit">
+              <button
+                className="submitting"
+                type="submit"
+                onSubmit={submitHandler}
+              >
                 회원가입
               </button>
             </div>

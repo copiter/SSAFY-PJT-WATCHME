@@ -19,7 +19,11 @@ import RoomDetail from "./components/Room/WebRTC/RoomDetail"; //룸생성
 import GroupRecruit from "./components/Group/GroupRecruit"; //그룹탐색
 import GroupCreate from "./components/Group/GroupCreate"; //그룹생성
 import GroupReform from "./components/Group/GroupReform"; //그룹탐색
-import GroupDetail from "./components/Group/GroupDetail"; //그룹정보
+import GroupDetail from "./components/Group/GroupDetail/GroupDetail"; //그룹정보
+import MyGroups from "./components/Group/MyGroups"; // 내그룹
+
+//스프린트 관련
+import SprintCreate from "./components/Sprints/SprintCreate";
 
 //MyPage관련
 import MyPage from "./components/MyPage/MyPage";
@@ -47,9 +51,11 @@ function App() {
         <Route path="/RoomCreate" element={<RoomCreate />} />
         <Route path="/RoomDetail/:id" element={<RoomDetail />} />
         <Route path="/GroupCreate" element={<GroupCreate />} />
-        <Route path="/GroupDetail" element={<GroupDetail />} />
+        <Route path="/GroupDetail/:id" element={<GroupDetail />} />
         <Route path="/GroupRecruit" element={<GroupRecruit />} />
         <Route path="/GroupReform/:id" element={<GroupReform />} />
+        <Route path="/MyGroups" element={<MyGroups />} />
+        <Route path="/SprintCreate/:id" element={<SprintCreate />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/PointAdd" element={<PointAdd />} />
         <Route path="/PointRefund" element={<PointRefund />} />

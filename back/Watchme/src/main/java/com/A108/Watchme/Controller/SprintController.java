@@ -4,6 +4,7 @@ import com.A108.Watchme.DTO.Sprint.SprintPostDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +26,7 @@ public class SprintController {
     }
 
     // 스프린트 생성
-    @PostMapping("/sprints/{groupId}")
+    @PostMapping(value = "/sprints/{groupId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     ApiResponse createSprint(@PathVariable(value = "groupId") int groupId, @RequestPart(value="sprintPostDTO") SprintPostDTO sprintPostDTO,
                              @RequestPart(required = false, value = "images") MultipartFile images){
         Long id = Long.valueOf(groupId);

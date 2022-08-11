@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 
 @RestController
-@RequestMapping("/members")
+//@RequestMapping("/members")
 public class MemberController {
     @Autowired
     private MemberService memberService;
@@ -35,7 +35,7 @@ public class MemberController {
     @Autowired
     private S3Uploader s3Uploader;
 
-    @PostMapping(value="/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value="/auth/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
     public ApiResponse signUp( @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO,@RequestPart(value = "files",required = false) MultipartFile images) throws ParseException {
         String url="https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png";
@@ -54,7 +54,7 @@ public class MemberController {
         System.out.println(apiResponse.getResponseData());
         return apiResponse;
     }
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     @ResponseBody
     public ApiResponse logout(HttpServletRequest request,
                               HttpServletResponse response, Authentication authentication){
@@ -66,14 +66,14 @@ public class MemberController {
         return apiResponse;
     }
 
-    @PostMapping("/social-signup")
+    @PostMapping("/auth/social-signup")
     @ResponseBody
     public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
                                     HttpServletResponse response, Authentication authentication) throws ParseException {
         return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
     }
 
-    @PostMapping("/find-email")
+    @PostMapping("/auth/find-email")
     @ResponseBody
     public ApiResponse findEmail(@RequestBody FindEmailRequestDTO findEmailRequestDTO){
         System.out.println(findEmailRequestDTO.getNickName());

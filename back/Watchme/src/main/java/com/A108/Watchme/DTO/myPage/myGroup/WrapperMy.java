@@ -1,4 +1,4 @@
-package com.A108.Watchme.DTO.myPage;
+package com.A108.Watchme.DTO.myPage.myGroup;
 
 import lombok.Builder;
 import lombok.Getter;

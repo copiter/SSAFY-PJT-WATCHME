@@ -8,6 +8,7 @@ import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.utils.CookieUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.Optional;
 
 @RestController
 //@RequestMapping("/members")
@@ -139,4 +141,35 @@ public class MemberController {
 
         return memberService.getMySprints(memberId);
     }
+
+    @GetMapping("/members")
+    @ResponseBody
+    public ApiResponse memberInfo(HttpServletResponse response){
+        ApiResponse apiResponse;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.getPrincipal().equals("anonymousUser")){
+            apiResponse = new ApiResponse();
+            apiResponse.setCode(400);
+            apiResponse.setMessage("NOT LOGIN");
+            return apiResponse;
+        }
+
+        // 일반 로그인의 경우
+        Long currUserId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+        if(checkCurrUser.isPresent()){
+            apiResponse = memberService.getMyPage(checkCurrUser.get(), response);
+        } else{
+            apiResponse = new ApiResponse();
+            apiResponse.setCode(400);
+            apiResponse.setMessage("NO SUCH USER");
+        }
+
+        return apiResponse;
+
+    }
+
 }

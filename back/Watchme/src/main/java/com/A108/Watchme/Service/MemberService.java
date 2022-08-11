@@ -3,11 +3,12 @@ package com.A108.Watchme.Service;
 import com.A108.Watchme.Config.properties.AppProperties;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
-import com.A108.Watchme.DTO.myPage.MyData;
-import com.A108.Watchme.DTO.myPage.MyGroup;
-import com.A108.Watchme.DTO.myPage.WrapperMy;
-import com.A108.Watchme.Exception.AuthenticationException;
+import com.A108.Watchme.DTO.myPage.myPage.MemberDTO;
+import com.A108.Watchme.DTO.myPage.myGroup.MyData;
+import com.A108.Watchme.DTO.myPage.myGroup.MyGroup;
+import com.A108.Watchme.DTO.myPage.myGroup.WrapperMy;
 
+import com.A108.Watchme.DTO.myPage.myPage.PenaltyDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.*;
@@ -21,7 +22,7 @@ import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.ENUM.Role;
 import com.A108.Watchme.VO.ENUM.Status;
-import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.MemberEmailKey;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.RefreshToken;
@@ -43,6 +44,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -437,6 +439,7 @@ public class MemberService {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+                    System.out.println("heelo");
 
                     Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
 
@@ -577,6 +580,83 @@ public class MemberService {
         apiResponse.setMessage("SUCCESS MY SPRINT");
         apiResponse.setResponseData("sprints", sprintList);
         return  apiResponse;
+    }
+
+    // 멤버 정보를 가지고 오는 서비스 함수
+    public ApiResponse getMyPage(com.A108.Watchme.VO.Entity.member.Member currUser, HttpServletResponse response) {
+        ApiResponse result = new ApiResponse();
+
+        MemberInfo currUserInfo = currUser.getMemberInfo();
+
+        // member
+        MemberDTO resMemberDTO = MemberDTO.builder()
+                .nickName(currUser.getNickName())
+                .profileImage(currUserInfo.getImageLink())
+                .point(currUserInfo.getPoint())
+                .description(currUserInfo.getDescription())
+                .studyTimeToday(currUserInfo.getStudyTimeDay())
+                .studyTimeWeek(currUserInfo.getStudyTimeWeek())
+                .studyTimeMonth(currUserInfo.getStudyTimeMonth())
+                .studyTimeTotal(currUserInfo.getStudyTime())
+                .build();
+
+        result.setResponseData("member", resMemberDTO);
+
+        // rules
+        List<String> resRules = new LinkedList<>();
+
+        for (Mode m : Mode.values()) {
+            resRules.add(m.toString());
+        }
+
+        result.setResponseData("rules", resRules);
+
+
+
+
+        // TODO: 1.일자 별 페널티를 배열에 담아서 반환
+        //       2.일자 별 공부시간을 배열에 담아서 반환
+
+        // penaltyByDay
+        // 1.일자별 패널티
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 0);
+
+        int[] penaltyByDay = new int[Calendar.getInstance().get(Calendar.DATE)];
+
+        List<PenaltyLog> myPenaltyLog = penaltyLogRegistory.findByMember_idAndCreatedAtAfter(currUser.getId(), Date.from(cal.toInstant()));
+
+        myPenaltyLog.stream().forEach(x -> penaltyByDay[x.getCreatedAt().getDate() - 1] += 1);
+
+        result.setResponseData("penaltyByDay", penaltyByDay);
+
+
+        // studyByDay
+        // 2.일자별 공부 시간
+        int[] studyByDay = new int[Calendar.getInstance().get(Calendar.DATE)];
+
+        List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), Date.from(cal.toInstant()));
+
+        myStudyLog.stream().forEach(x -> studyByDay[x.getStartAt().getDate() - 1] += x.getStudyTime());
+
+
+        result.setResponseData("studyByDay", studyByDay);
+
+
+        // 종류별 패털티 횟수
+        Map<String, Integer> resMyPenalty = new LinkedHashMap<>();
+
+        for (Mode m :
+                Mode.values()) {
+            resMyPenalty.put(m.toString(), penaltyLogRegistory.countByMember_idAndMode(currUser.getId(),m));
+        }
+
+        result.setResponseData("penalty", resMyPenalty);
+
+        result.setCode(200);
+        result.setMessage("SUCCESS GET MEMBER INFO");
+
+        return result;
     }
 }
 

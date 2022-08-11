@@ -62,7 +62,7 @@ function SprintCreate(props) {
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
     formData.append(
-      "data",
+      "sprintPostDTO",
       new Blob([JSON.stringify(data)], { type: "application/json" })
     );
 
@@ -88,7 +88,7 @@ function SprintCreate(props) {
   };
 
   return (
-    <>
+    <div className="body-frame">
       <form onSubmit={handleSubmit}>
         <div className="form-frame">
           <div className="sprint-image">
@@ -164,13 +164,16 @@ function SprintCreate(props) {
                 />
               </div>
               <div className="line">
-                <input
-                  type="date"
-                  placeholder="시작일을 선택하세요"
-                  required
-                  min={today}
-                  ref={startAtInputRef}
-                />
+                <label for="startAt" value="hi">
+                  <input
+                    name="startAt"
+                    type="date"
+                    placeholder="시작일을 선택하세요"
+                    required
+                    min={today}
+                    ref={startAtInputRef}
+                  />
+                </label>
                 <input
                   type="date"
                   placeholder="종료일을 선택하세요"
@@ -215,7 +218,7 @@ function SprintCreate(props) {
           </div>
         </div>
       </form>
-    </>
+    </div>
   );
 }
 

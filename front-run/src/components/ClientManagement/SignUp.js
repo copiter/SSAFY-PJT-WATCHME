@@ -163,7 +163,9 @@ function SignUp() {
                 />
               )}
 
-              <span className="signup-left-addimage">프로필 사진</span>
+              <span className="signup-left-addimage">
+                프로필 사진을 올려주세요
+              </span>
             </div>
             <div className="signup-right">
               <div className="line dup-check">

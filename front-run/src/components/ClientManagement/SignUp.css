@@ -51,7 +51,7 @@
 
 .signup-left .signup-left-image {
   position: absolute;
-  top: 15%;
+  top: 0%;
 
   width: 300px;
   height: 300px;
@@ -63,7 +63,7 @@
 }
 .signup-uploaded-image {
   position: absolute;
-  top: 15%;
+  top: 0%;
 
   width: 300px;
   height: 300px;
@@ -72,10 +72,10 @@
 
 .signup-left .signup-left-addimage {
   position: absolute;
-  top: 0;
+  bottom: 30%;
 
   font-weight: 700;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 54px;
   text-align: center;
 

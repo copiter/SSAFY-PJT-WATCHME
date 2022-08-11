@@ -1,10 +1,7 @@
 package com.A108.Watchme.Http;
 
-import com.A108.Watchme.oauth.entity.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
@@ -48,6 +45,11 @@ public enum Code {
     C544(544, "START DATE ERROR"),
     C550(550, "TOO MANY PEOPLE"),
     C551(551, "ROOM PWD FAILED"),
+    C564(504, "Invalid Group pwd"),
+    C565(505, "Not Authorized"),
+    C566(506, "Banned"),
+    C567(507, "Applied Already"),
+    C509(509, "ALREADY MEMBER"),
     C599(599, "DATE PARSING FAILED" ),
     C598(598, "INVALID POINT VALUE" ),
     C597(597, "KAKAO PAY ERROR" ),
@@ -61,4 +63,3 @@ public enum Code {
 
 
 }
-

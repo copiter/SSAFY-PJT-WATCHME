@@ -111,10 +111,12 @@ function SprintCreate(props) {
               name="img"
               accept="image/*"
               onChange={saveFileImage}
-              className="group-image__upload"
+              className="sprint-image__upload"
               ref={imgeRef}
             />
-            <div className="group-image__message">스프린트 사진을 올리세요</div>
+            <div className="sprint-image__message">
+              스프린트 사진을 올려주세요
+            </div>
           </div>
           <div className="sprint-infor">
             {/*우측부분*/}

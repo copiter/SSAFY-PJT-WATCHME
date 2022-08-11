@@ -86,7 +86,7 @@ function SignUp() {
     const email = emailInputRef.current.value;
     //API
     const config = {
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({ email: email }),
       headers: {
         "Content-Type": "application/json",
@@ -113,7 +113,7 @@ function SignUp() {
     const nickName = nickNameInputRef.current.value;
     //API
     const config = {
-      method: "GET",
+      method: "POST",
       body: JSON.stringify({ nickName: nickName }),
       headers: {
         "Content-Type": "application/json",

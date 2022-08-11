@@ -25,7 +25,7 @@ const Login = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    const url = `${FETCH_URL}/members/auth/login`;
+    const url = `${FETCH_URL}/login`;
     console.log(url);
 
     // Interacting with server

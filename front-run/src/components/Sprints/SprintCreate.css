@@ -1,0 +1,29 @@
+/* 배치 */
+.form-frame .sprint-image {
+  width: 279px;
+  height: 500px;
+  background: #eff0f2;
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.form-frame .sprint-infor {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 42px;
+}
+
+/* 이미지 */
+.sprint-image .sprint-image__upload {
+  margin: 50px 0 30px 0;
+
+  width: 160px;
+  height: 160px;
+  background: #d9d9d9;
+  text-indent: -10000px;
+
+  border-radius: 50%;
+}

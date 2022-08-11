@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
@@ -20,4 +21,5 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Page<Room> findAllByStatusAndRoomNameContaining(Status status, String title, Pageable pageable);
 
     Page<Room> findAllByRoomCtgAndStatusAndRoomNameContaining(Category roomCtg, Status status,  String title, Pageable pageable);
+
 }

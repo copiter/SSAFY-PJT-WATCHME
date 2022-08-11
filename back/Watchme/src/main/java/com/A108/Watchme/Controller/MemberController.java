@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 
 @RestController
+//@RequestMapping("/members")
 public class MemberController {
     @Autowired
     private MemberService memberService;
@@ -34,14 +35,9 @@ public class MemberController {
     @Autowired
     private S3Uploader s3Uploader;
 
-    @ApiOperation(value="회원가입", notes="성공시 200코드를 반환합니다.")
-//    @ApiImplicitParams({
-//            @ApiImplicitParam(name="email", value="유저 EMAIL"),
-//            @ApiImplicitParam(name="password", value="유저 비밀번호")
-//    })
-    @PostMapping(value="/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value="/auth/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public ApiResponse signUp(@ApiParam @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO, @ApiParam @RequestPart(value = "files") MultipartFile images) throws ParseException {
+    public ApiResponse signUp( @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO,@RequestPart(value = "files",required = false) MultipartFile images) throws ParseException {
         String url="https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png";
         try{
             url = s3Uploader.upload(images, "Watchme");
@@ -58,7 +54,7 @@ public class MemberController {
         System.out.println(apiResponse.getResponseData());
         return apiResponse;
     }
-    @PostMapping("/logout")
+    @PostMapping("/auth/logout")
     @ResponseBody
     public ApiResponse logout(HttpServletRequest request,
                               HttpServletResponse response, Authentication authentication){
@@ -70,14 +66,14 @@ public class MemberController {
         return apiResponse;
     }
 
-    @PostMapping("/social-signup")
+    @PostMapping("/auth/social-signup")
     @ResponseBody
     public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
                                     HttpServletResponse response, Authentication authentication) throws ParseException {
         return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
     }
 
-    @PostMapping("/find-email")
+    @PostMapping("/auth/find-email")
     @ResponseBody
     public ApiResponse findEmail(@RequestBody FindEmailRequestDTO findEmailRequestDTO){
         System.out.println(findEmailRequestDTO.getNickName());
@@ -85,9 +81,44 @@ public class MemberController {
         return result;
     }
 
+
     @GetMapping(value = "/members/mygroup")
     @ResponseBody
     public ApiResponse memberGroup(){
         return memberService.memberGroup();
+
+    @PostMapping("/find-password")
+    public ApiResponse findPW(@RequestBody FindPwDTO findPwDTO) {
+        return memberService.findPW(findPwDTO);
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse resetPW(@RequestBody ResetPwDTO resetPwDTO){
+        return memberService.resetPW(resetPwDTO);
+    }
+
+    @PostMapping("/reset-password-mainpages")
+    public ApiResponse resetPwMp(@RequestBody ResetPwMpDTO resetPwMpDTO){
+        return memberService.resetPwMp(resetPwMpDTO);
+    }
+
+    @PostMapping(value="/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseBody
+    public ApiResponse memberUpdate(@RequestPart(value = "data") UpdateRequestDTO updateRequestDTO, @RequestPart(value = "files", required = false) MultipartFile image) throws ParseException {
+        // 프로필 이미지 수정시 삭제?
+        return memberService.memberUpdate(updateRequestDTO, image);
+    }
+
+    @PostMapping("/emails-check")
+    @ResponseBody
+    public ApiResponse emailCheck(@RequestBody CheckEmailDTO checkEmailDTO){
+        return memberService.emailCheck(checkEmailDTO);
+    }
+
+    @PostMapping("/nickName-check")
+    @ResponseBody
+    public ApiResponse nickNameCheck(@RequestBody CheckNickNameDTO checkNickNameDTO){
+        return memberService.nickNameCheck(checkNickNameDTO);
+
     }
 }

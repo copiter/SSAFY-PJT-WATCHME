@@ -14,12 +14,10 @@ function RoomCreate() {
     description: "",
     categoryName: "", //TAG1, TAG2, TAG3
     num: 0,
-    roomPublic: "Private",
     endTime: "",
     display: 1,
   });
   const navigate = useNavigate();
-
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -28,21 +26,26 @@ function RoomCreate() {
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
-  const url = `${FETCH_URL}/addRoom`;
+  const url = `${FETCH_URL}/rooms`;
   //Otpion
+  function getCookie(name) {
+      const cookie = document.cookie
+      .split(";")
+      .map((cookie) => cookie.split("="))
+      .filter((cookie) => cookie[0] === name);
+      return cookie[0][1];
+  }
+  try{
+    getCookie()
+  }
+  catch{ 
+    navigate("/" );
+  }
 
   const imgeRef = useRef();
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
@@ -51,7 +54,7 @@ function RoomCreate() {
       new Blob([JSON.stringify(inputs)], { type: "application/json" })
     );
 
-    console.log(url);
+    console.log(inputs);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -61,8 +64,6 @@ function RoomCreate() {
     })
       .then((response) => {
         if (response.ok) {
-          console.log("C1");
-          console.log(response);
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
@@ -74,10 +75,7 @@ function RoomCreate() {
       })
       .then((result) => {
         if (result != null) {
-          console.log("방생성 완료");
-          console.log(result);
-          console.log("CK");
-          console.log(result.responseData.roomId);
+          alert("방생성이 완료되었습니다.");
           navigate("/RoomDetail/:" + result.responseData.roomId);
           window.location.reload(); //리다이렉션관련
         }
@@ -172,12 +170,19 @@ function RoomCreate() {
                 </select>
               </div>
               <div className="line">
+                <span>종료기간</span>
+                    <input
+                      type="date"
+                      name="endTime"
+                      value={inputs.endTime || ""}
+                      onChange={handleChange}
+                    />
                 <span>비공개</span>
                 <label className="switch">
                   <input
                     type="checkbox"
-                    name="roomPublic"
-                    value={inputs.roomPublic || ""}
+                    name="display"
+                    value={inputs.display || ""}
                     onChange={handleChange}
                   />
                   <span className="slider round"></span>
@@ -200,18 +205,17 @@ function RoomCreate() {
               {/*규칙입니다. 현재 진행파트아닙니다. */}
               <div className="rules-title">📝 규칙</div>
               <div className="rules-box">
-                {/*규칙 미정이라서 편하신대로 임시본으로 넣으시면됩니다.*/}
                 <label>
                   <input type="checkbox" />
-                  공부루틴 설정
+                  감시없음
                 </label>
                 <label>
                   <input type="checkbox" />
-                  딴짓 감지
+                  스마트폰감지
                 </label>
                 <label>
                   <input type="checkbox" />
-                  얼굴인식
+                  졸음감지
                 </label>
                 <label>
                   <input type="checkbox" />

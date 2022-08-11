@@ -1,5 +1,7 @@
 package com.A108.Watchme.oauth.token;
 
+import com.A108.Watchme.Exception.CustomException;
+import com.A108.Watchme.Http.Code;
 import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

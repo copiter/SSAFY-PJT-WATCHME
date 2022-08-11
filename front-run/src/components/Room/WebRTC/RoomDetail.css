@@ -1,3 +1,11 @@
 .stream-container {
 	padding: 0;
 }
+.linksUl{
+	position: relative;
+	width: 100%;
+}
+.linksLi{
+	float:left;
+	width: 33%;
+}

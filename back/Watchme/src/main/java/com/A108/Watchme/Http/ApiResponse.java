@@ -22,7 +22,10 @@ public class ApiResponse {
         this.responseData = responseData;
     }
 
-
+    public void setCodeMsg(Code code){
+        this.setCode(code.getErrCode());
+        this.setMessage(code.getMessage());
+    }
     public void setMessage(String message) {
         this.message = message;
     }

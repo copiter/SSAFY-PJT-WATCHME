@@ -6,11 +6,11 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor @NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class SprintGetResDTO {
     private Long sprintId;
-    private Long roomId;
     private String sprintName;
     private String description;
     private String goal;
@@ -29,5 +29,5 @@ public class SprintGetResDTO {
     private Integer penaltySum;
     private Integer myStudy;
     private Integer myPenalty;
-
+    private Integer fee;
 }

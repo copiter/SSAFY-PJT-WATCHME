@@ -12,7 +12,15 @@ import com.A108.Watchme.VO.ENUM.*;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
+import com.A108.Watchme.Repository.MemberEmailKeyRepository;
+import com.A108.Watchme.Repository.MemberInfoRepository;
+import com.A108.Watchme.Repository.MemberRepository;
+import com.A108.Watchme.Repository.RefreshTokenRepository;
+import com.A108.Watchme.VO.ENUM.ProviderType;
+import com.A108.Watchme.VO.ENUM.Role;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.member.MemberEmailKey;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.RefreshToken;
 import com.A108.Watchme.oauth.entity.UserPrincipal;
@@ -27,6 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +44,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -47,11 +60,14 @@ public class MemberService {
     private final MemberGroupRepository memberGroupRepository;
     private final MRLRepository mrlRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberEmailKeyRepository memberEmailKeyRepository;
     private final AuthenticationManager authenticationManager;
     private final AppProperties appProperties;
     private final AuthTokenProvider tokenProvider;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final S3Uploader s3Uploader;
+    private final MailService mailService;
+
 
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
@@ -181,8 +197,6 @@ public class MemberService {
 
     public ApiResponse findEmail(FindEmailRequestDTO findEmailRequestDTO) {
         ApiResponse result = new ApiResponse();
-
-        System.out.println(findEmailRequestDTO.getNickName());
         Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
 
         if(member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())){
@@ -280,6 +294,210 @@ public class MemberService {
 
 
         return result;
+    public ApiResponse findPW(FindPwDTO resetPwDTO) {
+        ApiResponse result = new ApiResponse();
+
+        Member member = memberRepository.findByEmail(resetPwDTO.getEmail());
+
+        if(member == null){
+            result.setCode(400);
+            result.setMessage("이메일 입력이 잘못 되었습니다.");
+            return result;
+        }
+        if(!resetPwDTO.getName().equals(member.getMemberInfo().getName())){
+            result.setCode(400);
+            result.setMessage("이름 입력이 잘못 되었습니다.");
+            return result;
+        }
+
+        String uuid = UUID.randomUUID().toString();
+
+        memberEmailKeyRepository.save(MemberEmailKey.builder()
+                .member(member)
+                .emailKey((uuid))
+                .createdAt(new Date())
+                .build());
+
+
+        // localhost:81 바꿔주기;
+        String email = member.getEmail();
+        String subject = "Watchme 사이트 비밀번호 초기화 메일입니다. ";
+        String text = "<p>Watchme 사이트 비밀번호를 초기화 합니다. </p><p>아래 링크를 클릭하셔서 비밀번호 초기화를 완료하세요.</p>"
+                + "<form action='http://localhost:3000/changePWD' method='GET'>"
+                + "<input type='hidden' name='emailKey' value= '"+ uuid+ "'/> "
+                + "<input type='submit' value='비밀번호 초기화'/>"
+                + "</form></div>";
+        mailService.sendMail(email, subject, text);
+        result.setMessage("EMAIL SEND SUCCESS");
+        return result;
+    }
+
+    public ApiResponse resetPW(ResetPwDTO resetPwDTO)  {
+        ApiResponse result = new ApiResponse();
+        System.out.println(resetPwDTO.getEmailKey());
+        MemberEmailKey memberEmailKey =  memberEmailKeyRepository.findByEmailKey(resetPwDTO.getEmailKey());
+
+        if(memberEmailKey != null){
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DATE, - 1);
+
+            System.out.println(memberEmailKey);
+
+            if(memberEmailKey.getCreatedAt().compareTo(  cal.getTime() ) < 0){
+                // 유효 기간을 넘겼다.
+                // 삭제 : 이메일 초기화 키
+
+                // 시간 제한을 넘긴 인증 코드 삭제
+                memberEmailKeyRepository.deleteById(memberEmailKey.getId());
+
+                result.setMessage("EMAIL CODE HAS EXPIRED");
+                result.setCode(400);
+
+                return result;
+            }
+
+            Member member = memberRepository.findById(memberEmailKey.getId()).get();
+            if(member != null){
+                String encPassword = bCryptPasswordEncoder.encode(resetPwDTO.getPassword());
+                member.setPwd(encPassword);
+
+                memberEmailKeyRepository.deleteById(member.getId());
+
+                result.setMessage("PASSWORD RESET SUCCESS");
+                result.setCode(200);
+                return result;
+            }
+
+            result.setMessage("PASSWORD RESET FAIL");
+            result.setCode(400);
+            return result;
+
+        }
+
+        else{
+            result.setMessage("EMAIL CODE ALREADY USED");
+            result.setCode(400);
+
+            return result;
+        }
+    }
+
+    public ApiResponse resetPwMp(ResetPwMpDTO resetPwMpDTO) {
+        ApiResponse result = new ApiResponse();
+
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+
+                UserDetails currUser = (UserDetails) authentication.getPrincipal();
+                Member mem = memberRepository.findByEmail(currUser.getUsername());
+                Member member = memberRepository.findById(mem.getId()).get();
+
+                if(bCryptPasswordEncoder.matches(resetPwMpDTO.getPassword(), member.getPwd())){
+                    System.out.println(resetPwMpDTO.getPassword());
+                    System.out.println(resetPwMpDTO.getNewPassword());
+
+                    String encPassword = bCryptPasswordEncoder.encode(resetPwMpDTO.getNewPassword());
+                    System.out.println(member.getPwd());
+                    System.out.println(encPassword);
+
+                    member.setPwd(encPassword);
+
+                    result.setMessage("RESET PASSWORD SUCCESS");
+                    result.setCode(200);
+
+                    System.out.println(member.getPwd());
+                    System.out.println(encPassword);
+                }
+                else {
+                    result.setMessage("PASSWORD IS NOT CORRECT");
+                    result.setCode(400);
+                }
+            }
+            else {
+                result.setMessage("NOT LOGGINED");
+                result.setCode(400);
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            result.setCode(500);
+        }
+        return result;
+    }
+
+    @Transactional
+    public ApiResponse memberUpdate(UpdateRequestDTO updateRequestDTO, MultipartFile image) {
+        ApiResponse result = new ApiResponse();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+                System.out.println("heelo");
+
+                Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
+
+                if(currUser.isPresent()) {
+                    String url = currUser.get().getMemberInfo().getImageLink();
+                    try {
+                        url = s3Uploader.upload(image, "Watchme");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        currUser.get().setNickName(updateRequestDTO.getNickName());
+                        currUser.get().getMemberInfo().setName(updateRequestDTO.getName());
+                        currUser.get().getMemberInfo().setBirth(updateRequestDTO.getBirth());
+                        currUser.get().getMemberInfo().setGender(updateRequestDTO.getGender());
+                        currUser.get().getMemberInfo().setDescription(updateRequestDTO.getDescription());
+                        memberRepository.save(currUser.get());
+                        memberInfoRepository.save(currUser.get().getMemberInfo());
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    result.setCode(200);
+                    result.setMessage("UPDATE SUCCESS");
+
+                }
+            }
+        }catch (Exception e){
+            result.setCode(400);
+            result.setMessage("LOGIN USER ONLY");
+        }
+
+        return result;
+    }
+
+    public ApiResponse emailCheck(CheckEmailDTO checkEmailDTO) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        Member member = memberRepository.findByEmail(checkEmailDTO.getEmail());
+
+        if(member != null){
+            apiResponse.setCode(500);
+            apiResponse.setMessage("UNAVAILABLE EMAIL");
+            return apiResponse;
+        }
+        apiResponse.setCode(200);
+        apiResponse.setMessage("AVAILABLE EMAIL");
+        return apiResponse;
+
+    }
+
+    public ApiResponse nickNameCheck(CheckNickNameDTO checkNickNameDTO) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
+        if(member != null) {
+            apiResponse.setCode(500);
+            apiResponse.setMessage("UNAVAILABLE NiCK NAME");
+            return apiResponse;
+        }
+
+        apiResponse.setCode(200);
+        apiResponse.setMessage("AVAILABLE NiCK NAME");
+        return apiResponse;
 
     }
 }

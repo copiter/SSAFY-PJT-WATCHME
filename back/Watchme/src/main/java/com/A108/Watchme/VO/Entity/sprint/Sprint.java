@@ -4,14 +4,19 @@ import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.group.Group;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.room.Room;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Sprint {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,8 +38,8 @@ public class Sprint {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToOne
-    @JoinColumn(name = "sprint_info")
+    @OneToOne(mappedBy = "sprint", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private SprintInfo sprintInfo;
 
     @OneToMany(mappedBy = "sprint")

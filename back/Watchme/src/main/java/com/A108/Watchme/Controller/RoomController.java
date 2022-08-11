@@ -4,13 +4,16 @@ import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Room.JoinRoomDTO;
 import com.A108.Watchme.DTO.Room.PostRoomReqDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Service.RoomService;
 import io.swagger.annotations.*;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,11 +37,17 @@ public class RoomController {
     @GetMapping("/rooms")
     public ApiResponse getRoom(@RequestParam(required = false, value="category") String ctgName,
                                @RequestParam(required = false, value="keyword") String keyword,
-                               @RequestParam(value="page", required = false) Integer page) {
+                               @RequestParam(value="page", required = false) String page){
+        System.out.println("page"+ page);
         int pages = 1;
-        if(page!=null){
-            pages=page;
+        try{
+            if(page!=null){
+                pages=Integer.parseInt(page);
+            }
+        } catch (Exception e){
+            throw new CustomException(Code.C521);
         }
+
         return roomService.getRoomList(ctgName, pages, keyword);
     }
 

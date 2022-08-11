@@ -1,6 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.Room.*;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.*;
@@ -91,9 +92,6 @@ public class RoomService {
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
                 joinRoomFunc(room.getId());
-                System.out.println("TEST2");
-                result.setCode();
-                result.setMessage("SUCCESS ADD&JOIN ROOM");
                 result.setResponseData("roomId", room.getId());
 
             }
@@ -109,36 +107,32 @@ public class RoomService {
 
     public ApiResponse getRoomList(String ctgName, int page, String keyword) {
         ApiResponse result = new ApiResponse();
-
-        System.out.println("roomService getRoomList : keyword = " + keyword);
-
         PageRequest pageRequest = PageRequest.of(page - 1, 10);
         List<Room> roomList;
+        try {
+            if (ctgName != null) {
+                CategoryList name = CategoryList.valueOf(ctgName);
+                Category category = categoryRepository.findByName(name);
+                if (keyword == null) {
+                    roomList = roomRepository.findAllByRoomCtgAndStatus(category, pageRequest, Status.YES).stream().collect(Collectors.toList());
+                } else {
+                    roomList = roomRepository.findAllByRoomCtgAndStatusAndRoomNameContaining(category, Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
+                }
 
-        if (ctgName != null) {
-
-            CategoryList name = CategoryList.valueOf(ctgName);
-
-
-            Category category = categoryRepository.findByName(name);
-
-            if (keyword == null) {
-                System.out.println("ctg");
-                roomList = roomRepository.findAllByRoomCtgAndStatus(category, pageRequest, Status.YES).stream().collect(Collectors.toList());
             } else {
-                System.out.println("ctg&search");
-                roomList = roomRepository.findAllByRoomCtgAndStatusAndRoomNameContaining(category, Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
-            }
+                if (keyword == null) {
+                    roomList = roomRepository.findAllByStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
+                } else {
+                    roomList = roomRepository.findAllByStatusAndRoomNameContaining(Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
+                }
 
-        } else {
-            if (keyword == null) {
-                System.out.println("nullAndnull");
-                roomList = roomRepository.findAllByStatusOrderByViewDesc(pageRequest, Status.YES).stream().collect(Collectors.toList());
-            } else {
-                System.out.println("search");
-                roomList = roomRepository.findAllByStatusAndRoomNameContaining(Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
             }
+        } catch(Exception e){
+            throw new CustomException(Code.C521);
+        }
 
+        if(roomList.isEmpty()){
+            throw new CustomException(Code.C520);
         }
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();

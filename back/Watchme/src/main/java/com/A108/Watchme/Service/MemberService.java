@@ -3,12 +3,15 @@ package com.A108.Watchme.Service;
 import com.A108.Watchme.Config.properties.AppProperties;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
-import com.A108.Watchme.DTO.myPage.MyData;
-import com.A108.Watchme.DTO.myPage.MyGroup;
-import com.A108.Watchme.DTO.myPage.WrapperMy;
-import com.A108.Watchme.Exception.AuthenticationException;
+import com.A108.Watchme.DTO.myPage.myPage.MemberDTO;
+import com.A108.Watchme.DTO.myPage.myGroup.MyData;
+import com.A108.Watchme.DTO.myPage.myGroup.MyGroup;
+import com.A108.Watchme.DTO.myPage.myGroup.WrapperMy;
 
+import com.A108.Watchme.DTO.myPage.myPage.PenaltyDTO;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.*;
 import com.A108.Watchme.VO.Entity.MemberGroup;
@@ -21,6 +24,7 @@ import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.ENUM.Role;
 import com.A108.Watchme.VO.ENUM.Status;
+import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberEmailKey;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
@@ -43,6 +47,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -207,8 +212,7 @@ public class MemberService {
         Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
 
         if (member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())) {
-            result.setMessage("FIND EMAIL FAIL");
-            result.setCode(400);
+            throw new CustomException(Code.C504);
         } else {
             result.setMessage("FIND EMAIL SUCCESS");
             result.setResponseData("email", member.getEmail());
@@ -306,16 +310,11 @@ public class MemberService {
 
             Member member = memberRepository.findByEmail(resetPwDTO.getEmail());
 
-            if (member == null) {
-                result.setCode(400);
-                result.setMessage("이메일 입력이 잘못 되었습니다.");
-                return result;
+            if (member == null || !member.getMemberInfo().getName().equals(resetPwDTO.getName())) {
+                throw new CustomException(Code.C504);
             }
-            if (!resetPwDTO.getName().equals(member.getMemberInfo().getName())) {
-                result.setCode(400);
-                result.setMessage("이름 입력이 잘못 되었습니다.");
-                return result;
-            }
+
+
 
             String uuid = UUID.randomUUID().toString();
 
@@ -341,32 +340,31 @@ public class MemberService {
 
         public ApiResponse resetPW (ResetPwDTO resetPwDTO){
             ApiResponse result = new ApiResponse();
-            System.out.println(resetPwDTO.getEmailKey());
             MemberEmailKey memberEmailKey = memberEmailKeyRepository.findByEmailKey(resetPwDTO.getEmailKey());
-
-            if (memberEmailKey != null) {
+            if(memberEmailKey == null){
+                throw new CustomException(Code.C505);
+            }
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.DATE, -1);
 
-                System.out.println(memberEmailKey);
-
                 if (memberEmailKey.getCreatedAt().compareTo(cal.getTime()) < 0) {
                     // 유효 기간을 넘겼다.
                     // 삭제 : 이메일 초기화 키
-
                     // 시간 제한을 넘긴 인증 코드 삭제
                     memberEmailKeyRepository.deleteById(memberEmailKey.getId());
 
-                    result.setMessage("EMAIL CODE HAS EXPIRED");
-                    result.setCode(400);
+                    throw new CustomException(Code.C506);
 
-                    return result;
+                }
+                Member member;
+                try{
+                    member = memberRepository.findById(memberEmailKey.getId()).get();
+                } catch (Exception e){
+                    throw new CustomException(Code.C504);
                 }
 
-                Member member = memberRepository.findById(memberEmailKey.getId()).get();
-                if (member != null) {
                     String encPassword = bCryptPasswordEncoder.encode(resetPwDTO.getPassword());
                     member.setPwd(encPassword);
 
@@ -375,18 +373,6 @@ public class MemberService {
                     result.setMessage("PASSWORD RESET SUCCESS");
                     result.setCode(200);
                     return result;
-                }
-
-                result.setMessage("PASSWORD RESET FAIL");
-                result.setCode(400);
-                return result;
-
-            } else {
-                result.setMessage("EMAIL CODE ALREADY USED");
-                result.setCode(400);
-
-                return result;
-            }
         }
 
         public ApiResponse resetPwMp (ResetPwMpDTO resetPwMpDTO){
@@ -577,6 +563,83 @@ public class MemberService {
         apiResponse.setMessage("SUCCESS MY SPRINT");
         apiResponse.setResponseData("sprints", sprintList);
         return  apiResponse;
+    }
+
+    // 멤버 정보를 가지고 오는 서비스 함수
+    public ApiResponse getMyPage(com.A108.Watchme.VO.Entity.member.Member currUser, HttpServletResponse response) {
+        ApiResponse result = new ApiResponse();
+
+        MemberInfo currUserInfo = currUser.getMemberInfo();
+
+        // member
+        MemberDTO resMemberDTO = MemberDTO.builder()
+                .nickName(currUser.getNickName())
+                .profileImage(currUserInfo.getImageLink())
+                .point(currUserInfo.getPoint())
+                .description(currUserInfo.getDescription())
+                .studyTimeToday(currUserInfo.getStudyTimeDay())
+                .studyTimeWeek(currUserInfo.getStudyTimeWeek())
+                .studyTimeMonth(currUserInfo.getStudyTimeMonth())
+                .studyTimeTotal(currUserInfo.getStudyTime())
+                .build();
+
+        result.setResponseData("member", resMemberDTO);
+
+        // rules
+        List<String> resRules = new LinkedList<>();
+
+        for (Mode m : Mode.values()) {
+            resRules.add(m.toString());
+        }
+
+        result.setResponseData("rules", resRules);
+
+
+
+
+        // TODO: 1.일자 별 페널티를 배열에 담아서 반환
+        //       2.일자 별 공부시간을 배열에 담아서 반환
+
+        // penaltyByDay
+        // 1.일자별 패널티
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, 0);
+
+        int[] penaltyByDay = new int[Calendar.getInstance().get(Calendar.DATE)];
+
+        List<PenaltyLog> myPenaltyLog = penaltyLogRegistory.findByMember_idAndCreatedAtAfter(currUser.getId(), Date.from(cal.toInstant()));
+
+        myPenaltyLog.stream().forEach(x -> penaltyByDay[x.getCreatedAt().getDate() - 1] += 1);
+
+        result.setResponseData("penaltyByDay", penaltyByDay);
+
+
+        // studyByDay
+        // 2.일자별 공부 시간
+        int[] studyByDay = new int[Calendar.getInstance().get(Calendar.DATE)];
+
+        List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), Date.from(cal.toInstant()));
+
+        myStudyLog.stream().forEach(x -> studyByDay[x.getStartAt().getDate() - 1] += x.getStudyTime());
+
+
+        result.setResponseData("studyByDay", studyByDay);
+
+
+        // 종류별 패털티 횟수
+        Map<String, Integer> resMyPenalty = new LinkedHashMap<>();
+
+        for (Mode m :
+                Mode.values()) {
+            resMyPenalty.put(m.toString(), penaltyLogRegistory.countByMember_idAndMode(currUser.getId(),m));
+        }
+
+        result.setResponseData("penalty", resMyPenalty);
+
+        result.setCode(200);
+        result.setMessage("SUCCESS GET MEMBER INFO");
+
+        return result;
     }
 }
 

@@ -8,6 +8,7 @@ import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.utils.CookieUtil;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.Optional;
 
 @RestController
 //@RequestMapping("/members")
@@ -41,12 +43,12 @@ public class MemberController {
 
     @PostMapping(value="/auth/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public ApiResponse signUp( @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO,@RequestPart(value = "files",required = false) MultipartFile images) throws ParseException {
+    public ApiResponse signUp(@Valid @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO,@RequestPart(value = "files",required = false) MultipartFile images) throws ParseException {
         String url="https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png";
         try{
             url = s3Uploader.upload(images, "Watchme");
         } catch (Exception e){
-            e.printStackTrace();
+            throw new CustomException(Code.C512);
         }
         return memberService.memberInsert(signUpRequestDTO, url);
     }
@@ -55,13 +57,18 @@ public class MemberController {
     public ApiResponse login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
 
         ApiResponse apiResponse = memberService.login(request,response, loginRequestDTO);
-        System.out.println(apiResponse.getResponseData());
         return apiResponse;
     }
     @PostMapping("/auth/logout")
     @ResponseBody
     public ApiResponse logout(HttpServletRequest request,
-                              HttpServletResponse response, Authentication authentication){
+                              HttpServletResponse response){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try{
+            Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        } catch (Exception e){
+            throw new CustomException(Code.C501);
+        }
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setMessage("LOGOUT SUCCESS");
@@ -72,14 +79,14 @@ public class MemberController {
 
     @PostMapping("/auth/social-signup")
     @ResponseBody
-    public ApiResponse socialSignUp(@RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
+    public ApiResponse socialSignUp(@Valid @RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
                                     HttpServletResponse response, Authentication authentication) throws ParseException {
         return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
     }
 
     @PostMapping("/auth/find-email")
     @ResponseBody
-    public ApiResponse findEmail(@RequestBody FindEmailRequestDTO findEmailRequestDTO){
+    public ApiResponse findEmail(@Valid @RequestBody FindEmailRequestDTO findEmailRequestDTO){
         System.out.println(findEmailRequestDTO.getNickName());
         ApiResponse result = memberService.findEmail(findEmailRequestDTO);
         return result;
@@ -92,37 +99,37 @@ public class MemberController {
         return memberService.memberGroup();
     }
 
-    @PostMapping("/find-password")
-    public ApiResponse findPW(@RequestBody FindPwDTO findPwDTO) {
+    @PostMapping("/find-pwd")
+    public ApiResponse findPW(@Valid @RequestBody FindPwDTO findPwDTO) {
         return memberService.findPW(findPwDTO);
     }
 
-    @PostMapping("/reset-password")
-    public ApiResponse resetPW(@RequestBody ResetPwDTO resetPwDTO){
+    @PostMapping("/reset-pwd")
+    public ApiResponse resetPW(@Valid @RequestBody ResetPwDTO resetPwDTO){
         return memberService.resetPW(resetPwDTO);
     }
 
-    @PostMapping("/reset-password-mainpages")
-    public ApiResponse resetPwMp(@RequestBody ResetPwMpDTO resetPwMpDTO){
+    @PostMapping("/change-pwd")
+    public ApiResponse resetPwMp(@Valid @RequestBody ResetPwMpDTO resetPwMpDTO){
         return memberService.resetPwMp(resetPwMpDTO);
     }
 
     @PostMapping(value="/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    public ApiResponse memberUpdate(@RequestPart(value = "data") UpdateRequestDTO updateRequestDTO, @RequestPart(value = "files", required = false) MultipartFile image) throws ParseException {
+    public ApiResponse memberUpdate(@Valid @RequestPart(value = "data") UpdateRequestDTO updateRequestDTO, @RequestPart(value = "files", required = false) MultipartFile image) throws ParseException {
         // 프로필 이미지 수정시 삭제?
         return memberService.memberUpdate(updateRequestDTO, image);
     }
 
     @PostMapping("/emails-check")
     @ResponseBody
-    public ApiResponse emailCheck(@RequestBody CheckEmailDTO checkEmailDTO){
+    public ApiResponse emailCheck(@Valid @RequestBody CheckEmailDTO checkEmailDTO){
         return memberService.emailCheck(checkEmailDTO);
     }
 
     @PostMapping("/nickName-check")
     @ResponseBody
-    public ApiResponse nickNameCheck(@RequestBody CheckNickNameDTO checkNickNameDTO){
+    public ApiResponse nickNameCheck(@Valid @RequestBody CheckNickNameDTO checkNickNameDTO){
         return memberService.nickNameCheck(checkNickNameDTO);
     }
 
@@ -139,4 +146,35 @@ public class MemberController {
 
         return memberService.getMySprints(memberId);
     }
+
+    @GetMapping("/members")
+    @ResponseBody
+    public ApiResponse memberInfo(HttpServletResponse response){
+        ApiResponse apiResponse;
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication.getPrincipal().equals("anonymousUser")){
+            apiResponse = new ApiResponse();
+            apiResponse.setCode(400);
+            apiResponse.setMessage("NOT LOGIN");
+            return apiResponse;
+        }
+
+        // 일반 로그인의 경우
+        Long currUserId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+        if(checkCurrUser.isPresent()){
+            apiResponse = memberService.getMyPage(checkCurrUser.get(), response);
+        } else{
+            apiResponse = new ApiResponse();
+            apiResponse.setCode(400);
+            apiResponse.setMessage("NO SUCH USER");
+        }
+
+        return apiResponse;
+
+    }
+
 }

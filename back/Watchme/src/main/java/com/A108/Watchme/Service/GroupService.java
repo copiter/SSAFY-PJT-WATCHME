@@ -126,46 +126,49 @@ public class GroupService {
 
         List<GroupListResDTO> getGroupList = new LinkedList<>();
 
-        for (Group g : groupList) {
-            // endAt이 현재보다 이후인 (즉, 진행중인) sprint(들)을 collect
-            List<Sprint> sprint = new LinkedList<>();
+        if(!groupList.isEmpty()) {
+            for (Group g : groupList) {
+                // endAt이 현재보다 이후인 (즉, 진행중인) sprint(들)을 collect
+                List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).collect(Collectors.toList());
 
-            g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).map(x -> sprint.add(x));
+                // 첫번째 sprint를 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
+                Sprint currSprint;
+
+                getGroupList.add(GroupListResDTO.builder()
+                        .id(g.getId())
+                        .name(g.getGroupName())
+                        .description(g.getGroupInfo().getDescription())
+                        .currMember(g.getGroupInfo().getCurrMember())
+                        .maxMember(g.getGroupInfo().getMaxMember())
+                        .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
+                        .imgLink(g.getGroupInfo().getImageLink())
+                        .createdAt(format.format(g.getCreatedAt()))
+                        .display(g.getDisplay())
+                        .view(g.getView())
+                        // 현재 진행중인 sprint가 있다면
+                        .sprint(!sprint.isEmpty() ?
+                                SprintDTO.builder()
+                                        .name((currSprint = sprint.get(0)).getName())
+                                        .description(currSprint.getSprintInfo().getDescription())
+                                        .startAt(format.format(currSprint.getSprintInfo().getStartAt()))
+                                        .endAt(format.format(currSprint.getSprintInfo().getEndAt()))
+                                        .build() : null
+                        )
+                        .build()
+                );
+
+            }
+
+            result.setResponseData("groups", getGroupList);
 
 
-            // 첫번째 sprint를 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
-            Sprint currSprint;
-
-            getGroupList.add(GroupListResDTO.builder()
-                    .id(g.getId())
-                    .name(g.getGroupName())
-                    .description(g.getGroupInfo().getDescription())
-                    .currMember(g.getGroupInfo().getCurrMember())
-                    .maxMember(g.getGroupInfo().getMaxMember())
-                    .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
-                    .imgLink(g.getGroupInfo().getImageLink())
-                    .createdAt(format.format(g.getCreatedAt()))
-                    .display(g.getDisplay())
-                    .view(g.getView())
-                    // 현재 진행중인 sprint가 있다면
-                    .sprint(!sprint.isEmpty() ?
-                            SprintDTO.builder()
-                                    .name((currSprint = sprint.get(0)).getName())
-                                    .description(currSprint.getSprintInfo().getDescription())
-                                    .startAt(format.format(currSprint.getSprintInfo().getStartAt()))
-                                    .endAt(format.format(currSprint.getSprintInfo().getEndAt()))
-                                    .build() : null
-                    )
-                    .build()
-            );
-
+            result.setCode(200);
+            result.setMessage("GETROOMS SUCCESS");
+        }else{
+            result.setCode(400);
+            result.setMessage("No group result");
         }
 
-        result.setResponseData("groups", getGroupList);
-
-
-        result.setMessage("GETROOMS SUCCESS");
-        result.setCode(200);
         return result;
     }
 

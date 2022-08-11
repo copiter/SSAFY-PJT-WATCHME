@@ -12,6 +12,8 @@ public enum Code {
     C501 (501, "INVALID JWT"),
     C502 (502, "LOGIN FAILED"),
     C503 (503, "NOT MEMBER"),
+    C504(504, "NO MEMBER"),
+    C509(509, "ALREADY MEMBER"),
 
     // 520 에서부터 ROOM관련 ERROR
     C510 (510, "NO GROUP"),
@@ -51,7 +53,9 @@ public enum Code {
     C599(599, "DATE PARSING FAILED" ),
     C598(598, "INVALID POINT VALUE" ),
     C597(597, "KAKAO PAY ERROR" ),
-    C596(596, "DTO ERROR");
+    C596(596, "DTO ERROR"),
+    C505(505, "INVALID EMAIL KEY"),
+    C506(506, "EMAIL KEY EXPIRED" );
 
     private int errCode;
 

@@ -16,14 +16,14 @@ function MyPage() {
 
   const url = `${FETCH_URL}/members`;
 
+  function getCookie(name) {
+    const cookie = document.cookie
+      .split(";")
+      .map((cookie) => cookie.split("="))
+      .filter((cookie) => cookie[0] === name);
+    return cookie[0][1];
+  }
   useEffect(() => {
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
     fetch(url, {
       headers: {
         accessToken: getCookie("accessToken"),
@@ -33,14 +33,13 @@ function MyPage() {
         if (response.bodyUsed) {
           console.log("재사용됨");
         } else if (response.ok) {
-          console.log(response);
           return response.json();
         } else {
           console.log("ELSE");
         }
       })
       .then((result) => {
-        setUserInforMation(result.responseData.member);
+        console.log(result.responseData);
       })
       .catch((err) => {
         console.log("ERROR");
@@ -67,9 +66,9 @@ function MyPage() {
         </div>
         <ul>
           <li>{userInformation.point} 포인트</li>
-          <li>⚡충전하기</li>
-          <li>💰전환하기</li>
-          <li>⚡사용내역</li>
+          <li><Link to="/PointAdd">⚡충전하기</Link></li>
+          <li><Link to="./PointRefund">💰전환하기</Link></li>
+          <li><Link to="./PointUsed">⚡사용내역</Link></li>
         </ul>
         <ul>
           <li>Category</li>
@@ -89,7 +88,6 @@ function MyPage() {
               <li>총 공부시간</li>
             </ul>
             <ul>
-              {console.log(userInformation)}
               <li>
                 {parseInt(userInformation.studyTimeToday / 60)
                   ? parseInt(userInformation.studyTimeToday / 60) + "시간"
@@ -155,7 +153,7 @@ function MyPage() {
           <div className="studyRight">
             <ul>
               <li>MyPage</li>
-              <li>포인트 충전하기</li>
+              <li><Link to ="./PointAdd">포인트 충전하기</Link></li>
               <li>회원정보 수정</li>
               <li>나의 문의내역</li>
               <li>FAQ</li>

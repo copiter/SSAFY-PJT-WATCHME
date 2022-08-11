@@ -4,8 +4,17 @@ import React, { Component } from "react";
 import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
 import ChatComponent from "./chat/ChatComponent";
+import { FetchUrl } from "../../../store/communication";
+import { Routes, Route ,Link,Navigate } from "react-router-dom";
 
-const OPENVIDU_SERVER_URL = "https://" + window.location.hostname + ":4443";
+import Members from "./componentOnRoom/Members";
+import MyStudy from "./componentOnRoom/MyStudy";
+import RoomReform from "./componentOnRoom/RoomReform";
+
+
+//강제 리브세션=추방
+//방장 전용 기능 구현.
+const OPENVIDU_SERVER_URL = "https://watchme1.shop:4443";
 const OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 class RoomDetail extends Component {
@@ -23,7 +32,10 @@ class RoomDetail extends Component {
       audioState: true, //마이크 on
       screenShare: true, //화면공유 버튼
       chatDisplay: "none",
+
+
     };
+    //setInterval(()=>{alert("TEST콘솔로그입니다")},1000);
 
     this.joinSession = this.joinSession.bind(this);
     this.getUserPermission = this.getUserPermission.bind(this);
@@ -40,13 +52,15 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
+    setInterval(() => {this.getMedia()},10000);
   }
+
+
 
   componentDidMount() {
     window.addEventListener("beforeunload", this.onbeforeunload);
     // this.joinSession();
   }
-
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.onbeforeunload);
   }
@@ -88,9 +102,8 @@ class RoomDetail extends Component {
 
   async getUserPermission() {}
 
-  joinSession() {
+  joinSession() {//세션조인
     // --- 1) Get an OpenVidu object ---
-
     this.OV = new OpenVidu();
 
     // --- 2) Init a session ---
@@ -100,6 +113,7 @@ class RoomDetail extends Component {
         session: this.OV.initSession(),
       },
       () => {
+        
         var mySession = this.state.session;
 
         // --- 3) Specify the actions when events take place in the session ---
@@ -138,8 +152,7 @@ class RoomDetail extends Component {
           // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
           mySession
             .connect(token, { clientData: this.state.myUserName })
-            .then(async () => {
-              //브라우저 비디오, 오디오 권한 설정
+            .then(async () => {//브라우저 비디오, 오디오 권한 설정
               try {
                 var devices = await navigator.mediaDevices.getUserMedia({
                   video: true,
@@ -151,7 +164,10 @@ class RoomDetail extends Component {
                 );
               }
 
-              devices = await this.OV.getDevices();
+              devices = await this.OV.getDevices();//디바이스 없으면 가져옴
+   
+   
+
 
               var videoDevices = devices.filter(
                 (device) => device.kind === "videoinput"
@@ -196,15 +212,63 @@ class RoomDetail extends Component {
       }
     );
   }
-
-  leaveSession() {
+  
+  leaveSession() {//세션 탈출
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
-
+    clearInterval();
+      
     const mySession = this.state.session;
+    const FETCH_URL=FetchUrl._currentValue;
+    const id=window.location.pathname.split("/")[2].substring(1);
+    const url = `${FETCH_URL}/rooms/`+id+'/leave';
 
-    if (mySession) {
-      mySession.disconnect();
+    
+
+    function getCookie(name) {
+      const cookie = document.cookie
+        .split(";")
+        .map((cookie) => cookie.split("="))
+        .filter((cookie) => cookie[0] === name);
+      return cookie[0][1];
     }
+    console.log(getCookie("accessToken"));
+    fetch(url,{
+      method:"POST",
+      headers:{accessToken: getCookie("accessToken")}
+    })
+    .then((response) => {
+      console.log("HERE");
+      console.log(response);
+      if (response.ok) {
+        return response.json(); //ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => {
+          console.log("ERR");
+          let errorMessage = "";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+        console.log("성공"); 
+        if(result.code===200)
+        {
+
+          if (mySession) {
+            mySession.disconnect();
+          }
+        }
+        else{
+
+          console.log("오류가 발생하였습니다.");
+        }
+      }
+    })
+    .catch((err) => {
+      console.log("ERR"); 
+    });
+   
 
     // Empty all properties...
     this.OV = null;
@@ -216,9 +280,11 @@ class RoomDetail extends Component {
       mainStreamManager: undefined,
       publisher: undefined,
     });
+    
   }
 
-  async switchCamera() {
+  
+  async switchCamera() {//카메라 교환
     try {
       const devices = await this.OV.getDevices();
       var videoDevices = devices.filter(
@@ -343,7 +409,142 @@ class RoomDetail extends Component {
     });
   }
 
-  render() {
+
+  closeRoom()
+  {
+      
+    const FETCH_URL=FetchUrl._currentValue;
+    fetch(FETCH_URL, {
+      method: "POST",
+      headers: {
+        accessToken: this.getCookie("accessToken"),
+      },
+    })
+
+
+
+    this.closeSession()
+    this.banALL()
+  }
+  closeSession(){
+    
+  }
+  banALL(){
+
+  }
+
+  async  getMedia() {
+    let imageCapture;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {pan: true, tilt: true, zoom: true},
+      });
+      const video = document.querySelector('video');
+      video.srcObject = stream;
+
+      const [track] = stream.getVideoTracks();
+      imageCapture = new ImageCapture(track);
+
+      const capabilities = track.getCapabilities();
+      const settings = track.getSettings();
+
+      for (const ptz of ['pan', 'tilt', 'zoom']) {
+        // Check whether pan/tilt/zoom is available or not.
+        if (!(ptz in settings)) continue;
+
+        // Map it to a slider element.
+        const input = document.getElementById(ptz);
+        input.min = capabilities[ptz].min;
+        input.max = capabilities[ptz].max;
+        input.step = capabilities[ptz].step;
+        input.value = settings[ptz];
+        input.disabled = false;
+        input.oninput = async event => {
+          try {
+            // Warning: Chrome requires advanced constraints.
+            await track.applyConstraints({[ptz]: input.value});
+          } catch (err) {
+            console.error("applyConstraints() failed: ", err);
+          }
+        };
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    try {
+      const blob = await imageCapture.takePhoto();
+      console.log("Photo taken: " + blob.type + ", " + blob.size + "B");
+
+      const image = document.querySelector('img');
+      image.src = URL.createObjectURL(blob);
+    } catch (err) {
+      console.error("takePhoto() failed: ", err);
+    }
+  }
+
+
+
+
+
+
+
+
+
+  sendPicutres(imgeRef,nickName,roomID,mode){
+    if(mode==="MODE2"||mode==="MODE3")
+    {
+      const formData = new FormData();
+      formData.append("images", imgeRef);
+      formData.append(
+        "flaskDTO",
+        new Blob([JSON.stringify({"nickName":nickName,"roomId":roomID,"mode":mode})], { type: "application/json" })
+      );
+      const FETCH_URL=FetchUrl._currentValue;
+      fetch(`${FETCH_URL}/flask`,{
+        method:"POST",
+        body: formData,
+      })
+      .then((response) => {
+        if (response.ok) {
+          return response.json(); //ok떨어지면 바로 종료.
+        } else {
+          response.json().then((data) => {
+            console.log("ERR");
+            let errorMessage = "";
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((result) => {
+        if (result != null) {
+          if(result.code===200)
+          {
+
+          }
+          else if(result.code===205)
+          {
+            if(mode==="MODE2")
+            {
+
+            }
+            else if(mode==="MODE3")
+            {
+
+            }
+          }
+          else{
+            
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("ERR");
+      });
+    }
+    return 0;
+  }
+
+  render() { 
     const mySessionId = this.state.mySessionId;
     const myUserName = this.state.myUserName;
     var chatDisplay = { display: this.state.chatDisplay };
@@ -400,13 +601,7 @@ class RoomDetail extends Component {
           <div id="session">
             <div id="session-header">
               <h1 id="session-title">{mySessionId}</h1>
-              <input
-                className="btn btn-large btn-danger"
-                type="button"
-                id="buttonLeaveSession"
-                onClick={this.leaveSession}
-                value="Leave session"
-              />
+             
 
               {this.state.videoState && (
                 <button onClick={this.videoHandlerOff}>Video OFF</button>
@@ -461,7 +656,35 @@ class RoomDetail extends Component {
                 </div>
               ))}
             </div>
-            <div id="chat-container">
+<div style={{display:'inline-block',width:'1000px',height:'500px'}}>
+  <ul className="linksUl">
+    <Link to="./" ><li className="linksLi">내 공부</li></Link>
+    <Link to="./members" ><li className="linksLi">맴버목록</li></Link>
+    <Link to="./RoomReform" ><li className="linksLi">방 정보 수정</li></Link>
+  </ul>
+  <Routes>
+    <Route path="/" element={<MyStudy/>} />
+    <Route path="/members" element={<Members/>}/>
+    <Route path="/RoomReform" element={<RoomReform/>} />
+  </Routes>
+
+  
+  <input
+    className="btn btn-large btn-danger"
+    type="button"
+    id="buttonLeaveSession"
+    onClick={this.leaveSession}
+    value="방 나가기"
+  />
+   <input
+    className="btn btn-large btn-danger"
+    type="button"
+    id="buttonLeaveSession"
+    onClick={this.closeRoom}
+    value="공부방 닫기"
+  />
+</div>
+            <div id="chat-container"><canvas id="canvas">\</canvas>
               <button onClick={() => this.toggleChat()}>채팅열기</button>
               {this.state.publisher !== undefined &&
                 this.state.publisher.stream !== undefined && (
@@ -480,9 +703,13 @@ class RoomDetail extends Component {
             </div>
           </div>
         ) : null}
+        
       </div>
     );
   }
+
+
+
 
   /**
    * --------------------------

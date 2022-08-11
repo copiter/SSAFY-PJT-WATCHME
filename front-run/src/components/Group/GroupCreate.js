@@ -6,17 +6,28 @@ import { FetchUrl } from "../../store/communication";
 import "./GroupCreate.css";
 
 function GroupCreate() {
-  //방생성 요청 보내기
+  const handleChangeSelect = (event) => {
+    const value = event.target.value;
+
+    if (value === "공무원") {
+      inputs.ctg[0] = !inputs.ctg[0];
+    } else if (value === "취업") {
+      inputs.ctg[1] = !inputs.ctg[1];
+    } else if (value === "수능") {
+      inputs.ctg[2] = !inputs.ctg[2];
+    } else if (value === "기타") {
+      inputs.ctg[3] = !inputs.ctg[3];
+    }
+    console.log(inputs.ctg);
+  };
+
   const [inputs, setInputs] = useState({
-    groupName: "",
-    status: "MODE1", //MODE1, MODE2, MODE3
-    groupPwd: "",
+    name: "",
     description: "",
-    categoryName: "", //TAG1, TAG2, TAG3
-    num: 0,
-    groupPublic: "Private",
-    endTime: "",
+    maxMember: 0,
+    ctg: [false, false, false, false],
     display: 1,
+    pwd: "",
   });
   const navigate = useNavigate();
 
@@ -25,10 +36,16 @@ function GroupCreate() {
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
+  const [isChecked, setIsChecked] = useState(false);
+  const handleChangeCheck = (event) => {
+    setIsChecked((current) => !current);
+    const name = event.target.name;
+    setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
+  };
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
-  const url = `${FETCH_URL}/addGroup`;
+  const url = `${FETCH_URL}/groups`;
   //Otpion
 
   const imgeRef = useRef();
@@ -46,12 +63,38 @@ function GroupCreate() {
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
+    let ctgs = [];
+    let i = 0;
+    if (inputs.ctg[0]) {
+      ctgs[i] = "공무원";
+      i++;
+    }
+    if (inputs.ctg[1]) {
+      ctgs[i] = "취업";
+      i++;
+    }
+    if (inputs.ctg[2]) {
+      ctgs[i] = "수능";
+      i++;
+    }
+    if (inputs.ctg[3]) {
+      ctgs[i] = "기타";
+      i++;
+    }
+    //inputs.cgs
+    const outputs = {
+      name: inputs.name,
+      description: inputs.description,
+      maxMember: inputs.maxMember,
+      ctg: ctgs,
+      display: inputs.display,
+      pwd: inputs.pwd,
+    };
     formData.append(
       "postGroupReqDTO",
-      new Blob([JSON.stringify(inputs)], { type: "application/json" })
+      new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
-    console.log(url);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -96,13 +139,14 @@ function GroupCreate() {
       <Link to="/GroupRecruit" className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>
-
+      <Link to="/GroupReform/:1">groupReform test</Link>
       <form onSubmit={handleSubmit}>
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
           <div className="group-image">
             {fileImage && (
               <img
+                /*이미지 띄워지는곳 */
                 alt="sample"
                 src={fileImage}
                 style={{
@@ -114,10 +158,9 @@ function GroupCreate() {
                 }}
               />
             )}
-            {/*룸 이미지, 좌측부분 */}
             <input
               type="file"
-              name="groupImage"
+              name="img"
               accept="image/*"
               onChange={saveFileImage}
               className="group-image__upload"
@@ -132,8 +175,8 @@ function GroupCreate() {
               <div className="line">
                 <input
                   type="text"
-                  name="groupName"
-                  value={inputs.groupName || ""}
+                  name="name"
+                  value={inputs.name || ""}
                   onChange={handleChange}
                   placeholder="그룹 이름을 적으세요"
                 />
@@ -150,8 +193,8 @@ function GroupCreate() {
               <div className="line">
                 <input
                   type="number"
-                  name="num"
-                  value={inputs.num ? inputs.num : ""}
+                  name="maxMember"
+                  value={inputs.maxMember ? inputs.maxMember : ""}
                   onChange={handleChange}
                   accept="number"
                   placeholder="인원수를 선택하세요(1~25)"
@@ -162,9 +205,9 @@ function GroupCreate() {
                 <label className="switch">
                   <input
                     type="checkbox"
-                    name="groupPublic"
-                    value={inputs.groupPublic || ""}
-                    onChange={handleChange}
+                    name="display"
+                    value={isChecked}
+                    onChange={handleChangeCheck}
                   />
                   <span className="slider round"></span>
                 </label>
@@ -172,8 +215,8 @@ function GroupCreate() {
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input
                   type="password"
-                  name="groupPwd"
-                  value={inputs.groupPwd || ""}
+                  name="pwd"
+                  value={inputs.pwd || ""}
                   onChange={handleChange}
                   maxLength="4"
                   minLength="4"
@@ -181,33 +224,41 @@ function GroupCreate() {
                 />
               </div>
             </div>
-                {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
-                <input
-                  type="date"
-                  name="groupPwd"
-                  value={inputs.groupEndDate || ""}
-                  onChange={handleChange}
-                  placeholder="기간"
-                />
-           <div className="input-rules">
-              {/*규칙입니다. 현재 진행파트아닙니다. */}
-              <div className="rules-title">📝 규칙</div>
+            <div className="input-rules">
+              <div className="rules-title" name="ctg">
+                카테고리
+              </div>
               <div className="rules-box">
-                {/*규칙 미정이라서 편하신대로 임시본으로 넣으시면됩니다.*/}
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="공무원"
+                  />
                   공무원
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="취업"
+                  />
                   취업
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="수능"
+                  />
                   수능
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="기타"
+                  />
                   기타
                 </label>
               </div>
@@ -215,14 +266,9 @@ function GroupCreate() {
             <button type="submit">생성하기</button>
           </div>
         </div>
-        
       </form>
     </div>
   );
 }
 
 export default GroupCreate;
-
-
-
-

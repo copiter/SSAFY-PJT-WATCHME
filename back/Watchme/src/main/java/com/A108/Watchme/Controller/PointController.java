@@ -3,7 +3,9 @@ package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayApproveReq;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayRes;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Service.PointService;
 import com.A108.Watchme.oauth.entity.UserPrincipal;
@@ -28,11 +30,23 @@ public class PointController {
     @PostMapping("/points/kakao")
     public ApiResponse kakaoPayReady(@RequestParam(name = "value") String value){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(((UserDetails)authentication.getPrincipal()).getUsername());
-        System.out.println("----------------------------");
-        Long id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        Long id;
+        try{
+            id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        }
+        catch(Exception e){
+            throw new CustomException(Code.C501);
+        }
+        int point = 0;
+        try{
+            point = Integer.parseInt(value);
+            if(point <= 0){
+                throw new CustomException(Code.C598);
+            }
+        } catch (Exception e){
+            throw new CustomException(Code.C521);
+        }
 
-        int point = Integer.parseInt(value);
         KakaoPayRes kakaoPayRes = pointService.kakaoPayReady(id, point);
 
         ApiResponse apiResponse = new ApiResponse();

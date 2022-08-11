@@ -11,6 +11,8 @@ import java.util.Arrays;
 public enum Code {
     C200 (200, "SUCCESS"),
     C300 (300, "INVALID"),
+    C500 (500, "NOT MEMBER"),
+    C501 (501, "JWT EXPIRED"),
     // 520 에서부터 ROOM관련 ERROR
     C520 (520, "NO SEARCH DATA"),
     C521 (521, "INVALID VALUE"),
@@ -26,7 +28,7 @@ public enum Code {
     C531 (531, "FAILED CREATE STUDY LOG"),
     C532 (532, "FAILED SAVE STUDY LOG");
 
-    private int code;
+    private int errCode;
 
     private final String message;
 

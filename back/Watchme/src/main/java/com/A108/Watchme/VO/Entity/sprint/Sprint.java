@@ -44,7 +44,4 @@ public class Sprint {
     @OneToMany(mappedBy = "sprint")
     List<PointLog> pointLogList = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
 }

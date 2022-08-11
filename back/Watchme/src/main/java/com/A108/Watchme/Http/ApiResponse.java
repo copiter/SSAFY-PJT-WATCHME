@@ -22,8 +22,8 @@ public class ApiResponse {
         this.responseData = responseData;
     }
 
-    public ApiResponse(Code code){
-        this.setCode(code.getCode());
+    public void setCodeMsg(Code code){
+        this.setCode(code.getErrCode());
         this.setMessage(code.getMessage());
     }
     public void setMessage(String message) {

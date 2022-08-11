@@ -84,4 +84,10 @@ public class MemberController {
         ApiResponse result = memberService.findEmail(findEmailRequestDTO);
         return result;
     }
+
+    @GetMapping(value = "/members/mygroup")
+    @ResponseBody
+    public ApiResponse memberGroup(){
+        return memberService.memberGroup();
+    }
 }

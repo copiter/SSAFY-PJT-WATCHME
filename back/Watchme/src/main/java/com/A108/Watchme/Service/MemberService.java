@@ -9,7 +9,9 @@ import com.A108.Watchme.DTO.myPage.myGroup.MyGroup;
 import com.A108.Watchme.DTO.myPage.myGroup.WrapperMy;
 
 import com.A108.Watchme.DTO.myPage.myPage.PenaltyDTO;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.*;
 import com.A108.Watchme.VO.Entity.MemberGroup;
@@ -23,6 +25,7 @@ import com.A108.Watchme.VO.ENUM.ProviderType;
 import com.A108.Watchme.VO.ENUM.Role;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.log.PenaltyLog;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberEmailKey;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.RefreshToken;
@@ -209,8 +212,7 @@ public class MemberService {
         Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
 
         if (member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())) {
-            result.setMessage("FIND EMAIL FAIL");
-            result.setCode(400);
+            throw new CustomException(Code.C504);
         } else {
             result.setMessage("FIND EMAIL SUCCESS");
             result.setResponseData("email", member.getEmail());
@@ -308,16 +310,11 @@ public class MemberService {
 
             Member member = memberRepository.findByEmail(resetPwDTO.getEmail());
 
-            if (member == null) {
-                result.setCode(400);
-                result.setMessage("이메일 입력이 잘못 되었습니다.");
-                return result;
+            if (member == null || !member.getMemberInfo().getName().equals(resetPwDTO.getName())) {
+                throw new CustomException(Code.C504);
             }
-            if (!resetPwDTO.getName().equals(member.getMemberInfo().getName())) {
-                result.setCode(400);
-                result.setMessage("이름 입력이 잘못 되었습니다.");
-                return result;
-            }
+
+
 
             String uuid = UUID.randomUUID().toString();
 
@@ -343,32 +340,31 @@ public class MemberService {
 
         public ApiResponse resetPW (ResetPwDTO resetPwDTO){
             ApiResponse result = new ApiResponse();
-            System.out.println(resetPwDTO.getEmailKey());
             MemberEmailKey memberEmailKey = memberEmailKeyRepository.findByEmailKey(resetPwDTO.getEmailKey());
-
-            if (memberEmailKey != null) {
+            if(memberEmailKey == null){
+                throw new CustomException(Code.C505);
+            }
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.DATE, -1);
 
-                System.out.println(memberEmailKey);
-
                 if (memberEmailKey.getCreatedAt().compareTo(cal.getTime()) < 0) {
                     // 유효 기간을 넘겼다.
                     // 삭제 : 이메일 초기화 키
-
                     // 시간 제한을 넘긴 인증 코드 삭제
                     memberEmailKeyRepository.deleteById(memberEmailKey.getId());
 
-                    result.setMessage("EMAIL CODE HAS EXPIRED");
-                    result.setCode(400);
+                    throw new CustomException(Code.C506);
 
-                    return result;
+                }
+                Member member;
+                try{
+                    member = memberRepository.findById(memberEmailKey.getId()).get();
+                } catch (Exception e){
+                    throw new CustomException(Code.C504);
                 }
 
-                Member member = memberRepository.findById(memberEmailKey.getId()).get();
-                if (member != null) {
                     String encPassword = bCryptPasswordEncoder.encode(resetPwDTO.getPassword());
                     member.setPwd(encPassword);
 
@@ -377,18 +373,6 @@ public class MemberService {
                     result.setMessage("PASSWORD RESET SUCCESS");
                     result.setCode(200);
                     return result;
-                }
-
-                result.setMessage("PASSWORD RESET FAIL");
-                result.setCode(400);
-                return result;
-
-            } else {
-                result.setMessage("EMAIL CODE ALREADY USED");
-                result.setCode(400);
-
-                return result;
-            }
         }
 
         public ApiResponse resetPwMp (ResetPwMpDTO resetPwMpDTO){
@@ -439,7 +423,6 @@ public class MemberService {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                    System.out.println("heelo");
 
                     Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
 

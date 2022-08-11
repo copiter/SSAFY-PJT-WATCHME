@@ -374,4 +374,36 @@ public class MemberService {
 
         return result;
     }
+
+    public ApiResponse emailCheck(CheckEmailDTO checkEmailDTO) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        Member member = memberRepository.findByEmail(checkEmailDTO.getEmail());
+
+        if(member != null){
+            apiResponse.setCode(500);
+            apiResponse.setMessage("UNAVAILABLE EMAIL");
+            return apiResponse;
+        }
+        apiResponse.setCode(200);
+        apiResponse.setMessage("AVAILABLE EMAIL");
+        return apiResponse;
+
+    }
+
+    public ApiResponse nickNameCheck(CheckNickNameDTO checkNickNameDTO) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
+        if(member != null) {
+            apiResponse.setCode(500);
+            apiResponse.setMessage("UNAVAILABLE NiCK NAME");
+            return apiResponse;
+        }
+
+        apiResponse.setCode(200);
+        apiResponse.setMessage("AVAILABLE NiCK NAME");
+        return apiResponse;
+
+    }
 }

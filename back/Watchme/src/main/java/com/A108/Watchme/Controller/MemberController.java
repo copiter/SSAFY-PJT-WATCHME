@@ -102,4 +102,16 @@ public class MemberController {
         // 프로필 이미지 수정시 삭제?
         return memberService.memberUpdate(updateRequestDTO, image);
     }
+
+    @GetMapping("/emails-check")
+    @ResponseBody
+    public ApiResponse emailCheck(@RequestBody CheckEmailDTO checkEmailDTO){
+        return memberService.emailCheck(checkEmailDTO);
+    }
+
+    @GetMapping("/nickName-check")
+    @ResponseBody
+    public ApiResponse nickNameCheck(@RequestBody CheckNickNameDTO checkNickNameDTO){
+        return memberService.nickNameCheck(checkNickNameDTO);
+    }
 }

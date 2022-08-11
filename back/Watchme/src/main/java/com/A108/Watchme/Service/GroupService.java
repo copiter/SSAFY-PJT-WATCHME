@@ -5,7 +5,9 @@ import com.A108.Watchme.DTO.group.*;
 import com.A108.Watchme.DTO.group.getGroup.*;
 import com.A108.Watchme.DTO.group.getGroupList.GroupListResDTO;
 import com.A108.Watchme.DTO.group.getGroupList.SprintDTO;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.*;
 import com.A108.Watchme.VO.ENUM.*;
 import com.A108.Watchme.VO.Entity.Category;
@@ -28,7 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -118,13 +120,17 @@ public class GroupService {
 
         }
 
+        if (groupList.isEmpty()) {
+            throw new CustomException(Code.C520);
+        }
+
         List<GroupListResDTO> getGroupList = new LinkedList<>();
 
         for (Group g : groupList) {
             // endAt이 현재보다 이후인 (즉, 진행중인) sprint(들)을 collect
             List<Sprint> sprint = new LinkedList<>();
 
-            g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).map(x->sprint.add(x));
+            g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).map(x -> sprint.add(x));
 
 
             // 첫번째 sprint를 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
@@ -194,7 +200,6 @@ public class GroupService {
 
 
                 // sprints
-
                 List<SprintResDTO> sprintResDTOList = new LinkedList<>();
 
                 List<Sprint> sprintList = sprintRepository.findAllByGroupId(groupId);
@@ -208,6 +213,8 @@ public class GroupService {
                     Optional<Integer> sum = mrlRepository.getSprintData(sprint.getRoom().getId());
                     if (sum.isPresent()) {
                         sumTime = sum.get();
+                    } else {
+
                     }
 
                     // TODO : repository 이게 맞나..?
@@ -384,25 +391,23 @@ public class GroupService {
                     result.setResponseData("myData", MyDataResDTO.builder()
                             .role(GroupRole.ANONYMOUS.ordinal())
                             .build());
+
                     result.setCode(200);
                     result.setMessage("GET GROUP SUCCESS");
                     return result;
                 }
 
             } else {
-                result.setCode(307);
-                result.setMessage("Wrong Password");
-
+                throw new CustomException(Code.C564);
             }
 
         } else {
-            result.setCode(400);
-            result.setMessage("no such group");
+            throw new CustomException(Code.C510);
         }
         return result;
     }
 
-
+    @Transactional
     public ApiResponse createGroup(GroupCreateReqDTO groupCreateReqDTO, MultipartFile image, HttpServletRequest request) {
         ApiResponse result = new ApiResponse();
 
@@ -414,67 +419,74 @@ public class GroupService {
 
                 String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
 
+                if (image != null) {
+                    try {
+                        url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
+                    } catch (Exception e) {
+                        throw new CustomException(Code.C512);
+                    }
+                }
+
                 try {
-                    url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    // TODO : GroupBuilder
+                    // 1.group 기본 저장
+                    Group newGroup = Group.builder()
+                            .groupName(groupCreateReqDTO.getName())
+                            .leader(currUser.get())
+                            .status(Status.YES)
+                            .view(0)
+                            .build();
 
-                // TODO : GroupBuilder
-                // 1.group 기본 저장
-                Group newGroup = Group.builder()
-                        .groupName(groupCreateReqDTO.getName())
-                        .leader(currUser.get())
-                        .status(Status.YES)
-                        .view(0)
-                        .build();
+                    groupRepository.save(newGroup);
 
-                groupRepository.save(newGroup);
-
-                GroupInfo newGroupInfo = groupInfoRepos.save(GroupInfo.builder()
-                        .group(newGroup)
-                        .imageLink(url)
-                        .description(groupCreateReqDTO.getDescription())
-                        .currMember(1)
-                        .maxMember(Integer.parseInt(groupCreateReqDTO.getMaxMember()))
-                        .pwd(groupCreateReqDTO.getPwd())
-                        .build());
-
-
-                // 2.MemberGroup save
-                memberGroupRepository.save(MemberGroup.builder()
-                        .group(newGroupInfo.getGroup())
-                        .member(newGroupInfo.getGroup().getLeader())
-                        .createdAt(new Date())
-                        .groupRole(GroupRole.LEADER)
-                        .build());
-
-
-                // 3.GroupCategory
-
-                for (String ctg :
-                        groupCreateReqDTO.getCtg()) {
-                    groupCategoryRepository.save(GroupCategory.builder()
-                            .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
-                            .group(newGroupInfo.getGroup())
+                    GroupInfo newGroupInfo = groupInfoRepos.save(GroupInfo.builder()
+                            .group(newGroup)
+                            .imageLink(url)
+                            .description(groupCreateReqDTO.getDescription())
+                            .currMember(1)
+                            .maxMember(Integer.parseInt(groupCreateReqDTO.getMaxMember()))
+                            .pwd(groupCreateReqDTO.getPwd())
                             .build());
+
+
+                    // 2.MemberGroup save
+                    memberGroupRepository.save(MemberGroup.builder()
+                            .group(newGroupInfo.getGroup())
+                            .member(newGroupInfo.getGroup().getLeader())
+                            .createdAt(new Date())
+                            .groupRole(GroupRole.LEADER)
+                            .build());
+
+                    // 3.GroupCategory
+
+                    for (String ctg :
+                            groupCreateReqDTO.getCtg()) {
+                        groupCategoryRepository.save(GroupCategory.builder()
+                                .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
+                                .group(newGroupInfo.getGroup())
+                                .build());
+                    }
+
+
+                    result.setCode(200);
+                    result.setMessage("SUCCESS ADD&JOIN ROOM");
+                    result.setResponseData("groupId", newGroupInfo.getGroup().getId());
+                } catch (Exception e) {
+                    throw new CustomException(Code.C521);
                 }
 
-
-                result.setCode(200);
-                result.setMessage("SUCCESS ADD&JOIN ROOM");
-                result.setResponseData("groupId", newGroupInfo.getGroup().getId());
-
+            } else {
+                throw new CustomException(Code.C501);
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            result.setCode(500);
+            throw new CustomException(Code.C501);
         }
 
         return result;
     }
 
+    @Transactional
     public ApiResponse updateGroup(Long groupId, GroupUpdateReqDTO groupUpdateReqDTO, MultipartFile image, HttpServletRequest request) {
         ApiResponse result = new ApiResponse();
 
@@ -483,58 +495,71 @@ public class GroupService {
 
             if (check.isPresent()) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
-
+                Optional<Member> checkCurrUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
 
                 Group group = check.get();
 
-                String url = group.getGroupInfo().getImageLink();
+                if (checkCurrUser.isPresent()) {
+                    Member currUser = checkCurrUser.get();
 
-                try {
-                    url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    if (currUser.getId() != group.getLeader().getId()) {
+                        throw new CustomException(Code.C565);
+                    }
+
+                    String url = group.getGroupInfo().getImageLink();
+
+                    if (image != null) {
+                        try {
+                            url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
+                        } catch (Exception e) {
+                            throw new CustomException(Code.C512);
+                        }
+                    }
+
+                    // 그룹 카테고리 삭제
+                    List<GroupCategory> groupCategoryList = groupCategoryRepository.findAllByGroupId(groupId);
+                    groupCategoryRepository.deleteAllInBatch(groupCategoryList);
+
+                    List<GroupCategory> categoryList = new LinkedList<>();
+
+                    try {
+                        for (String ctg :
+                                groupUpdateReqDTO.getCtg()) {
+                            categoryList.add(GroupCategory.builder()
+                                    .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
+                                    .group(group)
+                                    .build());
+                        }
+
+                        group.setGroupName(groupUpdateReqDTO.getName());
+                        group.setCategory(categoryList);
+                        group.setDisplay(groupUpdateReqDTO.getDisplay());
+
+                        GroupInfo groupInfo = groupInfoRepos.findById(groupId).get();
+                        groupInfo.setDescription(groupUpdateReqDTO.getDescription());
+                        groupInfo.setMaxMember(Integer.parseInt(groupUpdateReqDTO.getMaxMember()));
+                        groupInfo.setPwd(groupUpdateReqDTO.getPwd());
+
+
+                        groupRepository.save(group);
+                        groupInfoRepos.save(groupInfo);
+                    }catch(Exception e){
+                        throw new CustomException(Code.C521);
+                    }
+
+                    result.setCode(200);
+                    result.setMessage("SUCCESS GROUP UPDATE");
+                } else {
+                    throw new CustomException(Code.C503);
                 }
-
-                // TODO : Update Group
-                // 그룹 카테고리 삭제
-                List<GroupCategory> groupCategoryList = groupCategoryRepository.findAllByGroupId(groupId);
-                groupCategoryRepository.deleteAllInBatch(groupCategoryList);
-
-                List<GroupCategory> categoryList = new LinkedList<>();
-
-                for (String ctg :
-                        groupUpdateReqDTO.getCtg()) {
-                    categoryList.add(GroupCategory.builder()
-                            .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
-                            .group(group)
-                            .build());
-                }
-
-                group.setGroupName(groupUpdateReqDTO.getName());
-                group.setCategory(categoryList);
-                group.setDisplay(groupUpdateReqDTO.getDisplay());
-
-                GroupInfo groupInfo = groupInfoRepos.findById(groupId).get();
-                groupInfo.setDescription(groupUpdateReqDTO.getDescription());
-                groupInfo.setMaxMember(Integer.parseInt(groupUpdateReqDTO.getMaxMember()));
-                groupInfo.setPwd(groupUpdateReqDTO.getPwd());
-
-
-                groupRepository.save(group);
-                groupInfoRepos.save(groupInfo);
-
-                result.setCode(200);
-                result.setMessage("SUCCESS GROUP UPDATE");
 
             } else {
-                throw new Exception("no such group");
+                throw new CustomException(Code.C510);
             }
 
 
         } catch (Exception e) {
-            e.printStackTrace();
-            result.setCode(500);
+            throw new CustomException(Code.C500);
         }
 
         return result;
@@ -551,9 +576,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("login first");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -567,14 +590,11 @@ public class GroupService {
                 result.setMessage("GROUP DELETE SUCCESS");
 
             } else {
-                result.setCode(400);
-                result.setMessage("no authority");
-
+                throw new CustomException(Code.C565);
             }
 
         } else {
-            result.setCode(400);
-            result.setMessage("NO SUCH GROUP");
+            throw new CustomException(Code.C510);
         }
 
         return result;
@@ -591,9 +611,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -661,15 +679,11 @@ public class GroupService {
                     result.setMessage("GROUP APPLY LIST SUCCESS");
 
                 } else {
-                    // 그룹 리더가 아님
-                    result.setCode(400);
-                    result.setMessage("ONLY GROUP LEADER CAN GET APPLYES");
+                    throw new CustomException(Code.C565);
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("no such id");
+                throw new CustomException(Code.C503);
             }
-
 
         } else {
             result.setCode(400);
@@ -690,9 +704,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -705,9 +717,7 @@ public class GroupService {
                 List<Long> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember().getId()).collect(Collectors.toList());
 
                 if (groupMembers.contains(currUserId)) {
-                    result.setCode(400);
-                    result.setMessage("MEMBER OF THIS GROUP ALREADY");
-
+                    throw new CustomException(Code.C509);
                 } else {
                     if (groupApplyLog.isEmpty()) {
                         groupApplyLogRegistory.save(GroupApplyLog.builder()
@@ -721,23 +731,17 @@ public class GroupService {
                         result.setMessage("GROUP JOIN APPLY SUCCESS");
                     } else {
                         if (groupApplyLog.get().getStatus() == 2) {
-                            result.setCode(400);
-                            result.setMessage("BANNED MEMBER CANNOT REAPPLY");
+                            throw new CustomException(Code.C566);
                         } else {
-                            // 승인이거나 보류 중
-                            result.setCode(400);
-                            result.setMessage("ALREADY APPLIED");
+                            throw new CustomException(Code.C567);
                         }
                     }
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("NO SUCH MEMBER ID");
-
+                throw new CustomException(Code.C503);
             }
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
 
         return result;
@@ -752,9 +756,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -773,27 +775,25 @@ public class GroupService {
 
                         result.setCode(200);
                         result.setMessage("GROUP APPLY CANCLE SUCCESS");
-                    } else {
-                        result.setCode(400);
-                        result.setMessage("Cannot Apply : banned or accepted");
+                    } else if(groupApplyLog.getStatus() == 1){
+                        throw new CustomException(Code.C509);
+                    } else if(groupApplyLog.getStatus() == 2){
+                        throw new CustomException(Code.C566);
                     }
                 } else {
-                    result.setCode(400);
-                    result.setMessage("THERE IS NO APPLY");
+                    throw new CustomException(Code.C300);
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("no such member id");
-
+                throw new CustomException(Code.C503);
             }
 
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
         return result;
     }
 
+    @Transactional
     public ApiResponse acceptApply(Long groupId, AcceptApplyReqDTO acceptApplyReqDTO) {
         ApiResponse result = new ApiResponse();
 
@@ -805,9 +805,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -839,22 +837,17 @@ public class GroupService {
                         result.setCode(200);
                         result.setMessage("GROUP APPLY ACCEPT SUCCESS");
                     } else {
-                        result.setCode(400);
-                        result.setMessage("THERE IS NO APPLY");
+                        throw new CustomException(Code.C300);
                     }
 
                 } else {
-                    // 그룹 리더가 아님
-                    result.setCode(400);
-                    result.setMessage("ONLY GROUP LEADER DECLINE APPLYES");
+                    throw new CustomException(Code.C565);
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("no such member id");
+                throw new CustomException(Code.C503);
             }
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
 
         return result;
@@ -871,9 +864,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -890,8 +881,7 @@ public class GroupService {
                     if (groupApplyLog.isPresent()) {
 
                         if (groupApplyLog.get().getStatus() == 1) {
-                            result.setCode(400);
-                            result.setMessage("ALREADY JOINED");
+                            throw new CustomException(Code.C509);
                         } else {
                             // TODO : 1.거절된 경우 Log.status를 어떻게 처리할 것인지?
                             groupApplyLogRegistory.delete(groupApplyLog.get());
@@ -899,30 +889,25 @@ public class GroupService {
                             result.setMessage("GROUP APPLY DECLINE SUCCESS");
                         }
                     } else {
-                        result.setCode(400);
-                        result.setMessage("THERE IS NO APPLY");
+                        throw new CustomException(Code.C300);
                     }
 
                 } else {
-                    // 그룹 리더가 아님
-                    result.setCode(400);
-                    result.setMessage("ONLY GROUP LEADER DECLINE APPLYES");
+                    throw new CustomException(Code.C565);
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("no such member id");
-
+                throw new CustomException(Code.C503);
             }
 
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
 
         return result;
     }
 
     // TODO : 방장이 나갈경우는 어떻게 하는가?
+    @Transactional
     public ApiResponse leaveGroup(Long groupId) {
         ApiResponse result = new ApiResponse();
 
@@ -932,9 +917,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -959,27 +942,24 @@ public class GroupService {
                         result.setMessage("GROUP LEAVE SUCCESS");
 
                     } else {
-                        result.setCode(400);
-                        result.setMessage("NOT GROUP MEMBER");
+                        throw new CustomException(Code.C565);
                     }
 
                 } else {
-                    result.setCode(400);
-                    result.setMessage("THERE IS NO APPLY LOG");
+                    throw new CustomException(Code.C300);
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("no such member id");
+                throw new CustomException(Code.C300);
             }
 
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
 
         return result;
     }
 
+    @Transactional
     public ApiResponse tossLeader(Long groupId, LeaderTossReqDTO leaderTossReqDTO) {
         ApiResponse result = new ApiResponse();
 
@@ -991,16 +971,14 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymous")) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
 
             Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
 
-            if(checkCurrUser.isPresent()) {
+            if (checkCurrUser.isPresent()) {
                 Member currUser = checkCurrUser.get();
 
                 if (currUser.getId() == group.getLeader().getId()) {
@@ -1010,7 +988,7 @@ public class GroupService {
                     Optional<MemberGroup> leaderGroup = memberGroupRepository.findByGroupIdAndMemberId(groupId, currUserId);
                     Optional<MemberGroup> memberGroup = memberGroupRepository.findByGroupIdAndMemberId(groupId, member.getId());
 
-                    if (memberGroup.isPresent()&&leaderGroup.isPresent()) {
+                    if (memberGroup.isPresent() && leaderGroup.isPresent()) {
                         group.setLeader(member);
 
                         leaderGroup.get().setGroupRole(GroupRole.MEMBER);
@@ -1022,24 +1000,19 @@ public class GroupService {
                         result.setCode(200);
                         result.setMessage("GROUP LEADER CHANGE SUCCESS");
                     } else {
-                        result.setCode(400);
-                        result.setMessage(leaderTossReqDTO.getNickName() + " IS NOT GROUP MEMBER");
+                        throw new CustomException(Code.C565);
                     }
 
                 } else {
-                    // 그룹 리더가 아님
-                    result.setCode(400);
-                    result.setMessage("ONLY GROUP LEADER GET APPLYES");
+                    throw new CustomException(Code.C565);
                 }
 
-            } else{
-                result.setCode(400);
-                result.setMessage("no such member id");
+            } else {
+                throw new CustomException(Code.C565);
             }
 
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
 
         return result;
@@ -1071,24 +1044,18 @@ public class GroupService {
                             result.setCode(200);
                             result.setMessage("GROUP MEMBER KICK SUCCESS");
                         } else {
-                            result.setCode(400);
-                            result.setMessage("CAN'T FIND ON DB");
+                            throw new CustomException(Code.C520);
                         }
 
                     } else {
-                        // 그룹 리더가 아님
-                        result.setCode(400);
-                        result.setMessage("ONLY GROUP LEADER GET APPLYES");
+                        throw new CustomException(Code.C565);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
+                throw new CustomException(Code.C501);
             }
         } else {
-            result.setCode(400);
-            result.setMessage("CAN'T FIND GROUP BY GROUP ID");
+            throw new CustomException(Code.C510);
         }
 
         return result;
@@ -1105,9 +1072,7 @@ public class GroupService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication.getPrincipal().equals("anonymousUser")) {
-                result.setCode(400);
-                result.setMessage("login first");
-                return result;
+                throw new CustomException(Code.C501);
             }
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -1133,13 +1098,10 @@ public class GroupService {
                     result.setCode(200);
                     result.setMessage("UPDATE-FORM SUCCESS");
                 } else {
-                    result.setCode(400);
-                    result.setMessage("no authority");
+                    throw new CustomException(Code.C565);
                 }
             } else {
-                result.setCode(400);
-                result.setMessage("no such member id");
-
+                throw new CustomException(Code.C503);
             }
         }
 

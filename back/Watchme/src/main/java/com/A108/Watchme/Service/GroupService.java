@@ -1,7 +1,6 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.DTO.*;
-import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.DTO.group.*;
 import com.A108.Watchme.DTO.group.getGroup.*;
 import com.A108.Watchme.DTO.group.getGroupList.GroupListResDTO;
@@ -29,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +42,9 @@ public class GroupService {
     private final CategoryRepository categoryRepository;
     private final GroupCategoryRepository groupCategoryRepository;
     private final GroupInfoRepository groupInfoRepos;
+    @Deprecated(forRemoval = true)
     private final GroupApplyLogRegistory groupApplyLogRegistory;
+    private final GroupApplyLogRegistory groupApplyLogRepository;
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final MemberRepository memberRepository;
     private final MemberGroupRepository memberGroupRepository;
@@ -119,47 +121,37 @@ public class GroupService {
         List<GroupListResDTO> getGroupList = new LinkedList<>();
 
         for (Group g : groupList) {
-            // endAt이 null인 (즉, 진행중인) sprint(들)을 collect
-            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getEndAt().after(new Date())).collect(Collectors.toList());
+            // endAt이 현재보다 이후인 (즉, 진행중인) sprint(들)을 collect
+            List<Sprint> sprint = new LinkedList<>();
 
-            if (!sprint.isEmpty()) {
-                Sprint currSprint = sprint.get(0);
-                getGroupList.add(GroupListResDTO.builder()
-                        .id(g.getId())
-                        .name(g.getGroupName())
-                        .description(g.getGroupInfo().getDescription())
-                        .currMember(g.getGroupInfo().getCurrMember())
-                        .maxMember(g.getGroupInfo().getMaxMember())
-                        .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
-                        .imgLink(g.getGroupInfo().getImageLink())
-                        .createdAt(format.format(g.getCreatedAt()))
-                        .display(g.getDisplay())
-                        .view(g.getView())
-                        .sprint(
-                                SprintDTO.builder()
-                                        .name(currSprint.getName())
-                                        .description(currSprint.getSprintInfo().getDescription())
-                                        .startAt(format.format(currSprint.getSprintInfo().getStartAt()))
-                                        .endAt(format.format(currSprint.getSprintInfo().getEndAt()))
-                                        .build()
-                        )
-                        .build()
-                );
-            } else {
-                getGroupList.add(GroupListResDTO.builder()
-                        .id(g.getId())
-                        .name(g.getGroupName())
-                        .description(g.getGroupInfo().getDescription())
-                        .currMember(g.getGroupInfo().getCurrMember())
-                        .maxMember(g.getGroupInfo().getMaxMember())
-                        .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
-                        .imgLink(g.getGroupInfo().getImageLink())
-                        .createdAt(format.format(g.getCreatedAt()))
-                        .display(g.getDisplay())
-                        .view(g.getView())
-                        .build()
-                );
-            }
+            g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).map(x->sprint.add(x));
+
+
+            // 첫번째 sprint를 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
+            Sprint currSprint;
+
+            getGroupList.add(GroupListResDTO.builder()
+                    .id(g.getId())
+                    .name(g.getGroupName())
+                    .description(g.getGroupInfo().getDescription())
+                    .currMember(g.getGroupInfo().getCurrMember())
+                    .maxMember(g.getGroupInfo().getMaxMember())
+                    .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
+                    .imgLink(g.getGroupInfo().getImageLink())
+                    .createdAt(format.format(g.getCreatedAt()))
+                    .display(g.getDisplay())
+                    .view(g.getView())
+                    // 현재 진행중인 sprint가 있다면
+                    .sprint(!sprint.isEmpty() ?
+                            SprintDTO.builder()
+                                    .name((currSprint = sprint.get(0)).getName())
+                                    .description(currSprint.getSprintInfo().getDescription())
+                                    .startAt(format.format(currSprint.getSprintInfo().getStartAt()))
+                                    .endAt(format.format(currSprint.getSprintInfo().getEndAt()))
+                                    .build() : null
+                    )
+                    .build()
+            );
 
         }
 
@@ -202,52 +194,36 @@ public class GroupService {
 
 
                 // sprints
-                List<SprintResDTO> sprints = new LinkedList<>();
-
-                group.getSprints().stream().map(x -> sprints.add(
-                        SprintResDTO.builder()
-                                .name(x.getName())
-//                                .status(new Date().after(x.getSprintInfo().getEndAt()) ? 2 : new Date().after(x.getSprintInfo().getStartAt()) ? 1 : 0)
-                                .description(x.getSprintInfo().getDescription())
-                                .goal(x.getSprintInfo().getGoal())
-//                                .startAt(x.getSprintInfo().getStartAt())
-//                                .endAt(x.getSprintInfo().getEndAt())
-//                                .sprintRuleList(x.getSprintRuleList().stream().map(y -> y.getRule().getRuleName().toString()).collect(Collectors.toList()))
-                                .fee(x.getSprintInfo().getFee())
-//                                .routineStartAt(x.getSprintInfo().getRoutineStartAt())
-//                                .routineEndAt(x.getSprintInfo().getRoutineEndAt())
-                                .build()
-                ));
-
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-                Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
 
                 List<SprintResDTO> sprintResDTOList = new LinkedList<>();
 
                 List<Sprint> sprintList = sprintRepository.findAllByGroupId(groupId);
 
                 for (Sprint sprint : sprintList) {
-                    Optional<Integer> sum = mrlRepository.getSprintData(sprint.getRoom().getId());
-                    Optional<MemberRoomLog> memberRoomLog = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
-
                     int sumTime = 0;
-                    if (sum.isPresent()) {
-                        sumTime = sum.get();
-                    }
                     String nickName = sprint.getGroup().getLeader().getNickName();
                     Integer kingTime = 0;
                     Integer count = 0;
 
-                    if (memberRoomLog.isPresent()) {
-                        nickName = memberRoomLog.get().getMember().getNickName();
-                        kingTime = memberRoomLog.get().getStudyTime();
-                        count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.get().getMember().getId(), sprint.getRoom().getId());
+                    Optional<Integer> sum = mrlRepository.getSprintData(sprint.getRoom().getId());
+                    if (sum.isPresent()) {
+                        sumTime = sum.get();
+                    }
+
+                    // TODO : repository 이게 맞나..?
+                    Optional<MemberRoomLog> checkMrl = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
+                    if (checkMrl.isPresent()) {
+                        MemberRoomLog memberRoomLog = checkMrl.get();
+
+                        nickName = memberRoomLog.getMember().getNickName();
+                        kingTime = memberRoomLog.getStudyTime();
+                        count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.getMember().getId(), sprint.getRoom().getId());
                     }
 
                     int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
 
-                    SprintResDTO sprintResDTO = new SprintResDTO().builder()
+
+                    sprintResDTOList.add(new SprintResDTO().builder()
                             .sprintId(sprint.getId())
                             .sprintImg(sprint.getSprintInfo().getImg())
                             .name(sprint.getName())
@@ -265,9 +241,7 @@ public class GroupService {
                             .kingStudy(kingTime)
                             .studySum(sumTime)
                             .penaltySum(sumPenalty)
-                            .build();
-                    sprintResDTOList.add(sprintResDTO);
-
+                            .build());
                 }
 
                 result.setResponseData("sprints", sprintResDTOList);
@@ -276,7 +250,7 @@ public class GroupService {
                 // leader
                 Member leader = group.getLeader();
 
-                result.setResponseData("leader", GroupMemberResDTO.builder()
+                result.setResponseData("leader", new GroupMemberResDTO().builder()
                         .nickName(leader.getNickName())
                         .imgLink(leader.getMemberInfo().getImageLink())
                         .role(GroupRole.LEADER.ordinal())
@@ -284,12 +258,30 @@ public class GroupService {
 
 
                 // 접속자 체크
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
                 // 비로그인
                 if (authentication.getPrincipal().equals("anonymousUser")) {
 
                     result.setResponseData("myData", MyDataResDTO.builder()
                             .role(GroupRole.ANONYMOUS.ordinal())
                             .build());
+
+                    List<Long> roomIdList = group.getSprints().stream().map(x -> x.getRoom().getId()).collect(Collectors.toList());
+                    List<MemberRoomLog> groupRoomLogList = mrlRepository.findByRoomIdIn(roomIdList);
+
+                    int sumTime = 0;
+                    for (MemberRoomLog mrl :
+                            groupRoomLogList) {
+                        sumTime += mrl.getStudyTime();
+                    }
+
+                    GroupDataResDTO groupDataResDTO = GroupDataResDTO.builder()
+                            .sumTime(sumTime)
+                            .build();
+
+                    result.setResponseData("groupData", groupDataResDTO);
+
                     result.setCode(200);
                     result.setMessage("GET GROUP SUCCESS");
                     return result;
@@ -306,7 +298,6 @@ public class GroupService {
                     // 그룹원 + 그룹장
                     Member currMember = checkMember.get();
 
-
                     // members
                     List<GroupMemberResDTO> members = new LinkedList<>();
 
@@ -315,7 +306,7 @@ public class GroupService {
                         members.add(GroupMemberResDTO.builder()
                                 .nickName(m.getNickName())
                                 .imgLink(m.getMemberInfo().getImageLink())
-                                .role(m.getNickName().equals(leader.getNickName()) ? GroupRole.LEADER.ordinal() : GroupRole.MEMBER.ordinal())
+                                .role(m.getEmail().equals(leader.getEmail()) ? GroupRole.LEADER.ordinal() : GroupRole.MEMBER.ordinal())
                                 .build()
                         );
                     }
@@ -336,12 +327,20 @@ public class GroupService {
                     }
 
                     // myData.penalty
-                    List<Integer> penalty = new ArrayList<>(RuleName.values().length);
-                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSprintIn(currMember.getId(), group.getSprints());
+                    List<Integer> penalty = new ArrayList<>(Mode.values().length);
+                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndRoomIn(currMember.getId(), group.getSprints().stream().map(x -> x.getRoom()).collect(Collectors.toList()));
 
-                    for (RuleName rule :
-                            RuleName.values()) {
-                        penalty.add(rule.ordinal(), (int) (long) penaltyLogList.stream().filter(x -> x.getRule().getRuleName().ordinal() == rule.ordinal()).count());
+                    for (PenaltyLog p :
+                            penaltyLogList) {
+                        System.out.println(p.getId());
+                        System.out.println(p.getRoom().getId());
+                        System.out.println(p.getMode().toString());
+                        System.out.println("--------------");
+                    }
+
+                    for (Mode mode :
+                            Mode.values()) {
+                        penalty.add(mode.ordinal(), (int) (long) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == mode.ordinal()).count());
                     }
 
                     MemberGroup currMemberGroup = memberGroupRepository.findByMemberIdAndGroupId(currMember.getId(), groupId).get();
@@ -376,7 +375,7 @@ public class GroupService {
                                 .build();
                     }
 
-                    result.setResponseData("groupData",groupDataResDTO);
+                    result.setResponseData("groupData", groupDataResDTO);
 
                     result.setCode(200);
                     result.setMessage("GET GROUP SUCCESS");
@@ -547,10 +546,32 @@ public class GroupService {
         Optional<Group> check = groupRepository.findById(groupId);
 
         if (check.isPresent()) {
-            check.get().setStatus(Status.NO);
+            Group group = check.get();
 
-            result.setCode(200);
-            result.setMessage("GROUP DELETE SUCCESS");
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication.getPrincipal().equals("anonymousUser")) {
+                result.setCode(400);
+                result.setMessage("login first");
+                return result;
+            }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+            Optional<Member> currUser = memberRepository.findById(currUserId);
+
+            if (currUser.isPresent() && group.getLeader().getId() == currUserId) {
+                group.setStatus(Status.NO);
+
+                result.setCode(200);
+                result.setMessage("GROUP DELETE SUCCESS");
+
+            } else {
+                result.setCode(400);
+                result.setMessage("no authority");
+
+            }
+
         } else {
             result.setCode(400);
             result.setMessage("NO SUCH GROUP");
@@ -561,45 +582,95 @@ public class GroupService {
 
     public ApiResponse getApplyList(Long groupId) {
         ApiResponse result = new ApiResponse();
-        Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
-                    UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                    if (currUser.getUsername().equals("" +group.get().getLeader().getId())) {
-                        // 그룹 리더임
-                        List<GroupApplyLog> applyLogs = groupApplyLogRegistory.findAllByGroupId(groupId);
-                        List<GroupApplyDTO> getApplys = new LinkedList<>();
+        if (checkGroup.isPresent()) {
+            Group group = checkGroup.get();
 
-                        for (GroupApplyLog applyLog : applyLogs) {
-                            Member member = applyLog.getMember();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                            Integer penaltyScore = penaltyLogRegistory.findAllByMemberId(member.getId()).size();
-
-                            getApplys.add(new GroupApplyDTO().builder()
-                                    .email(member.getEmail()).nickName(member.getNickName())
-                                    .imgLink(member.getMemberInfo().getImageLink())
-                                    .studyTime(member.getMemberInfo().getStudyTime())
-                                    .penaltyScore(penaltyScore)
-                                    .build()
-                            );
-                        }
-                        result.setResponseData("appliers", getApplys);
-                        result.setCode(200);
-                        result.setMessage("GROUP APPLY LIST SUCCESS");
-                    } else {
-                        // 그룹 리더가 아님
-                        result.setCode(400);
-                        result.setMessage("ONLY GROUP LEADER CAN GET APPLYES");
-                    }
-                }
-            } catch (Exception e) {
+            if (authentication.getPrincipal().equals("anonymousUser")) {
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
+                return result;
             }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+            if (checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
+
+                if (currUser.getId() == group.getLeader().getId()) {
+                    // 그룹 리더임
+                    List<GroupApplyLog> applyLogs = groupApplyLogRepository.findAllByGroupId(groupId);
+
+                    for (GroupApplyLog a :
+                            applyLogs) {
+                        System.out.println(a.getStatus());
+                    }
+
+                    applyLogs = applyLogs.stream().filter(x -> x.getStatus() == 0).collect(Collectors.toList());
+
+                    List<GroupApplyDTO> getApplys = new LinkedList<>();
+
+                    for (GroupApplyLog applyLog : applyLogs) {
+                        Member member = applyLog.getMember();
+
+                        //
+                        List<Integer> penalty = new ArrayList<>(Mode.values().length);
+                        List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberId(member.getId());
+
+                        if (penaltyLogList.size() != 0) {
+                            for (Mode mode :
+                                    Mode.values()) {
+                                penalty.add(mode.ordinal(), (int) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == mode.ordinal()).count());
+                            }
+                        }
+
+                        //
+                        getApplys.add(new GroupApplyDTO().builder()
+                                .email(member.getEmail()).nickName(member.getNickName())
+                                .imgLink(member.getMemberInfo().getImageLink())
+                                .studyTime(member.getMemberInfo().getStudyTime())
+                                .penalty(penalty)
+                                .build()
+                        );
+                    }
+
+                    List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).collect(Collectors.toList());
+
+
+                    // members
+                    List<GroupMemberResDTO> members = new LinkedList<>();
+
+                    for (Member m : groupMembers) {
+
+                        members.add(GroupMemberResDTO.builder()
+                                .nickName(m.getNickName())
+                                .build()
+                        );
+                    }
+
+
+                    result.setResponseData("appliers", getApplys);
+                    result.setResponseData("members", members);
+
+                    result.setCode(200);
+                    result.setMessage("GROUP APPLY LIST SUCCESS");
+
+                } else {
+                    // 그룹 리더가 아님
+                    result.setCode(400);
+                    result.setMessage("ONLY GROUP LEADER CAN GET APPLYES");
+                }
+            } else {
+                result.setCode(400);
+                result.setMessage("no such id");
+            }
+
+
         } else {
             result.setCode(400);
             result.setMessage("CAN'T FIND GROUP BY GROUP ID");
@@ -610,43 +681,59 @@ public class GroupService {
 
     public ApiResponse apply(Long groupId) {
         ApiResponse result = new ApiResponse();
-        Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                UserDetails currUser = (UserDetails) authentication.getPrincipal();
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
-                Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
+        if (checkGroup.isPresent()) {
+            Group group = checkGroup.get();
 
-                Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                if(groupApplyLog.isEmpty()){
-
-                    groupApplyLogRegistory.save(GroupApplyLog.builder()
-                            .member(member)
-                            .group(group.get())
-                            .apply_date(new Date())
-                            .status(0)
-                            .build()
-                    );
-                    result.setCode(200);
-                    result.setMessage("GROUP JOIN APPLY SUCCESS");
-                }
-                else {
-                    if(groupApplyLog.get().getStatus()==2){
-                        result.setCode(400);
-                        result.setMessage("BANNED MEMBER CAN REAPPLY");
-                    }
-                    else {
-                        // 승인이거나 보류 중
-                        result.setCode(400);
-                        result.setMessage("ALREADY APPLIED");
-                    }
-                }
-            } catch (Exception e) {
+            if (authentication.getPrincipal().equals("anonymousUser")) {
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
+                return result;
+            }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+            if (checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
+
+                Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(currUserId, groupId);
+                List<Long> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember().getId()).collect(Collectors.toList());
+
+                if (groupMembers.contains(currUserId)) {
+                    result.setCode(400);
+                    result.setMessage("MEMBER OF THIS GROUP ALREADY");
+
+                } else {
+                    if (groupApplyLog.isEmpty()) {
+                        groupApplyLogRegistory.save(GroupApplyLog.builder()
+                                .member(currUser)
+                                .group(group)
+                                .apply_date(new Date())
+                                .status(0)
+                                .build()
+                        );
+                        result.setCode(200);
+                        result.setMessage("GROUP JOIN APPLY SUCCESS");
+                    } else {
+                        if (groupApplyLog.get().getStatus() == 2) {
+                            result.setCode(400);
+                            result.setMessage("BANNED MEMBER CANNOT REAPPLY");
+                        } else {
+                            // 승인이거나 보류 중
+                            result.setCode(400);
+                            result.setMessage("ALREADY APPLIED");
+                        }
+                    }
+                }
+            } else {
+                result.setCode(400);
+                result.setMessage("NO SUCH MEMBER ID");
+
             }
         } else {
             result.setCode(400);
@@ -658,29 +745,48 @@ public class GroupService {
 
     public ApiResponse cancelApply(Long groupId) {
         ApiResponse result = new ApiResponse();
+
         Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                UserDetails currUser = (UserDetails) authentication.getPrincipal();
+        if (group.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
-                Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
+            if (authentication.getPrincipal().equals("anonymousUser")) {
+                result.setCode(400);
+                result.setMessage("LOGIN USER ONLY");
+                return result;
+            }
 
-                if (groupApplyLog.isPresent()) {
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+            Optional<Member> member = memberRepository.findById(currUserId);
+
+            if (member.isPresent()) {
+                Optional<GroupApplyLog> checkGroupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(currUserId, groupId);
+
+                if (checkGroupApplyLog.isPresent()) {
                     // 로그에서 삭제
-                    groupApplyLogRegistory.delete(groupApplyLog.get());
-                    result.setCode(200);
-                    result.setMessage("GROUP APPLY CANCLE SUCCESS");
+                    GroupApplyLog groupApplyLog = checkGroupApplyLog.get();
+
+                    if (groupApplyLog.getStatus() == 0) {
+                        groupApplyLogRegistory.delete(groupApplyLog);
+
+                        result.setCode(200);
+                        result.setMessage("GROUP APPLY CANCLE SUCCESS");
+                    } else {
+                        result.setCode(400);
+                        result.setMessage("Cannot Apply : banned or accepted");
+                    }
                 } else {
                     result.setCode(400);
                     result.setMessage("THERE IS NO APPLY");
                 }
-            } catch (Exception e) {
+            } else {
                 result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
+                result.setMessage("no such member id");
+
             }
+
         } else {
             result.setCode(400);
             result.setMessage("CAN'T FIND GROUP BY GROUP ID");
@@ -690,31 +796,45 @@ public class GroupService {
 
     public ApiResponse acceptApply(Long groupId, AcceptApplyReqDTO acceptApplyReqDTO) {
         ApiResponse result = new ApiResponse();
-        Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                UserDetails currUser = (UserDetails) authentication.getPrincipal();
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
-                if (currUser.getUsername().equals("" +group.get().getLeader().getId())) {
+        if (checkGroup.isPresent()) {
+            Group group = checkGroup.get();
 
-                    Member member = memberRepository.findByNickName(acceptApplyReqDTO.getNickName());
-                    Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication.getPrincipal().equals("anonymousUser")) {
+                result.setCode(400);
+                result.setMessage("LOGIN USER ONLY");
+                return result;
+            }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+            if (checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
+
+                if (currUser.getId() == group.getLeader().getId()) {
+                    Member applier = memberRepository.findByNickName(acceptApplyReqDTO.getNickName());
+
+                    Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(applier.getId(), groupId);
 
                     if (groupApplyLog.isPresent()) {
                         groupApplyLog.get().setStatus(1);
                         groupApplyLog.get().setUpdate_date(new Date());
 
+                        groupApplyLogRegistory.save(groupApplyLog.get());
+
                         memberGroupRepository.save(MemberGroup.builder()
-                                .member(member)
-                                .group(group.get())
+                                .member(applier)
+                                .group(group)
                                 .createdAt(new Date())
                                 .groupRole(GroupRole.MEMBER)
                                 .build()
                         );
-
-                        groupApplyLogRegistory.save(groupApplyLog.get());
 
                         result.setCode(200);
                         result.setMessage("GROUP APPLY ACCEPT SUCCESS");
@@ -728,9 +848,9 @@ public class GroupService {
                     result.setCode(400);
                     result.setMessage("ONLY GROUP LEADER DECLINE APPLYES");
                 }
-            } catch (Exception e) {
+            } else {
                 result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
+                result.setMessage("no such member id");
             }
         } else {
             result.setCode(400);
@@ -742,47 +862,58 @@ public class GroupService {
 
     public ApiResponse declineApply(Long groupId, DeclineApplyReqDTO declineApplyReqDTO) {
         ApiResponse result = new ApiResponse();
-        Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                    UserDetails currUser = (UserDetails) authentication.getPrincipal();
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
+        if (checkGroup.isPresent()) {
+            Group group = checkGroup.get();
 
-                    if (currUser.getUsername().equals("" + group.get().getLeader().getId())) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                        Member member = memberRepository.findByNickName(declineApplyReqDTO.getNickName());
-
-                        Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
-                        if (groupApplyLog.isPresent()) {
-
-                            if(groupApplyLog.get().getStatus() == 1){
-                                result.setCode(400);
-                                result.setMessage("ALREADY JOINED");
-                            }
-                            else {
-                                groupApplyLogRegistory.delete(groupApplyLog.get());
-                                result.setCode(200);
-                                result.setMessage("GROUP APPLY DECLINE SUCCESS");
-                            }
-                        } else {
-                            result.setCode(400);
-                            result.setMessage("THERE IS NO APPLY");
-                        }
-
-                    } else {
-                        // 그룹 리더가 아님
-                        result.setCode(400);
-                        result.setMessage("ONLY GROUP LEADER DECLINE APPLYES");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (authentication.getPrincipal().equals("anonymousUser")) {
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
+                return result;
             }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+            if (checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
+
+                if (currUser.getId() == group.getLeader().getId()) {
+                    Member member = memberRepository.findByNickName(declineApplyReqDTO.getNickName());
+
+                    Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
+
+                    if (groupApplyLog.isPresent()) {
+
+                        if (groupApplyLog.get().getStatus() == 1) {
+                            result.setCode(400);
+                            result.setMessage("ALREADY JOINED");
+                        } else {
+                            // TODO : 1.거절된 경우 Log.status를 어떻게 처리할 것인지?
+                            groupApplyLogRegistory.delete(groupApplyLog.get());
+                            result.setCode(200);
+                            result.setMessage("GROUP APPLY DECLINE SUCCESS");
+                        }
+                    } else {
+                        result.setCode(400);
+                        result.setMessage("THERE IS NO APPLY");
+                    }
+
+                } else {
+                    // 그룹 리더가 아님
+                    result.setCode(400);
+                    result.setMessage("ONLY GROUP LEADER DECLINE APPLYES");
+                }
+            } else {
+                result.setCode(400);
+                result.setMessage("no such member id");
+
+            }
+
         } else {
             result.setCode(400);
             result.setMessage("CAN'T FIND GROUP BY GROUP ID");
@@ -791,48 +922,56 @@ public class GroupService {
         return result;
     }
 
+    // TODO : 방장이 나갈경우는 어떻게 하는가?
     public ApiResponse leaveGroup(Long groupId) {
-
-        // 방장이 나갈경우는 어떻게 하는가?
         ApiResponse result = new ApiResponse();
-        Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                    UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                    Member member = memberRepository.findById(Long.parseLong(currUser.getUsername())).get();
+        if (checkGroup.isPresent()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                    Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(member.getId(), groupId);
+            if (authentication.getPrincipal().equals("anonymousUser")) {
+                result.setCode(400);
+                result.setMessage("LOGIN USER ONLY");
+                return result;
+            }
 
-                    if (groupApplyLog.isPresent()) {
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
 
-                        if(groupApplyLog.get().getStatus()==1) {
-                            groupApplyLogRegistory.delete(groupApplyLog.get());
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
 
-                            Optional<MemberGroup> memberGroup = memberGroupRepository.findByMemberIdAndGroupId(member.getId(), groupId);
-                            memberGroupRepository.delete(memberGroup.get());
+            if (checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
 
-                            result.setCode(200);
-                            result.setMessage("GROUP LEAVE SUCCESS");
-                        }
+                Optional<GroupApplyLog> groupApplyLog = groupApplyLogRegistory.findByMemberIdAndGroupId(currUserId, groupId);
 
-                        else {
-                            result.setCode(400);
-                            result.setMessage("NOT GROUP MEMBER");
-                        }
+                if (groupApplyLog.isPresent()) {
+                    if (groupApplyLog.get().getStatus() == 1) {
+                        // TODO : 2.탈톼한 경우 Log.status를 어떻게 처리할 것인지?
+                        groupApplyLogRegistory.delete(groupApplyLog.get());
+
+                        Optional<MemberGroup> memberGroup = memberGroupRepository.findByMemberIdAndGroupId(currUserId, groupId);
+
+                        memberGroupRepository.delete(memberGroup.get());
+
+                        result.setCode(200);
+                        result.setMessage("GROUP LEAVE SUCCESS");
 
                     } else {
                         result.setCode(400);
-                        result.setMessage("THERE IS NO APPLY");
+                        result.setMessage("NOT GROUP MEMBER");
                     }
+
+                } else {
+                    result.setCode(400);
+                    result.setMessage("THERE IS NO APPLY LOG");
                 }
-            } catch (Exception e) {
+            } else {
                 result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
+                result.setMessage("no such member id");
             }
+
         } else {
             result.setCode(400);
             result.setMessage("CAN'T FIND GROUP BY GROUP ID");
@@ -843,46 +982,61 @@ public class GroupService {
 
     public ApiResponse tossLeader(Long groupId, LeaderTossReqDTO leaderTossReqDTO) {
         ApiResponse result = new ApiResponse();
-        Optional<Group> group = groupRepository.findById(groupId);
 
-        if (group != null) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
-                    UserDetails currUser = (UserDetails) authentication.getPrincipal();
+        if (checkGroup.isPresent()) {
+            Group group = checkGroup.get();
 
-                    if (currUser.getUsername().equals("" + group.get().getLeader().getId())) {
-                        Member member = memberRepository.findByNickName(leaderTossReqDTO.getNickName());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-                        // 방장 바뀐 것도 로그로 남겨야 하는가?
-                        group.get().setLeader(member);
-
-                        // 현재 넘겨받는 사람이 리더인지 아닌지 봐야한다.
-                        Optional<MemberGroup> memberGroup = memberGroupRepository.findByGroupIdAndMemberId(groupId, member.getId());
-
-                        if(memberGroup.isPresent()) {
-                            memberGroup.get().setGroupRole(GroupRole.LEADER);
-                            memberGroupRepository.save(memberGroup.get());
-                            result.setCode(200);
-                            result.setMessage("GROUP LEADER CHANGE SUCCESS");
-                        }
-                        else {
-                            result.setCode(400);
-                            result.setMessage(leaderTossReqDTO.getNickName() + " IS NOT GROUP MEMBER");
-                        }
-
-                    } else {
-                        // 그룹 리더가 아님
-                        result.setCode(400);
-                        result.setMessage("ONLY GROUP LEADER GET APPLYES");
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (authentication.getPrincipal().equals("anonymous")) {
                 result.setCode(400);
                 result.setMessage("LOGIN USER ONLY");
+                return result;
             }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+            if(checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
+
+                if (currUser.getId() == group.getLeader().getId()) {
+                    Member member = memberRepository.findByNickName(leaderTossReqDTO.getNickName());
+
+                    // 현재 넘겨받는 사람이 리더인지 아닌지 봐야한다.
+                    Optional<MemberGroup> leaderGroup = memberGroupRepository.findByGroupIdAndMemberId(groupId, currUserId);
+                    Optional<MemberGroup> memberGroup = memberGroupRepository.findByGroupIdAndMemberId(groupId, member.getId());
+
+                    if (memberGroup.isPresent()&&leaderGroup.isPresent()) {
+                        group.setLeader(member);
+
+                        leaderGroup.get().setGroupRole(GroupRole.MEMBER);
+                        memberGroup.get().setGroupRole(GroupRole.LEADER);
+
+                        groupRepository.save(group);
+                        memberGroupRepository.save(memberGroup.get());
+
+                        result.setCode(200);
+                        result.setMessage("GROUP LEADER CHANGE SUCCESS");
+                    } else {
+                        result.setCode(400);
+                        result.setMessage(leaderTossReqDTO.getNickName() + " IS NOT GROUP MEMBER");
+                    }
+
+                } else {
+                    // 그룹 리더가 아님
+                    result.setCode(400);
+                    result.setMessage("ONLY GROUP LEADER GET APPLYES");
+                }
+
+            } else{
+                result.setCode(400);
+                result.setMessage("no such member id");
+            }
+
         } else {
             result.setCode(400);
             result.setMessage("CAN'T FIND GROUP BY GROUP ID");
@@ -943,24 +1097,50 @@ public class GroupService {
     public ApiResponse updateForm(Long groupId, HttpServletRequest request) {
         ApiResponse result = new ApiResponse();
 
-        Optional<Group> check = groupRepository.findById(groupId);
+        Optional<Group> checkGroup = groupRepository.findById(groupId);
 
-        if (check.isPresent()) {
-            Group group = check.get();
+        if (checkGroup.isPresent()) {
+            Group group = checkGroup.get();
 
-            result.setResponseData("group", UpdateFormResDTO.builder()
-                    .id(group.getId())
-                    .name(group.getGroupName())
-                    .description(group.getGroupInfo().getDescription())
-                    .maxMember(group.getGroupInfo().getMaxMember())
-                    .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
-                    .pwd(group.getGroupInfo().getPwd())
-                    .display(group.getDisplay())
-                    .imgLink(group.getGroupInfo().getImageLink())
-                    .build());
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            result.setCode(200);
-            result.setMessage("UPDATE-FORM SUCCESS");
+            if (authentication.getPrincipal().equals("anonymousUser")) {
+                result.setCode(400);
+                result.setMessage("login first");
+                return result;
+            }
+
+            Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+
+            Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
+
+            if (checkCurrUser.isPresent()) {
+                Member currUser = checkCurrUser.get();
+
+                if (currUser.getId() == group.getLeader().getId()) {
+
+                    result.setResponseData("group", UpdateFormResDTO.builder()
+                            .id(group.getId())
+                            .name(group.getGroupName())
+                            .description(group.getGroupInfo().getDescription())
+                            .maxMember(group.getGroupInfo().getMaxMember())
+                            .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
+                            .pwd(group.getGroupInfo().getPwd())
+                            .display(group.getDisplay())
+                            .imgLink(group.getGroupInfo().getImageLink())
+                            .build());
+
+                    result.setCode(200);
+                    result.setMessage("UPDATE-FORM SUCCESS");
+                } else {
+                    result.setCode(400);
+                    result.setMessage("no authority");
+                }
+            } else {
+                result.setCode(400);
+                result.setMessage("no such member id");
+
+            }
         }
 
         return result;

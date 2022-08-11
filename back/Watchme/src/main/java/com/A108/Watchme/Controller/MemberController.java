@@ -81,6 +81,12 @@ public class MemberController {
         return result;
     }
 
+
+    @GetMapping(value = "/members/mygroup")
+    @ResponseBody
+    public ApiResponse memberGroup(){
+        return memberService.memberGroup();
+
     @PostMapping("/find-password")
     public ApiResponse findPW(@RequestBody FindPwDTO findPwDTO) {
         return memberService.findPW(findPwDTO);
@@ -113,5 +119,6 @@ public class MemberController {
     @ResponseBody
     public ApiResponse nickNameCheck(@RequestBody CheckNickNameDTO checkNickNameDTO){
         return memberService.nickNameCheck(checkNickNameDTO);
+
     }
 }

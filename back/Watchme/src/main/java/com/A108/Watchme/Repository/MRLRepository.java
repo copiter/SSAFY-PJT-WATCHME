@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +33,6 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
             "WHERE room_id= ?1")
     Optional<Integer> getSprintData(Long roomId);
     Optional<MemberRoomLog> findTopByRoomIdOrderByStudyTimeDesc(Long roomId);
+
+    List<MemberRoomLog> findByMember_idAndStartAtAfter(Long memberId, Date date);
 }

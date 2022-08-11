@@ -37,10 +37,5 @@ public class GroupApplyLog {
     @Column(name = "update_date")
     private Date update_date;
 
-
-    // 0 : 보류
-    // 1 : 승인
-    // 2 : 밴
-
     private int status;
 }

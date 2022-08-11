@@ -247,6 +247,9 @@ public class SprintService {
         }
 
             for(Sprint sprint: sprintList) {
+                if(sprint.getStatus().equals(Status.DELETE)){
+                    continue;
+                }
                 int myTime = 0;
                 int sumTime = 0;
                 int myPenalty = 0;

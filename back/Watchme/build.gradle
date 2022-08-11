@@ -43,7 +43,7 @@ dependencies {
 	implementation 'io.openvidu:openvidu-java-client:2.22.0'
 	implementation platform('software.amazon.awssdk:bom:2.15.0')
 	implementation 'software.amazon.awssdk:s3control'
-
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.7.2'
 
 	// WebRTC SETTING
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'

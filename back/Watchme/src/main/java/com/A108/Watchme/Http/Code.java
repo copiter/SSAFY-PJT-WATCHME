@@ -47,7 +47,9 @@ public enum Code {
     C550(550, "TOO MANY PEOPLE"),
     C551(551, "ROOM PWD FAILED"),
     C599(599, "DATE PARSING FAILED" ),
-    C598(598, "INVALID POINT VALUE" );
+    C598(598, "INVALID POINT VALUE" ),
+    C597(597, "KAKAO PAY ERROR" ),
+    C596(596, "DTO ERROR");
 
     private int errCode;
 

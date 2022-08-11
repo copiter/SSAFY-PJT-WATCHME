@@ -1,6 +1,7 @@
 package com.A108.Watchme.Repository;
 
 import com.A108.Watchme.VO.Entity.log.PenaltyLog;
+import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface PenaltyLogRegistory extends JpaRepository<PenaltyLog, Long> {
     List<PenaltyLog> findAllByMemberId(Long id);
     Integer countByRoomId(Long roomId);
-    List<PenaltyLog> findAllByMemberIdAndSprintIn(Long id, List<Sprint> sprints);
+    List<PenaltyLog> findAllByMemberIdAndRoomIn(Long id, List<Room> rooms);
 
 //    @Query(value = "select new Integer(count(p.penalty_log_id))" +
 //            "from Penalty_log p where p.member_id=:memberId and p.room_id=:roomId")

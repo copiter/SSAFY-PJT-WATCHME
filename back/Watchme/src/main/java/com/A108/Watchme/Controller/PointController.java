@@ -2,6 +2,7 @@ package com.A108.Watchme.Controller;
 
 
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayApproveReq;
+import com.A108.Watchme.DTO.KakaoPay.KakaoPayApproveRes;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayRes;
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
@@ -46,26 +47,44 @@ public class PointController {
         } catch (Exception e){
             throw new CustomException(Code.C521);
         }
-
-        KakaoPayRes kakaoPayRes = pointService.kakaoPayReady(id, point);
-
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(200);
-        apiResponse.setMessage("PAY READY SUCCESS");
-        apiResponse.setResponseData("REDIRECT_URL", kakaoPayRes.getNext_redirect_pc_url());
-        apiResponse.setResponseData("tid", kakaoPayRes.getTid());
+        try{
+            KakaoPayRes kakaoPayRes = pointService.kakaoPayReady(id, point);
+            apiResponse.setCode(200);
+            apiResponse.setMessage("PAY READY SUCCESS");
+            apiResponse.setResponseData("REDIRECT_URL", kakaoPayRes.getNext_redirect_pc_url());
+            apiResponse.setResponseData("tid", kakaoPayRes.getTid());
+        } catch (Exception e){
+            throw new CustomException(Code.C597);
+        }
+
+
+
+
         return apiResponse;
     }
 
     @PostMapping("/points/kakao/approval")
-    public ApiResponse kakaoApprove(@RequestParam(required = false, name="pg_token") String pg_token, @RequestBody KakaoPayApproveReq kakaoPayApproveReq){
+    public ApiResponse kakaoApprove(@RequestBody KakaoPayApproveReq kakaoPayApproveReq){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-        pointService.kakaoPayApprove(id, pg_token, kakaoPayApproveReq);
-
+        Long id;
+        try{
+            id = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        } catch (Exception e){
+            throw new CustomException(Code.C501);
+        }
         ApiResponse apiResponse = new ApiResponse();
+    try{
+        pointService.kakaoPayApprove(id, kakaoPayApproveReq);
+        pointService.pointSave(kakaoPayApproveReq.getPg_token(), kakaoPayApproveReq.getValue(), id);
         apiResponse.setCode(200);
-        apiResponse.setMessage("PAY READY SUCCESS");
+        apiResponse.setMessage("PAY APPROVE SUCCESS");
+    } catch (Exception e){
+        throw new CustomException(Code.C597);
+    }
+
+
+
         return apiResponse;
     }
 

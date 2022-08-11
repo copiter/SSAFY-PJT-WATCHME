@@ -31,6 +31,8 @@ public class PointLog {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "pg_token")
+    private String pgToken;
     @ManyToOne
     @JoinColumn(name = "sprint_id")
     private Sprint sprint;

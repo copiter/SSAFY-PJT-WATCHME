@@ -1,6 +1,7 @@
 package com.A108.Watchme.Repository;
 
 import com.A108.Watchme.VO.Entity.MemberGroup;
+import com.A108.Watchme.VO.Entity.group.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,6 @@ public interface MemberGroupRepository extends JpaRepository<MemberGroup, Long> 
     Optional<MemberGroup> findByGroupIdAndMemberId(Long groupId, Long MemberId);
 
     List<MemberGroup> findByMemberId(Long memberId);
+
+    List<MemberGroup> findAllByMemberId(Long memberId);
 }

@@ -2,6 +2,7 @@ package com.A108.Watchme.Service;
 
 import com.A108.Watchme.Config.properties.AppProperties;
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.DTO.myPage.MyData;
 import com.A108.Watchme.DTO.myPage.MyGroup;
 import com.A108.Watchme.DTO.myPage.WrapperMy;
@@ -24,6 +25,7 @@ import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.member.MemberEmailKey;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.RefreshToken;
+import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import com.A108.Watchme.oauth.entity.UserPrincipal;
 import com.A108.Watchme.oauth.token.AuthToken;
 import com.A108.Watchme.oauth.token.AuthTokenProvider;
@@ -53,6 +55,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class MemberService {
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
 
@@ -68,7 +72,8 @@ public class MemberService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final S3Uploader s3Uploader;
     private final MailService mailService;
-
+    private final PenaltyLogRegistory penaltyLogRegistory;
+    private final SprintRepository sprintRepository;
 
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
@@ -432,7 +437,6 @@ public class MemberService {
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-                    System.out.println("heelo");
 
                     Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
 
@@ -498,5 +502,81 @@ public class MemberService {
             return apiResponse;
 
         }
+
+    public ApiResponse getMySprints(Long memberId) {
+        ApiResponse apiResponse = new ApiResponse();
+        List<MemberGroup> memberGroupList = memberGroupRepository.findAllByMemberId(memberId);
+        List<SprintGetResDTO> sprintList = new LinkedList<>();
+        for(MemberGroup memberGroup : memberGroupList){
+            List<Sprint> sprints = sprintRepository.findAllByGroupId(memberGroup.getGroup().getId());
+            for(Sprint sprint : sprints){
+                if(sprint.getStatus().equals(Status.DELETE)){
+                    continue;
+                }
+                int myTime = 0;
+                int sumTime = 0;
+                int myPenalty = 0;
+                int kingTime=0;
+                int count=0;
+                if(memberId != -1){
+                    myPenalty = penaltyLogRegistory.countByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
+                    Optional<MemberRoomLog> myData = mrlRepository.findByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
+                    if(myData.isPresent()) {
+                        myTime = myData.get().getStudyTime();
+                    }
+                }
+
+                Optional<Integer> summ = mrlRepository.getSprintData(sprint.getRoom().getId());
+                Optional<MemberRoomLog> memberRoomLog = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
+
+
+                if(summ.isPresent()) {
+                    System.out.println(summ.get());
+                    sumTime = summ.get();
+                }
+
+                String nickName=sprint.getGroup().getLeader().getNickName();
+
+
+                if(memberRoomLog.isPresent()){
+                    nickName = memberRoomLog.get().getMember().getNickName();
+                    kingTime = memberRoomLog.get().getStudyTime();
+                    count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.get().getMember().getId(), sprint.getRoom().getId());
+                }
+                int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
+
+
+
+
+                SprintGetResDTO sprintGetResDTO = new SprintGetResDTO().builder()
+                        .sprintId(sprint.getId())
+                        .sprintImg(sprint.getSprintInfo().getImg())
+                        .sprintName(sprint.getName())
+                        .description(sprint.getSprintInfo().getDescription())
+                        .goal(sprint.getSprintInfo().getGoal())
+                        .mode(sprint.getRoom().getMode())
+                        .endAt(format.format(sprint.getSprintInfo().getEndAt()))
+                        .penaltyMoney(sprint.getSprintInfo().getPenaltyMoney())
+                        .startAt(format.format(sprint.getSprintInfo().getStartAt()))
+                        .routineEndAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
+                        .routineStartAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
+                        .status(sprint.getStatus())
+                        .kingName(nickName)
+                        .kingPenalty(count)
+                        .kingStudy(kingTime)
+                        .studySum(sumTime)
+                        .penaltySum(sumPenalty)
+                        .myPenalty(myPenalty)
+                        .myStudy(myTime)
+                        .fee(sprint.getSprintInfo().getFee())
+                        .build();
+                sprintList.add(sprintGetResDTO);
+            }
+        }
+        apiResponse.setCode(200);
+        apiResponse.setMessage("SUCCESS MY SPRINT");
+        apiResponse.setResponseData("sprints", sprintList);
+        return  apiResponse;
     }
+}
 

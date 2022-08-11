@@ -1,7 +1,9 @@
 package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +23,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.text.ParseException;
 
 @RestController
@@ -48,7 +52,7 @@ public class MemberController {
     }
     @PostMapping("/login")
     @ResponseBody
-    public ApiResponse login(@RequestBody @Validated LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
+    public ApiResponse login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
 
         ApiResponse apiResponse = memberService.login(request,response, loginRequestDTO);
         System.out.println(apiResponse.getResponseData());
@@ -120,6 +124,19 @@ public class MemberController {
     @ResponseBody
     public ApiResponse nickNameCheck(@RequestBody CheckNickNameDTO checkNickNameDTO){
         return memberService.nickNameCheck(checkNickNameDTO);
+    }
 
+    @GetMapping("/sprints")
+    @ResponseBody
+    public ApiResponse getMySprints(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId;
+        try{
+            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        } catch (Exception e){
+            throw new CustomException(Code.C501);
+        }
+
+        return memberService.getMySprints(memberId);
     }
 }

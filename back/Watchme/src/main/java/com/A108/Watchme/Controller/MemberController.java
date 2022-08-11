@@ -81,6 +81,21 @@ public class MemberController {
         return result;
     }
 
+    @PostMapping("/find-password")
+    public ApiResponse findPW(@RequestBody FindPwDTO findPwDTO) {
+        return memberService.findPW(findPwDTO);
+    }
+
+    @PostMapping("/reset-password")
+    public ApiResponse resetPW(@RequestBody ResetPwDTO resetPwDTO){
+        return memberService.resetPW(resetPwDTO);
+    }
+
+    @PostMapping("/reset-password-mainpages")
+    public ApiResponse resetPwMp(@RequestBody ResetPwMpDTO resetPwMpDTO){
+        return memberService.resetPwMp(resetPwMpDTO);
+    }
+
     @PostMapping(value="/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
     public ApiResponse memberUpdate(@RequestPart(value = "data") UpdateRequestDTO updateRequestDTO, @RequestPart(value = "files", required = false) MultipartFile image) throws ParseException {

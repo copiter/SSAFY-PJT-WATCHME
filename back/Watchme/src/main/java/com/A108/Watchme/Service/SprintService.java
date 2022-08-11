@@ -25,6 +25,7 @@ import org.checkerframework.checker.nullness.Opt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -188,25 +189,42 @@ public class SprintService {
     }
 
     public ApiResponse getSprints(Long groupId){
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ApiResponse apiResponse = new ApiResponse();
-        Long memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        Long memberId = -1L;
+        if(!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        }
+
         List<SprintGetResDTO> sprintGetResDTOList = new LinkedList<>();
         List<Sprint> sprintList = sprintRepository.findAllByGroupId(groupId);
 
             for(Sprint sprint: sprintList) {
-                Optional<MemberRoomLog> myData = mrlRepository.findByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
+                int myTime = 0;
+                int sumTime = 0;
+                int myPenalty = 0;
+                int kingTime=0;
+                int count=0;
+                if(memberId != -1){
+                    myPenalty = penaltyLogRegistory.countByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
+                    Optional<MemberRoomLog> myData = mrlRepository.findByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
+                    if(myData.isPresent()) {
+                        myTime = myData.get().getStudyTime();
+                    }
+                }
+
                 Optional<Integer> summ = mrlRepository.getSprintData(sprint.getRoom().getId());
                 Optional<MemberRoomLog> memberRoomLog = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
 
-                int sumTime = 0;
+
                 if(summ.isPresent()) {
                     System.out.println(summ.get());
                     sumTime = summ.get();
                 }
+
                 String nickName=sprint.getGroup().getLeader().getNickName();
-                Integer kingTime=0;
-                Integer count=0;
+
 
                 if(memberRoomLog.isPresent()){
                     nickName = memberRoomLog.get().getMember().getNickName();
@@ -214,11 +232,8 @@ public class SprintService {
                     count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.get().getMember().getId(), sprint.getRoom().getId());
                 }
                 int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
-                int myTime = 0;
-                int myPenalty = penaltyLogRegistory.countByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
-                if(myData.isPresent()){
-                    myTime = myData.get().getStudyTime();
-                }
+
+
 
 
                 SprintGetResDTO sprintGetResDTO = new SprintGetResDTO().builder()

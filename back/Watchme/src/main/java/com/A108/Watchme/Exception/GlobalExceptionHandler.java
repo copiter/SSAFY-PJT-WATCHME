@@ -25,20 +25,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handleAllException(Exception ex) {
+    protected ResponseEntity<Object> handleAllException(Exception ex) {
         Code errorCode = Code.C500;
         return handleExceptionInternal(errorCode);
     }
-    @ExceptionHandler(AuthenticationException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorResponse> handleAuthenticaitionException(AuthenticationException ex){
-        ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode().getCode(), ex.getErrorCode().getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler({AuthenticationException.class})
+//    @ResponseBody
+//    public ResponseEntity<Object> handleAuthenticaitionException(AuthenticationException ex){
+//        return handleExceptionInternal(Code.C502);
+//    }
 
     @ExceptionHandler({ExpiredJwtException.class})
     public ResponseEntity<Object> handleExpiredJwtException(Exception ex) {
-        Code errorCode = Code.C501;
+        Code errorCode = Code.C500;
         return handleExceptionInternal(errorCode);
     }
 

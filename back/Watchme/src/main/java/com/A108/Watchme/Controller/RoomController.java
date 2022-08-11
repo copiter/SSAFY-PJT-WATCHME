@@ -38,6 +38,7 @@ public class RoomController {
     public ApiResponse getRoom(@RequestParam(required = false, value="category") String ctgName,
                                @RequestParam(required = false, value="keyword") String keyword,
                                @RequestParam(value="page", required = false) String page){
+        System.out.println("page"+ page);
         int pages = 1;
         try{
             if(page!=null){

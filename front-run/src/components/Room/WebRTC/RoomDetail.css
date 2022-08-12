@@ -9,3 +9,14 @@
 	float:left;
 	width: 33%;
 }
+
+.others{
+	display:flex;
+	flex-wrap: wrap;
+}
+.otherVedio{
+
+}
+.nextLine{
+
+}

@@ -9,7 +9,7 @@ import java.util.List;
 public class GroupCreateReqDTO {
     private String name;
     private String description;
-    private String maxMember;
+    private Integer maxMember;
     private List<String> ctg;
     private String pwd;
     private Integer display;

@@ -625,38 +625,40 @@ class RoomDetail extends Component {
               <button onClick={this.screenShare}>화면공유</button>
             )}
           </div>
-          
-          {//개인카메라
-          this.state.mainStreamManager !== undefined ? (
-            <div id="main-video" className="col-md-6">
-              <UserVideoComponent
-                streamManager={this.state.mainStreamManager}
-                audioState={this.state.audioState}
-              />
-              <input
-                className="btn btn-large btn-success"
-                type="button"
-                id="buttonSwitchCamera"
-                onClick={this.switchCamera}
-                value="내 화면을 다시 보기"
-              />
-            </div>
-          ) : null}
-          <div id="video-container" className="col-md-6">
-            {this.state.publisher !== undefined ? (
-              <div className="stream-container col-md-6 col-xs-6">
-                <UserVideoComponent streamManager={this.state.publisher} />
+          <div className="myCams">
+            {//개인카메라
+            this.state.mainStreamManager !== undefined ? (
+              <div id="main-video" className="col-md-6">
+                <UserVideoComponent
+                  streamManager={this.state.mainStreamManager}
+                  audioState={this.state.audioState}
+                />
+                <input
+                  className="btn btn-large btn-success"
+                  type="button"
+                  id="buttonSwitchCamera"
+                  onClick={this.switchCamera}
+                  value="내 화면을 다시 보기"
+                />
               </div>
             ) : null}
-            {this.state.subscribers.map((sub, i) => (
-              <div
-                key={i}
-                className="stream-container col-md-6 col-xs-6"
-                onClick={() => this.handleMainVideoStream(sub)}
-              >
-                <UserVideoComponent streamManager={sub} />
-              </div>
-            ))}
+            <div id="video-container" className="col-md-6">
+              {this.state.publisher !== undefined ? (
+                <div className="stream-container col-md-6 col-xs-6">
+                  <UserVideoComponent streamManager={this.state.publisher} />
+                </div>
+              ) : null}
+          </div>
+            <div className="others">
+              {this.state.subscribers.map((sub, i) => (
+                <div
+                  key={i}
+                  className="stream-container col-md-6 col-xs-6 "
+                  onClick={() => this.handleMainVideoStream(sub)}
+                >
+                  <UserVideoComponent streamManager={sub} />
+                </div>
+              ))}</div>
           </div>
 <div style={{display:'inline-block',width:'1000px',height:'500px'}}>
   <ul className="linksUl">

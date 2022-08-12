@@ -13,6 +13,9 @@
 .others{
 	display:flex;
 	flex-wrap: wrap;
+}.myCams{
+	display:flex;
+	flex-wrap: wrap;
 }
 .otherVedio{
 

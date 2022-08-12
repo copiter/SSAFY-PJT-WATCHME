@@ -57,8 +57,6 @@ function GroupCreate() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    formData.append("images", imgeRef.current.files[0]);
     let ctgs = [];
     let i = 0;
     let j = 0;
@@ -87,8 +85,10 @@ function GroupCreate() {
       pwd: inputs.pwd,
     };
 
+    const formData = new FormData();
+    formData.append("images", imgeRef.current.files[0]);
     formData.append(
-      "postGroupReqDTO",
+      "groupCreateReqDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
@@ -102,6 +102,7 @@ function GroupCreate() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
+          alert("그룹이 생성되었습니다!");
           navigate(`/GroupDetail/${result.responseData.groupId}`);
         } else {
           console.log(result);

@@ -63,6 +63,8 @@ function MainPage() {
     myGroups = datas["myGroups"];
   }
 
+  console.log(datas);
+
   return (
     <>
       <div id="outer">
@@ -89,7 +91,7 @@ function MainPage() {
                   </span>
 
                   {/*그룹 아무것도 가입안한경우 */}
-                  {!myGroups.length && (
+                  {myGroups.length === 0 && (
                     <>
                       <div id="myGroup-title">
                         <span>
@@ -99,7 +101,7 @@ function MainPage() {
                       </div>
                     </>
                   )}
-                  {myGroups.length && (
+                  {myGroups.length > 0 && (
                     <ul id="mypage-mygroup">
                       {myGroups.map((group, index) => {
                         return (

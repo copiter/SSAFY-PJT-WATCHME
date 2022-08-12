@@ -36,20 +36,16 @@ function GroupRecruit() {
   const url = `${FETCH_URL}/groups`;
   useEffect(() => {
     fetch(url)
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          setGroups(result["responseData"]["groups"]);
         } else {
-          console.log("기본Case4");
+          console.log(result);
         }
       })
-      .then((result) => {
-        setGroups(result["responseData"]["groups"]);
-      })
       .catch((err) => {
-        console.log("ERROR");
+        console.log(err);
       });
   }, []);
 

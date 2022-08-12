@@ -17,6 +17,9 @@ function SignUp() {
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
+  const day = new Date();
+  const today = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+
   const handleSelectSex = (e) => {
     setSelectSex(e.target.value);
   };
@@ -56,16 +59,15 @@ function SignUp() {
       birth: birthdayInputRef.current.value,
     };
 
-    const files = imageInputRef.current.files[0];
+    const images = imageInputRef.current.files[0];
     const formData = new FormData();
-    formData.append("files", files);
+    formData.append("images", images);
     formData.append(
       "data",
       new Blob([JSON.stringify(data)], { type: "application/json" })
     );
 
     console.log(data);
-    debugger;
 
     //myjsons->application.josn
 
@@ -274,7 +276,7 @@ function SignUp() {
                   placeholder="생년월일을 입력하세요"
                   required
                   min="1900-01-01"
-                  max="2022-12-31"
+                  max="9999-12-31"
                   ref={birthdayInputRef}
                 />
               </div>

@@ -1,38 +1,36 @@
 {
+    "code": 200,
+    "message": "SUCCESS GET MEMBER INFO",
     "responseData": {
-        "code": 200,
-        "message": "SUCCESS GET MEMBER INFO",
-        "responseData": {
-            "studyByDay": [
-                130,
-                80,
-                180,
-                220
-            ],
-            "penalty": {
-                "SLEEP": 5,
-                "PHONE": 2
-            },
-            "member": {
-                "nickName": "테스트",
-                "profileImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/%EA%B7%80%EC%97%AC%EC%9B%80.jpg",
-                "point": 1,
-                "description": null,
-                "studyTimeToday": 0,
-                "studyTimeWeek": 54,
-                "studyTimeMonth": 231,
-                "studyTimeTotal": 416
-            },
-            "penaltyByDay": [
-                10,
-                15,
-                12,
-                25
-            ],
-            "rules": [
-                "SLEEP",
-                "PHONE"
-            ]
-        }
+        "studyByDay": [
+            130,
+            80,
+            180,
+            220
+        ],
+        "penalty": {
+            "MODE1": 5,
+            "MODE2": 2
+        },
+        "member": {
+            "nickName": "춘식이입니당",
+            "profileImage": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/귀여움.jpg",
+            "point": 1,
+            "description": null,
+            "studyTimeToday": 0,
+            "studyTimeWeek": 54,
+            "studyTimeMonth": 231,
+            "studyTimeTotal": 416
+        },
+        "penaltyByDay": [
+            10,
+            15,
+            12,
+            25
+        ],
+        "rules": [
+            "MDOE1",
+            "MODE2"
+        ]
     }
-}
+    }

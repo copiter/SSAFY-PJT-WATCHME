@@ -61,6 +61,7 @@ function MainPage() {
   if (isLoggedIn) {
     userInformation = datas["member"];
     myGroups = datas["myGroups"];
+    let myNickName=localStorage.setItem('nickName',userInformation["nickName"]);
   }
 
   console.log(datas);

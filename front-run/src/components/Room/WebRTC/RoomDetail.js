@@ -52,7 +52,7 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-    setInterval(() => {this.getMedia()},10000);
+   this.getMedia();
   }
 
 
@@ -441,6 +441,7 @@ class RoomDetail extends Component {
   }
 
   async  getMedia() {
+    /*
     let imageCapture;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -477,7 +478,7 @@ class RoomDetail extends Component {
       }
     } catch (err) {
       console.error(err);
-    }
+    }*/
  
 
 
@@ -495,7 +496,6 @@ class RoomDetail extends Component {
 
     
   
-    const formData = new FormData();
 
     
 /*
@@ -509,8 +509,6 @@ class RoomDetail extends Component {
       console.error("takePhoto() failed: ", err);
     }
     */
-    const blob = await imageCapture.takePhoto();
-    formData.append("file",blob );
 
     let json;
     fetch(`${FETCH_URL}/rooms/`+id, {
@@ -530,18 +528,39 @@ class RoomDetail extends Component {
     })
     .then((result) => {
       if (result != null) {
-        json={"nickName":this.state.myUserName,
-        "roomId":id,
-        "mode":result.responseData.room.mode};
-        console.log(json);
-        formData.append(
-          "flaskDTO",
-          new Blob([JSON.stringify(json)], { type: "application/json" })
-        );
-        fetch("https://watchme1.shop/flask/ovenCV",
+      }
+    })
+    .catch((err) => {
+      console.log("ERR22");
+    });
+    
+   
+    /*const blob = await imageCapture.takePhoto();
+    formData.append("file",blob );*/
+
+    
+
+
+    const formData = new FormData();
+    json={"nickName":this.state.myUserName,
+    "roomId":id,
+    "mode":"MODE2"};
+    formData.append(
+      "flaskDTO",
+      new Blob([JSON.stringify(json)], { type: "application/json" })
+    );
+    
+
+    console.log("TESTHERE");
+    console.log(json);
+    fetch("https://watchme1.shop/flask/openCV",
         {
           method:"POST",
           body: formData,
+          mode: "cors",
+          headers: {
+            "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
+          },
         })
         .then((response) => {
           console.log(response);
@@ -574,20 +593,6 @@ class RoomDetail extends Component {
         .catch((err) => {
           console.log("ERR여기임");
         });
-  
-
-
-
-
-
-
-      }
-    })
-    .catch((err) => {
-      console.log("ERR22");
-    });
-    
-   
 
   }
 

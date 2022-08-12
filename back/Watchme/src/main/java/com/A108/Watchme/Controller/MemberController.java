@@ -150,30 +150,21 @@ public class MemberController {
     @GetMapping("/members")
     @ResponseBody
     public ApiResponse memberInfo(HttpServletResponse response){
-        ApiResponse apiResponse;
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if(authentication.getPrincipal().equals("anonymousUser")){
-            apiResponse = new ApiResponse();
-            apiResponse.setCode(400);
-            apiResponse.setMessage("NOT LOGIN");
-            return apiResponse;
+            throw new CustomException(Code.C501);
         }
 
         // 일반 로그인의 경우
         Long currUserId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
         Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
 
-        if(checkCurrUser.isPresent()){
-            apiResponse = memberService.getMyPage(checkCurrUser.get(), response);
-        } else{
-            apiResponse = new ApiResponse();
-            apiResponse.setCode(400);
-            apiResponse.setMessage("NO SUCH USER");
+        if(checkCurrUser.isEmpty()){
+            throw new CustomException(Code.C503);
         }
 
-        return apiResponse;
+        return memberService.getMyPage(checkCurrUser.get(), response);
 
     }
 

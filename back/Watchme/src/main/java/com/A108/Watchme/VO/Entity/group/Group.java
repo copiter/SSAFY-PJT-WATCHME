@@ -59,5 +59,8 @@ public class Group {
 
     private Integer view;
 
+    /**
+     * 1 : 공개 2: 비공개
+     */
     private Integer display;
 }

@@ -293,13 +293,11 @@ public class MemberService {
                 result.setResponseData("myGroups", wraperList);
 
             } else {
-                result.setCode(501);
-                result.setMessage("no such user");
+                throw new CustomException(Code.C501);
             }
 
         } else {
-            result.setCode(501);
-            result.setMessage("login first");
+            throw new CustomException(Code.C501);
         }
 
 
@@ -435,8 +433,7 @@ public class MemberService {
                     }
                 }
             } catch (Exception e) {
-                result.setCode(400);
-                result.setMessage("LOGIN USER ONLY");
+                throw new CustomException(Code.C501);
             }
 
             return result;
@@ -448,9 +445,7 @@ public class MemberService {
             Member member = memberRepository.findByEmail(checkEmailDTO.getEmail());
 
             if (member != null) {
-                apiResponse.setCode(500);
-                apiResponse.setMessage("UNAVAILABLE EMAIL");
-                return apiResponse;
+                throw new CustomException(Code.C505);
             }
             apiResponse.setCode(200);
             apiResponse.setMessage("AVAILABLE EMAIL");
@@ -463,9 +458,7 @@ public class MemberService {
 
             Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
             if (member != null) {
-                apiResponse.setCode(500);
-                apiResponse.setMessage("UNAVAILABLE NiCK NAME");
-                return apiResponse;
+                throw new CustomException(Code.C300);
             }
 
             apiResponse.setCode(200);

@@ -29,7 +29,7 @@ import java.text.ParseException;
 import java.util.Optional;
 
 @RestController
-//@RequestMapping("/members")
+@RequestMapping("/members")
 public class MemberController {
     @Autowired
     private MemberService memberService;
@@ -52,7 +52,7 @@ public class MemberController {
         }
         return memberService.memberInsert(signUpRequestDTO, url);
     }
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     @ResponseBody
     public ApiResponse login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletResponse response, HttpServletRequest request){
 
@@ -93,7 +93,7 @@ public class MemberController {
     }
 
 
-    @GetMapping(value = "/members/mygroup")
+    @GetMapping(value = "/mygroup")
     @ResponseBody
     public ApiResponse memberGroup() {
         return memberService.memberGroup();
@@ -147,7 +147,7 @@ public class MemberController {
         return memberService.getMySprints(memberId);
     }
 
-    @GetMapping("/members")
+    @GetMapping()
     @ResponseBody
     public ApiResponse memberInfo(HttpServletResponse response){
         ApiResponse apiResponse;

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FetchUrl } from "../../../store/communication";
-import getCookie from "../../../Cookie";
+import { getCookie } from "../../../Cookie";
 
 import "./GroupDetail.css";
 import json from "../../json/groupdetail.json";
@@ -11,6 +11,7 @@ import GroupDetailMembers from "./GroupDetailMembers";
 
 // props 에 id, pwd 실려서 내려옴
 function GroupDetail(props) {
+  const [isCrew, setIsCrew] = useState(false);
   const [resData, setResData] = useState(json.responseData);
   const [navBar, setNavBar] = useState(0);
   const [isJoinCheck, setIsJoinCheck] = useState(false);
@@ -34,12 +35,17 @@ function GroupDetail(props) {
       const data = await response.json();
       if (data.code === 200) {
         setResData(data.responseData);
+        setIsCrew(true);
       } else {
+        alert("그룹원이 아닙니다");
+        window.history.back();
         console.log(data.message);
       }
     };
     getDatas();
   }, []);
+
+  console.log(resData);
 
   function joinHandler() {
     const config = {

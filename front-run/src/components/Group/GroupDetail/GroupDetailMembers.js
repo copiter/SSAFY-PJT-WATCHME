@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import getCookie from "../../../Cookie";
+import { getCookie } from "../../../Cookie";
 
 import "./GroupDetailMembers.css";
 import json from "../../json/groupdetailmembers.json";

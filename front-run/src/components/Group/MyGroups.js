@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FetchUrl } from "../../store/communication";
-import getCookie from "../../Cookie";
+import { getCookie } from "../../Cookie";
 
 import "./MyGroups.css";
 import json from "../json/mygroups.json";

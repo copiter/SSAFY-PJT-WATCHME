@@ -6,6 +6,7 @@ import "./Login.css";
 import kakao from "../../img/SignUpLogos/kakao.png";
 import naver from "../../img/SignUpLogos/naver1.png";
 import google from "../../img/SignUpLogos/google.png";
+import { setCookie } from "../../Cookie";
 
 const Login = () => {
   const FETCH_URL = useContext(FetchUrl);
@@ -55,11 +56,15 @@ const Login = () => {
         }
       })
       .then((result) => {
-        document.cookie = `accessToken=${result.responseData.accessToken}`;
-        authCtx.login();
-        alert("로그인 되었습니다");
-        navigate("/");
-        window.location.reload();
+        if (result.code === 200) {
+          setCookie("accessToken", result.responseData.accessToken, {});
+          authCtx.login();
+          alert("로그인 되었습니다");
+          navigate("/");
+          window.location.reload();
+        } else {
+          alert(result);
+        }
       })
       .catch((err) => {
         let errorMessage = "오류가 발생하였습니다";
@@ -101,7 +106,7 @@ const Login = () => {
         </Link>
         <a
           href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=
-          https://watchme2.shop/api/login/authorization/kakao?redirect_uri=https://watchme2.shop/slogin`}
+          https://watchme1.shop/api/login/authorization/kakao?redirect_uri=https://watchme2.shop/slogin`}
         >
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
@@ -110,7 +115,7 @@ const Login = () => {
         </a>
         <a
           href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=
-          https://watchme2.shop/api/login/oauth2/code/naver`}
+          https://watchme1.shop/api/login/oauth2/code/naver`}
         >
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
@@ -119,7 +124,7 @@ const Login = () => {
         </a>
         <a
           href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=	
-          https://watchme2.shop/api/login/authorization/google`}
+          https://watchme1.shop/api/login/authorization/google`}
         >
           <div className="google">
             <img src={google} alt="구글" width={40} />

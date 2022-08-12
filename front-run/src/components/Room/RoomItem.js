@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
-import getCookie from "../../Cookie";
+import { getCookie } from "../../Cookie";
 
 import "./RoomItem.css";
 
 function RoomItem(props) {
   const room = props.room;
-  const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
+  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
 
   const navigate = useNavigate();
   const FETCH_URL = useContext(FetchUrl);

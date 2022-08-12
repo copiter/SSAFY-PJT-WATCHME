@@ -101,40 +101,6 @@ a {
   border-radius: 5px;
 }
 
-.mypage__myinfor__mystudy-group-image {
-  width: 160px;
-  height: 160px;
-  border-radius: 8px;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.mypage__myinfor__mystudy-group__img {
-  width: 160px;
-  height: 160px;
-
-  filter: contrast(50%);
-}
-
-.mypage__myinfor__mystudy-group__Title {
-  position: absolute;
-  font-weight: 700;
-  font-size: 17px;
-  line-height: 48px;
-  /* identical to box height, or 282% */
-
-  color: #000;
-  z-index: 1;
-  bottom: 0px;
-  left: 20px;
-}
-#mypage__myinfor__mystudy-group1 {
-  position: relative;
-}
-#mypage__myinfor__mystudy-group2 {
-  position: relative;
-}
-
 /* 나의 공부시간 */
 #mypage__myinfor__mystudy {
   box-sizing: content-box;

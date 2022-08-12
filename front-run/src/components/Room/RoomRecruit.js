@@ -60,8 +60,7 @@ function RoomRecruit() {
         (inputs.category === "" || inputs.category === "all"
           ? ""
           : "category=" + inputs.category + "&") +
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword) +
-        (inputs.secret === "" ? "" : "secret=" + inputs.secret)
+        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => {
         if (response.bodyUsed) {

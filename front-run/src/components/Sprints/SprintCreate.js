@@ -1,10 +1,9 @@
 import React, { useRef, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
+import { getCookie } from "../../Cookie";
 
 import "./SprintCreate.css";
-
-import getCookie from "../../Cookie";
 
 function SprintCreate(props) {
   const navigate = useNavigate();

@@ -10,6 +10,10 @@ import "./SignUp.css";
 function SignUp() {
   const FETCH_URL = useContext(FetchUrl);
 
+  const url = `${FETCH_URL}/members/auth/signup`;
+  const emailDupUrl = `${FETCH_URL}/members/emails-check`;
+  const nickNameDupUrl = `${FETCH_URL}/members/nickName-check`;
+
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
@@ -19,6 +23,7 @@ function SignUp() {
 
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
+  const pwdSameRef = useRef();
   const nameInputRef = useRef();
   const nickNameInputRef = useRef();
   const sexInputRef = useRef();
@@ -34,6 +39,11 @@ function SignUp() {
       return;
     } else if (isEmailDup === null || isNickNameDup === null) {
       alert("이메일 혹은 닉네임 중복확인이 필요합니다");
+      return;
+    }
+
+    if (!isPwdSame) {
+      alert("비밀번호를 확인해주세요");
       return;
     }
 
@@ -54,32 +64,39 @@ function SignUp() {
       new Blob([JSON.stringify(data)], { type: "application/json" })
     );
 
+    console.log(data);
+    debugger;
+
     //myjsons->application.josn
 
-    const url = `${FETCH_URL}/members/auth/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",
       body: formData,
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          alert("회원가입 되었습니다");
+          navigate("/login"); //로그인 페이지로
         } else {
-          response.json().then((data) => {
-            let errorMessage = "Authentication failed!";
-            throw new Error(errorMessage);
-          });
+          console.log(result);
         }
       })
-      .then((result) => {
-        alert("회원가입 되었습니다");
-        navigate("/login"); //로그인 페이지로
-      })
       .catch((err) => {
+        console.log(err);
         alert("오류가 발생하였습니다");
       });
   };
+
+  const [isPwdSame, setIsPwdSame] = useState(null);
+  function checkPwdSame() {
+    if (passwordInputRef.current.value === pwdSameRef.current.value) {
+      setIsPwdSame(true);
+    } else {
+      setIsPwdSame(false);
+    }
+  }
 
   const [isEmailDup, setIsEmailDup] = useState(null);
   function checkDuplicateEmail() {
@@ -94,11 +111,12 @@ function SignUp() {
     };
     const getDatas = async () => {
       try {
-        const response = await fetch(`${FETCH_URL}/emails-check`, config);
+        const response = await fetch(emailDupUrl, config);
         const result = await response.json();
-        if (result.code === "200") {
+        if (result.code === 200) {
           setIsEmailDup(false);
         } else {
+          console.log(result);
           setIsEmailDup(true);
         }
       } catch (e) {
@@ -121,11 +139,12 @@ function SignUp() {
     };
     const getDatas = async () => {
       try {
-        const response = await fetch(`${FETCH_URL}/nickName-check`, config);
+        const response = await fetch(nickNameDupUrl, config);
         const result = await response.json();
-        if (result.code === "200") {
+        if (result.code === 200) {
           setIsNickNameDup(false);
         } else {
+          console.log(result);
           setIsNickNameDup(true);
         }
       } catch (e) {
@@ -187,7 +206,7 @@ function SignUp() {
                   중복확인
                 </button>
               </div>
-              <div className="line">
+              <div className="line password-check">
                 <input
                   className="half"
                   type="password"
@@ -199,7 +218,15 @@ function SignUp() {
                   className="half"
                   type="password"
                   placeholder="비밀번호를 다시한번 입력하세요"
+                  ref={pwdSameRef}
+                  onKeyUp={checkPwdSame}
                 />
+                {isPwdSame === false && (
+                  <img className="dup-icon" src={cancel} alt="다름" />
+                )}
+                {isPwdSame === true && (
+                  <img className="dup-icon" src={accept} alt="같음" />
+                )}
               </div>
               <div className="line">
                 <input
@@ -254,7 +281,7 @@ function SignUp() {
               <button
                 className="submitting"
                 type="submit"
-                onSubmit={submitHandler}
+                onClick={submitHandler}
               >
                 회원가입
               </button>

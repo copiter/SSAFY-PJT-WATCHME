@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { FetchUrl } from "./communication";
-import getCookie from "../Cookie";
+import { getCookie } from "../Cookie";
 
 const AuthContext = React.createContext({
   userData: "",

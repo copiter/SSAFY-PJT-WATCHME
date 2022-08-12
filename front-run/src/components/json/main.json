@@ -131,7 +131,7 @@
         "imgLink": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/%EA%B3%B5%EB%AC%B4%EC%9B%90.jpg",
         "secret": false,
         "view": 12,
-        "sprint": {}
+        "sprint": null
       },
       {
         "id": 5,
@@ -163,7 +163,7 @@
         "imgLink": "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/cpa.png",
         "secret": false,
         "view": 100,
-        "sprint": {}
+        "sprint": null
       }
     ]
   }

@@ -116,10 +116,18 @@
 .signup-right .line.dup-check {
   position: relative;
 }
-.dup-icon {
+.signup-right .line.password-check {
+  position: relative;
+}
+.dup-check .dup-icon {
   position: absolute;
   right: 130px;
   top: 10px;
+}
+.password-check .dup-icon {
+  position: absolute;
+  right: 23px;
+  top: 11px;
 }
 
 .line .short {

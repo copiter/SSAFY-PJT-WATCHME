@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./GroupItem.css";
@@ -54,8 +54,9 @@ function GroupItem(props) {
         {!props.myGroup && (
           <div className="group-specs__rules">
             <span>🏃‍♂️ 스프린트</span>
-            {group.hasOwnProperty("sprint") &&
-            group.sprint.hasOwnProperty("status") ? (
+            {group.sprint === null ? (
+              <p>현재 모집중인 스프린트가 없습니다</p>
+            ) : (
               <>
                 <li>
                   <p>{group.sprint.name}</p>
@@ -69,8 +70,6 @@ function GroupItem(props) {
                   </p>
                 </li>
               </>
-            ) : (
-              <p>현재 모집중인 스프린트가 없습니다</p>
             )}
           </div>
         )}

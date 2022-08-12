@@ -6,10 +6,16 @@ import crown from "../../../img/Icons/crown.png";
 import "./GroupDetailHome.css";
 
 const GroupDetailHome = (props) => {
+  console.log(props);
+
   const resData = props.resData;
   const groupTotalTime = resData.groupData.sumTime;
   const penalty = resData.myData.penalty;
-  const crewsData = resData.members.filter((member) => member.role == 0);
+
+  let crewsData;
+  if (resData.hasOwnProperty("members")) {
+    crewsData = resData.members.filter((member) => member.role == 0);
+  }
 
   const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
 
@@ -67,18 +73,19 @@ const GroupDetailHome = (props) => {
               </div>
               <span>{resData.leader.nickName}</span>
             </li>
-            {crewsData.map((item, index) => (
-              <li key={index}>
-                <div
-                  className="group-detail__group-members-list-item"
-                  style={{
-                    backgroundImage: `url(${item.imgLink})`,
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-                <span>{item.nickName}</span>
-              </li>
-            ))}
+            {crewsData.length > 0 &&
+              crewsData.map((item, index) => (
+                <li key={index}>
+                  <div
+                    className="group-detail__group-members-list-item"
+                    style={{
+                      backgroundImage: `url(${item.imgLink})`,
+                      backgroundSize: "cover",
+                    }}
+                  ></div>
+                  <span>{item.nickName}</span>
+                </li>
+              ))}
           </ul>
         </div>
         <div id="group-detail__sprint-summary">

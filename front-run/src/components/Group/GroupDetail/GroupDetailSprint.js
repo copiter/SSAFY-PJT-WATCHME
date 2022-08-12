@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SprintItem from "./SprintItem";
 
-import getCookie from "../../../Cookie";
+import { getCookie } from "../../../Cookie";
 import json from "../../json/groupdetailsprint.json";
 import "./GroupDetailSprint.css";
 

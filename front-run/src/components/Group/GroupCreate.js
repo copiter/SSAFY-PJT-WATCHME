@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
-import getCookie from "../../Cookie";
+import { getCookie } from "../../Cookie";
 
 import "./GroupCreate.css";
 
@@ -16,8 +16,10 @@ function GroupCreate() {
       inputs.ctg[1] = !inputs.ctg[1];
     } else if (value === "수능") {
       inputs.ctg[2] = !inputs.ctg[2];
-    } else if (value === "기타") {
+    } else if (value === "코딩") {
       inputs.ctg[3] = !inputs.ctg[3];
+    } else if (value === "기타") {
+      inputs.ctg[4] = !inputs.ctg[4];
     }
     // console.log(inputs.ctg);
   };
@@ -27,8 +29,8 @@ function GroupCreate() {
     description: "",
     maxMember: 0,
     ctg: [false, false, false, false],
-    display: 1,
-    pwd: "",
+    // secret: false,
+    pwd: null,
   });
   const navigate = useNavigate();
 
@@ -42,7 +44,7 @@ function GroupCreate() {
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
     const name = event.target.name;
-    setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
+    setInputs((values) => ({ ...values, [name]: isChecked ? false : true }));
   };
 
   //URL
@@ -60,10 +62,18 @@ function GroupCreate() {
     let ctgs = [];
     let i = 0;
     let j = 0;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < 5; i++) {
       if (inputs.ctg[i]) {
         ctgs[j] =
-          i === 0 ? "공무원" : i === 1 ? "취업" : i === 2 ? "수능" : "기타";
+          i === 0
+            ? "공무원"
+            : i === 1
+            ? "취업"
+            : i === 2
+            ? "수능"
+            : i === 3
+            ? "코딩"
+            : "기타";
         j++;
       }
     }
@@ -73,13 +83,15 @@ function GroupCreate() {
       description: inputs.description,
       maxMember: inputs.maxMember,
       ctg: ctgs,
-      display: inputs.display,
+      // secret: inputs.secret,
       pwd: inputs.pwd,
     };
+
     formData.append(
       "postGroupReqDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
+
     fetch(url, {
       method: "POST",
       body: formData,
@@ -87,27 +99,12 @@ function GroupCreate() {
         accessToken: getCookie("accessToken"),
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          console.log("C1");
-          console.log(response);
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            console.log("ERR");
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        if (result != null) {
-          console.log("방생성 완료");
+        if (result.code === 200) {
+          navigate(`/GroupDetail/${result.responseData.groupId}`);
+        } else {
           console.log(result);
-          console.log("CK");
-          console.log(result["responseData"]["groupId"]);
-          navigate("/GroupDetail/" + result["responseData"]["groupId"]);
-          window.location.reload(); //리다이렉션관련
         }
       })
       .catch((err) => {
@@ -185,10 +182,10 @@ function GroupCreate() {
                 </div>
                 <div className="line">
                   <span>비공개</span>
-                  <label className="switch" >
+                  <label className="switch">
                     <input
                       type="checkbox"
-                      name="display"
+                      name="secret"
                       value={isChecked}
                       onChange={handleChangeCheck}
                     />
@@ -202,7 +199,7 @@ function GroupCreate() {
                     disabled={!isChecked}
                     maxLength="4"
                     minLength="4"
-                    placeholder={!isChecked?"공개방입니다":"비밀번호 4자리"}
+                    placeholder={!isChecked ? "공개방입니다" : "비밀번호 4자리"}
                   />
                 </div>
               </div>
@@ -240,13 +237,23 @@ function GroupCreate() {
                   <input
                     type="checkbox"
                     onChange={handleChangeSelect}
+                    value="코딩"
+                  />
+                  코딩
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
                     value="기타"
                   />
                   기타
                 </label>
               </div>
             </div>
-            <button type="submit">생성하기</button>
+            <button type="submit" onSubmit={handleSubmit}>
+              생성하기
+            </button>
           </div>
         </div>
       </form>

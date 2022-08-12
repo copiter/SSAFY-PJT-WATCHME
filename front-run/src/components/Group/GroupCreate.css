@@ -204,4 +204,6 @@ select option[value=""][disabled] {
   font-size: 16px;
   line-height: 46px;
   text-align: center;
+
+  cursor: pointer;
 }

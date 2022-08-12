@@ -2,7 +2,7 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
-import getCookie from "../../Cookie";
+import { getCookie } from "../../Cookie";
 
 import GroupItem from "../Group/GroupItem";
 import Banner from "./Banner";
@@ -22,29 +22,33 @@ function MainPage() {
 
   let rooms, groups, myGroups, userInformation;
 
-  let groupNo = 0;
-  let roomNo = 0;
-  let myGroupNo = 0;
-
   const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
 
   const [datas, setDatas] = useState(jsons.responseData);
 
+  //쿠키를 받아오기 위한
+  // let cookie;
+  // (async function () {
+  //   cookie = await getCookie("accessToken");
+  // })();
+
   useEffect(() => {
     const getDatas = async () => {
       const response = await fetch(url, {
-        credentials: "include",
+        // credentials: "include",
         headers: {
           accessToken: getCookie("accessToken"),
         },
       });
       const data = await response.json();
-      setDatas(data.responseData);
-      if (data.responseData.member !== undefined) {
-        authCtx.userDataGetter({
-          profileImage: data.responseData.member.profileImage,
-          nickName: data.responseData.fgroupin.nickName,
-        });
+      if (data.code === 200) {
+        setDatas(data.responseData);
+        if (data.responseData.member !== undefined) {
+          authCtx.userDataGetter({
+            profileImage: data.responseData.member.profileImage,
+            nickName: data.responseData.member.nickName,
+          });
+        }
       }
     };
     getDatas();
@@ -63,111 +67,118 @@ function MainPage() {
     <>
       <div id="outer">
         {/* 로그인 됐을때만 표시 */}
-        <section id="mainpage__myinfor">
-          {/*개인과 관련된 섹션. 임시링크들 있음 수정예정 */}
-          <div id="mypage__myinfor__width">
-            <div id="mypage__myinfor__title">
-              오늘도 화이팅, {userInformation["nickName"]}님
-            </div>
-            <div id="mypage__myinfor__contents">
-              <div id="mypage__myinfor__create-room">
-                {/*방생성관련 */}
-                <span className="mypage__myinfor__sub-title">방만들기</span>
-                <Link to="/RoomCreate">
-                  <div id="mypage__myinfor__create-room__create"></div>
-                </Link>
+        {isLoggedIn && (
+          <section id="mainpage__myinfor">
+            {/*개인과 관련된 섹션. 임시링크들 있음 수정예정 */}
+            <div id="mypage__myinfor__width">
+              <div id="mypage__myinfor__title">
+                오늘도 화이팅, {userInformation["nickName"]}님
               </div>
-              <div id="mypage__myinfor__mystudy-group">
-                {/*내가 가입한 스터디그룹 관련*/}
-                <span className="mypage__myinfor__sub-title">
-                  내 스터디그룹
-                </span>
+              <div id="mypage__myinfor__contents">
+                <div id="mypage__myinfor__create-room">
+                  {/*방생성관련 */}
+                  <span className="mypage__myinfor__sub-title">방만들기</span>
+                  <Link to="/RoomCreate">
+                    <div id="mypage__myinfor__create-room__create"></div>
+                  </Link>
+                </div>
+                <div id="mypage__myinfor__mystudy-group">
+                  {/*내가 가입한 스터디그룹 관련*/}
+                  <span className="mypage__myinfor__sub-title">
+                    내 스터디그룹
+                  </span>
 
-                {!myGroups.length && (
-                  <>
-                    {/*그룹 아무것도 가입안한경우 */}
-                    <div>
-                      가입한 그룹이 없습니다. 새로 가입해보시는건 어떠신가요
-                    </div>
-                  </>
-                )}
-                {myGroups.length && (
-                  <ul id="mypage-mygroup" value={0}>
-                    {myGroups.map((group, index) => {
-                      return (
-                        <li key={index}>
-                          <GroupItem
-                            group={group}
-                            width="160"
-                            height="160"
-                            myGroup={true}
-                          />
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
-              <div id="mypage__myinfor__mystudy">
-                {/*내가 공부한 총 공부시간 관련. */}
-                <div className="mypage__myinfor__sub-title">나의 공부시간</div>
-                <Link to="MyPage">
-                  <div id="mypage__myinfor__mystudy__infor">
-                    {/* <img
+                  {/*그룹 아무것도 가입안한경우 */}
+                  {!myGroups.length && (
+                    <>
+                      <div id="myGroup-title">
+                        <span>
+                          가입한 그룹이 없습니다. 새로 가입해보시는건
+                          어떠신가요?
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {myGroups.length && (
+                    <ul id="mypage-mygroup">
+                      {myGroups.map((group, index) => {
+                        return (
+                          <li key={index}>
+                            <GroupItem
+                              group={group}
+                              width="160"
+                              height="160"
+                              myGroup={true}
+                            />
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+                <div id="mypage__myinfor__mystudy">
+                  {/*내가 공부한 총 공부시간 관련. */}
+                  <div className="mypage__myinfor__sub-title">
+                    나의 공부시간
+                  </div>
+                  <Link to="MyPage">
+                    <div id="mypage__myinfor__mystudy__infor">
+                      {/* <img
                       src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=464&q=80"
                       width="128px"
                       height="128px"
                       alt="#"
                     /> */}
-                    <div id="fighting-text">오늘도 파이팅!</div>
-                    <ul id="mypage__myinfor__mystudy__infor__text">
-                      <li>
-                        <span className="mystudy__infor__text-left">
-                          오늘 공부시간
-                        </span>
-                        <span>
-                          {`${parseInt(
-                            userInformation["studyTimeToday"] / 60
-                          )}시간 ${userInformation["studyTimeToday"] % 60}분`}
-                        </span>
-                      </li>
-                      <li>
-                        <span className="mystudy__infor__text-left">
-                          이번주 공부시간
-                        </span>
-                        <span>
-                          {`${parseInt(
-                            userInformation["studyTimeWeek"] / 60
-                          )}시간 ${userInformation["studyTimeWeek"] % 60}분`}
-                        </span>
-                      </li>
-                      <li>
-                        <span className="mystudy__infor__text-left">
-                          이번달 공부시간
-                        </span>
-                        <span>
-                          {`${parseInt(
-                            userInformation["studyTimeMonth"] / 60
-                          )}시간 ${userInformation["studyTimeMonth"] % 60}분`}
-                        </span>
-                      </li>
-                      <li>
-                        <span className="mystudy__infor__text-left">
-                          총 공부시간
-                        </span>
-                        <span>
-                          {`${parseInt(
-                            userInformation["studyTimeTotal"] / 60
-                          )}시간 ${userInformation["studyTimeTotal"] % 60}분`}
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </Link>
+                      <div id="fighting-text">오늘도 파이팅!</div>
+                      <ul id="mypage__myinfor__mystudy__infor__text">
+                        <li>
+                          <span className="mystudy__infor__text-left">
+                            오늘 공부시간
+                          </span>
+                          <span>
+                            {`${parseInt(
+                              userInformation["studyTimeToday"] / 60
+                            )}시간 ${userInformation["studyTimeToday"] % 60}분`}
+                          </span>
+                        </li>
+                        <li>
+                          <span className="mystudy__infor__text-left">
+                            이번주 공부시간
+                          </span>
+                          <span>
+                            {`${parseInt(
+                              userInformation["studyTimeWeek"] / 60
+                            )}시간 ${userInformation["studyTimeWeek"] % 60}분`}
+                          </span>
+                        </li>
+                        <li>
+                          <span className="mystudy__infor__text-left">
+                            이번달 공부시간
+                          </span>
+                          <span>
+                            {`${parseInt(
+                              userInformation["studyTimeMonth"] / 60
+                            )}시간 ${userInformation["studyTimeMonth"] % 60}분`}
+                          </span>
+                        </li>
+                        <li>
+                          <span className="mystudy__infor__text-left">
+                            총 공부시간
+                          </span>
+                          <span>
+                            {`${parseInt(
+                              userInformation["studyTimeTotal"] / 60
+                            )}시간 ${userInformation["studyTimeTotal"] % 60}분`}
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* 로그인 유무와 관계 없는 부분 */}
         <section id="mainpage_study-groups">

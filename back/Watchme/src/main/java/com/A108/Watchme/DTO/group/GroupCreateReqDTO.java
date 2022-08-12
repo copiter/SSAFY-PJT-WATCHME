@@ -12,5 +12,4 @@ public class GroupCreateReqDTO {
     private Integer maxMember;
     private List<String> ctg;
     private String pwd;
-    private Integer display;
 }

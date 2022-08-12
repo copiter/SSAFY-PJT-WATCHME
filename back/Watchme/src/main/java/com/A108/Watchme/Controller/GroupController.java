@@ -1,6 +1,7 @@
 package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.Sprint.SprintPostDTO;
 import com.A108.Watchme.DTO.group.GroupCreateReqDTO;
 import com.A108.Watchme.DTO.group.GroupKickReqDTO;
 import com.A108.Watchme.DTO.group.GroupReqDTO;
@@ -28,7 +29,7 @@ public class GroupController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ApiResponse createGroup(@RequestPart GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request){
+    public ApiResponse createGroup(@RequestPart(value="groupCreateReqDTO") GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false, value = "images") MultipartFile image, HttpServletRequest request){
         groupCreateReqDTO.getCtg().stream().forEach(System.out::println);
         return groupService.createGroup(groupCreateReqDTO, image, request);
     }
@@ -41,8 +42,8 @@ public class GroupController {
         return groupService.getGroup(groupId, null);
     }
 
-    @PostMapping("/{groupId}/udpate")
-    public ApiResponse updateGroup(@PathVariable(value = "groupId") Long groupId, @RequestPart GroupUpdateReqDTO groupUpdateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request) {
+    @PostMapping(value = "/{groupId}/update",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse updateGroup(@PathVariable(value = "groupId") Long groupId, @RequestPart(value="groupUpdateReqDTO") GroupUpdateReqDTO groupUpdateReqDTO, @RequestPart(required = false, value = "images") MultipartFile image, HttpServletRequest request) {
         return groupService.updateGroup(groupId, groupUpdateReqDTO, image, request);
     }
 

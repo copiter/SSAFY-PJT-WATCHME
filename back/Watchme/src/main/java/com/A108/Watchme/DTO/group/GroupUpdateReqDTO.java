@@ -10,6 +10,5 @@ public class GroupUpdateReqDTO {
     private String description;
     private String maxMember;
     private List<String> ctg;
-    private String pwd;
     private Integer display;
 }

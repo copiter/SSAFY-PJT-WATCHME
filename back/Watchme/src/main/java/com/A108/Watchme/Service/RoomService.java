@@ -59,7 +59,7 @@ public class RoomService {
         } catch(Exception e){
             throw new CustomException(Code.C501);
         }
-                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
+                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/WatchMe/study.jpg";
             if(images!=null){
                 try {
                     url = s3Uploader.upload(images, "Watchme");

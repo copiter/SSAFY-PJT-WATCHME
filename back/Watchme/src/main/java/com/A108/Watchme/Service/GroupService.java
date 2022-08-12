@@ -70,6 +70,7 @@ public class GroupService {
         }
         PageRequest pageRequest = PageRequest.of(page - 1, 10);
 
+        // TODO : Status가 Yes인 group만 조회 가능(NO : 삭제된 그룹)
         if (ctgName != null) {
             Category category = categoryRepository.findByName(CategoryList.valueOf(ctgName));
 
@@ -156,6 +157,8 @@ public class GroupService {
 
             Group group = checkGroup.get();
 
+            // TODO : Group.status == NO 면 에러코드 반환 (삭제된 group)
+
             //group
             result.setResponseData("group", GroupResDTO.builder()
                     .name(group.getGroupName())
@@ -240,7 +243,7 @@ public class GroupService {
             // 비로그인
             if (authentication.getPrincipal().equals("anonymousUser")) {
 
-                if(group.getSecret()==1){
+                if (group.getSecret() == 1) {
                     throw new CustomException(Code.C501);
                 }
                 List<Integer> penalties = new LinkedList<>();
@@ -368,7 +371,7 @@ public class GroupService {
                 result.setMessage("GET GROUP SUCCESS");
 
             } else {
-                if(group.getSecret()==1){
+                if (group.getSecret() == 1) {
                     throw new CustomException(Code.C501);
                 }
 
@@ -393,84 +396,92 @@ public class GroupService {
     public ApiResponse createGroup(GroupCreateReqDTO groupCreateReqDTO, MultipartFile image, HttpServletRequest request) {
         ApiResponse result = new ApiResponse();
 
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Optional<Member> checkCurrUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (checkCurrUser.isPresent()) {
-                Member currUser = checkCurrUser.get();
+        if(((UserDetails) authentication.getPrincipal()).getUsername().equals("anonymousUser")) {
+            throw new CustomException(Code.C501);
+        }
 
-                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
+        Long currUserId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+        Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
 
-                if (image != null) {
-                    try {
-                        url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
-                    } catch (Exception e) {
-                        throw new CustomException(Code.C512);
-                    }
-                }
+        if (checkCurrUser.isPresent()) {
+            Member currUser = checkCurrUser.get();
 
+            String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/WatchMe/groups.jpg";
+
+            if (image != null) {
                 try {
-                    // TODO : GroupBuilder
-                    // 1.group 기본 저장
-                    Group newGroup = Group.builder()
-                            .groupName(groupCreateReqDTO.getName())
-                            .leader(currUser)
-                            .status(Status.YES)
-                            .view(0)
-                            .build();
-
-                    newGroup = groupRepository.save(newGroup);
-
-                    GroupInfo newGroupInfo = groupInfoRepos.save(GroupInfo.builder()
-                            .group(newGroup)
-                            .imageLink(url)
-                            .description(groupCreateReqDTO.getDescription())
-                            .currMember(1)
-                            .maxMember(groupCreateReqDTO.getMaxMember())
-                            .build());
-
-
-                    // 2.MemberGroup save
-                    memberGroupRepository.save(MemberGroup.builder()
-                            .group(newGroupInfo.getGroup())
-                            .member(newGroupInfo.getGroup().getLeader())
-                            .createdAt(new Date())
-                            .groupRole(GroupRole.LEADER)
-                            .build());
-
-                    // 3.GroupCategory
-
-                    for (String ctg :
-                            groupCreateReqDTO.getCtg()) {
-                        groupCategoryRepository.save(GroupCategory.builder()
-                                .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
-                                .group(newGroupInfo.getGroup())
-                                .build());
-                    }
-
-                    // 4.GroupApplyLog
-                    groupApplyLogRepository.save(GroupApplyLog.builder()
-                            .member(currUser)
-                            .group(newGroup)
-                            .apply_date(new Date())
-                            .status(1)
-                            .build()
-                    );
-
-
-                    result.setCode(200);
-                    result.setMessage("SUCCESS ADD&JOIN ROOM");
-                    result.setResponseData("groupId", newGroupInfo.getGroup().getId());
+                    url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
                 } catch (Exception e) {
-                    throw new CustomException(Code.C521);
+                    throw new CustomException(Code.C512);
                 }
-
-            } else {
-                throw new CustomException(Code.C501);
             }
 
-        } catch (Exception e) {
+            try {
+                // TODO : GroupBuilder
+                // 1.group 기본 저장
+                Group newGroup = Group.builder()
+                        .groupName(groupCreateReqDTO.getName())
+                        .leader(currUser)
+                        .createdAt(new Date())
+                        .status(Status.YES)
+                        .view(0)
+                        .secret(0)
+                        .build();
+
+
+                GroupInfo newGroupInfo = GroupInfo.builder()
+                        .group(newGroup)
+                        .imageLink(url)
+                        .description(groupCreateReqDTO.getDescription())
+                        .currMember(1)
+                        .maxMember(groupCreateReqDTO.getMaxMember())
+                        .build();
+
+                GroupInfo nGI = groupInfoRepos.save(newGroupInfo);
+
+
+                MemberGroup newMemberGroup = MemberGroup.builder()
+                        .group(nGI.getGroup())
+                        .member(nGI.getGroup().getLeader())
+                        .createdAt(new Date())
+                        .groupRole(GroupRole.LEADER)
+                        .build();
+
+
+                List<GroupCategory> newGroupCategory = new LinkedList<>();
+                for (String ctg :
+                        groupCreateReqDTO.getCtg()) {
+                    newGroupCategory.add(GroupCategory.builder()
+                            .category(categoryRepository.findByName(CategoryList.valueOf(ctg)))
+                            .group(nGI.getGroup())
+                            .build());
+                }
+
+                GroupApplyLog newGroupApplyLog = GroupApplyLog.builder()
+                        .member(currUser)
+                        .group(nGI.getGroup())
+                        .apply_date(new Date())
+                        .status(1)
+                        .build();
+
+
+                // 2.MemberGroup
+                memberGroupRepository.save(newMemberGroup);
+                // 3.GroupCategory
+                groupCategoryRepository.saveAll(newGroupCategory);
+                // 4.GroupApplyLog
+                groupApplyLogRepository.save(newGroupApplyLog);
+
+                result.setCode(200);
+                result.setMessage("SUCCESS ADD&JOIN ROOM");
+                result.setResponseData("groupId", newGroupInfo.getGroup().getId());
+            } catch (Exception e) {
+                throw new CustomException(Code.C521);
+            }
+
+        } else {
             throw new CustomException(Code.C501);
         }
 
@@ -501,7 +512,7 @@ public class GroupService {
 
                     if (image != null) {
                         try {
-                            url = s3Uploader.upload(image, "Watchme"); // TODO : groupImg랑 roomImg를 다른 디렉토리에 저장해야될거같은데?
+                            url = s3Uploader.upload(image, "Watchme");
                         } catch (Exception e) {
                             throw new CustomException(Code.C512);
                         }
@@ -578,7 +589,6 @@ public class GroupService {
 
                 result.setCode(200);
                 result.setMessage("GROUP DELETE SUCCESS");
-
             } else {
                 throw new CustomException(Code.C565);
             }

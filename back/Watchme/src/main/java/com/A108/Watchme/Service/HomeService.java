@@ -102,8 +102,15 @@ public class HomeService {
                 roomList) {
             System.out.println("roomList = " + room.toString());
         }
+        Integer pwd = -1;
+
+
         for (Room room :
                 roomList) {
+            if(room.getRoomInfo().getPwd()!=null){
+                pwd = room.getRoomInfo().getPwd();
+            }
+
             resRoom.add(RoomDataDTO.builder()
                     .id(room.getId())
                     .roomName(room.getRoomName())
@@ -114,7 +121,7 @@ public class HomeService {
                     .endTime(format3.format(room.getRoomInfo().getEndAt()))
                     .description(room.getRoomInfo().getDescription())
                     .roomImage(room.getRoomInfo().getImageLink())
-                    .secret(room.getRoomInfo().getDisplay() == 2 ? true : false)
+                    .secret(pwd==-1 ? true : false)
                     .build());
         }
 

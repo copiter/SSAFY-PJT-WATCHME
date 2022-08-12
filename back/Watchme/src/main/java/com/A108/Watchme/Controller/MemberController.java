@@ -41,15 +41,18 @@ public class MemberController {
     @Autowired
     private S3Uploader s3Uploader;
 
-    @PostMapping(value="/auth/signup", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value="/auth/signup")
     @ResponseBody
-    public ApiResponse signUp(@Valid @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO,@RequestPart(value = "files",required = false) MultipartFile images) throws ParseException {
+    public ApiResponse signUp(@Valid @RequestPart(value = "data") SignUpRequestDTO signUpRequestDTO,@RequestPart(value = "images",required = false) MultipartFile images) throws ParseException {
         String url="https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/user.png";
-        try{
-            url = s3Uploader.upload(images, "Watchme");
-        } catch (Exception e){
-            throw new CustomException(Code.C512);
+        if(images!=null){
+            try{
+                url = s3Uploader.upload(images, "Watchme");
+            } catch (Exception e){
+                throw new CustomException(Code.C512);
+            }
         }
+
         return memberService.memberInsert(signUpRequestDTO, url);
     }
     @PostMapping("/auth/login")

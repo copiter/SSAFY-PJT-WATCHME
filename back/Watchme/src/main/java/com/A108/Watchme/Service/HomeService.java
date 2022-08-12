@@ -7,6 +7,7 @@ import com.A108.Watchme.DTO.Room.RoomDataDTO;
 import com.A108.Watchme.DTO.group.getGroupList.SprintDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
+import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
@@ -42,7 +43,7 @@ public class HomeService {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
-        SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format3 = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 종료");
 
         System.out.println("-----------------------------------");
 
@@ -96,24 +97,31 @@ public class HomeService {
         List<RoomDataDTO> resRoom = new LinkedList<>();
 
 
-        List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES).stream().collect(Collectors.toList());
+        List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES).stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
         for (Room room :
                 roomList) {
             System.out.println("roomList = " + room.toString());
         }
+        Integer pwd = -1;
+
+
         for (Room room :
                 roomList) {
+            if(room.getRoomInfo().getPwd()!=null){
+                pwd = room.getRoomInfo().getPwd();
+            }
+
             resRoom.add(RoomDataDTO.builder()
                     .id(room.getId())
                     .roomName(room.getRoomName())
-                    .roomStatus(room.getStatus().toString())
+                    .roomStatus(room.getMode().toString())
                     .ctgName(room.getRoomCtg().getName().toString())
                     .maxNum(room.getRoomInfo().getMaxMember())
                     .nowNum(room.getRoomInfo().getCurrMember())
                     .endTime(format3.format(room.getRoomInfo().getEndAt()))
                     .description(room.getRoomInfo().getDescription())
                     .roomImage(room.getRoomInfo().getImageLink())
-                    .secret(room.getRoomInfo().getDisplay() == 0 ? true : false)
+                    .secret(pwd==-1 ? true : false)
                     .build());
         }
 
@@ -139,7 +147,7 @@ public class HomeService {
                     .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                     .createAt(format.format(group.getCreatedAt()))
                     .imgLink(group.getGroupInfo().getImageLink())
-                    .secret(group.getDisplay() == 0 ? true : false)
+                    .secret(group.getSecret() == 1 ? true : false)
                     .view(group.getView())
                     .sprint(!sprint.isEmpty()?SprintDTO.builder()
                             .name((currSprint = sprint.get(0)).getName())

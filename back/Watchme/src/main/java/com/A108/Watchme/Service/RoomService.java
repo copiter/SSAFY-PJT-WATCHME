@@ -59,7 +59,7 @@ public class RoomService {
         } catch(Exception e){
             throw new CustomException(Code.C501);
         }
-                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
+                String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/WatchMe/study.jpg";
             if(images!=null){
                 try {
                     url = s3Uploader.upload(images, "Watchme");
@@ -107,11 +107,12 @@ public class RoomService {
                         .endAt(date)
                         .description(postRoomReqDTO.getDescription())
                         .imageLink(url)
-                        .display(postRoomReqDTO.getDisplay())
                         .build();
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
                 joinRoomFunc(room.getId(), member.getId());
+                result.setCode(200);
+                result.setMessage("CREATE SUCCESS");
                 result.setResponseData("roomId", room.getId());
 
         return result;
@@ -148,14 +149,18 @@ public class RoomService {
             throw new CustomException(Code.C520);
         }
 
+        roomList = roomList.stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {
+            if(room.getRoomCtg().getName().equals(CategoryList.스프린트)){
+                continue;
+            }
             getRooms.add(new GetRoomResDTO().builder()
                     .id(room.getId())
                     .roomImage(room.getRoomInfo().getImageLink())
                     .roomName(room.getRoomName())
-                    .mode(room.getMode())
+                    .roomStatus(room.getMode())
                     .ctgName(room.getRoomCtg().getName())
                     .description(room.getRoomInfo().getDescription())
                     .endTime(simpleDateFormat.format(room.getRoomInfo().getEndAt()))
@@ -325,7 +330,6 @@ public class RoomService {
 
         if (memberId == room.getMember().getId()) {
 
-                System.out.println("update");
                 room.setRoomCtg(category);
                 room.setRoomName(roomUpdateDTO.getRoomName());
                 room.setMode(Mode.valueOf(roomUpdateDTO.getMode()));
@@ -334,7 +338,6 @@ public class RoomService {
                 roomInfo.setEndAt(date);
                 roomInfo.setMaxMember(roomUpdateDTO.getRoomMemberMaxNo());
                 roomInfo.setPwd(roomUpdateDTO.getPwd());
-                roomInfo.setDisplay(roomInfo.getDisplay());
                 roomInfoRepository.save(roomInfo);
 
             apiResponse.setCode(200);
@@ -473,7 +476,6 @@ public class RoomService {
                 .mode(room.getMode().toString())
                 .roomName(room.getRoomName())
                 .categoryName(room.getRoomCtg().getName().toString())
-                .display(room.getRoomInfo().getDisplay())
                 .description(room.getRoomInfo().getDescription())
                 .roomPwd((room.getRoomInfo().getPwd()==null)? -1:room.getRoomInfo().getPwd())
                 .img(room.getRoomInfo().getImageLink())

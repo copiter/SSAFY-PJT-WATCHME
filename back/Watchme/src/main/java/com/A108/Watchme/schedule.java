@@ -2,14 +2,18 @@ package com.A108.Watchme;
 
 import com.A108.Watchme.Repository.MRLRepository;
 import com.A108.Watchme.Repository.MemberInfoRepository;
+import com.A108.Watchme.Repository.SprintRepository;
+import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.member.MemberInfo;
+import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +24,8 @@ public class schedule {
     MemberInfoRepository memberInfoRepository;
     @Autowired
     MRLRepository mrlRepository;
+    @Autowired
+    SprintRepository sprintRepository;
 
     Timestamp ttime = new Timestamp(System.currentTimeMillis());
 
@@ -108,5 +114,27 @@ public class schedule {
 
     }
 
+    @Scheduled(cron = "0 0 0 * * *")
+    public void startSprint(){
+        Calendar cal = Calendar.getInstance();
 
-}
+        cal.setTime(ttime);
+        cal.add(Calendar.DATE, -1);
+
+        ttime.setTime(cal.getTime().getTime());
+
+        // 시작 전 스프린트
+        List<Sprint> sprintListNo = sprintRepository.findAllByStatus(Status.NO);
+        sprintListNo.stream().filter(x->x.getSprintInfo().getStartAt().before(new Date())).forEach(x->x.setStatus(Status.ING));
+
+        sprintRepository.saveAll(sprintListNo);
+
+
+        // 진행 중 스프린트
+        List<Sprint> sprintListIng = sprintRepository.findAllByStatus(Status.ING);
+        sprintListIng.stream().filter(x->x.getSprintInfo().getEndAt().before(new Date())).forEach(x->x.setStatus(Status.NO));
+
+        sprintRepository.saveAll(sprintListIng);
+        }
+
+    }

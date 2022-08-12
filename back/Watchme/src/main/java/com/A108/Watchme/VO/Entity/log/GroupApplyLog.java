@@ -37,5 +37,10 @@ public class GroupApplyLog {
     @Column(name = "update_date")
     private Date update_date;
 
+    /**
+     * 0: 승인 대기
+     * 1: 승인
+     * 2: banned
+     */
     private int status;
 }

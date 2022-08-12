@@ -31,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.TypedQuery;
@@ -112,6 +113,7 @@ public class SprintService {
         return apiResponse;
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public ApiResponse createSprints(Long groupId, MultipartFile images, SprintPostDTO sprintPostDTO) {
         Group group;
         Long memberId;
@@ -157,7 +159,7 @@ public class SprintService {
         Member member = memberRepository.findById(memberId).get();
 
         // 기본 이미지
-        String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
+        String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/Watchme/sprint.jpg";
 
         if (group.getLeader().getId() != memberId) {
             throw new CustomException(Code.C536);
@@ -190,7 +192,6 @@ public class SprintService {
                         .endAt(format.parse(sprintPostDTO.getEndAt()))
                         .description(sprintPostDTO.getDescription())
                         .imageLink(url)
-                        .display(0)
                         .build();
 
                 roomRepository.save(room);
@@ -209,7 +210,7 @@ public class SprintService {
                         .endAt(format.parse(sprintPostDTO.getEndAt()))
                         .startAt(format.parse(sprintPostDTO.getStartAt()))
                         .routineEndAt(format2.parse(sprintPostDTO.getRoutineEndAt()))
-                        .routineStartAt(format2.parse(sprintPostDTO.getRoutineEndAt()))
+                        .routineStartAt(format2.parse(sprintPostDTO.getRoutineStartAt()))
                         .img(url)
                         .penaltyMoney(sprintPostDTO.getPenaltyMoney())
                         .goal(sprintPostDTO.getGoal())

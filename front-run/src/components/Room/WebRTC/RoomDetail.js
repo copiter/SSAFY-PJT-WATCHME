@@ -557,7 +557,6 @@ class RoomDetail extends Component {
         {
           method:"POST",
           body: formData,
-          mode: "cors",
           headers: {
             "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
           },

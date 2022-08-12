@@ -58,11 +58,6 @@ function MyPage() {
 
   timeChartdata[1] = ["오늘공부량시간", userInformation.member.studyTimeToday];
   timeChartdata[2] = ["이번주 공부시간", userInformation.member.studyTimeWeek];
-  timeChartdata[3] = [
-    "이번달공부량시간",
-    userInformation.member.studyTimeMonth,
-  ];
-  timeChartdata[4] = ["전체 공부시간", userInformation.member.studyTimeTotal];
   console.log(timeChartdata[1]);
   console.log("TST");
   const url = `${FETCH_URL}/members`;
@@ -74,13 +69,17 @@ function MyPage() {
       .filter((cookie) => cookie[0] === name);
     return cookie[0][1];
   }
+  console.log("START");
+  console.log(getCookie("accessToken"));
   useEffect(() => {
+    console.log("EFFECT");
     fetch(url, {
       headers: {
         accessToken: getCookie("accessToken"),
       },
     })
       .then((response) => {
+        console.log(response);
         if (response.bodyUsed) {
           console.log("재사용됨");
         } else if (response.ok) {
@@ -280,7 +279,7 @@ function MyPage() {
             </div>
           </div>
         </div>
-        <div classNmae="inner_Down"></div>
+        <div className="inner_Down"></div>
       </div>
     </div>
   );

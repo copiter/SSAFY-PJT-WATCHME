@@ -148,6 +148,7 @@ public class RoomService {
             throw new CustomException(Code.C520);
         }
 
+        roomList = roomList.stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {

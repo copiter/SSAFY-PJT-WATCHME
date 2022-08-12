@@ -7,6 +7,7 @@ import com.A108.Watchme.DTO.Room.RoomDataDTO;
 import com.A108.Watchme.DTO.group.getGroupList.SprintDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Repository.*;
+import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
@@ -96,7 +97,7 @@ public class HomeService {
         List<RoomDataDTO> resRoom = new LinkedList<>();
 
 
-        List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES).stream().collect(Collectors.toList());
+        List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES).stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
         for (Room room :
                 roomList) {
             System.out.println("roomList = " + room.toString());
@@ -113,7 +114,7 @@ public class HomeService {
                     .endTime(format3.format(room.getRoomInfo().getEndAt()))
                     .description(room.getRoomInfo().getDescription())
                     .roomImage(room.getRoomInfo().getImageLink())
-                    .secret(room.getRoomInfo().getDisplay() == 0 ? true : false)
+                    .secret(room.getRoomInfo().getDisplay() == 2 ? true : false)
                     .build());
         }
 
@@ -139,7 +140,7 @@ public class HomeService {
                     .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                     .createAt(format.format(group.getCreatedAt()))
                     .imgLink(group.getGroupInfo().getImageLink())
-                    .secret(group.getDisplay() == 0 ? true : false)
+                    .secret(group.getDisplay() == 2 ? true : false)
                     .view(group.getView())
                     .sprint(!sprint.isEmpty()?SprintDTO.builder()
                             .name((currSprint = sprint.get(0)).getName())

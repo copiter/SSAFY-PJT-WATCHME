@@ -52,7 +52,7 @@ public class RoomController {
     }
 
     // 룸 참여 API
-    @PostMapping("/rooms/join/{roomId}")
+    @PostMapping("/rooms/{roomId}/join")
     public ApiResponse joinRoom(@PathVariable(value ="roomId")  int roomId,  @RequestBody(required = false) JoinRoomDTO joinRoomDTO){
         return roomService.joinRoom(Long.valueOf(roomId), joinRoomDTO);
     }

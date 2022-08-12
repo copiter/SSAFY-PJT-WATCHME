@@ -114,7 +114,7 @@ public class HomeService {
             resRoom.add(RoomDataDTO.builder()
                     .id(room.getId())
                     .roomName(room.getRoomName())
-                    .roomStatus(room.getStatus().toString())
+                    .roomStatus(room.getMode().toString())
                     .ctgName(room.getRoomCtg().getName().toString())
                     .maxNum(room.getRoomInfo().getMaxMember())
                     .nowNum(room.getRoomInfo().getCurrMember())

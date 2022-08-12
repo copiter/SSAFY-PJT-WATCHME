@@ -20,6 +20,7 @@ import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -242,9 +243,13 @@ public class GroupService {
                 if(group.getSecret()==1){
                     throw new CustomException(Code.C501);
                 }
-
+                List<Integer> penalties = new LinkedList<>();
+                penalties.add(0);
+                penalties.add(0);
                 result.setResponseData("myData", MyDataResDTO.builder()
                         .role(GroupRole.ANONYMOUS.ordinal())
+                        .penalty(penalties)
+                        .studyTime(0)
                         .build());
 
                 List<Long> roomIdList = group.getSprints().stream().map(x -> x.getRoom().getId()).collect(Collectors.toList());

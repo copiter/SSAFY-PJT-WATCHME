@@ -107,11 +107,12 @@ public class RoomService {
                         .endAt(date)
                         .description(postRoomReqDTO.getDescription())
                         .imageLink(url)
-                        .display(postRoomReqDTO.getDisplay())
                         .build();
                 roomRepository.save(room);
                 roomInfoRepository.save(roominfo);
                 joinRoomFunc(room.getId(), member.getId());
+                result.setCode(200);
+                result.setMessage("CREATE SUCCESS");
                 result.setResponseData("roomId", room.getId());
 
         return result;
@@ -159,7 +160,7 @@ public class RoomService {
                     .id(room.getId())
                     .roomImage(room.getRoomInfo().getImageLink())
                     .roomName(room.getRoomName())
-                    .mode(room.getMode())
+                    .roomStatus(room.getMode())
                     .ctgName(room.getRoomCtg().getName())
                     .description(room.getRoomInfo().getDescription())
                     .endTime(simpleDateFormat.format(room.getRoomInfo().getEndAt()))
@@ -329,7 +330,6 @@ public class RoomService {
 
         if (memberId == room.getMember().getId()) {
 
-                System.out.println("update");
                 room.setRoomCtg(category);
                 room.setRoomName(roomUpdateDTO.getRoomName());
                 room.setMode(Mode.valueOf(roomUpdateDTO.getMode()));
@@ -338,7 +338,6 @@ public class RoomService {
                 roomInfo.setEndAt(date);
                 roomInfo.setMaxMember(roomUpdateDTO.getRoomMemberMaxNo());
                 roomInfo.setPwd(roomUpdateDTO.getPwd());
-                roomInfo.setDisplay(roomInfo.getDisplay());
                 roomInfoRepository.save(roomInfo);
 
             apiResponse.setCode(200);
@@ -477,7 +476,6 @@ public class RoomService {
                 .mode(room.getMode().toString())
                 .roomName(room.getRoomName())
                 .categoryName(room.getRoomCtg().getName().toString())
-                .display(room.getRoomInfo().getDisplay())
                 .description(room.getRoomInfo().getDescription())
                 .roomPwd((room.getRoomInfo().getPwd()==null)? -1:room.getRoomInfo().getPwd())
                 .img(room.getRoomInfo().getImageLink())

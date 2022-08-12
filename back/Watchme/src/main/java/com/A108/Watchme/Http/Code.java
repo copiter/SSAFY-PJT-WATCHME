@@ -56,7 +56,10 @@ public enum Code {
     C596(596, "DTO ERROR"),
     C505(505, "INVALID EMAIL KEY"),
     C506(506, "EMAIL KEY EXPIRED" ),
-    C552(552, "YOU BANNED");
+    C514(514, "EMAIL DUPLICATED"),
+    C552(552, "YOU BANNED"),
+    C515(515,"NICKNAME DUPLICATED" );
+
 
 
     private int errCode;

@@ -15,7 +15,7 @@ public class GetRoomResDTO {
 
     private Long id;
     private String roomName;
-    private Mode mode;
+    private Mode roomStatus;
     private CategoryList ctgName;
     private int maxNum;
     private int nowNum;

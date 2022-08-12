@@ -190,7 +190,6 @@ public class SprintService {
                         .endAt(format.parse(sprintPostDTO.getEndAt()))
                         .description(sprintPostDTO.getDescription())
                         .imageLink(url)
-                        .display(0)
                         .build();
 
                 roomRepository.save(room);

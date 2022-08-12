@@ -458,7 +458,7 @@ public class MemberService {
 
             Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
             if (member != null) {
-                throw new CustomException(Code.C300);
+                throw new CustomException(Code.C515);
             }
 
             apiResponse.setCode(200);

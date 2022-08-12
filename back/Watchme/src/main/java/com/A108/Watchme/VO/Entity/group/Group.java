@@ -49,7 +49,7 @@ public class Group {
     @JsonManagedReference
     private List<MemberGroup> memberGroupList;
 
-    @OneToOne(mappedBy = "group", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "group")
     @JsonManagedReference
     private GroupInfo groupInfo;
 

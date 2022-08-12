@@ -13,5 +13,6 @@ public class SprintDTO {
     private String description;
     private String startAt;
     private String endAt;
+    private String status;
 
 }

@@ -23,8 +23,14 @@ public class GroupController {
     private GroupService groupService;
 
     @GetMapping
-    public ApiResponse getGroupList(@RequestParam(value = "ctg",required = false) String ctgName, @RequestParam(value = "keyword",required = false) String keyword, @RequestParam(value = "page",required = false) Integer page, @RequestParam(value = "active", required = false) Integer active, HttpServletRequest request){
-        return groupService.getGroupList(ctgName, keyword, page, active, request);
+    public ApiResponse getGroupList(@RequestParam(value = "ctg",required = false) String ctgName, @RequestParam(value = "keyword",required = false) String keyword, @RequestParam(value = "page",required = false) Integer page, HttpServletRequest request){
+        return groupService.getGroupList(ctgName, keyword, page, request);
+    }
+
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse createGroup(@RequestPart GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request){
+        groupCreateReqDTO.getCtg().stream().forEach(System.out::println);
+        return groupService.createGroup(groupCreateReqDTO, image, request);
     }
 
     @PostMapping("/{groupId}")
@@ -33,11 +39,6 @@ public class GroupController {
             return groupService.getGroup(groupId, groupReqDTO.getPwd());
         }
         return groupService.getGroup(groupId, null);
-    }
-
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ApiResponse createGroup(@RequestPart GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request){
-        return groupService.createGroup(groupCreateReqDTO, image, request);
     }
 
     @PostMapping("/{groupId}/udpate")

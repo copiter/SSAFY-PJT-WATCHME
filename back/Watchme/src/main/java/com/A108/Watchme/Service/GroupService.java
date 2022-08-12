@@ -56,7 +56,7 @@ public class GroupService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final S3Uploader s3Uploader;
 
-    public ApiResponse getGroupList(String ctgName, String keyword, Integer page, Integer active, HttpServletRequest request) {
+    public ApiResponse getGroupList(String ctgName, String keyword, Integer page, HttpServletRequest request) {
         ApiResponse result = new ApiResponse();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -69,53 +69,22 @@ public class GroupService {
         }
         PageRequest pageRequest = PageRequest.of(page - 1, 10);
 
-        if (active == null) {
-            active = 0;
-        }
-
         if (ctgName != null) {
             Category category = categoryRepository.findByName(CategoryList.valueOf(ctgName));
 
             if (keyword == null) {
-                switch (active) {
-                    case 0:
-                        groupList = groupRepository.findAllByCategory_category(category, pageRequest).stream().collect(Collectors.toList());
-                        break;
-                    case 1:
-                    case 2:
-                        groupList = groupRepository.findAllByCategory_categoryAndDisplay(category, active, pageRequest).stream().collect(Collectors.toList());
-                }
+                groupList = groupRepository.findAllByCategory_category(category, pageRequest).stream().collect(Collectors.toList());
+
             } else {
-                switch (active) {
-                    case 0:
-                        groupList = groupRepository.findAllByCategory_categoryAndGroupNameContaining(category, keyword, pageRequest).stream().collect(Collectors.toList());
-                        break;
-                    case 1:
-                    case 2:
-                        groupList = groupRepository.findAllByCategory_categoryAndDisplayAndGroupNameContaining(category, active, keyword, pageRequest).stream().collect(Collectors.toList());
-                }
+                groupList = groupRepository.findAllByCategory_categoryAndGroupNameContaining(category, keyword, pageRequest).stream().collect(Collectors.toList());
             }
 
         } else {
             if (keyword == null) {
-                switch (active) {
-                    case 0:
-                        groupList = groupRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
-                        break;
-                    case 1:
-                    case 2:
-                        groupList = groupRepository.findAllByDisplayOrderByViewDesc(active, pageRequest).stream().collect(Collectors.toList());
-                }
-            } else {
-                switch (active) {
-                    case 0:
-                        groupList = groupRepository.findAllByGroupNameContaining(keyword, pageRequest).stream().collect(Collectors.toList());
-                        break;
-                    case 1:
-                    case 2:
-                        groupList = groupRepository.findAllByGroupNameContainingAndDisplay(keyword, active, pageRequest).stream().collect(Collectors.toList());
-                }
+                groupList = groupRepository.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
 
+            } else {
+                groupList = groupRepository.findAllByGroupNameContaining(keyword, pageRequest).stream().collect(Collectors.toList());
             }
 
         }
@@ -126,10 +95,10 @@ public class GroupService {
 
         List<GroupListResDTO> getGroupList = new LinkedList<>();
 
-        if(!groupList.isEmpty()) {
+        if (!groupList.isEmpty()) {
             for (Group g : groupList) {
                 // endAt이 현재보다 이후인 (즉, 진행중인) sprint(들)을 collect
-                List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).collect(Collectors.toList());
+                List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().after(new Date())).collect(Collectors.toList());
 
                 // 첫번째 sprint를 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
                 Sprint currSprint;
@@ -143,7 +112,7 @@ public class GroupService {
                         .ctg(g.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                         .imgLink(g.getGroupInfo().getImageLink())
                         .createdAt(format.format(g.getCreatedAt()))
-                        .display(g.getDisplay())
+                        .secret(g.getDisplay() == 1 ? true : false)
                         .view(g.getView())
                         // 현재 진행중인 sprint가 있다면
                         .sprint(!sprint.isEmpty() ?
@@ -152,6 +121,7 @@ public class GroupService {
                                         .description(currSprint.getSprintInfo().getDescription())
                                         .startAt(format.format(currSprint.getSprintInfo().getStartAt()))
                                         .endAt(format.format(currSprint.getSprintInfo().getEndAt()))
+                                        .status(currSprint.getStatus().toString())
                                         .build() : null
                         )
                         .build()
@@ -164,7 +134,7 @@ public class GroupService {
 
             result.setCode(200);
             result.setMessage("GETROOMS SUCCESS");
-        }else{
+        } else {
             result.setCode(400);
             result.setMessage("No group result");
         }
@@ -447,7 +417,7 @@ public class GroupService {
                             .imageLink(url)
                             .description(groupCreateReqDTO.getDescription())
                             .currMember(1)
-                            .maxMember(Integer.parseInt(groupCreateReqDTO.getMaxMember()))
+                            .maxMember(groupCreateReqDTO.getMaxMember())
                             .pwd(groupCreateReqDTO.getPwd())
                             .build());
 
@@ -546,7 +516,7 @@ public class GroupService {
 
                         groupRepository.save(group);
                         groupInfoRepos.save(groupInfo);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         throw new CustomException(Code.C521);
                     }
 
@@ -778,9 +748,9 @@ public class GroupService {
 
                         result.setCode(200);
                         result.setMessage("GROUP APPLY CANCLE SUCCESS");
-                    } else if(groupApplyLog.getStatus() == 1){
+                    } else if (groupApplyLog.getStatus() == 1) {
                         throw new CustomException(Code.C509);
-                    } else if(groupApplyLog.getStatus() == 2){
+                    } else if (groupApplyLog.getStatus() == 2) {
                         throw new CustomException(Code.C566);
                     }
                 } else {

@@ -140,7 +140,7 @@ public class HomeService {
                     .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
                     .createAt(format.format(group.getCreatedAt()))
                     .imgLink(group.getGroupInfo().getImageLink())
-                    .secret(group.getDisplay() == 2 ? true : false)
+                    .secret(group.getSecret() == 1 ? true : false)
                     .view(group.getView())
                     .sprint(!sprint.isEmpty()?SprintDTO.builder()
                             .name((currSprint = sprint.get(0)).getName())

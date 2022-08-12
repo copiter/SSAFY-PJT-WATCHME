@@ -2,6 +2,7 @@ package com.A108.Watchme.VO.Entity.group;
 
 import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.Entity.Category;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
@@ -12,12 +13,12 @@ import javax.persistence.*;
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 public class GroupInfo {
-
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "groupInfo_id")
+    @Id
+    @Column(name = "group_id", nullable = false)
     private Long id;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "group_id")
     @JsonBackReference
     private Group group;
@@ -29,7 +30,5 @@ public class GroupInfo {
     private Integer currMember;
 
     private Integer maxMember;
-
-    private String pwd;
 
 }

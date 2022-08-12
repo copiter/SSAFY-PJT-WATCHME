@@ -60,7 +60,7 @@ public class Group {
     private Integer view;
 
     /**
-     * 1 : 공개 2: 비공개
+     * 1 : 비공개 / 0: 공개
      */
-    private Integer display;
+    private Integer secret;
 }

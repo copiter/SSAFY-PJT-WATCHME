@@ -11,4 +11,6 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
     List<Sprint> findAllByGroupId(Long groupId);
 
     Optional<Sprint> findByGroupIdAndStatus(Long groupId, Status yes);
+
+    List<Sprint> findAllByStatus(Status status);
 }

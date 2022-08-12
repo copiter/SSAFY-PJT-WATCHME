@@ -1,3 +1,9 @@
+.imgSrc {
+  position: absolute;
+  width: 87%;
+  height: 82%;
+}
+
 .sr-only {
   position: absolute;
   left: -9999px;
@@ -78,6 +84,7 @@
 }
 /* 여기까지 open-group__search */
 
+/* open-group__module */
 .open-group__module {
   box-sizing: border-box;
   min-width: 1256px;
@@ -162,12 +169,83 @@
   vertical-align: middle;
 }
 
-#groups__whole {
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  justify-content: center;
-  column-gap: 30px;
-  row-gap: 30px;
+/* 아래 공개룸 표시 되는 부분 */
+#module__groups {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.groups__whole {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.groups__whole article {
+  display: inline-block;
+  margin: 0 30px 30px 0;
+}
+
+.groups__whole li .group-specs {
+  position: relative;
+
+  width: 329px;
+  height: 285px;
+  background: #e0e2e6;
+  border-radius: 12px;
+  padding: 41px 27px;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.group-specs .group-specs__rules {
+  display: none;
+}
+.group-specs__rules span {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.group-specs__rules li {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+.group-specs:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.group-specs:hover .group-specs__rules {
+  display: block;
+  z-index: 1;
+}
+
+.group-info {
+  /* margin: 10px 12.5px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 2;
+
+  display: flex;
+  flex-direction: column; */
+}
+
+.group-info div {
+  display: inline;
+}
+
+.group-info .info-content {
+  font-weight: 500;
+  font-size: 14px;
+  color: #9a9a9a;
+}
+
+.group-info .ctg {
+  display: flex;
+  justify-content: space-between;
 }
 
 .open-group__module #more-btn {

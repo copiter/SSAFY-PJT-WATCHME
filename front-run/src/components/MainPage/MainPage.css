@@ -90,6 +90,17 @@ a {
   left: 20px;
 }
 
+#mypage-mygroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+}
+
+#mypage-mygroup > li {
+  overflow: hidden;
+  border-radius: 5px;
+}
+
 .mypage__myinfor__mystudy-group-image {
   width: 160px;
   height: 160px;
@@ -140,6 +151,12 @@ a {
 
   background-color: #e0e2e6;
   border-radius: 8px;
+}
+#fighting-text {
+  font-size: 24px;
+  text-align: center;
+  padding-left: 5px;
+  font-weight: bold;
 }
 #mypage__myinfor__mystudy__infor__text {
   width: 262px;
@@ -267,51 +284,6 @@ a {
 }
 
 /* 메인페이지 배너 */
-#mainpage__banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin: 130px auto 130px;
-  padding: 60px;
-
-  width: 1120px;
-  height: 280px;
-
-  /* background: #e0e2e6; */
-  background: #eff0f2;
-  border-radius: 12px;
-}
-#banner__left {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-#mainpage__banner__title {
-  font-weight: 700;
-  font-size: 38px;
-  line-height: 52px;
-  margin-bottom: 50px;
-
-  color: #484848;
-}
-#mainpage__banner__main {
-  font-weight: 800;
-  font-size: 64px;
-  line-height: 78px;
-  text-align: right;
-  letter-spacing: 3px;
-
-  color: #535353;
-}
-#mainpage__banner__description {
-  font-weight: 300;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: 1px;
-
-  color: #9a9a9a;
-}
 
 /* 공개룸 소개 */
 

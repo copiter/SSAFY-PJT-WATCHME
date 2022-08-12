@@ -8,7 +8,7 @@
       "ctg": ["공무원", "자격증"],
       "imgLink": "http://gdimg.gmarket.co.kr/1882934532/still/600?ver=1622428606",
       "createAt": "2022-08-06",
-      "display": "1",
+      "secret": true,
       "view": 567
     },
     "members": [

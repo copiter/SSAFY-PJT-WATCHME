@@ -20,7 +20,6 @@ function PointAdd() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     console.log(url+"value="+(inputs.valueSelect==="Free"?inputs.valueInputs:inputs.valueSelect));
     fetch(url+"value="+(inputs.valueSelect==="Free"?inputs.valueInputs:inputs.valueSelect), 
     {

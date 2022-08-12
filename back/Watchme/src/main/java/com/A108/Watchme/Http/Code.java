@@ -55,7 +55,9 @@ public enum Code {
     C597(597, "KAKAO PAY ERROR" ),
     C596(596, "DTO ERROR"),
     C505(505, "INVALID EMAIL KEY"),
-    C506(506, "EMAIL KEY EXPIRED" );
+    C506(506, "EMAIL KEY EXPIRED" ),
+    C552(552, "YOU BANNED");
+
 
     private int errCode;
 

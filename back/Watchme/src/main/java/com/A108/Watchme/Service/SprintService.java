@@ -367,6 +367,7 @@ public class SprintService {
         mslRepository.save(MemberSprintLog.builder()
                 .sprint(sprint)
                 .member(member)
+                .status(Status.YES)
                 .build());
         member.getMemberInfo().setPoint(member.getMemberInfo().getPoint()-sprint.getSprintInfo().getFee());
 
@@ -407,6 +408,10 @@ public class SprintService {
         Optional<MemberSprintLog> memberSprintLog = mslRepository.findByMemberIdAndSprintId(memberId, sprintId);
         if(!memberSprintLog.isPresent()){
             throw new CustomException(Code.C540);
+        }
+
+        if(memberSprintLog.get().getStatus().equals(Status.DELETE)){
+            throw new CustomException(Code.C552);
         }
 
         roomService.joinRoomFunc(memberSprintLog.get().getSprint().getRoom().getId(),memberId);

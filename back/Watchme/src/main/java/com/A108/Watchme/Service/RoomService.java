@@ -152,6 +152,9 @@ public class RoomService {
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {
+            if(room.getRoomCtg().getName().equals(CategoryList.스프린트)){
+                continue;
+            }
             getRooms.add(new GetRoomResDTO().builder()
                     .id(room.getId())
                     .roomImage(room.getRoomInfo().getImageLink())

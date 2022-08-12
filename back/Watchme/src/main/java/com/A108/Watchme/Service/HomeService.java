@@ -43,7 +43,7 @@ public class HomeService {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
-        SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format3 = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 종료");
 
         System.out.println("-----------------------------------");
 

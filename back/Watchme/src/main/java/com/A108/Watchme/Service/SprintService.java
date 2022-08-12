@@ -162,12 +162,14 @@ public class SprintService {
         if (group.getLeader().getId() != memberId) {
             throw new CustomException(Code.C536);
         }
-
+        if(images!=null){
             try {
                 url = s3Uploader.upload(images, "Watchme");
             } catch (Exception e) {
                 throw new CustomException(Code.C512);
             }
+        }
+
 
             try {
                 // 룸생성

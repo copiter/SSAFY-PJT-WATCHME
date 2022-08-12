@@ -377,43 +377,28 @@ public class MemberService {
 
         public ApiResponse resetPwMp (ResetPwMpDTO resetPwMpDTO){
             ApiResponse result = new ApiResponse();
-
-            try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+                    Long id;
+                    try{
+                        id = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+                    } catch(Exception e){
+                        throw new CustomException(Code.C501);
+                    }
+                    Member member = memberRepository.findById(id).get();
 
-                    UserDetails currUser = (UserDetails) authentication.getPrincipal();
-                    Member mem = memberRepository.findByEmail(currUser.getUsername());
-                    Member member = memberRepository.findById(mem.getId()).get();
 
                     if (bCryptPasswordEncoder.matches(resetPwMpDTO.getPassword(), member.getPwd())) {
-                        System.out.println(resetPwMpDTO.getPassword());
-                        System.out.println(resetPwMpDTO.getNewPassword());
 
                         String encPassword = bCryptPasswordEncoder.encode(resetPwMpDTO.getNewPassword());
-                        System.out.println(member.getPwd());
-                        System.out.println(encPassword);
 
                         member.setPwd(encPassword);
 
                         result.setMessage("RESET PASSWORD SUCCESS");
                         result.setCode(200);
-
-                        System.out.println(member.getPwd());
-                        System.out.println(encPassword);
                     } else {
-                        result.setMessage("PASSWORD IS NOT CORRECT");
-                        result.setCode(400);
+                        throw new CustomException(Code.C513);
                     }
-                } else {
-                    result.setMessage("NOT LOGGINED");
-                    result.setCode(400);
-                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                result.setCode(500);
-            }
             return result;
         }
 

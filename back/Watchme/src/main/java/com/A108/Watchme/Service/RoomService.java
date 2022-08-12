@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class RoomService {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM월 dd일 HH시 mm분");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 종료");
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
@@ -60,12 +60,14 @@ public class RoomService {
             throw new CustomException(Code.C501);
         }
                 String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/StudyRoom.jpg";
-
+            if(images!=null){
                 try {
                     url = s3Uploader.upload(images, "Watchme");
                 } catch (Exception e) {
                     throw new CustomException(Code.C512);
                 }
+            }
+
 
 
 
@@ -198,6 +200,7 @@ public class RoomService {
             if(roomPwd==null || roomPwd== pwd){
                 if(roomPeople(roomId, 1)){
                     joinRoomFunc(roomId, memberId);
+                    room.setView(room.getView()+1);
                     result.setMessage("JOIN SUCCESS");
                     result.setCode(200);
                 }
@@ -211,8 +214,7 @@ public class RoomService {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
-            result.setCode(500);
+            throw new CustomException(Code.C500);
         }
 
         return result;

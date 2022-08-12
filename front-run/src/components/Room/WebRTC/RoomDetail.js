@@ -11,6 +11,7 @@ import Members from "./componentOnRoom/Members";
 import MyStudy from "./componentOnRoom/MyStudy";
 import RoomReform from "./componentOnRoom/RoomReform";
 
+import AuthContext from "../../../store/auth-context";
 
 //강제 리브세션=추방
 //방장 전용 기능 구현.
@@ -33,7 +34,6 @@ class RoomDetail extends Component {
       screenShare: true, //화면공유 버튼
       chatDisplay: "none",
 
-
     };
     //setInterval(()=>{alert("TEST콘솔로그입니다")},1000);
 
@@ -52,12 +52,13 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-    setInterval(() => {this.getMedia()},10000);
+   this.getMedia();
   }
 
 
 
   componentDidMount() {
+    this.joinSession()
     window.addEventListener("beforeunload", this.onbeforeunload);
     // this.joinSession();
   }
@@ -105,9 +106,14 @@ class RoomDetail extends Component {
   joinSession() {//세션조인
     // --- 1) Get an OpenVidu object ---
     this.OV = new OpenVidu();
-
+    
+    let myNickName=localStorage.getItem('nickName');
+    console.log("닉네임");
+    console.log(myNickName);
+    this.setState({
+      myUserName: myNickName
+    });
     // --- 2) Init a session ---
-
     this.setState(
       {
         session: this.OV.initSession(),
@@ -231,19 +237,18 @@ class RoomDetail extends Component {
         .filter((cookie) => cookie[0] === name);
       return cookie[0][1];
     }
-    console.log(getCookie("accessToken"));
+    console.log("방나가기 시도");
     fetch(url,{
       method:"POST",
       headers:{accessToken: getCookie("accessToken")}
     })
     .then((response) => {
-      console.log("HERE");
       console.log(response);
       if (response.ok) {
         return response.json(); //ok떨어지면 바로 종료.
       } else {
         response.json().then((data) => {
-          console.log("ERR");
+          console.log("ERR방나기 실패");
           let errorMessage = "";
           throw new Error(errorMessage);
         });
@@ -251,13 +256,9 @@ class RoomDetail extends Component {
     })
     .then((result) => {
       if (result != null) {
-        console.log("성공"); 
+        console.log(result); 
         if(result.code===200)
         {
-
-          if (mySession) {
-            mySession.disconnect();
-          }
         }
         else{
 
@@ -266,12 +267,19 @@ class RoomDetail extends Component {
       }
     })
     .catch((err) => {
-      console.log("ERR"); 
+      console.log("ERR여기 못나감"); 
     });
    
 
     // Empty all properties...
     this.OV = null;
+    try{
+      mySession.disconnect();
+      window.location.href="../";
+    }
+    catch{
+      console.log("디스콘실패");
+    }
     this.setState({
       session: undefined,
       subscribers: [],
@@ -280,7 +288,6 @@ class RoomDetail extends Component {
       mainStreamManager: undefined,
       publisher: undefined,
     });
-    
   }
 
   
@@ -434,6 +441,7 @@ class RoomDetail extends Component {
   }
 
   async  getMedia() {
+    /*
     let imageCapture;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -470,16 +478,122 @@ class RoomDetail extends Component {
       }
     } catch (err) {
       console.error(err);
+    }*/
+ 
+
+
+  
+    const FETCH_URL=FetchUrl._currentValue;
+    const id=window.location.pathname.split("/")[2].substring(1);
+    function getCookie(name) {
+      const cookie = document.cookie
+        .split(";")
+        .map((cookie) => cookie.split("="))
+        .filter((cookie) => cookie[0] === name);
+      return cookie[0][1];
     }
+
+
+    
+  
+
+    
+/*
     try {
       const blob = await imageCapture.takePhoto();
-      console.log("Photo taken: " + blob.type + ", " + blob.size + "B");
-
       const image = document.querySelector('img');
       image.src = URL.createObjectURL(blob);
+      console.log(blob);
+      console.log(image);
     } catch (err) {
       console.error("takePhoto() failed: ", err);
     }
+    */
+
+    let json;
+    fetch(`${FETCH_URL}/rooms/`+id, {
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+    .then((response) => {
+      if (response.ok) {
+        return response.json(); //ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+      }
+    })
+    .catch((err) => {
+      console.log("ERR22");
+    });
+    
+   
+    /*const blob = await imageCapture.takePhoto();
+    formData.append("file",blob );*/
+
+    
+
+
+    const formData = new FormData();
+    json={"nickName":this.state.myUserName,
+    "roomId":id,
+    "mode":"MODE2"};
+    formData.append(
+      "flaskDTO",
+      new Blob([JSON.stringify(json)], { type: "application/json" })
+    );
+    
+
+    console.log("TESTHERE");
+    console.log(json);
+    fetch("https://watchme1.shop/flask/openCV",
+        {
+          method:"POST",
+          body: formData,
+          mode: "cors",
+          headers: {
+            "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
+          },
+        })
+        .then((response) => {
+          console.log(response);
+          console.log("왜안되");
+          if (response.ok) {
+            return response.json(); //ok떨어지면 바로 종료.
+          } else {
+            response.json().then((data) => {
+              let errorMessage = "";
+              throw new Error(errorMessage);
+            });
+          }
+        })
+        .then((result) => {
+          if (result != null) {
+            if(result.code===200)
+            {
+              console.log("200")
+  
+            }
+            else if(result.code===205)
+            {
+              console.log("205")
+            }
+            else{
+              
+            }
+          }
+        })
+        .catch((err) => {
+          console.log("ERR여기임");
+        });
+
   }
 
 
@@ -488,139 +602,37 @@ class RoomDetail extends Component {
 
 
 
-
-
-  sendPicutres(imgeRef,nickName,roomID,mode){
-    if(mode==="MODE2"||mode==="MODE3")
-    {
-      const formData = new FormData();
-      formData.append("images", imgeRef);
-      formData.append(
-        "flaskDTO",
-        new Blob([JSON.stringify({"nickName":nickName,"roomId":roomID,"mode":mode})], { type: "application/json" })
-      );
-      const FETCH_URL=FetchUrl._currentValue;
-      fetch(`${FETCH_URL}/flask`,{
-        method:"POST",
-        body: formData,
-      })
-      .then((response) => {
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            console.log("ERR");
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((result) => {
-        if (result != null) {
-          if(result.code===200)
-          {
-
-          }
-          else if(result.code===205)
-          {
-            if(mode==="MODE2")
-            {
-
-            }
-            else if(mode==="MODE3")
-            {
-
-            }
-          }
-          else{
-            
-          }
-        }
-      })
-      .catch((err) => {
-        console.log("ERR");
-      });
-    }
-    return 0;
-  }
 
   render() { 
     const mySessionId = this.state.mySessionId;
-    const myUserName = this.state.myUserName;
     var chatDisplay = { display: this.state.chatDisplay };
 
     return (
-      <div className="container">
-        {this.state.session === undefined ? (
-          <div id="join">
-            <div id="img-div">
-              <img
-                src="resources/images/openvidu_grey_bg_transp_cropped.png"
-                alt="OpenVidu logo"
-              />
-            </div>
-            <div id="join-dialog" className="jumbotron vertical-center">
-              <h1> Join a video session </h1>
-              <form className="form-group" onSubmit={this.joinSession}>
-                <p>
-                  <label>Participant: </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    id="userName"
-                    value={myUserName}
-                    onChange={this.handleChangeUserName}
-                    required
-                  />
-                </p>
-                <p>
-                  <label> Session: </label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    id="sessionId"
-                    value={mySessionId}
-                    onChange={this.handleChangeSessionId}
-                    required
-                  />
-                </p>
-                <p className="text-center">
-                  <input
-                    className="btn btn-lg btn-success"
-                    name="commit"
-                    type="submit"
-                    value="JOIN"
-                  />
-                </p>
-              </form>
-            </div>
+      <div className="container">{this.state.session === undefined ? (null) : (
+        <div id="session">
+          <div id="session-header">
+            <h1 id="session-title">{mySessionId}</h1>
+            
+
+            {this.state.videoState && (
+              <button onClick={this.videoHandlerOff}>Video OFF</button>
+            )}
+            {!this.state.videoState && (
+              <button onClick={this.videoHandlerOn}>Video ON</button>
+            )}
+            {this.state.audioState && (
+              <button onClick={this.audioHandlerOff}>Audio OFF</button>
+            )}
+            {!this.state.audioState && (
+              <button onClick={this.audioHandlerOn}>Audio ON</button>
+            )}
+            {this.state.screenShare && (
+              <button onClick={this.screenShare}>화면공유</button>
+            )}
           </div>
-        ) : null}
-
-        {this.state.session !== undefined ? (
-          <div id="session">
-            <div id="session-header">
-              <h1 id="session-title">{mySessionId}</h1>
-             
-
-              {this.state.videoState && (
-                <button onClick={this.videoHandlerOff}>Video OFF</button>
-              )}
-              {!this.state.videoState && (
-                <button onClick={this.videoHandlerOn}>Video ON</button>
-              )}
-              {this.state.audioState && (
-                <button onClick={this.audioHandlerOff}>Audio OFF</button>
-              )}
-              {!this.state.audioState && (
-                <button onClick={this.audioHandlerOn}>Audio ON</button>
-              )}
-              {this.state.screenShare && (
-                <button onClick={this.screenShare}>화면공유</button>
-              )}
-            </div>
-
-            {this.state.mainStreamManager !== undefined ? (
+          <div className="myCams">
+            {//개인카메라
+            this.state.mainStreamManager !== undefined ? (
               <div id="main-video" className="col-md-6">
                 <UserVideoComponent
                   streamManager={this.state.mainStreamManager}
@@ -631,31 +643,28 @@ class RoomDetail extends Component {
                   type="button"
                   id="buttonSwitchCamera"
                   onClick={this.switchCamera}
-                  value="Switch Camera"
+                  value="내 화면을 다시 보기"
                 />
               </div>
             ) : null}
             <div id="video-container" className="col-md-6">
               {this.state.publisher !== undefined ? (
-                <div
-                  className="stream-container col-md-6 col-xs-6"
-                  onClick={() =>
-                    this.handleMainVideoStream(this.state.publisher)
-                  }
-                >
+                <div className="stream-container col-md-6 col-xs-6">
                   <UserVideoComponent streamManager={this.state.publisher} />
                 </div>
               ) : null}
+          </div>
+            <div className="others">
               {this.state.subscribers.map((sub, i) => (
                 <div
                   key={i}
-                  className="stream-container col-md-6 col-xs-6"
+                  className="stream-container col-md-6 col-xs-6 "
                   onClick={() => this.handleMainVideoStream(sub)}
                 >
                   <UserVideoComponent streamManager={sub} />
                 </div>
-              ))}
-            </div>
+              ))}</div>
+          </div>
 <div style={{display:'inline-block',width:'1000px',height:'500px'}}>
   <ul className="linksUl">
     <Link to="./" ><li className="linksLi">내 공부</li></Link>
@@ -668,7 +677,7 @@ class RoomDetail extends Component {
     <Route path="/RoomReform" element={<RoomReform/>} />
   </Routes>
 
-  
+  {/**/}
   <input
     className="btn btn-large btn-danger"
     type="button"
@@ -702,7 +711,7 @@ class RoomDetail extends Component {
                 )}
             </div>
           </div>
-        ) : null}
+        )}
         
       </div>
     );

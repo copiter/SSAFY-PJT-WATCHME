@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FetchUrl } from "../../../store/communication";
-import getCookie from "../../../Cookie";
+import { getCookie } from "../../../Cookie";
 
 import "./GroupDetail.css";
 import json from "../../json/groupdetail.json";
@@ -11,6 +11,7 @@ import GroupDetailMembers from "./GroupDetailMembers";
 
 // props 에 id, pwd 실려서 내려옴
 function GroupDetail(props) {
+  const [isCrew, setIsCrew] = useState(false);
   const [resData, setResData] = useState(json.responseData);
   const [navBar, setNavBar] = useState(0);
   const [isJoinCheck, setIsJoinCheck] = useState(false);
@@ -25,9 +26,6 @@ function GroupDetail(props) {
   useEffect(() => {
     const config = {
       method: "POST",
-      // body: {
-      //   pwd: props.pwd,
-      // },
       headers: {
         accessToken: getCookie("accessToken"),
       },
@@ -35,11 +33,19 @@ function GroupDetail(props) {
     const getDatas = async () => {
       const response = await fetch(url, config);
       const data = await response.json();
-      console.log(data.responseData);
-      setResData(data.responseData);
+      if (data.code === 200) {
+        setResData(data.responseData);
+        setIsCrew(true);
+      } else {
+        alert("그룹원이 아닙니다");
+        window.history.back();
+        console.log(data.message);
+      }
     };
     getDatas();
   }, []);
+
+  console.log(resData);
 
   function joinHandler() {
     const config = {
@@ -50,11 +56,17 @@ function GroupDetail(props) {
     };
     const getDatas = async () => {
       try {
-        await fetch(url + "/applies", config);
-        alert("그룹 가입 신청되었습니다");
-        setIsJoinCheck(true);
+        const response = await fetch(url + "/applies", config);
+        const data = await response.json();
+
+        if (data.code === 200) {
+          alert("그룹 가입 신청되었습니다");
+          setIsJoinCheck(true);
+        } else {
+          alert(data.message);
+        }
       } catch (e) {
-        alert(`가입 신청 실패 ` + e);
+        alert(`통신 실패 ` + e);
       }
     };
     getDatas();
@@ -69,11 +81,17 @@ function GroupDetail(props) {
     };
     const getDatas = async () => {
       try {
-        await fetch(url + "/applies/cancel", config);
-        alert("신청 취소되었습니다");
-        setIsJoinCheck(false);
+        const response = await fetch(url + "/applies/cancel", config);
+        const data = await response.json();
+
+        if (data.code === 200) {
+          alert("신청 취소되었습니다");
+          setIsJoinCheck(false);
+        } else {
+          alert(data.message);
+        }
       } catch (e) {
-        alert(`신청 취소 실패 ` + e);
+        alert(`통신 실패 ` + e);
       }
     };
     getDatas();

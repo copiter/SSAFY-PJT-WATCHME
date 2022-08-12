@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
+import { getCookie } from "../../Cookie";
 
 import "./RoomCreate.css";
 
@@ -23,29 +24,20 @@ function RoomCreate() {
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
-
+  const toggleChange = () => {
+    setInputs((values) => ({
+      ...values,
+      display: inputs.display === 1 ? 0 : 1,
+    }));
+  };
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/rooms`;
-  //Otpion
-  function getCookie(name) {
-      const cookie = document.cookie
-      .split(";")
-      .map((cookie) => cookie.split("="))
-      .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-  }
-  try{
-    getCookie()
-  }
-  catch{ 
-    navigate("/" );
-  }
 
   const imgeRef = useRef();
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    console.log(inputs);
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
@@ -54,7 +46,6 @@ function RoomCreate() {
       new Blob([JSON.stringify(inputs)], { type: "application/json" })
     );
 
-    console.log(inputs);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -76,8 +67,8 @@ function RoomCreate() {
       .then((result) => {
         if (result != null) {
           alert("방생성이 완료되었습니다.");
-          navigate("/RoomDetail/:" + result.responseData.roomId);
-          window.location.reload(); //리다이렉션관련
+          navigate("/RoomDetail/" + result.responseData.roomId);
+          //window.location.reload(); //리다이렉션관련
         }
       })
       .catch((err) => {
@@ -109,6 +100,7 @@ function RoomCreate() {
                   width: "150px",
                   height: "150px",
                   borderRadius: "50%",
+                  pointerEvents: "none",
                 }}
               />
             )}
@@ -171,21 +163,21 @@ function RoomCreate() {
               </div>
               <div className="line">
                 <span>종료기간</span>
-                    <input
-                      type="date"
-                      name="endTime"
-                      value={inputs.endTime || ""}
-                      onChange={handleChange}
-                    />
+                <input
+                  type="datetime-local"
+                  name="endTime"
+                  value={inputs.endTime || ""}
+                  onChange={handleChange}
+                />
                 <span>비공개</span>
                 <label className="switch">
                   <input
                     type="checkbox"
                     name="display"
-                    value={inputs.display || ""}
-                    onChange={handleChange}
+                    value={inputs.display}
+                    onChange={toggleChange}
                   />
-                  <span className="slider round"></span>
+                  <div className="slider round"></div>
                 </label>
 
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
@@ -206,19 +198,39 @@ function RoomCreate() {
               <div className="rules-title">📝 규칙</div>
               <div className="rules-box">
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="radio"
+                    name="mode"
+                    value="MODE1"
+                    onChange={handleChange}
+                  />
                   감시없음
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="radio"
+                    name="mode"
+                    value="MODE2"
+                    onChange={handleChange}
+                  />
                   스마트폰감지
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="radio"
+                    name="mode"
+                    value="MODE3"
+                    onChange={handleChange}
+                  />
                   졸음감지
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input
+                    type="radio"
+                    name="mode"
+                    value="MODE4"
+                    onChange={handleChange}
+                  />
                   화면공유
                 </label>
               </div>

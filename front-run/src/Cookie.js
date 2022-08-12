@@ -1,12 +1,11 @@
-function getCookie(name) {
-  if (!document.cookie) {
-    return;
-  }
-  const cookie = document.cookie
-    .split("; ")
-    .map((cookie) => cookie.split("="))
-    .filter((cookie) => cookie[0] === name);
-  return cookie[0][1];
-}
+import { Cookies } from "react-cookie";
 
-export default getCookie;
+const cookies = new Cookies();
+
+export const setCookie = (name, value, option) => {
+  return cookies.set(name, value, { ...option });
+};
+
+export const getCookie = (name) => {
+  return cookies.get(name);
+};

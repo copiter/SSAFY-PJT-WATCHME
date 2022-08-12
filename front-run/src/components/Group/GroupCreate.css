@@ -1,10 +1,10 @@
-.body-frame {
+#group-create {
   width: 1090px;
   height: 600px;
   margin: 27px auto;
   padding: 16px;
 }
-.body-frame .back-to-recruit {
+#group-create .back-to-recruit {
   margin-left: 10px;
 
   display: inline-block;
@@ -19,13 +19,13 @@
   text-align: center;
 }
 
-.body-frame .form-frame {
+#group-create .form-frame {
   display: flex;
   flex-direction: row;
   padding: 10px;
 }
 
-.form-frame .room-image {
+.form-frame .group-image {
   width: 279px;
   height: 500px;
   background: #eff0f2;
@@ -36,7 +36,7 @@
   align-items: center;
 }
 
-.room-image .room-image__upload {
+.group-image .group-image__upload {
   margin: 50px 0 30px 0;
 
   width: 160px;
@@ -47,55 +47,45 @@
   border-radius: 50%;
 }
 
-.room-image__upload::file-selector-button {
+.group-image__upload::file-selector-button {
   display: none;
 }
 
-.room-image__message {
+.group-image__message {
   font-weight: 500;
   font-size: 16px;
   letter-spacing: -1px;
 }
 
 /* 배치 */
-.form-frame .room-infor {
+.form-frame .group-infor {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   padding-left: 42px;
 }
 
-.room-infor .input-type {
+.group-infor .group-type {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.input-type .line input,
-.input-type .line select {
+.group-type .line input,
+.group-type .line select {
   border: 0;
   padding: 7px 0;
   border-bottom: 1px solid #ccc;
   width: 100%;
-}
-.input-type .line:first-child input {
   height: 34px;
+  font-size: 16px;
 }
-.input-type .line:first-child input::placeholder {
+
+.group-type > .line:first-child input::placeholder {
   font-size: 28px;
   font-weight: 700;
   line-height: 34px;
   color: #000;
-}
-
-.input-type .line:nth-child(3) {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-.input-type .line:nth-child(3) input,
-.input-type .line:nth-child(3) select {
-  width: 47.5%;
 }
 
 select option[value=""][disabled] {
@@ -106,20 +96,26 @@ select option[value=""][disabled] {
   outline: none;
 }
 
-.input-type .line:nth-child(4) {
+#group-twin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 30px;
+}
+
+#group-twin .line:nth-child(2) {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
 }
-.input-type .line:nth-child(4) input {
+#group-twin .line:nth-child(2) input {
   width: 170px;
   margin-left: 10px;
 }
 
 /* 슬라이더 구현 */
 /* The switch - the box around the slider */
-.input-type .switch {
+.group-type .switch {
   position: relative;
   display: inline-block;
   width: 28px;
@@ -128,14 +124,14 @@ select option[value=""][disabled] {
 }
 
 /* Hide default HTML checkbox */
-.input-type .switch input {
+.group-type .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
 /* The slider */
-.input-type .slider {
+.group-type .slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -147,7 +143,7 @@ select option[value=""][disabled] {
   transition: 0.4s;
 }
 
-.input-type .slider:before {
+.group-type .slider:before {
   position: absolute;
   content: "";
   height: 15px;
@@ -159,26 +155,26 @@ select option[value=""][disabled] {
   transition: 0.4s;
 }
 
-.input-type input:checked + .slider {
+.group-type input:checked + .slider {
   background-color: #2196f3;
 }
 
-.input-type input:focus + .slider {
+.group-type input:focus + .slider {
   box-shadow: 0 0 1px #2196f3;
 }
 
-.input-type input:checked + .slider:before {
+.group-type input:checked + .slider:before {
   -webkit-transform: translateX(12px);
   -ms-transform: translateX(12px);
   transform: translateX(12px);
 }
 
 /* Rounded sliders */
-.input-type .slider.round {
+.group-type .slider.round {
   border-radius: 15px;
 }
 
-.input-type .slider.round:before {
+.group-type .slider.round:before {
   border-radius: 50%;
 }
 
@@ -194,7 +190,7 @@ select option[value=""][disabled] {
   gap: 5px;
 }
 
-.room-infor > button {
+.group-infor > button {
   align-self: flex-end;
   margin-top: auto;
 
@@ -208,4 +204,6 @@ select option[value=""][disabled] {
   font-size: 16px;
   line-height: 46px;
   text-align: center;
+
+  cursor: pointer;
 }

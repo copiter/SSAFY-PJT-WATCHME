@@ -30,7 +30,7 @@ function SocialLogin() {
     const enteredSex = sexInputRef.current.value;
     const enteredBirthday = birthdayInputRef.current.value;
 
-    const url = `${FETCH_URL}/social-signup`;
+    const url = `${FETCH_URL}/members/auth/social-signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",
@@ -60,7 +60,7 @@ function SocialLogin() {
         if (result != null) {
           authCtx.login();
           navigate("/");
-     //     window.location.reload();
+          //     window.location.reload();
         }
       })
       .catch((err) => {

@@ -59,21 +59,13 @@ function GroupCreate() {
     formData.append("images", imgeRef.current.files[0]);
     let ctgs = [];
     let i = 0;
-    if (inputs.ctg[0]) {
-      ctgs[i] = "공무원";
-      i++;
-    }
-    if (inputs.ctg[1]) {
-      ctgs[i] = "취업";
-      i++;
-    }
-    if (inputs.ctg[2]) {
-      ctgs[i] = "수능";
-      i++;
-    }
-    if (inputs.ctg[3]) {
-      ctgs[i] = "기타";
-      i++;
+    let j = 0;
+    for (i = 0; i < 4; i++) {
+      if (inputs.ctg[i]) {
+        ctgs[j] =
+          i === 0 ? "공무원" : i === 1 ? "취업" : i === 2 ? "수능" : "기타";
+        j++;
+      }
     }
     //inputs.cgs
     const outputs = {
@@ -88,7 +80,6 @@ function GroupCreate() {
       "postGroupReqDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
-
     fetch(url, {
       method: "POST",
       body: formData,
@@ -115,7 +106,7 @@ function GroupCreate() {
           console.log(result);
           console.log("CK");
           console.log(result["responseData"]["groupId"]);
-          navigate("/GroupDetail/:" + result["responseData"]["groupId"]);
+          navigate("/GroupDetail/" + result["responseData"]["groupId"]);
           window.location.reload(); //리다이렉션관련
         }
       })
@@ -133,9 +124,7 @@ function GroupCreate() {
       <Link to="/GroupRecruit" className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>
-      {/* <Link to="/GroupReform/1">groupReform test</Link> */}
       <form onSubmit={handleSubmit}>
-        {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
           <div className="group-image">
             {fileImage && (
@@ -164,7 +153,6 @@ function GroupCreate() {
           </div>
           <div className="group-infor">
             {/*우측부분*/}
-
             <div className="group-type">
               <div className="line">
                 <input
@@ -197,7 +185,7 @@ function GroupCreate() {
                 </div>
                 <div className="line">
                   <span>비공개</span>
-                  <label className="switch">
+                  <label className="switch" >
                     <input
                       type="checkbox"
                       name="display"
@@ -206,8 +194,6 @@ function GroupCreate() {
                     />
                     <span className="slider round"></span>
                   </label>
-
-                  {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                   <input
                     type="password"
                     name="pwd"
@@ -216,7 +202,7 @@ function GroupCreate() {
                     disabled={!isChecked}
                     maxLength="4"
                     minLength="4"
-                    placeholder="비밀번호 4자리"
+                    placeholder={!isChecked?"공개방입니다":"비밀번호 4자리"}
                   />
                 </div>
               </div>

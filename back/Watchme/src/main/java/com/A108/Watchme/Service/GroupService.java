@@ -267,6 +267,8 @@ public class GroupService {
 
                 result.setResponseData("groupData", groupDataResDTO);
 
+                result.setResponseData("members", null);
+
                 result.setCode(200);
                 result.setMessage("GET GROUP SUCCESS");
                 return result;
@@ -373,6 +375,8 @@ public class GroupService {
                 result.setResponseData("myData", MyDataResDTO.builder()
                         .role(GroupRole.ANONYMOUS.ordinal())
                         .build());
+
+                result.setResponseData("members", null);
 
                 result.setCode(200);
                 result.setMessage("GET GROUP SUCCESS");

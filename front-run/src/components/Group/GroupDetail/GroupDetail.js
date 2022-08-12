@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FetchUrl } from "../../../store/communication";
 import getCookie from "../../../Cookie";
-import { useLocation } from "react-router-dom";
 
 import "./GroupDetail.css";
 import json from "../../json/groupdetail.json";
@@ -20,33 +19,12 @@ function GroupDetail(props) {
   const pathnameArr = window.location.pathname.split("/");
   const groupId = +pathnameArr[pathnameArr.length - 1];
 
-  //GroupItem에서 secret 들고옴
-  const { state } = useLocation();
-  let pwd = null;
-  async function config() {
-    function getPwd() {
-      pwd = prompt("비공개 그룹입니다. 비밀번호를 입력하세요");
-    }
-
-    if (state.secret) {
-      await getPwd();
-      if (pwd === null) {
-        window.history.back();
-      }
-    }
-    console.log(pwd);
-  }
-  config();
-
   //데이터 요청
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/groups/${groupId}`;
   useEffect(() => {
     const config = {
       method: "POST",
-      body: {
-        pwd: pwd,
-      },
       headers: {
         accessToken: getCookie("accessToken"),
       },
@@ -57,7 +35,7 @@ function GroupDetail(props) {
       if (data.code === 200) {
         setResData(data.responseData);
       } else {
-        //
+        console.log(data.message);
       }
     };
     getDatas();
@@ -72,11 +50,17 @@ function GroupDetail(props) {
     };
     const getDatas = async () => {
       try {
-        await fetch(url + "/applies", config);
-        alert("그룹 가입 신청되었습니다");
-        setIsJoinCheck(true);
+        const response = await fetch(url + "/applies", config);
+        const data = await response.json();
+
+        if (data.code === 200) {
+          alert("그룹 가입 신청되었습니다");
+          setIsJoinCheck(true);
+        } else {
+          alert(data.message);
+        }
       } catch (e) {
-        alert(`가입 신청 실패 ` + e);
+        alert(`통신 실패 ` + e);
       }
     };
     getDatas();
@@ -91,11 +75,17 @@ function GroupDetail(props) {
     };
     const getDatas = async () => {
       try {
-        await fetch(url + "/applies/cancel", config);
-        alert("신청 취소되었습니다");
-        setIsJoinCheck(false);
+        const response = await fetch(url + "/applies/cancel", config);
+        const data = await response.json();
+
+        if (data.code === 200) {
+          alert("신청 취소되었습니다");
+          setIsJoinCheck(false);
+        } else {
+          alert(data.message);
+        }
       } catch (e) {
-        alert(`신청 취소 실패 ` + e);
+        alert(`통신 실패 ` + e);
       }
     };
     getDatas();

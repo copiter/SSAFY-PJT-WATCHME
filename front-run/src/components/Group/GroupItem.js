@@ -9,7 +9,7 @@ function GroupItem(props) {
   const navigate = useNavigate();
 
   function enteringGroup(id) {
-    navigate(`/GroupDetail/${id}`, { state: { secret: group.secret } });
+    navigate(`/GroupDetail/${id}`);
   }
 
   return (
@@ -72,9 +72,6 @@ function GroupItem(props) {
             ) : (
               <p>현재 모집중인 스프린트가 없습니다</p>
             )}
-            {/* {group.sprint.hasOwnProperty("status") && (
-            
-          )} */}
           </div>
         )}
       </div>

@@ -17,15 +17,20 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      const response = await fetch(url + "/members", config);
-      // const response = await fetch(url);
-      const data = await response.json();
-      setMemData(data.responseData);
+      try {
+        const response = await fetch(url + "/members", config);
+        const data = await response.json();
+        if (data.code === 200) {
+          setMemData(data.responseData);
+        } else {
+          alert(data.message);
+        }
+      } catch (e) {
+        alert(`통신 실패 ` + e);
+      }
     };
     getDatas();
   }, []);
-
-  console.log(memData);
 
   function leaveGroupHandler() {
     const ask = window.confirm("탈퇴하시겠습니까?");
@@ -44,10 +49,16 @@ function GroupDetailMembers(props) {
     };
     const getDatas = async () => {
       try {
-        await fetch(url + "/leave", config);
-        alert("그룹 탈퇴 되었습니다");
+        const response = await fetch(url + "/leave", config);
+        const data = await response.json();
+
+        if (data.code === 200) {
+          alert("그룹 탈퇴 되었습니다");
+        } else {
+          alert(data.message);
+        }
       } catch (e) {
-        alert("탈퇴 실패 " + e);
+        alert(e);
       }
     };
     getDatas();
@@ -72,10 +83,14 @@ function GroupDetailMembers(props) {
       try {
         const response = await fetch(url + "/applies/accept", config);
         const data = await response.json();
-        console.log(data);
-        alert("가입 승인되었습니다");
+
+        if (data.code === 200) {
+          alert("가입 승인되었습니다");
+        } else {
+          alert(data.message);
+        }
       } catch (e) {
-        alert("승인 실패 " + e);
+        alert("통신 " + e);
       }
     };
     getDatas();
@@ -100,9 +115,14 @@ function GroupDetailMembers(props) {
       try {
         const response = await fetch(url + "/applies/decline", config);
         const data = await response.json();
-        console.log(data);
-        alert("반려되었습니다");
+
+        if (data.code === 200) {
+          alert("반려되었습니다");
+        } else {
+          alert(data.message);
+        }
         window.location.reload();
+        props.setNavBar(2);
       } catch (e) {
         alert("반려 실패 " + e);
       }
@@ -130,11 +150,16 @@ function GroupDetailMembers(props) {
       try {
         const response = await fetch(url + "/kick", config);
         const data = await response.json();
-        console.log(data);
-        alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
+
+        if (data.code === 200) {
+          alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
+        } else {
+          alert(data.message);
+        }
         window.location.reload();
+        props.setNavBar(2);
       } catch (e) {
-        alert(`탈퇴 실패 ` + e);
+        alert(`통신 ` + e);
       }
     };
     getDatas();
@@ -162,11 +187,15 @@ function GroupDetailMembers(props) {
       try {
         const response = await fetch(url + "/leader-toss", config);
         const data = await response.json();
-        console.log(data);
-        alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
+        if (data.code === 200) {
+          alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
+        } else {
+          alert(data.message);
+        }
         window.location.reload();
+        props.setNavBar(2);
       } catch (e) {
-        alert(`권한 이전 실패 ` + e);
+        alert(`통신 ` + e);
       }
     };
     getDatas();

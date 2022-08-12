@@ -30,34 +30,34 @@ function MainPage() {
 
   const [datas, setDatas] = useState(jsons.responseData);
 
-  // useEffect(() => {
-  //   const getDatas = async () => {
-  //     const response = await fetch(url, {
-  //       credentials: "include",
-  //       headers: {
-  //         accessToken: getCookie("accessToken"),
-  //       },
-  //     });
-  //     const data = await response.json();
-  //     setDatas(data.responseData);
-  //     if (data.responseData.member !== undefined) {
-  //       authCtx.userDataGetter({
-  //         profileImage: data.responseData.member.profileImage,
-  //         nickName: data.responseData.fgroupin.nickName,
-  //       });
-  //     }
-  //   };
-  //   getDatas();
-  // }, []);
+  useEffect(() => {
+    const getDatas = async () => {
+      const response = await fetch(url, {
+        credentials: "include",
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
+      });
+      const data = await response.json();
+      setDatas(data.responseData);
+      if (data.responseData.member !== undefined) {
+        authCtx.userDataGetter({
+          profileImage: data.responseData.member.profileImage,
+          nickName: data.responseData.fgroupin.nickName,
+        });
+      }
+    };
+    getDatas();
+  }, []);
   rooms = datas["rooms"];
   groups = datas["groups"];
 
-  userInformation = datas["member"];
-  myGroups = datas["myGroups"];
-  // if (isLoggedIn) {
-  //   userInformation = datas["member"];
-  //   myGroups = datas["myGroups"];
-  // }
+  // userInformation = datas["member"];
+  // myGroups = datas["myGroups"];
+  if (isLoggedIn) {
+    userInformation = datas["member"];
+    myGroups = datas["myGroups"];
+  }
 
   return (
     <>

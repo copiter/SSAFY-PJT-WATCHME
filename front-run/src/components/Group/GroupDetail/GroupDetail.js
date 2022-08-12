@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FetchUrl } from "../../../store/communication";
 import getCookie from "../../../Cookie";
+import { useLocation } from "react-router-dom";
 
 import "./GroupDetail.css";
 import json from "../../json/groupdetail.json";
@@ -19,15 +20,33 @@ function GroupDetail(props) {
   const pathnameArr = window.location.pathname.split("/");
   const groupId = +pathnameArr[pathnameArr.length - 1];
 
+  //GroupItem에서 secret 들고옴
+  const { state } = useLocation();
+  let pwd = null;
+  async function config() {
+    function getPwd() {
+      pwd = prompt("비공개 그룹입니다. 비밀번호를 입력하세요");
+    }
+
+    if (state.secret) {
+      await getPwd();
+      if (pwd === null) {
+        window.history.back();
+      }
+    }
+    console.log(pwd);
+  }
+  config();
+
   //데이터 요청
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/groups/${groupId}`;
   useEffect(() => {
     const config = {
       method: "POST",
-      // body: {
-      //   pwd: props.pwd,
-      // },
+      body: {
+        pwd: pwd,
+      },
       headers: {
         accessToken: getCookie("accessToken"),
       },
@@ -35,8 +54,11 @@ function GroupDetail(props) {
     const getDatas = async () => {
       const response = await fetch(url, config);
       const data = await response.json();
-      console.log(data.responseData);
-      setResData(data.responseData);
+      if (data.code === 200) {
+        setResData(data.responseData);
+      } else {
+        //
+      }
     };
     getDatas();
   }, []);

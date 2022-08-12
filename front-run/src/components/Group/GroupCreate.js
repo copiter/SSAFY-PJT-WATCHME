@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
+import getCookie from "../../Cookie";
 
 import "./GroupCreate.css";
 
@@ -18,7 +19,7 @@ function GroupCreate() {
     } else if (value === "기타") {
       inputs.ctg[3] = !inputs.ctg[3];
     }
-    console.log(inputs.ctg);
+    // console.log(inputs.ctg);
   };
 
   const [inputs, setInputs] = useState({
@@ -36,6 +37,7 @@ function GroupCreate() {
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
+
   const [isChecked, setIsChecked] = useState(false);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
@@ -52,14 +54,6 @@ function GroupCreate() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
@@ -135,11 +129,11 @@ function GroupCreate() {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
   return (
-    <div className="body-frame">
+    <div id="group-create">
       <Link to="/GroupRecruit" className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>
-      <Link to="/GroupReform/:1">groupReform test</Link>
+      {/* <Link to="/GroupReform/1">groupReform test</Link> */}
       <form onSubmit={handleSubmit}>
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
@@ -171,7 +165,7 @@ function GroupCreate() {
           <div className="group-infor">
             {/*우측부분*/}
 
-            <div className="input-type">
+            <div className="group-type">
               <div className="line">
                 <input
                   type="text"
@@ -190,38 +184,41 @@ function GroupCreate() {
                   placeholder="간단한 설명을 적으세요"
                 />
               </div>
-              <div className="line">
-                <input
-                  type="number"
-                  name="maxMember"
-                  value={inputs.maxMember ? inputs.maxMember : ""}
-                  onChange={handleChange}
-                  accept="number"
-                  placeholder="인원수를 선택하세요(1~25)"
-                />
-              </div>
-              <div className="line">
-                <span>비공개</span>
-                <label className="switch">
+              <div id="group-twin">
+                <div className="line">
                   <input
-                    type="checkbox"
-                    name="display"
-                    value={isChecked}
-                    onChange={handleChangeCheck}
+                    type="number"
+                    name="maxMember"
+                    value={inputs.maxMember ? inputs.maxMember : ""}
+                    onChange={handleChange}
+                    accept="number"
+                    placeholder="인원수를 선택하세요(1~25)"
                   />
-                  <span className="slider round"></span>
-                </label>
+                </div>
+                <div className="line">
+                  <span>비공개</span>
+                  <label className="switch">
+                    <input
+                      type="checkbox"
+                      name="display"
+                      value={isChecked}
+                      onChange={handleChangeCheck}
+                    />
+                    <span className="slider round"></span>
+                  </label>
 
-                {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
-                <input
-                  type="password"
-                  name="pwd"
-                  value={inputs.pwd || ""}
-                  onChange={handleChange}
-                  maxLength="4"
-                  minLength="4"
-                  placeholder="비밀번호 4자리"
-                />
+                  {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
+                  <input
+                    type="password"
+                    name="pwd"
+                    value={inputs.pwd || ""}
+                    onChange={handleChange}
+                    disabled={!isChecked}
+                    maxLength="4"
+                    minLength="4"
+                    placeholder="비밀번호 4자리"
+                  />
+                </div>
               </div>
             </div>
             <div className="input-rules">

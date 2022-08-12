@@ -56,7 +56,7 @@ function SignUp() {
 
     //myjsons->application.josn
 
-    const url = `${FETCH_URL}/signup`;
+    const url = `${FETCH_URL}/members/auth/signup`;
     // Interacting with server
     fetch(url, {
       method: "POST",

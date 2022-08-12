@@ -1,7 +1,8 @@
-function getCookie(name) {
+async function getCookie(name) {
   if (!document.cookie) {
     return;
   }
+
   const cookie = document.cookie
     .split("; ")
     .map((cookie) => cookie.split("="))

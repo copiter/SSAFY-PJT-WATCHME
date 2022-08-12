@@ -29,23 +29,21 @@ function RoomCreate() {
   const url = `${FETCH_URL}/rooms`;
   //Otpion
   function getCookie(name) {
-      const cookie = document.cookie
+    const cookie = document.cookie
       .split(";")
       .map((cookie) => cookie.split("="))
       .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
+    return cookie[0][1];
   }
-  try{
-    getCookie()
-  }
-  catch{ 
-    navigate("/" );
+  try {
+    getCookie();
+  } catch {
+    navigate("/");
   }
 
   const imgeRef = useRef();
   const handleSubmit = (event) => {
     event.preventDefault();
-
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
@@ -171,12 +169,12 @@ function RoomCreate() {
               </div>
               <div className="line">
                 <span>종료기간</span>
-                    <input
-                      type="date"
-                      name="endTime"
-                      value={inputs.endTime || ""}
-                      onChange={handleChange}
-                    />
+                <input
+                  type="date"
+                  name="endTime"
+                  value={inputs.endTime || ""}
+                  onChange={handleChange}
+                />
                 <span>비공개</span>
                 <label className="switch">
                   <input

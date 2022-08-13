@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 public class MyDataResDTO {
     private Integer role;
+    private Integer assign;
     private Integer studyTime;
     private List<Integer> penalty;
     private String joinDate;

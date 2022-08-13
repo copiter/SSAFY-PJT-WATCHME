@@ -150,7 +150,7 @@ public class MemberController {
         return memberService.getMySprints(memberId);
     }
 
-    @GetMapping()
+    @GetMapping
     @ResponseBody
     public ApiResponse memberInfo(HttpServletResponse response){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -163,11 +163,13 @@ public class MemberController {
         Long currUserId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
         Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
 
-        if(checkCurrUser.isEmpty()){
+        if(!checkCurrUser.isPresent()){
             throw new CustomException(Code.C503);
         }
 
-        return memberService.getMyPage(checkCurrUser.get(), response);
+        Member currUser = checkCurrUser.get();
+
+        return memberService.getMyPage(currUser, response);
 
     }
 

@@ -76,7 +76,7 @@ function SprintCreate(props) {
       .then((result) => {
         console.log(result);
         alert("방이 성공적으로 생성되었습니다");
-        navigate(`/GroupDetail/${props.groupId}`);
+        navigate(`/GroupDetail/${groupId}`);
       })
       .catch((err) => {
         console.log(err);

@@ -22,15 +22,16 @@ function MainPage() {
 
   let rooms, groups, myGroups, userInformation;
 
-  const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
+  // const [isLoggedIn, setIsLoggedIn] = useState();
+  const isLoggedIn = !!getCookie("accessToken");
 
-  const [datas, setDatas] = useState(jsons.responseData);
-
-  //쿠키를 받아오기 위한
-  // let cookie;
-  // (async function () {
-  //   cookie = await getCookie("accessToken");
-  // })();
+  // const [datas, setDatas] = useState(jsons.responseData);
+  const [datas, setDatas] = useState({
+    myGroups: [],
+    member: {},
+    rooms: [],
+    groups: [],
+  });
 
   useEffect(() => {
     const getDatas = async () => {
@@ -56,12 +57,13 @@ function MainPage() {
   rooms = datas["rooms"];
   groups = datas["groups"];
 
-  // userInformation = datas["member"];
-  // myGroups = datas["myGroups"];
   if (isLoggedIn) {
     userInformation = datas["member"];
     myGroups = datas["myGroups"];
-    let myNickName=localStorage.setItem('nickName',userInformation["nickName"]);
+    // let myNickName = localStorage.setItem(
+    //   "nickName",
+    //   userInformation["nickName"]
+    // );
   }
 
   console.log(datas);

@@ -7,7 +7,9 @@ import json from "../../json/groupdetailsprint.json";
 import "./GroupDetailSprint.css";
 
 function GroupDetailSprint(props) {
-  const [sprints, setSprints] = useState(json.responseData.sprints);
+  const [sprints, setSprints] = useState([]);
+  // const [sprints, setSprints] = useState(json.responseData.sprints);
+
   const navigate = useNavigate();
 
   const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
@@ -24,14 +26,19 @@ function GroupDetailSprint(props) {
     const getDatas = async () => {
       const response = await fetch(`${url}/${props.groupId}`, config);
       const data = await response.json();
-      setSprints(data.responseData.sprints);
+
+      if (data.code === 200) {
+        setSprints(data.responseData.sprints);
+      } else {
+        console.log(data);
+      }
     };
     getDatas();
   }, []);
 
   //sprint 분류
-  let sprintJoin,
-    sprintOngoing,
+  let sprintJoin = {},
+    sprintOngoing = {},
     sprintDone = [];
   sprints.forEach((sprint) => {
     if (sprint.status === "YES") {
@@ -42,6 +49,7 @@ function GroupDetailSprint(props) {
       sprintDone.push(sprint);
     }
   });
+  console.log(sprintOngoing);
 
   function sprintJoinHandler() {
     const ask = window.confirm("스프린트 참가신청 하시겠습니까?");
@@ -61,10 +69,14 @@ function GroupDetailSprint(props) {
         console.log(result);
         if (result.code === 200) {
           alert("스프린트에 정상적으로 참가신청 되었습니다");
+        } else if (result.code === 535) {
+          alert("그룹원이 아닙니다");
+        } else {
+          alert(result.message);
         }
       })
       .catch((err) => {
-        alert("참가실패 " + err);
+        alert("통신실패 " + err);
       });
   }
   function sprintOnGoingHandler() {

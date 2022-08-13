@@ -9,10 +9,16 @@ import GroupDetailHome from "./GroupDetailHome";
 import GroupDetailSprint from "./GroupDetailSprint";
 import GroupDetailMembers from "./GroupDetailMembers";
 
-// props 에 id, pwd 실려서 내려옴
-function GroupDetail(props) {
+function GroupDetail() {
+  const [resData, setResData] = useState({
+    group: {},
+    members: [],
+    myData: {},
+    sprints: [],
+    leader: {},
+    groupData: {},
+  });
   const [isCrew, setIsCrew] = useState(false);
-  const [resData, setResData] = useState(json.responseData);
   const [navBar, setNavBar] = useState(0);
   const [isJoinCheck, setIsJoinCheck] = useState(false);
 
@@ -23,15 +29,15 @@ function GroupDetail(props) {
   //데이터 요청
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/groups/${groupId}`;
+
   useEffect(() => {
-    const config = {
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url, config);
+    (async () => {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
+      });
       const data = await response.json();
       if (data.code === 200) {
         setResData(data.responseData);
@@ -41,8 +47,7 @@ function GroupDetail(props) {
         window.history.back();
         console.log(data.message);
       }
-    };
-    getDatas();
+    })();
   }, []);
 
   console.log(resData);
@@ -61,6 +66,9 @@ function GroupDetail(props) {
 
         if (data.code === 200) {
           alert("그룹 가입 신청되었습니다");
+          setIsJoinCheck(true);
+        } else if (data.code === 547) {
+          alert("이미 가입신청이 되어 있습니다");
           setIsJoinCheck(true);
         } else {
           alert(data.message);
@@ -115,16 +123,21 @@ function GroupDetail(props) {
 
   return (
     <>
-      {resData.myData.role === 2 && (
+      {resData.myData.role === 2 && resData.myData.assign !== null && (
         <div id="group-detail__joinBtn">
-          {!isJoinCheck && (
+          {resData.myData.assign === 0 && (
             <button id="join_submit" onClick={joinHandler}>
               그룹 참가하기 🏹
             </button>
           )}
-          {isJoinCheck && (
+          {resData.myData.assign === 1 && (
             <button id="join_cancel" onClick={joinCancelHandler}>
               그룹 참가 취소
+            </button>
+          )}
+          {resData.myData.assign === 2 && (
+            <button id="join_cancel" onClick={joinHandler}>
+              반려되었습니다
             </button>
           )}
         </div>
@@ -144,11 +157,12 @@ function GroupDetail(props) {
             </div>
             <div id="group-detail__etc">
               <ul id="group-detail__etc__ctg">
-                {resData.group.ctg.map((item, index) => (
-                  <li key={index} className="group-detail__etc__ctg-item">
-                    {item}
-                  </li>
-                ))}
+                {resData.group.hasOwnProperty("ctg") &&
+                  resData.group.ctg.map((item, index) => (
+                    <li key={index} className="group-detail__etc__ctg-item">
+                      {item}
+                    </li>
+                  ))}
               </ul>
               <div id="group-detail__etc__member">
                 🗽 {resData.group.currMember}/{resData.group.maxMember}

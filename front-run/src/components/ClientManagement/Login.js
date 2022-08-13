@@ -58,10 +58,10 @@ const Login = () => {
       .then((result) => {
         if (result.code === 200) {
           setCookie("accessToken", result.responseData.accessToken, {});
-          authCtx.login();
+          // authCtx.login();
           alert("로그인 되었습니다");
           navigate("/");
-          window.location.reload();
+          // window.location.reload();
         } else {
           alert(result);
         }

@@ -158,6 +158,7 @@ function GroupCreate() {
                   name="name"
                   value={inputs.name || ""}
                   onChange={handleChange}
+                  required
                   placeholder="그룹 이름을 적으세요"
                 />
               </div>
@@ -167,6 +168,7 @@ function GroupCreate() {
                   name="description"
                   value={inputs.description || ""}
                   onChange={handleChange}
+                  required
                   placeholder="간단한 설명을 적으세요"
                 />
               </div>
@@ -178,6 +180,7 @@ function GroupCreate() {
                     value={inputs.maxMember ? inputs.maxMember : ""}
                     onChange={handleChange}
                     accept="number"
+                    required
                     placeholder="인원수를 선택하세요(1~25)"
                   />
                 </div>

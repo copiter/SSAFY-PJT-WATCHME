@@ -22,18 +22,20 @@
   margin: 25px 0;
 }
 
-#sprint-join > .sprint__content {
+.sprint__content {
   cursor: pointer;
+}
+#sprint-join .sprint__content,
+#sprint-join #no-sprint {
   border-color: #4fd1d9;
 }
 
-#sprint-ongoing .sprint__content {
-  cursor: pointer;
+#sprint-ongoing .sprint__content,
+#sprint-ongoing #no-sprint {
   border-color: #dc3545;
 }
 
 #sprint-done .sprint__content {
-  cursor: not-allowed;
   border-color: #9d9d9d;
   opacity: 0.5;
 }

@@ -52,6 +52,9 @@
   border: 1px solid #c2c6cc;
   border-radius: 30px;
 }
+.login-inputs .input-box:focus {
+  border: 3px solid #c2c6cc;
+}
 
 .login-inputs a {
   text-decoration: none;
@@ -77,6 +80,8 @@
   align-items: center;
   text-align: center;
   color: #ffffff;
+
+  cursor: pointer;
 }
 
 .login-inputs::after {
@@ -120,6 +125,8 @@
   align-self: stretch;
   flex-grow: 0;
   z-index: 4;
+
+  cursor: pointer;
 }
 
 .signup-btns a {

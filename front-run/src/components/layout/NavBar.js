@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import AuthContext from "../../store/auth-context";
+import { getCookie } from "../../Cookie";
 
 import "./NavBar.css";
 import logo from "../../img/logo.png";
@@ -9,12 +10,16 @@ import tmp_picture from "../../img/tmp_picture.PNG";
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
+  // const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
+  const isLoggedIn = !!getCookie("accessToken");
 
   const logoutHandler = () => {
     authCtx.logout();
-    setIsLoggedIn(false);
   };
+
+  if (!isLoggedIn) {
+    logoutHandler();
+  }
 
   return (
     <header className="navbar">

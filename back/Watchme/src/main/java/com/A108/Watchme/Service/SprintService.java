@@ -403,7 +403,7 @@ public class SprintService {
 
         // 진행 중 일때만
         if(!sprint.getStatus().equals(Status.ING)){
-            throw new CustomException(Code.C539);
+            throw new CustomException(Code.C541);
         }
         // 신청했는지 확인
         Optional<MemberSprintLog> memberSprintLog = mslRepository.findByMemberIdAndSprintId(memberId, sprintId);

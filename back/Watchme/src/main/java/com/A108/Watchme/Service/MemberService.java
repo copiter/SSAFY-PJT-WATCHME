@@ -1,6 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.Config.properties.AppProperties;
+import com.A108.Watchme.Controller.AuthController;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.DTO.myPage.myPage.MemberDTO;
@@ -64,7 +65,7 @@ public class MemberService {
     SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
-
+    private final AuthController authController;
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
     private final MemberGroupRepository memberGroupRepository;
@@ -200,7 +201,6 @@ public class MemberService {
         int cookieMaxAge = (int) refreshTokenExpiry / 60;
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
         result.setMessage("SOCAIL LOGIN SUCCESS");
         result.setCode(200);
         result.setResponseData("accessToken", accessToken.getToken());

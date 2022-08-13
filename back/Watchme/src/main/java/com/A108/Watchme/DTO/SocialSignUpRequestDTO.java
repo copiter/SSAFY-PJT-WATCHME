@@ -18,6 +18,5 @@ public class SocialSignUpRequestDTO {
     @Size(max = 10, message = "닉네임은 10글자 이하입니다.")
     private String nickName;
     private Gender gender;
-    @NotBlank(message = "생년월일을 입력하세요")
     private Date birth;
 }

@@ -25,7 +25,7 @@ public class SignUpRequestDTO {
     private String password;
 
     @NotBlank(message = "이름을 입력하세요.")
-    @Size(min = 2, max = 7, message = "이름은 2 ~ 5글자 입니다.")
+    @Size(min = 2, max = 7, message = "이름은 2 ~ 7글자 입니다.")
     private String name;
 
     @NotBlank(message = "닉네임을 입력하세요.")

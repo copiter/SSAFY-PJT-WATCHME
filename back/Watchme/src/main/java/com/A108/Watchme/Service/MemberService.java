@@ -8,7 +8,6 @@ import com.A108.Watchme.DTO.myPage.myGroup.MyData;
 import com.A108.Watchme.DTO.myPage.myGroup.MyGroup;
 import com.A108.Watchme.DTO.myPage.myGroup.WrapperMy;
 
-import com.A108.Watchme.DTO.myPage.myPage.PenaltyDTO;
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
@@ -47,7 +46,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -515,7 +513,7 @@ public class MemberService {
                 SprintGetResDTO sprintGetResDTO = new SprintGetResDTO().builder()
                         .sprintId(sprint.getId())
                         .sprintImg(sprint.getSprintInfo().getImg())
-                        .sprintName(sprint.getName())
+                        .name(sprint.getName())
                         .description(sprint.getSprintInfo().getDescription())
                         .goal(sprint.getSprintInfo().getGoal())
                         .mode(sprint.getRoom().getMode())
@@ -544,7 +542,7 @@ public class MemberService {
     }
 
     // 멤버 정보를 가지고 오는 서비스 함수
-    public ApiResponse getMyPage(com.A108.Watchme.VO.Entity.member.Member currUser, HttpServletResponse response) {
+    public ApiResponse getMyPage(Member currUser, HttpServletResponse response) {
         ApiResponse result = new ApiResponse();
 
         MemberInfo currUserInfo = currUser.getMemberInfo();
@@ -573,11 +571,6 @@ public class MemberService {
         result.setResponseData("rules", resRules);
 
 
-
-
-        // TODO: 1.일자 별 페널티를 배열에 담아서 반환
-        //       2.일자 별 공부시간을 배열에 담아서 반환
-
         // penaltyByDay
         // 1.일자별 패널티
         Calendar cal = Calendar.getInstance();
@@ -598,8 +591,9 @@ public class MemberService {
 
         List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), Date.from(cal.toInstant()));
 
-        myStudyLog.stream().forEach(x -> studyByDay[x.getStartAt().getDate() - 1] += x.getStudyTime());
-
+        if(myStudyLog.size()!=0){
+            myStudyLog.stream().forEach(x -> studyByDay[x.getStartAt().getDate() - 1] += x.getStudyTime());
+        }
 
         result.setResponseData("studyByDay", studyByDay);
 

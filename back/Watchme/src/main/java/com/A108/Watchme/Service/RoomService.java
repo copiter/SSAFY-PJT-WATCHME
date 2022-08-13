@@ -231,12 +231,14 @@ public class RoomService {
             Optional<MemberRoomLog> memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId);
             if(memberRoomLog.isPresent()){
                 memberRoomLog.get().setJoinedAt(DateTime.now().toDate());
+                memberRoomLog.get().setStatus(Status.NO);
                 mrlRepository.save(memberRoomLog.get());
             }
             else{
-                mrlRepository.save(new MemberRoomLog().builder()
+                mrlRepository.save(MemberRoomLog.builder()
                         .room(roomRepository.findById(roomId).get())
                         .member(member)
+                        .studyTime(0)
                         .status(Status.NO) // 시간이 정산되었는지 여부
                         .joinedAt(DateTime.now().toDate())
                         .build()
@@ -374,7 +376,7 @@ public class RoomService {
         } catch (Exception e){
             throw new CustomException(Code.C522);
         }
-        if (room.getRoomInfo().getMaxMember() > (room.getRoomInfo().getCurrMember() + num)) {
+        if (room.getRoomInfo().getMaxMember() >= (room.getRoomInfo().getCurrMember() + num)) {
             room.getRoomInfo().setCurrMember(room.getRoomInfo().getCurrMember() + num);
             // 마지막사람이 나가면 닫아줌
             if(room.getRoomInfo().getCurrMember()==0){

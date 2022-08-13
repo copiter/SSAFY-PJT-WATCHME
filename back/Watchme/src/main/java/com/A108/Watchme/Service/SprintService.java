@@ -1,9 +1,7 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.DTO.Sprint.SprintData;
 import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.DTO.Sprint.SprintPostDTO;
-import com.A108.Watchme.DTO.group.getGroup.SprintResDTO;
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
@@ -23,21 +21,17 @@ import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import com.A108.Watchme.VO.Entity.sprint.SprintInfo;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.nullness.Opt;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.TypedQuery;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,8 +40,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SprintService {
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     private final RoomRepository roomRepository;
     private final RoomInfoRepository roomInfoRepository;
     private final SprintRepository sprintRepository;
@@ -58,17 +50,24 @@ public class SprintService {
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final SprintInfoRepository sprintInfoRepository;
     private final GroupRepository groupRepository;
-    private final S3Uploader s3Uploader;
-
     private final PointLogRepository pointLogRepository;
+    private final MSLRepository mslRepository;
 
     RoomService roomService;
-    private final MSLRepository mslRepository;
+    private final S3Uploader s3Uploader;
+
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+
     public ApiResponse deleteSprint(Long sprintId) {
         Sprint sprint;
         Long memberId;
+
         ApiResponse apiResponse = new ApiResponse();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         try{
             memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
         } catch (Exception e){
@@ -120,11 +119,13 @@ public class SprintService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ApiResponse apiResponse = new ApiResponse();
+
         try{
             memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
         } catch (Exception e){
             throw new CustomException(Code.C501);
         }
+
         try{
             group = groupRepository.findById(groupId).get();
         } catch (Exception e){
@@ -132,14 +133,18 @@ public class SprintService {
         }
 
         Optional<Sprint> existSprint = sprintRepository.findByGroupIdAndStatus(groupId, Status.YES);
+
         if(existSprint.isPresent()){
             throw new CustomException(Code.C543);
         }
+
         Optional<Sprint> runningSprint = sprintRepository.findByGroupIdAndStatus(groupId, Status.ING);
+
         if(runningSprint.isPresent()){
             try{
                 Date startDate = format.parse(sprintPostDTO.getStartAt());
                 Date endDate = format.parse(sprintPostDTO.getEndAt());
+
                 if(!runningSprint.get().getSprintInfo().getEndAt().before(startDate)){
                     throw new CustomException(Code.C544);
                 }
@@ -149,12 +154,13 @@ public class SprintService {
                 if(!startDate.before(endDate)){
                     throw new CustomException(Code.C544);
                 }
+
             } catch(Exception e){
                 System.out.println("ERROR1");
                 throw new CustomException(Code.C599);
             }
-
         }
+
         Category category = categoryRepository.findByName(CategoryList.valueOf("스프린트"));
         Member member = memberRepository.findById(memberId).get();
 
@@ -189,16 +195,16 @@ public class SprintService {
                         .maxMember(group.getGroupInfo().getMaxMember())
                         .pwd(-1)
                         .currMember(0)
+                        .createdAt(new Timestamp(System.currentTimeMillis()))
                         .endAt(format.parse(sprintPostDTO.getEndAt()))
                         .description(sprintPostDTO.getDescription())
                         .imageLink(url)
                         .build();
 
-                roomRepository.save(room);
-                roomInfoRepository.save(roominfo);
+                roominfo = roomInfoRepository.save(roominfo);
 
                 Sprint sprint = Sprint.builder()
-                        .room(room)
+                        .room(roominfo.getRoom())
                         .group(group)
                         .name(sprintPostDTO.getName())
                         .sumPoint(0)
@@ -217,7 +223,6 @@ public class SprintService {
                         .description(sprintPostDTO.getDescription())
                         .build();
 
-                sprintRepository.save(sprint);
                 sprintInfoRepository.save(sprintInfo);
 
 
@@ -291,7 +296,7 @@ public class SprintService {
                 SprintGetResDTO sprintGetResDTO = new SprintGetResDTO().builder()
                         .sprintId(sprint.getId())
                         .sprintImg(sprint.getSprintInfo().getImg())
-                        .sprintName(sprint.getName())
+                        .name(sprint.getName())
                         .description(sprint.getSprintInfo().getDescription())
                         .goal(sprint.getSprintInfo().getGoal())
                         .mode(sprint.getRoom().getMode())

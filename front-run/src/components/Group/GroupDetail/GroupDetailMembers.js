@@ -3,6 +3,7 @@ import { getCookie } from "../../../Cookie";
 
 import "./GroupDetailMembers.css";
 import json from "../../json/groupdetailmembers.json";
+import ErrorCode from "../../../Error/ErrorCode";
 
 function GroupDetailMembers(props) {
   const [memData, setMemData] = useState({ appliers: [], members: [] });
@@ -24,7 +25,7 @@ function GroupDetailMembers(props) {
         if (data.code === 200) {
           setMemData(data.responseData);
         } else {
-          alert(data.message);
+          ErrorCode(data);
         }
       } catch (e) {
         alert(`통신 실패 ` + e);
@@ -51,18 +52,14 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/leave", config);
-        const data = await response.json();
+      const response = await fetch(url + "/leave", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert("그룹 탈퇴 되었습니다");
-          window.location.reload();
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert(e);
+      if (data.code === 200) {
+        alert("그룹 탈퇴 되었습니다");
+        window.location.reload();
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
@@ -83,18 +80,14 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/applies/accept", config);
-        const data = await response.json();
+      const response = await fetch(url + "/applies/accept", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert("가입 승인되었습니다");
-          setReload(!reload);
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert("통신 " + e);
+      if (data.code === 200) {
+        alert("가입 승인되었습니다");
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
@@ -115,18 +108,14 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/applies/decline", config);
-        const data = await response.json();
+      const response = await fetch(url + "/applies/decline", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert("반려되었습니다");
-          setReload(!reload);
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert("반려 실패 " + e);
+      if (data.code === 200) {
+        alert("반려되었습니다");
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
@@ -148,18 +137,14 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/kick", config);
-        const data = await response.json();
+      const response = await fetch(url + "/kick", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
-          setReload(!reload);
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert(`통신 ` + e);
+      if (data.code === 200) {
+        alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
@@ -183,17 +168,13 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/leader-toss", config);
-        const data = await response.json();
-        if (data.code === 200) {
-          alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
-          setReload(!reload);
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert(`통신 ` + e);
+      const response = await fetch(url + "/leader-toss", config);
+      const data = await response.json();
+      if (data.code === 200) {
+        alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();

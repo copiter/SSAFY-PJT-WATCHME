@@ -5,9 +5,11 @@ import { getCookie } from "../../Cookie";
 import "./MyGroups.css";
 import json from "../json/mygroups.json";
 import { useNavigate } from "react-router-dom";
+import ErrorCode from "../../Error/ErrorCode";
 
 function MyGroups() {
   const [datas, setDatas] = useState(json.responseData.myGroups);
+  // const [datas, setDatas] = useState({ myGroups: [] });
   const navigate = useNavigate();
 
   const FETCH_URL = useContext(FetchUrl);
@@ -22,8 +24,11 @@ function MyGroups() {
     const getDatas = async () => {
       const response = await fetch(url, config);
       const data = await response.json();
-      console.log(data.responseData);
-      setDatas(data.responseData.myGroups);
+      if (data.code === 200) {
+        setDatas(data.responseData.myGroups);
+      } else {
+        ErrorCode(data);
+      }
     };
     getDatas();
   }, []);
@@ -31,10 +36,6 @@ function MyGroups() {
   function navigateHandler(id) {
     navigate(`/GroupDetail/${id}`);
   }
-
-  datas.sort((a, b) => {
-    return a.myData.joinDate - b.myData.joinDate;
-  });
 
   console.log(datas);
 

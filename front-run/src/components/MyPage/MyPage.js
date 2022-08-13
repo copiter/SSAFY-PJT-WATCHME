@@ -1,76 +1,67 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-import "./MyPage.css";
+import { getCookie } from "../../Cookie";
 import { FetchUrl } from "../../store/communication";
 import { Chart } from "react-google-charts";
+import ErrorCode from "../../Error/ErrorCode";
 
+import "./MyPage.css";
 import userInfor from "../json/member.json";
+
+import MyStudyInfo from "../MainPage/MyStudyInfo";
 
 function MyPage() {
   const FETCH_URL = useContext(FetchUrl);
-  let data = [
-    ["Day", "공부시간"],
-    ["2004", 1000],
-    ["2005", 1170],
-    ["2006", 660],
-    ["2007", 1030],
-  ];
 
-  const [userInformation, setUserInforMation] = useState(
-    userInfor.responseData
-  );
+  //로컬 테스트 시
+  const [info, setInfo] = useState(userInfor.responseData);
+  //실제 통신시
+  // const [info, setInfo] = useState({
+  //   studyByDay: [],
+  //   penalty: {},
+  //   member: {},
+  //   penaltyByDay: [],
+  //   rules: [],
+  // });
 
   let studydata = [["Day", "공부시간"]];
-
   let studydataPen = [["Day", "공부패널티"]];
-
   let timeChartdata = [["Task", "stutytimes"]];
 
   const options_studydataPen = {
     title: "나의 공부패널티 그래프",
     curveType: "function",
     legend: { position: "none" },
-    width: "500",
-    height: "250",
-    positon: "absoulte",
+    width: "650",
+    height: "300",
+    positon: "absolue",
   };
   const options = {
     title: "나의 공부시간 그래프",
     curveType: "function",
     legend: { position: "none" },
-    width: "500",
-    height: "250",
-    positon: "absoulte",
+    width: "700",
+    height: "220",
+    positon: "absolue",
   };
   const options_timeChartdata = {
     curveType: "function",
     pieHole: 0.4,
   };
-  for (let i = 0; i < userInformation.studyByDay.length; i++) {
-    studydata[i + 1] = [(i+1) + "일", userInformation.studyByDay[i]];
+
+  for (let i = 0; i < info.studyByDay.length; i++) {
+    studydata[i + 1] = [i + 1 + "일", info.studyByDay[i]];
   }
 
-  for (let i = 0; i < userInformation.penaltyByDay.length; i++) {
-    studydataPen[i + 1] = [(i+1) + "일", userInformation.penaltyByDay[i]];
+  for (let i = 0; i < info.penaltyByDay.length; i++) {
+    studydataPen[i + 1] = [i + 1 + "일", info.penaltyByDay[i]];
   }
 
-  timeChartdata[1] = ["오늘공부량시간", userInformation.member.studyTimeToday];
-  timeChartdata[2] = ["이번주 공부시간", userInformation.member.studyTimeWeek];
-  console.log(timeChartdata[1]);
-  console.log("TST");
+  timeChartdata[1] = ["오늘공부량시간", info.member.studyTimeToday];
+  timeChartdata[2] = ["이번주 공부시간", info.member.studyTimeWeek];
+
   const url = `${FETCH_URL}/members`;
-
-  function getCookie(name) {
-    const cookie = document.cookie
-      .split(";")
-      .map((cookie) => cookie.split("="))
-      .filter((cookie) => cookie[0] === name);
-    return cookie[0][1];
-  }
-  console.log("START");
-  console.log(getCookie("accessToken"));
   useEffect(() => {
     console.log("EFFECT");
     fetch(url, {
@@ -78,208 +69,121 @@ function MyPage() {
         accessToken: getCookie("accessToken"),
       },
     })
-      .then((response) => {
-        console.log(response);
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
-        } else {
-          console.log("ELSE");
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        setUserInforMation(result.responseData);
+        if (result.code === 200) {
+          setInfo(result.responseData);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         console.log("ERROR");
       });
   }, []);
 
-  console.log(userInformation.member);
-  console.log(userInformation.penalty);
-  console.log(userInformation.penaltyByDay); //이번달 패널티(일단위)
-  console.log(userInformation.rules);
-  console.log(userInformation.studyByDay); //이번달 공부시간(일단위)
+  console.log(info.member);
+  console.log(info.penalty);
+  console.log(info.penaltyByDay); //이번달 패널티(일단위)
+  console.log(info.rules);
+  console.log(info.studyByDay); //이번달 공부시간(일단위)
+
   return (
-    <div className="out">
-      <div className="Left">
-        <div className="Left_Inner">
-          <div className="profileImg">
-            <img
-              src={
-                userInformation.member.profileImage === "" ||
-                userInformation.member.profileImage === "none"
-                  ? "#"
-                  : userInformation.member.profileImage
-              }
-              alt="#"
-              className="profileImg_Img"
-            />
-            <div className="profileDisc">
-              <div className="nickName">{userInformation.member.nickName}</div>
-              <div className="description">
-                {userInformation.member.description}
-              </div>
-            </div>
-          </div>
-          <div className="LeftBottom">
-            <div className="Point">
-              <div className="RealPoint">
-                {userInformation.member.point} 포인트
-                <br />
-              </div>
-              <Link to="/PointAdd">
-                ⚡충전하기
-                <br />
-              </Link>
-              <Link to="./PointRefund">
-                💰전환하기
-                <br />
-              </Link>
-              <Link to="./PointUsed">
-                ⚡사용내역
-                <br />
-              </Link>
-            </div>
-            <div className="Category">
-              Category
-              <div className="CategoryHover">
-                ✏ 공무원 준비
-                <br />
-                🥂 [group_name] <br />
-                소속
-              </div>
-            </div>
-          </div>
+    <div id="mypage">
+      <div id="mypage__left">
+        <div id="mypage__profile">
+          <img
+            src={info.member.profileImage}
+            alt="프로필 사진"
+            id="mypage__profile__img"
+          />
+          <span id="mypage__profile__name">{info.member.nickName}</span>
+        </div>
+        <div id="mypage__point">
+          <span>
+            <b>보유 포인트</b>
+            {` : ${info.member.point}`}
+          </span>
+          <ul id="point-tabs">
+            <li>
+              <Link to="/PointAdd">⚡ 충전하기</Link>
+            </li>
+            <li>
+              <Link to="./PointRefund">💰 전환하기</Link>
+            </li>
+            <li>
+              <Link to="./PointUsed">⚡ 사용내역</Link>
+            </li>
+          </ul>
         </div>
       </div>
-      <div className="Right">
-        <div className="Up">
-          <div className="Title">나의 공부시간</div>
-          <div className="inner_Down">
-            <div className="studyLeft">
-              <div className="donutchart">
-                <Chart
-                  chartType="PieChart"
-                  data={timeChartdata}
-                  options={options_timeChartdata}
-                  width={"100%"}
-                  height={"400px"}
-                />
-              </div>
-            </div>
-            <div className="studyCenter">
-              <div className="subtitle">이번주 나의 공부량</div>
-                <div className="MyStduy">
-                  <div className="MyStduy1">
-                    <div>오늘 공부시간</div>
-                    <div>이번 주 공부시간</div>
-                    <div>이번 달 공부시간</div>
-                    <div>총 공부시간</div>
-                  </div>
-                  <div className="MyStduy2">
-                    <div>
-                      {parseInt(userInformation.member.studyTimeToday / 60)
-                        ? parseInt(userInformation.member.studyTimeToday / 60) +
-                          "시간"
-                        : ""}{" "}
-                      {userInformation.member.studyTimeToday % 60
-                        ? (userInformation.member.studyTimeToday % 60) + "분"
-                        : ""}
-                      {userInformation.member.studyTimeToday % 60 === "" ||
-                      userInformation.member.studyTimeToday % 60 === 0
-                        ? "0분"
-                        : ""}
-                    </div>
-                    <div>
-                      {parseInt(userInformation.member.studyTimeWeek / 60)
-                        ? parseInt(userInformation.member.studyTimeWeek / 60) +
-                          "시간"
-                        : ""}{" "}
-                      {userInformation.member.studyTimeWeek % 60
-                        ? (userInformation.member.studyTimeWeek % 60) + "분"
-                        : ""}
-                    </div>
-                    <div>
-                      {parseInt(userInformation.member.studyTimeMonth / 60)
-                        ? parseInt(userInformation.member.studyTimeMonth / 60) +
-                          "시간"
-                        : ""}{" "}
-                      {userInformation.member.studyTimeMonth % 60
-                        ? (userInformation.member.studyTimeMonth % 60) + "분"
-                        : ""}
-                    </div>
-                    <div>
-                      {parseInt(userInformation.member.studyTimeTotal / 60)
-                        ? parseInt(userInformation.member.studyTimeTotal / 60) +
-                          "시간"
-                        : ""}{" "}
-                      {userInformation.member.studyTimeTotal % 60
-                        ? (userInformation.member.studyTimeTotal % 60) + "분"
-                        : ""}
-                    </div>
-                  </div>
-              </div>
-            </div>
-            <div className="studyRight">
-              <div className="char_out">
-                <div className="subtitle">내 공부시간 그래프</div>
-              </div>
-              <div className="chart">
-                <Chart
-                  chartType="LineChart"
-                  width="100%"
-                  height="400px"
-                  data={studydata}
-                  options={options}
-                />
-              </div>
-            </div>
+      <div id="mypage__right">
+        <div id="mypage__top">
+          <div id="my-study-time__number">
+            {/* <Chart
+              chartType="PieChart"
+              data={timeChartdata}
+              options={options_timeChartdata}
+              width={"100%"}
+              height={"400px"}
+            /> */}
+            <strong>나의 공부량</strong>
+            <MyStudyInfo userInformation={info.member} isMainPage={false} />
+          </div>
+          <div id="my-study-time__graph">
+            <strong>내 공부시간 그래프</strong>
+            <Chart
+              chartType="LineChart"
+              width="100%"
+              height="400px"
+              data={studydata}
+              options={options}
+            />
           </div>
         </div>
-        <div className="Down">
-          <div className="Title">나의 패널티</div>
-          <div className="inner_Down">
-            <div className="studyLeft">
-              <div className="pens">
-                <ul className="pen1">
-                  <li>스마트폰감지</li>
-                  <li>졸음감지</li>
-                  <li>화면공유</li>
-                </ul>
-                <ul className="pen1">
-                  <li> {userInformation.penalty.MODE1}</li>
-                  <li> {userInformation.penalty.MODE2}</li>
-                  <li> {userInformation.penalty.MODE3}</li>
-                </ul>
-              </div>
-            </div>
-            <div className="studyCenter">
-              <div className="subtitle">그래프</div>
-              <div className="chart">
-                <Chart
-                  chartType="LineChart"
-                  data={studydataPen}
-                  options={options_studydataPen}
-                />
-              </div>
-            </div>
-            <div className="studyRight">
-              <div className="subtitle">MyPage</div>
-              <ul className="Links">
+        <div id="mypage__bottom">
+          <div id="mypage__penalty-wrap">
+            <div id="mypage__penalty">
+              <strong>내 패널티 그래프</strong>
+              <ul id="penalty__specific">
                 <li>
-                  <Link to="./PointAdd">포인트 충전하기</Link>
+                  <small>😴 졸림 감지</small>
+                  <span>{!!info.penalty.MODE2 ? info.penalty.MODE2 : 0}회</span>
                 </li>
-                <li>회원정보 수정</li>
-                <li>나의 문의내역</li>
-                {/*<li>FAQ</li>*/}
-                <li>회원탈퇴</li>
+                <li>
+                  <small>📱 스마트폰 감시</small>
+                  <span>{!!info.penalty.MODE3 ? info.penalty.MODE3 : 0}회</span>
+                </li>
+                <li>
+                  <small>🖥 화면공유</small>
+                  <span>{!!info.penalty.MODE4 ? info.penalty.MODE4 : 0}회</span>
+                </li>
               </ul>
             </div>
+            <Chart
+              chartType="LineChart"
+              data={studydataPen}
+              options={options_studydataPen}
+            />
+          </div>
+          <div id="mypage__setting">
+            <strong>MyPage</strong>
+            <ul id="Links">
+              <li>
+                <Link to="./PointAdd">포인트 충전하기</Link>
+              </li>
+              <li>
+                <a href="#">회원정보 수정</a>
+              </li>
+              <li>
+                <a href="#">나의 문의내역</a>
+              </li>
+              <li>
+                <a href="#">회원탈퇴</a>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="inner_Down"></div>
       </div>
     </div>
   );

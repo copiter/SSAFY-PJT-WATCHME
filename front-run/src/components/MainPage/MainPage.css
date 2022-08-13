@@ -107,39 +107,6 @@ a {
   width: 515px;
   padding: 0 26px;
 }
-#mypage__myinfor__mystudy__infor {
-  width: 535px;
-  height: 160px;
-
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-
-  background-color: #e0e2e6;
-  border-radius: 8px;
-}
-#fighting-text {
-  font-size: 24px;
-  text-align: center;
-  padding-left: 5px;
-  font-weight: bold;
-}
-#mypage__myinfor__mystudy__infor__text {
-  width: 262px;
-  letter-spacing: 0.75px;
-  color: #292929;
-}
-#mypage__myinfor__mystudy__infor__text li {
-  display: flex;
-  justify-content: space-between;
-  line-height: 2;
-}
-.mystudy__infor__text-left {
-  font-weight: 400;
-  font-size: 16px;
-
-  color: #858585;
-}
 
 /* 로그인 */
 #mainpage_study-groups {

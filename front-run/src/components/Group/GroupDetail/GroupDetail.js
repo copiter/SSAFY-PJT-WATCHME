@@ -8,6 +8,7 @@ import json from "../../json/groupdetail.json";
 import GroupDetailHome from "./GroupDetailHome";
 import GroupDetailSprint from "./GroupDetailSprint";
 import GroupDetailMembers from "./GroupDetailMembers";
+import ErrorCode from "../../../Error/ErrorCode";
 
 function GroupDetail() {
   const [resData, setResData] = useState({
@@ -18,9 +19,7 @@ function GroupDetail() {
     leader: {},
     groupData: {},
   });
-  const [isCrew, setIsCrew] = useState(false);
   const [navBar, setNavBar] = useState(0);
-  const [isJoinCheck, setIsJoinCheck] = useState(false);
 
   //groupId 구하기
   const pathnameArr = window.location.pathname.split("/");
@@ -41,11 +40,8 @@ function GroupDetail() {
       const data = await response.json();
       if (data.code === 200) {
         setResData(data.responseData);
-        setIsCrew(true);
       } else {
-        alert("그룹원이 아닙니다");
-        window.history.back();
-        console.log(data.message);
+        ErrorCode(data);
       }
     })();
   }, []);
@@ -66,12 +62,8 @@ function GroupDetail() {
 
         if (data.code === 200) {
           alert("그룹 가입 신청되었습니다");
-          setIsJoinCheck(true);
-        } else if (data.code === 547) {
-          alert("이미 가입신청이 되어 있습니다");
-          setIsJoinCheck(true);
         } else {
-          alert(data.message);
+          ErrorCode(data);
         }
       } catch (e) {
         alert(`통신 실패 ` + e);
@@ -94,9 +86,8 @@ function GroupDetail() {
 
         if (data.code === 200) {
           alert("신청 취소되었습니다");
-          setIsJoinCheck(false);
         } else {
-          alert(data.message);
+          ErrorCode(data);
         }
       } catch (e) {
         alert(`통신 실패 ` + e);

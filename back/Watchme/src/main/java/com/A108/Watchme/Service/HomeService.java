@@ -102,12 +102,11 @@ public class HomeService {
                 roomList) {
             System.out.println("roomList = " + room.toString());
         }
-
+        Integer pwd = -1;
 
 
         for (Room room :
                 roomList) {
-            Integer pwd = -1;
             if(room.getRoomInfo().getPwd()!=null){
                 pwd = room.getRoomInfo().getPwd();
             }
@@ -122,7 +121,7 @@ public class HomeService {
                     .endTime(format3.format(room.getRoomInfo().getEndAt()))
                     .description(room.getRoomInfo().getDescription())
                     .roomImage(room.getRoomInfo().getImageLink())
-                    .secret(pwd==-1 ? false : true)
+                    .secret(pwd==-1 ? true : false)
                     .build());
         }
 

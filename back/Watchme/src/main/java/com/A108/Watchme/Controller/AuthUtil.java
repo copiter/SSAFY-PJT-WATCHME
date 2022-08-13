@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @NoArgsConstructor
-public class AuthController {
+public class AuthUtil {
     public Long memberAuth(){
         Long memberId;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

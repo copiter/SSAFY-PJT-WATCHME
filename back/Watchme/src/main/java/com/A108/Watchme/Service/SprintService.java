@@ -60,19 +60,12 @@ public class SprintService {
     SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
-    public ApiResponse deleteSprint(Long sprintId) {
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse deleteSprint(Long sprintId, Long memberId) {
         Sprint sprint;
-        Long memberId;
 
         ApiResponse apiResponse = new ApiResponse();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        try{
-            memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
 
         try{
             sprint = sprintRepository.findById(sprintId).get();
@@ -87,7 +80,7 @@ public class SprintService {
 
         // 리더가 아닌 경우
         if (sprint.getGroup().getLeader().getId() != memberId) {
-            throw new CustomException(Code.C530);
+            throw new CustomException(Code.C536);
         }
 
         sprint.setStatus(Status.DELETE);
@@ -113,18 +106,9 @@ public class SprintService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public ApiResponse createSprints(Long groupId, MultipartFile images, SprintPostDTO sprintPostDTO) {
+    public ApiResponse createSprints(Long groupId, MultipartFile images, SprintPostDTO sprintPostDTO, Long memberId) {
         Group group;
-        Long memberId;
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ApiResponse apiResponse = new ApiResponse();
-
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
 
         try{
             group = groupRepository.findById(groupId).get();
@@ -328,9 +312,10 @@ public class SprintService {
 
 
     }
-    public ApiResponse joinSprints(Long sprintId){
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse joinSprints(Long sprintId, Long memberId){
         Sprint sprint;
-        Long memberId;
+
         MemberGroup memberGroup;
         try {
             sprint = sprintRepository.findById(sprintId).get();
@@ -339,12 +324,6 @@ public class SprintService {
             }
         } catch (Exception e){
             throw new CustomException(Code.C533);
-        }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
         }
 
         ApiResponse apiResponse = new ApiResponse();
@@ -389,20 +368,13 @@ public class SprintService {
         return apiResponse;
 
     }
-
-    public ApiResponse startSprints(Long sprintId) {
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse startSprints(Long sprintId, Long memberId) {
         Sprint sprint;
-        Long memberId;
         try{
             sprint = sprintRepository.findById(sprintId).get();
         } catch (Exception e){
             throw new CustomException(Code.C533);
-        }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
         }
         ApiResponse apiResponse = new ApiResponse();
 

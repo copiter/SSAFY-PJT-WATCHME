@@ -26,6 +26,9 @@ public class KakaoPayApproveRes {
     private String approved_at;
     private String payload;
 
+    public int getMoney(){
+        return getAmount().getTotal();
+    }
 
     @Getter
     @Setter

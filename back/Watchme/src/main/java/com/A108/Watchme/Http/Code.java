@@ -23,6 +23,7 @@ public enum Code {
     C513(513, "MEMBER PASSOWRD FAILED"),
     C514(514, "EMAIL DUPLICATED"),
     C515(515,"NICKNAME DUPLICATED" ),
+    C516(516, "INVALID PWD LENGTH"),
     C520 (520, "NO SEARCH DATA"),
     C521 (521, "INVALID VALUE"),
     C522 (522, "NO ROOM"),
@@ -54,10 +55,13 @@ public enum Code {
     C565(565, "Not Authorized"),
     C566(566, "Banned"),
     C567(567, "Applied Already"),
+
+    C595(595, "INVALID ACCESS"),
     C596(596, "DTO ERROR"),
     C597(597, "KAKAO PAY ERROR" ),
     C598(598, "INVALID POINT VALUE" ),
     C599(599, "DATE PARSING FAILED" );
+
 
     private int errCode;
 

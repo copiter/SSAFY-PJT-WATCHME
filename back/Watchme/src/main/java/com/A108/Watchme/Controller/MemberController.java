@@ -10,20 +10,16 @@ import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.utils.CookieUtil;
-import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.Optional;
@@ -34,6 +30,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
     private final static String REFRESH_TOKEN = "refresh_token";
+    private AuthUtil authUtil;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -66,12 +63,7 @@ public class MemberController {
     @ResponseBody
     public ApiResponse logout(HttpServletRequest request,
                               HttpServletResponse response){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        try{
-            Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
+        Long testId= authUtil.memberAuth();
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setMessage("LOGOUT SUCCESS");
@@ -139,14 +131,7 @@ public class MemberController {
     @GetMapping("/sprints")
     @ResponseBody
     public ApiResponse getMySprints(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId;
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
-
+        Long memberId = authUtil.memberAuth();
         return memberService.getMySprints(memberId);
     }
 

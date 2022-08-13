@@ -11,50 +11,124 @@
 .Main{
 	position: relative;
 	width: 80rem;
-	background-color: green;
 }
-.header{
-	
-}
+	.Header{
+		position: relative;
+		width: 100%;
+		height: 8rem;
+	}
+		.headerTitle{
+			position: relative;
+			width: 100%;
+			height: 5rem;
+			font-size:4em;
+			font-weight: 400;
+			text-align: center;
+		}
+		.headerButtons{
+			position: relative;
+			width: 100%;
+			height: 3rem;
+		}
+		.btnTotal{
+			position: relative;
+			margin-left: 6rem;
+			top:0.3rem;
+			width: 50%;
+			height: 2.1rem;
+		}
+		.btns{
+			width: 20%;
+			height:2rem;
+			margin-right: 0.5rem;
+		}
+			.btnVedioOFF{
+				position: flex;
+			}
+	.myCams{
+		position: relative;
+		width: 100%;
+		height: 50rem;
+		display:flex;
+		flex-wrap: wrap;
+		background-color: gainsboro;
+	}
 .Aside{
 	position: relative;
-	width:20rem;
-	background-color: yellow	;
+	width:30rem;
 }
-.Right{
-	position: relative;
-}
-
-
-
-
-
-
-
-.linksUl{
+.rightSide{
 	position: relative;
 	width: 100%;
+	height: 100%;
 }
-.linksLi{
-	float:left;
-	width: 33%;
-}
+	.sideNav{
+		position: relative;
+		height: 5rem;
+		
+	}
+	.AsideMain{
+		margin: 5%;
+		background-color: 858585;
+	}
+	.sideBoards{
+		position: relative;
+		width: 100%;
+		height: 35rem;
+	}
+
+		.linksUl{
+			position: relative;
+			margin-left: 10%;
+			height: 80%;
+			top:3rem;
+		}
+		.linksLi{
+			position: relative;
+			top:10%;
+			height: 3rem;
+			width: 5rem;
+			margin-left: 1rem;
+
+		}
+	
+	.chatBoards{
+		
+		position: absolute;
+		display: block;
+		top:40%;
+		width: 100%;
+		height: 23rem;
+	}
+	.btnRight{
+		position: relative;
+		width: 100%;
+		height: 5rem;
+
+	}
+		.btnRightInner{
+			position: relative;
+			margin-left: 10%;
+			top:0.7rem;
+		}
+			.btnR
+			{
+				position: relative;
+				top:10%;
+				height: 3rem;
+				width: 5rem;
+				margin-left: 1rem;
+				
+			}
+
+
+
+
+
 .others{
 	display:flex;
 	flex-wrap: wrap;
-}.myCams{
-	display:flex;
-	flex-wrap: wrap;
 }
-.otherVedio{
-
-}
-.nextLine{
-
-}
-
-.test{
-display:inline-block;
-width:1000px;
-height:500px;
+.routerBackGorund
+{
 }

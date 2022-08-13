@@ -415,8 +415,6 @@ class RoomDetail extends Component {
     const id = window.location.pathname.split("/")[2].substring(0);
     let mode = "MODE1";
 
-    console.log("MYID");
-    console.log(id);
 
     fetch(`${FETCH_URL}/rooms/` + id, {
       headers: {
@@ -438,10 +436,11 @@ class RoomDetail extends Component {
           console.log("성공");
           console.log(result);
           console.log("백통신 결과입니다.");
+          this.state.sessionId=result.resPonseData;
         }
       })
       .catch((err) => {
-        console.log("ERR22");
+        console.log("백통신실패");
       });
 
     setInterval(() => {
@@ -462,8 +461,6 @@ class RoomDetail extends Component {
   async openTeli(id, mode) {
     const formData = new FormData();
     const json = { nickName: this.state.myUserName, roomId: id, mode: mode };
-    console.log("TESTHERE");
-    console.log(json);
     formData.append(
       "flaskDTO",
       new Blob([JSON.stringify(json)], { type: "application/json" }),
@@ -485,26 +482,12 @@ class RoomDetail extends Component {
     const blob = await imageCapture.takePhoto();
     formData.append("img", blob, "img");
 
-    console.log("여기가 비면 안됨");
-    console.log(formData);
-
-    console.log("KEYS:::");
-    for (let key of formData.keys()) {
-      console.log(key);
-    }
-    console.log("Values:::.");
-    for (let value of formData.values()) {
-      console.log(value);
-    }
-    console.log("폼");
    /*fetch("https://watchme1.shop/flask/openCV", {
       method: "POST",
       body: formData,
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
-          console.log("왜안되");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
@@ -536,25 +519,30 @@ class RoomDetail extends Component {
     return (
       <div className="container">
         {this.state.session === undefined ? null : (
-          <div id="session" class="out">
+          <div id="session" className="out">
             <div className="Main">
-              <div id="session-header">
-                <h1 id="session-title">{mySessionId}</h1>
-                {this.state.videoState && (
-                  <button onClick={this.videoHandlerOff}>Video OFF</button>
-                )}
-                {!this.state.videoState && (
-                  <button onClick={this.videoHandlerOn}>Video ON</button>
-                )}
-                {this.state.audioState && (
-                  <button onClick={this.audioHandlerOff}>Audio OFF</button>
-                )}
-                {!this.state.audioState && (
-                  <button onClick={this.audioHandlerOn}>Audio ON</button>
-                )}
-                {this.state.screenShare && (
-                  <button onClick={this.screenShare}>화면공유</button>
-                )}
+              <div id="session-header" className="Header">
+                <div id="session-title" className="headerTitle"><h1>{mySessionId}</h1></div>
+                <div className="headerButtons">
+                  <div className="btnTotal">
+                    {this.state.videoState && (
+                      <button onClick={this.videoHandlerOff} className="btns ">Video OFF</button>
+                    )}
+                    {!this.state.videoState && (
+                      <button onClick={this.videoHandlerOn} className="btns ">Video ON</button>
+                    )}
+                    {this.state.audioState && (
+                      <button onClick={this.audioHandlerOff} className="btns ">Audio OFF</button>
+                    )}
+                    {!this.state.audioState && (
+                      <button onClick={this.audioHandlerOn} className="btns ">Audio ON</button>
+                    )}
+                    {this.state.screenShare && (
+                      <button onClick={this.screenShare} className="btns">화면공유</button>
+                    )}
+                  </div>
+                </div>
+                 
               </div>
               <div className="myCams">
                 {
@@ -596,58 +584,68 @@ class RoomDetail extends Component {
               </div>
             </div>
             <div className="Aside">
-              <div className="rightMain">
-                <ul className="linksUl">
-                  <Link to="./">
-                    <li className="linksLi">내 공부</li>
-                  </Link>
-                  <Link to="./members">
-                    <li className="linksLi">맴버목록</li>
-                  </Link>
-                  <Link to="./RoomReform">
-                    <li className="linksLi">방 정보 수정</li>
-                  </Link>
-                </ul>
-                <Routes>
-                  <Route path="/" element={<MyStudy />} />
-                  <Route path="/members" element={<Members />} />
-                  <Route path="/RoomReform" element={<RoomReform />} />
-                </Routes>
-
-                {/**/}
-                <input
-                  className="btn btn-large btn-danger"
-                  type="button"
-                  id="buttonLeaveSession"
-                  onClick={this.leaveSession}
-                  value="방 나가기"
-                />
-                <input
-                  className="btn btn-large btn-danger"
-                  type="button"
-                  id="buttonLeaveSession"
-                  onClick={this.closeRoom}
-                  value="공부방 닫기"
-                />
-              </div>
-              <div id="chat-container">
-                <button onClick={() => this.toggleChat()}>채팅열기</button>
-                {this.state.publisher !== undefined &&
-                  this.state.publisher.stream !== undefined && (
-                    <div
-                      className="OT_root OT_publisher custom-class"
-                      style={chatDisplay}
-                    >
-                      <ChatComponent
-                        user={this.state.publisher}
-                        chatDisplay={this.state.chatDisplay}
-                        close={this.toggleChat}
-                        messageReceived={this.checkNotification}
+              <div className="rightSide">
+                <div className="sideNav">
+                  <div className="linksUl">
+                    <Link to="./">
+                      <button className="linksLi">내 공부</button>
+                    </Link>
+                    <Link to="./members">
+                       <button className="linksLi">맴버목록</button>
+                    </Link>
+                    <Link to="./RoomReform">
+                      <button className="linksLi">방 수정</button>
+                    </Link>
+                  </div>
+                 
+                </div>
+                <div className="AsideMain">
+                  <div className="sideBoards">
+                    <Routes >
+                      <Route path="/" element={<MyStudy />} />
+                      <Route path="/members" element={<Members />} />
+                      <Route path="/RoomReform" element={<RoomReform />} />
+                    </Routes>
+                  </div>
+                  <div id="chat-container" className="chatBoards" >
+                  {this.state.publisher !== undefined &&
+                    this.state.publisher.stream !== undefined && (
+                      <div
+                        className="OT_root OT_publisher custom-class"
+                        style={chatDisplay}
+                      >
+                        <ChatComponent
+                          user={this.state.publisher}
+                          chatDisplay={this.state.chatDisplay}
+                          close={this.toggleChat}
+                          messageReceived={this.checkNotification}
+                        />
+                      </div>
+                    )}
+                    <canvas id="canvas" ></canvas>
+                  </div>
+                </div>
+                <div className="btnRight">
+                  <div className="btnRightInner">
+                    <input
+                        className="btn btn-large btn-danger btnR"
+                        type="button"
+                        id="buttonLeaveSession"
+                        onClick={this.leaveSession}
+                        value="방 나가기"
                       />
-                    </div>
-                  )}
-                  <canvas id="canvas" ></canvas>
+                    <input
+                      className="btn btn-large btn-danger btnR"
+                      type="button"
+                      id="buttonLeaveSession"
+                      onClick={this.closeRoom}
+                      value="방 닫기"
+                    />
+                    <button className="btnR" onClick={() => this.toggleChat()}>채팅</button>
+                  </div>
+                </div>
               </div>
+              
             </div>
           </div>
         )}

@@ -2,18 +2,26 @@ package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.Code;
+import com.A108.Watchme.Repository.MemberRepository;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @NoArgsConstructor
-public class AuthController {
+public class AuthUtil {
+    @Autowired
+    private MemberRepository memberRepository;
     public Long memberAuth(){
         Long memberId;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try{
             memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
+
+            if(!memberRepository.existsById(memberId)){
+                throw new CustomException(Code.C504);
+            }
         }
         catch(Exception e){
             throw new CustomException(Code.C501);

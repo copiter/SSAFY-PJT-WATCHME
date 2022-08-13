@@ -15,6 +15,13 @@ package com.A108.Watchme.VO.ENUM;
  *      DELETE : 삭제
  *      SPR : 스프린트로 생성된 미팅룸
  */
+
+/**
+ *  그룹
+ *      YES : 존재
+ *      NO : ???
+ *      DELETE : 삭제
+ */
 public enum Status {
     YES, NO, DELETE, ING, SPR
 }

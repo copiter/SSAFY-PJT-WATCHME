@@ -10,7 +10,6 @@ function RoomReform() {
   //방생성 요청 보내기
   const [inputs, setInputs] = useState({
   });
-  const [outputs, setOutputs] = useState();
   const navigate = useNavigate();
 
   const handleChange = (event) => {
@@ -22,9 +21,14 @@ function RoomReform() {
   //URL
   const FETCH_URL = useContext(FetchUrl);
   
-  const id=useParams().id.substring(1);
+  
+  const id=window.location.pathname.split("/")[2].substring(0 );
+  console.log("id");
+  console.log(id);
   const url1 = `${FETCH_URL}/rooms/`+id+`/settings`;
   const url = `${FETCH_URL}/rooms/`+id+`/update`;
+  console.log(url1);
+  console.log(url);
     //Otpion
 
   const imgeRef = useRef();
@@ -61,6 +65,7 @@ function RoomReform() {
     .then((result) => {
       if (result != null) {
         setInputs(result.responseData.room);
+        
         //navigate("/RoomDetail/:" + result.responseData.roomId);
         //window.location.reload(); //리다이렉션관련
       }
@@ -74,25 +79,28 @@ function RoomReform() {
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
-    setOutputs({
-      roomName: inputs.roomName,
-      mode: inputs.mode, //MODE1, MODE2, MODE3
-      pwd: inputs.roomPwd,
-      roomDescription:inputs.description,
-      roomCategory: inputs.categoryName, 
-      roomMemberMaxNo: inputs.num,
-      endAt: inputs.endTime,
-      display: inputs.display,
-    })
-    console.log("INPUTS")
-    console.log(inputs);
-    console.log("OUTPUTS");
-    console.log(outputs);
-    console.log("END");
     formData.append(
       "roomUpdateDTO",
-      new Blob([JSON.stringify(outputs)], { type: "application/json" })
+      new Blob([JSON.stringify({
+        roomName: inputs.roomName,
+        mode: inputs.mode, //MODE1, MODE2, MODE3
+        pwd: inputs.roomPwd,
+        roomDescription:inputs.description,
+        roomCategory: inputs.categoryName, 
+        roomMemberMaxNo: inputs.num,
+        endAt: inputs.endTime,
+      })], { type: "application/json" })
     );
+    
+    console.log("OUTPUTSHERE");
+    for (let key of formData.keys()) {
+      console.log(key);
+    }
+    console.log("KEY");
+    for (let value of formData.values()) {
+      console.log(value);
+    }
+    console.log("END");
     fetch(url, {
       method: "POST",
       body: formData,
@@ -114,8 +122,9 @@ function RoomReform() {
       })
       .then((result) => {
         if (result != null) {
-          navigate("/RoomDetail/:" + result.responseData.roomId);
-          window.location.reload(); //리다이렉션관련
+          //navigate("/RoomDetail/:" + result.responseData.roomId);
+          //navigate("./");
+          //window.location.reload(); //리다이렉션관련
         }
       })
       .catch((err) => {

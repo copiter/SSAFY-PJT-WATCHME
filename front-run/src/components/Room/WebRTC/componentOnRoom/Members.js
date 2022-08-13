@@ -7,7 +7,9 @@ import "./Members.css";
 function Members() {
 
   const FETCH_URL = useContext(FetchUrl);
-  const id=useParams().id.substring(1);
+  const id=window.location.pathname.split("/")[2].substring(0 );
+  console.log("members");
+  console.log(id);
   const url = `${FETCH_URL}/rooms/`+id+`/members`;
 
 
@@ -54,6 +56,8 @@ function Members() {
         }
       })
     .then((result) => {
+      console.log(result);
+      console.log("맴버스 성공");
     })
     .catch((err) => {
       console.log("ERR");

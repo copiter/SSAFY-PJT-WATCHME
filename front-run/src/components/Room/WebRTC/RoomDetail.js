@@ -35,7 +35,6 @@ class RoomDetail extends Component {
       chatDisplay: "none",
 
     };
-    //setInterval(()=>{alert("TEST콘솔로그입니다")},1000);
 
     this.joinSession = this.joinSession.bind(this);
     this.getUserPermission = this.getUserPermission.bind(this);
@@ -225,7 +224,7 @@ class RoomDetail extends Component {
       
     const mySession = this.state.session;
     const FETCH_URL=FetchUrl._currentValue;
-    const id=window.location.pathname.split("/")[2].substring(1);
+    const id=window.location.pathname.split("/")[2].substring(0 );
     const url = `${FETCH_URL}/rooms/`+id+'/leave';
 
     
@@ -237,7 +236,12 @@ class RoomDetail extends Component {
         .filter((cookie) => cookie[0] === name);
       return cookie[0][1];
     }
+    console.log(id);
+    console.log(url);
     console.log("방나가기 시도");
+
+
+    
     fetch(url,{
       method:"POST",
       headers:{accessToken: getCookie("accessToken")}
@@ -245,6 +249,7 @@ class RoomDetail extends Component {
     .then((response) => {
       console.log(response);
       if (response.ok) {
+        console.log("리스폰스 성공");
         return response.json(); //ok떨어지면 바로 종료.
       } else {
         response.json().then((data) => {
@@ -255,10 +260,13 @@ class RoomDetail extends Component {
       }
     })
     .then((result) => {
+      console.log("RES:");
       if (result != null) {
+        console.log("NOTNULL:");
         console.log(result); 
         if(result.code===200)
         {
+          console.log("방나가기 성공");
         }
         else{
 
@@ -275,7 +283,7 @@ class RoomDetail extends Component {
     this.OV = null;
     try{
       mySession.disconnect();
-      window.location.href="../";
+      window.location.href="../../";
     }
     catch{
       console.log("디스콘실패");
@@ -290,7 +298,6 @@ class RoomDetail extends Component {
     });
   }
 
-  
   async switchCamera() {//카메라 교환
     try {
       const devices = await this.OV.getDevices();
@@ -441,50 +448,10 @@ class RoomDetail extends Component {
   }
 
   async  getMedia() {
-    /*
-    let imageCapture;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {pan: true, tilt: true, zoom: true},
-      });
-      const video = document.querySelector('video');
-      video.srcObject = stream;
-
-      const [track] = stream.getVideoTracks();
-      imageCapture = new ImageCapture(track);
-
-      const capabilities = track.getCapabilities();
-      const settings = track.getSettings();
-
-      for (const ptz of ['pan', 'tilt', 'zoom']) {
-        // Check whether pan/tilt/zoom is available or not.
-        if (!(ptz in settings)) continue;
-
-        // Map it to a slider element.
-        const input = document.getElementById(ptz);
-        input.min = capabilities[ptz].min;
-        input.max = capabilities[ptz].max;
-        input.step = capabilities[ptz].step;
-        input.value = settings[ptz];
-        input.disabled = false;
-        input.oninput = async event => {
-          try {
-            // Warning: Chrome requires advanced constraints.
-            await track.applyConstraints({[ptz]: input.value});
-          } catch (err) {
-            console.error("applyConstraints() failed: ", err);
-          }
-        };
-      }
-    } catch (err) {
-      console.error(err);
-    }*/
- 
-
-
-  
+    
     const FETCH_URL=FetchUrl._currentValue;
-    const id=window.location.pathname.split("/")[2].substring(1);
+    const id=window.location.pathname.split("/")[2].substring(0);
+    let mode="MODE1";
     function getCookie(name) {
       const cookie = document.cookie
         .split(";")
@@ -492,25 +459,17 @@ class RoomDetail extends Component {
         .filter((cookie) => cookie[0] === name);
       return cookie[0][1];
     }
+    console.log("MYID");
+    console.log(id);
 
 
-    
-  
 
-    
-/*
-    try {
-      const blob = await imageCapture.takePhoto();
-      const image = document.querySelector('img');
-      image.src = URL.createObjectURL(blob);
-      console.log(blob);
-      console.log(image);
-    } catch (err) {
-      console.error("takePhoto() failed: ", err);
-    }
-    */
 
-    let json;
+
+
+
+
+
     fetch(`${FETCH_URL}/rooms/`+id, {
       headers: {
         accessToken: getCookie("accessToken"),
@@ -528,76 +487,155 @@ class RoomDetail extends Component {
     })
     .then((result) => {
       if (result != null) {
+        console.log("성공");
+        console.log(result);
+        console.log("백통신 결과입니다.")
       }
     })
     .catch((err) => {
       console.log("ERR22");
     });
     
-   
-    /*const blob = await imageCapture.takePhoto();
-    formData.append("file",blob );*/
 
     
 
 
+    setInterval(()=>{
+      this.openTeli(id,mode)},3000
+      );
+/*
+    try {
+      const blob = await imageCapture.takePhoto();
+      const image = document.querySelector('img');
+      image.src = URL.createObjectURL(blob);
+      console.log(blob);
+      console.log(image);
+    } catch (err) {
+      console.error("takePhoto() failed: ", err);
+    }
+    */
+  }
+  async openTeli(id,mode){
+    
     const formData = new FormData();
-    json={"nickName":this.state.myUserName,
+    const json={"nickName":this.state.myUserName,
     "roomId":id,
-    "mode":"MODE2"};
-    formData.append(
-      "flaskDTO",
-      new Blob([JSON.stringify(json)], { type: "application/json" })
-    );
-    
-
+    "mode":mode};
     console.log("TESTHERE");
     console.log(json);
+    formData.append(
+      "flaskDTO",
+      new Blob([JSON.stringify(json)], { type: "application/json" }),
+      "flaskDTO"
+    );
+ 
+    let imageCapture;
+   
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {pan: true, tilt: true, zoom: true},
+      });
+
+      const [track] = stream.getVideoTracks();
+      imageCapture = new ImageCapture(track);
+
+    } catch (err) {
+      console.error(err);
+    }
+    const blob = await imageCapture.takePhoto();
+    formData.append("img",blob,'img');
+
+
+    console.log("여기가 비면 안됨");
+    console.log(formData);
+    
+    console.log("KEYS:::");
+    for (let key of formData.keys()) {
+      console.log(key);
+    }
+    console.log("Values:::.")
+    for (let value of formData.values()) {
+      console.log(value);
+    }
+    console.log("폼");
     fetch("https://watchme1.shop/flask/openCV",
-        {
-          method:"POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
-          },
-        })
-        .then((response) => {
-          console.log(response);
-          console.log("왜안되");
-          if (response.ok) {
-            return response.json(); //ok떨어지면 바로 종료.
-          } else {
-            response.json().then((data) => {
-              let errorMessage = "";
-              throw new Error(errorMessage);
-            });
-          }
-        })
-        .then((result) => {
-          if (result != null) {
-            if(result.code===200)
-            {
-              console.log("200")
-  
-            }
-            else if(result.code===205)
-            {
-              console.log("205")
-            }
-            else{
-              
-            }
-          }
-        })
-        .catch((err) => {
-          console.log("ERR여기임");
+    {
+      method:"POST",
+      body: formData,
+    })
+    .then((response) => {
+      if (response.ok) {
+        console.log(response);
+        console.log("왜안되");
+        return response.json(); //ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => {
+          let errorMessage = "";
+          throw new Error(errorMessage);
         });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+        if(result.code===200)
+        {
+          console.log("오류없음")
 
-  }
+        }
+        else if(result.code===205)
+        {
+          alert()
+        }
+        else{
+          
+        }
+      }
+    })
+    .catch((err) => {
+      console.log("ERR여기임");
+    });/*
+  fetch("https://watchme1.shop/flask/test",
+  {
+    method:"POST",
+  })
+  .then((response) => {
+    console.log(response);
+    console.log("왜안나와");
+    if (response.ok) {
+      return response.json(); //ok떨어지면 바로 종료.
+    } else {
+      response.json().then((data) => {
+        let errorMessage = "";
+        throw new Error(errorMessage);
+      });
+    }
+  })
+  .then((result) => {
+    if (result != null) {
+      console.log("맞게옴")
+      console.log(result);
+      if(result.code===200)
+      {
+        console.log("200 완전성공");  
+
+      }
+      else if(result.code===205)
+      {
+        console.log("205");
+      }
+      else{
+        console.log("일단 여기서걸림.");
+        
+      }
+    }
+  })
+  .catch((err) => {
+    console.log("ERR여기임");
+  });*/
 
 
 
-
+}
 
 
 

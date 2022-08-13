@@ -135,7 +135,9 @@
 
 }
 
-
+.Title{
+    
+}
 
 .subtitle{
     font-size:30px;
@@ -144,7 +146,24 @@
     height: 70px;
 }
 
+.MyStduy{
+    display: flex;
+    
+    
+}
 
+.MyStduy1{
+    font-size: 30px;
+    margin-left: 30px;
+    margin-top: 45px;
+    line-height:70px;
+}
+.MyStduy2{
+    font-size: 30px;
+    margin-top: 50px;
+    line-height:45px;
+    margin-left: 50px;
+}
 .pens{
     display: flex;
 }
@@ -164,7 +183,7 @@
 {
     font-size: 30px;
     line-height:45px;
-    margin-left: 50px;
+    margin-right: 50px;
     text-align: right;
 
 }

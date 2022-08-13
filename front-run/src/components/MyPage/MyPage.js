@@ -156,7 +156,7 @@ function MyPage() {
       </div>
       <div className="Right">
         <div className="Up">
-          <div className="subTitle">나의 공부시간</div>
+          <div className="Title">나의 공부시간</div>
           <div className="inner_Down">
             <div className="studyLeft">
               <div className="donutchart">
@@ -171,14 +171,14 @@ function MyPage() {
             </div>
             <div className="studyCenter">
               <div className="subtitle">이번주 나의 공부량</div>
-                <div>
-                  <div>
+                <div className="MyStduy">
+                  <div className="MyStduy1">
                     <div>오늘 공부시간</div>
                     <div>이번 주 공부시간</div>
                     <div>이번 달 공부시간</div>
                     <div>총 공부시간</div>
                   </div>
-                  <div>
+                  <div className="MyStduy2">
                     <div>
                       {parseInt(userInformation.member.studyTimeToday / 60)
                         ? parseInt(userInformation.member.studyTimeToday / 60) +
@@ -239,7 +239,7 @@ function MyPage() {
           </div>
         </div>
         <div className="Down">
-          <div className="subTitle">나의 패널티</div>
+          <div className="Title">나의 패널티</div>
           <div className="inner_Down">
             <div className="studyLeft">
               <div className="pens">

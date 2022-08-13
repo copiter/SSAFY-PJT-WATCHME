@@ -55,7 +55,6 @@ class RoomDetail extends Component {
   componentDidMount() {
     this.joinSession();
     window.addEventListener("beforeunload", this.onbeforeunload);
-    // this.joinSession();
   }
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.onbeforeunload);
@@ -498,7 +497,7 @@ class RoomDetail extends Component {
       console.log(value);
     }
     console.log("폼");
-    fetch("https://watchme1.shop/flask/openCV", {
+   /*fetch("https://watchme1.shop/flask/openCV", {
       method: "POST",
       body: formData,
     })
@@ -526,45 +525,8 @@ class RoomDetail extends Component {
       })
       .catch((err) => {
         console.log("ERR여기임");
-      }); /*
-  fetch("https://watchme1.shop/flask/test",
-  {
-    method:"POST",
-  })
-  .then((response) => {
-    console.log(response);
-    console.log("왜안나와");
-    if (response.ok) {
-      return response.json(); //ok떨어지면 바로 종료.
-    } else {
-      response.json().then((data) => {
-        let errorMessage = "";
-        throw new Error(errorMessage);
-      });
-    }
-  })
-  .then((result) => {
-    if (result != null) {
-      console.log("맞게옴")
-      console.log(result);
-      if(result.code===200)
-      {
-        console.log("200 완전성공");  
-
-      }
-      else if(result.code===205)
-      {
-        console.log("205");
-      }
-      else{
-        console.log("일단 여기서걸림.");
-        
-      }
-    }
-  })
-  .catch((err) => {
-    console.log("ERR여기임");
-  });*/
+      }); */
+  
   }
 
   render() {

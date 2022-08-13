@@ -1,9 +1,21 @@
 .backDiv
 {
+    position: relative;
     width: 100%;
     height: 100%;
 }
-
+.LSTS{
+    position: relative;
+    
+    background-color: gray;
+}
+    .images{
+        width: 1rem;
+        height: 1rem;
+    }
 .comps{
+    position:relative;
+    
+    background-color: green;
     
 }

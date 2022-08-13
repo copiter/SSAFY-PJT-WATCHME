@@ -1,6 +1,8 @@
 import React, { useState, Fragment, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
+import GetToday from "../ETC/GetToday";
+import ErrorCode from "../../Error/ErrorCode";
 
 import accept from "../../img/Icons/accept.png";
 import cancel from "../../img/Icons/cancel.png";
@@ -17,8 +19,8 @@ function SignUp() {
   const [selectSex, setSelectSex] = useState("ND");
   const navigate = useNavigate();
 
-  const day = new Date();
-  const today = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
+  // 오늘 고르기
+  const today = GetToday();
 
   const handleSelectSex = (e) => {
     setSelectSex(e.target.value);
@@ -82,7 +84,7 @@ function SignUp() {
           alert("회원가입 되었습니다");
           navigate("/login"); //로그인 페이지로
         } else {
-          console.log(result);
+          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -118,7 +120,7 @@ function SignUp() {
         if (result.code === 200) {
           setIsEmailDup(false);
         } else {
-          console.log(result);
+          ErrorCode(result);
           setIsEmailDup(true);
         }
       } catch (e) {
@@ -146,7 +148,7 @@ function SignUp() {
         if (result.code === 200) {
           setIsNickNameDup(false);
         } else {
-          console.log(result);
+          ErrorCode(result);
           setIsNickNameDup(true);
         }
       } catch (e) {
@@ -276,7 +278,7 @@ function SignUp() {
                   placeholder="생년월일을 입력하세요"
                   required
                   min="1900-01-01"
-                  max="9999-12-31"
+                  max={today}
                   ref={birthdayInputRef}
                 />
               </div>

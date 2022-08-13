@@ -1,0 +1,178 @@
+#mypage {
+  display: flex;
+  position: relative;
+  height: 800px;
+  left: 100px;
+}
+.Left {
+  position: relative;
+  width: 300px;
+  height: 100%;
+  background-color: #e0e2e6;
+}
+.Left_Inner {
+  position: relative;
+  margin-left: 30px;
+  margin-top: 50px;
+  margin-right: 30px;
+}
+.profileImg {
+  position: relative;
+  height: 380px;
+}
+.profileImg_Img {
+  margin-top: 30px;
+  margin-left: 15px;
+  border-radius: 50%;
+  height: 200px;
+  width: 200px;
+}
+
+.profileDisc {
+  font-size: 35px;
+  text-align: center;
+  position: relative;
+  height: 150px;
+  top: 20px;
+}
+.nickName {
+  font-size: 35px;
+  text-align: center;
+  position: relative;
+  margin-top: 10px;
+  height: 40px;
+}
+.description {
+  font-size: 20px;
+  text-align: center;
+  height: 80px;
+  margin-top: 20px;
+}
+.LeftBottom {
+  position: relative;
+  margin-top: 40px;
+  font-size: 25px;
+  line-height: 1.5;
+}
+.Point {
+  margin-left: 30px;
+  position: relative;
+  font-size: 20px;
+  line-height: 1.5;
+}
+.RealPoint {
+  position: relative;
+  font-size: 30px;
+  line-height: 1.5;
+}
+.Category {
+  margin-left: 25px;
+  margin-top: 50px;
+  font-size: 40px;
+}
+.CategoryHover {
+  display: none;
+  position: absolute;
+  left: 00px;
+  bottom: 0px;
+  font-size: 20px;
+  height: 500px;
+  width: 250px;
+  background-color: green;
+}
+.Category:hover .CategoryHover {
+  display: block;
+}
+.Right {
+  position: relative;
+}
+.Up {
+  position: relative;
+  width: 2000px;
+}
+.subTitle {
+  position: relative;
+  height: 70px;
+  font-size: 40px;
+}
+.inner_Down {
+  position: relative;
+  display: flex;
+}
+.studyLeft {
+  position: relative;
+  width: 500px;
+  height: 330px;
+}
+.studyCenter {
+  position: relative;
+  width: 500px;
+  height: 330px;
+}
+
+.Down {
+  position: relative;
+  width: 2000px;
+}
+.studyRight {
+  position: relative;
+  width: 500px;
+  height: 330px;
+}
+
+.Title {
+}
+
+.subtitle {
+  font-size: 30px;
+  text-align: center;
+  line-height: 50px;
+  height: 70px;
+}
+
+.MyStduy {
+  display: flex;
+}
+
+.MyStduy1 {
+  font-size: 30px;
+  margin-left: 30px;
+  margin-top: 45px;
+  line-height: 70px;
+}
+.MyStduy2 {
+  font-size: 30px;
+  margin-top: 50px;
+  line-height: 45px;
+  margin-left: 50px;
+}
+.pens {
+  display: flex;
+}
+.pen1 {
+  font-size: 30px;
+  margin-left: 30px;
+  margin-top: 45px;
+  line-height: 70px;
+}
+.pen2 {
+  font-size: 30px;
+  margin-top: 50px;
+  line-height: 45px;
+  margin-left: 50px;
+}
+.Links {
+  font-size: 30px;
+  line-height: 45px;
+  margin-right: 50px;
+  text-align: right;
+}
+
+.chart {
+  position: relative;
+  left: 30px;
+}
+.donutchart {
+  position: relative;
+  top: -30px;
+}

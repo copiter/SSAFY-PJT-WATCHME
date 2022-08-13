@@ -5,6 +5,7 @@ import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
 
 import "./RoomCreate.css";
+import ErrorCode from "../../Error/ErrorCode";
 
 function RoomCreate() {
   //방생성 요청 보내기
@@ -53,22 +54,13 @@ function RoomCreate() {
         accessToken: getCookie("accessToken"),
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            console.log("ERR");
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        if (result != null) {
+        if (result.code === 200) {
           alert("방생성이 완료되었습니다.");
           navigate("/RoomDetail/" + result.responseData.roomId);
-          //window.location.reload(); //리다이렉션관련
+        } else {
+          ErrorCode(result);
         }
       })
       .catch((err) => {

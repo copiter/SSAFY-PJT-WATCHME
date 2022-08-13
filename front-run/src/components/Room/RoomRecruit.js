@@ -11,6 +11,7 @@ import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import json from "../json/roomrecruit.json";
+import ErrorCode from "../../Error/ErrorCode";
 
 let page = 1;
 
@@ -36,22 +37,19 @@ function RoomRecruit() {
   const url = `${FETCH_URL}/rooms`;
   useEffect(() => {
     fetch(url)
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
-        } else {
-          console.log("기본Case4");
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        setRooms(result["responseData"]["rooms"]);
+        if (result.code === 200) {
+          setRooms(result["responseData"]["rooms"]);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         console.log("ERROR");
       });
   }, []);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     fetch(
@@ -62,17 +60,13 @@ function RoomRecruit() {
           : "category=" + inputs.category + "&") +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
-        } else {
-          console.log("제출Case4");
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        setRooms(result["responseData"]["rooms"]);
+        if (result.code === 200) {
+          setRooms(result["responseData"]["rooms"]);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         console.log("ERROR");

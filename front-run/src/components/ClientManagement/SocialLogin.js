@@ -3,7 +3,11 @@ import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
 
+import accept from "../../img/Icons/accept.png";
+import cancel from "../../img/Icons/cancel.png";
+
 import "./SocialLogin.css"; // 동일한 CSS 파일 사용
+import ErrorCode from "../../Error/ErrorCode";
 
 function SocialLogin() {
   const FETCH_URL = useContext(FetchUrl);
@@ -22,8 +26,46 @@ function SocialLogin() {
 
   const authCtx = useContext(AuthContext);
 
+  // 닉네임 중복확인
+  const nickNameDupUrl = `${FETCH_URL}/members/nickName-check`;
+  const [isNickNameDup, setIsNickNameDup] = useState(null);
+  function checkDuplicateNickName() {
+    const nickName = nickNameInputRef.current.value;
+    //API
+    const config = {
+      method: "POST",
+      body: JSON.stringify({ nickName: nickName }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const getDatas = async () => {
+      try {
+        const response = await fetch(nickNameDupUrl, config);
+        const result = await response.json();
+        if (result.code === 200) {
+          setIsNickNameDup(false);
+        } else {
+          ErrorCode(result);
+          setIsNickNameDup(true);
+        }
+      } catch (e) {
+        alert("통신 실패 " + e);
+      }
+    };
+    getDatas();
+  }
+
   const submitHandler = (event) => {
     event.preventDefault();
+
+    if (isNickNameDup) {
+      alert("닉네임 중복확인이 필요합니다");
+      return;
+    } else if (isNickNameDup === null) {
+      alert("닉네임 중복확인이 필요합니다");
+      return;
+    }
 
     const enteredName = nameInputRef.current.value;
     const enteredNickname = nickNameInputRef.current.value;
@@ -45,22 +87,13 @@ function SocialLogin() {
         "content-type": "application/json",
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          console.log(response.json());
-          return response.json();
-        } else {
-          response.json().then((data) => {
-            let errorMessage = "인증 실패";
-            throw new Error(errorMessage);
-          });
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        if (result != null) {
-          authCtx.login();
+        if (result.code === 200) {
+          alert("회원가입 되었습니다");
           navigate("/");
-          //     window.location.reload();
+        } else {
+          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -86,7 +119,7 @@ function SocialLogin() {
                 ref={nameInputRef}
               />
             </div>
-            <div className="line">
+            <div className="line dup-check">
               <input
                 className="short"
                 type="text"
@@ -94,7 +127,15 @@ function SocialLogin() {
                 required
                 ref={nickNameInputRef}
               />
-              <button className="dup">중복확인</button>
+              {isNickNameDup === false && (
+                <img className="dup-icon" src={accept} alt="중복아님" />
+              )}
+              {isNickNameDup === true && (
+                <img className="dup-icon" src={cancel} alt="중복" />
+              )}
+              <button className="dup" onClick={checkDuplicateNickName}>
+                중복확인
+              </button>
             </div>
             <div className="line">
               <select
@@ -116,7 +157,7 @@ function SocialLogin() {
                 placeholder="생년월일을 입력하세요"
                 required
                 min="1900-01-01"
-                max="2022-12-31"
+                max="9999-12-31"
                 ref={birthdayInputRef}
               />
             </div>

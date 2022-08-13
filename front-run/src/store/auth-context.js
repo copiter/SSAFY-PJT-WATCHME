@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { FetchUrl } from "./communication";
 import { getCookie } from "../Cookie";
+import ErrorCode from "../Error/ErrorCode";
 
 const AuthContext = React.createContext({
   userData: "",
@@ -33,7 +34,9 @@ export const AuthContextProvider = (props) => {
       })
         .then((response) => response.json())
         .then((result) => {
-          console.log(result);
+          if (result.code === 501) {
+            ErrorCode(result);
+          }
         })
         .catch((err) => {
           console.log(err);

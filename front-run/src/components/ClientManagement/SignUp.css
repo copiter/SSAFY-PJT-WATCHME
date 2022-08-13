@@ -61,6 +61,7 @@
   text-indent: -9999px;
   cursor: pointer;
 }
+
 .signup-uploaded-image {
   position: absolute;
   top: 0%;
@@ -170,4 +171,11 @@
 }
 .submitting:hover {
   opacity: 1;
+}
+.submitting:active {
+  transform: scale(0.98);
+}
+
+.signup input:focus {
+  border: 3px solid #c2c6cc;
 }

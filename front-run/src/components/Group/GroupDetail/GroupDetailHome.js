@@ -9,8 +9,8 @@ const GroupDetailHome = (props) => {
   console.log(props);
 
   const resData = props.resData;
-  // const groupTotalTime = resData.groupData.sumTime;
-  const groupTotalTime = 0;
+  const groupTotalTime = resData.groupData.sumTime;
+  // const groupTotalTime = 0;
 
   let penalty = [0, 0, 0];
   if (resData.myData.hasOwnProperty("penalty")) {

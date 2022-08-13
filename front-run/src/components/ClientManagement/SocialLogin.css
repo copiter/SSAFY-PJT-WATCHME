@@ -53,9 +53,21 @@
   border: 1px solid #c2c6cc;
   border-radius: 30px;
 }
+.social-login-form input:focus {
+  border: 3px solid #c2c6cc;
+}
 
 .social-login-form .line {
   display: flex;
   flex-direction: row;
   margin-bottom: 25px;
+}
+
+.social-login-form .line.dup-check {
+  position: relative;
+}
+.dup-check .dup-icon {
+  position: absolute;
+  right: 130px;
+  top: 10px;
 }

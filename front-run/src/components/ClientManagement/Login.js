@@ -7,6 +7,7 @@ import kakao from "../../img/SignUpLogos/kakao.png";
 import naver from "../../img/SignUpLogos/naver1.png";
 import google from "../../img/SignUpLogos/google.png";
 import { setCookie } from "../../Cookie";
+import ErrorCode from "../../Error/ErrorCode";
 
 const Login = () => {
   const FETCH_URL = useContext(FetchUrl);
@@ -63,7 +64,7 @@ const Login = () => {
           navigate("/");
           // window.location.reload();
         } else {
-          alert(result);
+          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -91,9 +92,9 @@ const Login = () => {
           required
           ref={passwordInputRef}
         />
-        <div>
-          <Link to="/findID">아이디</Link>/
-          <Link to="/findPWD">비밀번호 찾기</Link>
+        <div className="link-to-find">
+          <Link to="/findID">아이디</Link> /{" "}
+          <Link to="/findPWD"> 비밀번호 찾기</Link>
         </div>
         <button className="submit-btn">로그인</button>
       </form>

@@ -203,7 +203,7 @@ public class RoomService {
                 pwd = joinRoomDTO.getPwd();
             }
             if(roomPwd==null || roomPwd== pwd){
-                System.out.println("ppp");
+                    System.out.println("ppp");
                 if(roomPeople(roomId, 1)){
                     joinRoomFunc(roomId, memberId);
                     room.setView(room.getView()+1);
@@ -231,6 +231,7 @@ public class RoomService {
             Optional<MemberRoomLog> memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId);
             if(memberRoomLog.isPresent()){
                 memberRoomLog.get().setJoinedAt(DateTime.now().toDate());
+                memberRoomLog.get().setStatus(Status.NO);
                 mrlRepository.save(memberRoomLog.get());
             }
             else{
@@ -368,15 +369,13 @@ public class RoomService {
     }
 
     public boolean roomPeople(Long roomId, int num) {
-        System.out.println("bye");
         Room room;
         try{
             room = roomRepository.findById(roomId).get();
         } catch (Exception e){
             throw new CustomException(Code.C522);
         }
-        System.out.println("PLUS");
-        if (room.getRoomInfo().getMaxMember() > (room.getRoomInfo().getCurrMember() + num)) {
+        if (room.getRoomInfo().getMaxMember() >= (room.getRoomInfo().getCurrMember() + num)) {
             room.getRoomInfo().setCurrMember(room.getRoomInfo().getCurrMember() + num);
             // 마지막사람이 나가면 닫아줌
             if(room.getRoomInfo().getCurrMember()==0){

@@ -547,8 +547,8 @@ class RoomDetail extends Component {
     "mode":"MODE2"};
     formData.append(
       "flaskDTO",
-      new Blob([JSON.stringify(json)], { type: "application/json" })
-    );
+      "{'nickName':'hey', 'roomId' : '1', 'mode' : 'MODE2'}", { type: "application/json" })
+    
     
 
     console.log("TESTHERE");
@@ -556,7 +556,7 @@ class RoomDetail extends Component {
     fetch("https://watchme1.shop/flask/openCV",
         {
           method:"POST",
-          body: formData,
+          data: formData,
           mode: "cors",
           headers: {
             "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.

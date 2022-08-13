@@ -1,6 +1,5 @@
 package com.A108.Watchme.Controller;
 
-import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Room.JoinRoomDTO;
 import com.A108.Watchme.DTO.Room.PostRoomReqDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
@@ -8,17 +7,12 @@ import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Service.RoomService;
-import io.swagger.annotations.*;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.A108.Watchme.utils.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @RestController
@@ -26,6 +20,7 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+    @Autowired
     private AuthUtil authUtil;
 
     // 룸 생성 API

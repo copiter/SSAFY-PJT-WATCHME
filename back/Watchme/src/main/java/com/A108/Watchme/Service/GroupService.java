@@ -1,6 +1,6 @@
 package com.A108.Watchme.Service;
 
-import com.A108.Watchme.Controller.AuthUtil;
+import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.group.*;
 import com.A108.Watchme.DTO.group.getGroup.*;
@@ -22,6 +22,7 @@ import com.A108.Watchme.VO.Entity.log.PenaltyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,6 +55,7 @@ public class GroupService {
     private final S3Uploader s3Uploader;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
     private AuthUtil authUtil;
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

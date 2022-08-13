@@ -9,23 +9,18 @@ import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Service.PointService;
-import com.A108.Watchme.oauth.entity.UserPrincipal;
+import com.A108.Watchme.utils.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 @RestController
 public class PointController {
     @Autowired
     private PointService pointService;
+    @Autowired
     private AuthUtil authUtil;
     @Autowired
     private MemberRepository memberRepository;

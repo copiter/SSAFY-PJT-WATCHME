@@ -3,6 +3,8 @@ package com.A108.Watchme.Controller;
 import com.A108.Watchme.DTO.Sprint.SprintPostDTO;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Service.SprintService;
+import com.A108.Watchme.utils.AuthUtil;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import javax.validation.Valid;
 public class SprintController {
     @Autowired
     private SprintService sprintService;
+    @Autowired
     private AuthUtil authUtil;
     @PostMapping("/sprints/{sprintId}/delete")
     ApiResponse deleteSprint(@PathVariable(value="sprintId") int sprintId){

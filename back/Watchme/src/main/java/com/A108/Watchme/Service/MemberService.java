@@ -1,7 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.Config.properties.AppProperties;
-import com.A108.Watchme.Controller.AuthUtil;
+import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
 import com.A108.Watchme.DTO.myPage.myPage.MemberDTO;

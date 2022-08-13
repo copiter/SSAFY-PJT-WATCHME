@@ -1,15 +1,20 @@
-package com.A108.Watchme.Controller;
+package com.A108.Watchme.utils;
 
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 
 @NoArgsConstructor
+@Component
 public class AuthUtil {
     @Autowired
     private MemberRepository memberRepository;

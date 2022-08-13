@@ -9,6 +9,7 @@ import com.A108.Watchme.Repository.RefreshTokenRepository;
 import com.A108.Watchme.Service.MemberService;
 import com.A108.Watchme.Service.S3Uploader;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.utils.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
     private final static String REFRESH_TOKEN = "refresh_token";
+    @Autowired
     private AuthUtil authUtil;
     @Autowired
     private MemberRepository memberRepository;

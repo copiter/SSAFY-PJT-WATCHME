@@ -20,5 +20,5 @@ public class GroupCreateReqDTO {
     private Integer maxMember;
     private List<String> ctg;
     //TODO : 그룹에서 pwd 삭제. secret은 받을건지??
-    private String pwd;
+    private Integer secret;
 }

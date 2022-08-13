@@ -55,7 +55,7 @@ public enum Code {
     C565(565, "Not Authorized"),
     C566(566, "Banned"),
     C567(567, "Applied Already"),
-
+    C568(568, "Room Full"),
     C595(595, "INVALID ACCESS"),
     C596(596, "DTO ERROR"),
     C597(597, "KAKAO PAY ERROR" ),

@@ -24,7 +24,7 @@ import javax.naming.SizeLimitExceededException;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({CustomException.class})
     protected ResponseEntity<Object> handleCustomException(CustomException ex) {
-        ex.printStackTrace();
+        logger.info(ex);
         Code code = ex.getCode();
         return handleExceptionInternal(code);
     }

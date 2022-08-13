@@ -28,20 +28,13 @@ function Members() {
    
   }])
   
-  function getCookie(name) {
-      const cookie = document.cookie
-      .split(";")
-      .map((cookie) => cookie.split("="))
-      .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-  }
 
 
   
 	useEffect(() => { 
   fetch(url, {
       headers: {
-        accessToken: getCookie("accessToken"),
+        //accessToken: getCookie("accessToken"),
       },
     })
    .then((response) => {

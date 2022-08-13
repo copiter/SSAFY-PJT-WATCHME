@@ -1,6 +1,36 @@
 .stream-container {
 	padding: 0;
 }
+
+
+.out{
+	position: relative;
+	width: 90em;
+	height: 90em;
+}
+.Main{
+	position: relative;
+	width: 80rem;
+	background-color: green;
+}
+.header{
+	
+}
+.Aside{
+	position: relative;
+	width:20rem;
+	background-color: yellow	;
+}
+.Right{
+	position: relative;
+}
+
+
+
+
+
+
+
 .linksUl{
 	position: relative;
 	width: 100%;
@@ -9,7 +39,6 @@
 	float:left;
 	width: 33%;
 }
-
 .others{
 	display:flex;
 	flex-wrap: wrap;
@@ -22,4 +51,10 @@
 }
 .nextLine{
 
+}
+
+.test{
+display:inline-block;
+width:1000px;
+height:500px;
 }

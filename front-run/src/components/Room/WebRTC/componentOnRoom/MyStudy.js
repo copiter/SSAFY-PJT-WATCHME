@@ -15,13 +15,6 @@ function MyStudy() {
     "penalty" : 0
   })
   
-  function getCookie(name) {
-      const cookie = document.cookie
-      .split(";")
-      .map((cookie) => cookie.split("="))
-      .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-  }
   let id=4;
   console.log("URL:"+url+"/"+id);
 
@@ -29,7 +22,7 @@ function MyStudy() {
   
   fetch(url+"/"+id, {
       headers: {
-        accessToken: getCookie("accessToken"),
+        //accessToken: getCookie("accessToken"),
       },
     })
    .then((response) => {

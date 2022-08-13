@@ -10,6 +10,7 @@ import { Routes, Route ,Link,Navigate } from "react-router-dom";
 import Members from "./componentOnRoom/Members";
 import MyStudy from "./componentOnRoom/MyStudy";
 import RoomReform from "./componentOnRoom/RoomReform";
+//import { getCookie } from "../../../Cookie";
 
 import AuthContext from "../../../store/auth-context";
 
@@ -51,7 +52,7 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-   this.getMedia();
+   //this.getMedia();
   }
 
 
@@ -228,14 +229,6 @@ class RoomDetail extends Component {
     const url = `${FETCH_URL}/rooms/`+id+'/leave';
 
     
-
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
     console.log(id);
     console.log(url);
     console.log("방나가기 시도");
@@ -244,7 +237,7 @@ class RoomDetail extends Component {
     
     fetch(url,{
       method:"POST",
-      headers:{accessToken: getCookie("accessToken")}
+      //headers:{accessToken: getCookie("accessToken")}
     })
     .then((response) => {
       console.log(response);
@@ -431,7 +424,7 @@ class RoomDetail extends Component {
     fetch(FETCH_URL, {
       method: "POST",
       headers: {
-        accessToken: this.getCookie("accessToken"),
+      //  accessToken: this.getCookie("accessToken"),
       },
     })
 
@@ -452,13 +445,7 @@ class RoomDetail extends Component {
     const FETCH_URL=FetchUrl._currentValue;
     const id=window.location.pathname.split("/")[2].substring(0);
     let mode="MODE1";
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
+    
     console.log("MYID");
     console.log(id);
 
@@ -472,7 +459,7 @@ class RoomDetail extends Component {
 
     fetch(`${FETCH_URL}/rooms/`+id, {
       headers: {
-        accessToken: getCookie("accessToken"),
+        //accessToken: getCookie("accessToken"),
       },
     })
     .then((response) => {

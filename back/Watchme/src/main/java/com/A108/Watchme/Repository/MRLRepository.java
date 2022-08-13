@@ -22,7 +22,7 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
     List<MemberRoomLog> findByJoinedAtAfter(Timestamp date);
 //    List<MemberRoomLog> findBymember_idBystart_atAfter(Long id, Date date);
     List<MemberRoomLog> findByRoomIdIn(List<Long> roomId);
-    Optional<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, Long roomId);
+    Optional<MemberRoomLog> findByMember_idAndRoom_id(Long memberId, Long roomId);
 
     List<MemberRoomLog> findByMemberIdAndRoomIdIn(Long memberId, List<Long> roomId);
 

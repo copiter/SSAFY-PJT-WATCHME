@@ -488,7 +488,7 @@ public class MemberService {
                 int count=0;
                 if(memberId != -1){
                     myPenalty = penaltyLogRegistory.countByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
-                    Optional<MemberRoomLog> myData = mrlRepository.findByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
+                    Optional<MemberRoomLog> myData = mrlRepository.findByMember_idAndRoom_id(memberId, sprint.getRoom().getId());
                     if(myData.isPresent()) {
                         myTime = myData.get().getStudyTime();
                     }

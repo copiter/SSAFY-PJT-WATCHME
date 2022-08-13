@@ -220,7 +220,7 @@ public class RoomService {
     public void joinRoomFunc(Long roomId, Long memberId) {
 
             Member member = memberRepository.findById(memberId).get();
-            Optional<MemberRoomLog> memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId);
+            Optional<MemberRoomLog> memberRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId);
             if(memberRoomLog.isPresent()){
                 memberRoomLog.get().setJoinedAt(DateTime.now().toDate());
                 memberRoomLog.get().setStatus(Status.NO);
@@ -243,7 +243,7 @@ public class RoomService {
     public void outRoomFunc(Long roomId, Long memberId) {
         MemberRoomLog memberRoomLog;
        try{
-            memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+            memberRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
        } catch (Exception e){
            throw new CustomException(Code.C523);
        }
@@ -317,8 +317,8 @@ public class RoomService {
         }
 
         try{
-            MemberRoomLog myRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
-            if(!myRoomLog.getStatus().equals("NO")){
+            MemberRoomLog myRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
+            if(!myRoomLog.getStatus().equals(Status.NO)){
                 throw new CustomException(Code.C595);
             }
         } catch (Exception e){
@@ -397,8 +397,10 @@ public class RoomService {
         }
         MemberRoomLog memberRoomLog;
         try{
-            memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
-            if(!memberRoomLog.getStatus().equals("NO")){
+            System.out.println(memberId);
+            System.out.println(roomId);
+            memberRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
+            if(!memberRoomLog.getStatus().equals(Status.NO)){
                 throw new CustomException(Code.C595);
             }
         } catch (Exception e){
@@ -428,8 +430,8 @@ public class RoomService {
             throw new CustomException(Code.C522);
         }
         try{
-            MemberRoomLog myRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
-            if(!myRoomLog.getStatus().equals("NO")){
+            MemberRoomLog myRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
+            if(!myRoomLog.getStatus().equals(Status.NO)){
                 throw new CustomException(Code.C595);
             }
         } catch (Exception e){
@@ -458,8 +460,8 @@ public class RoomService {
             throw new CustomException(Code.C522);
         }
         try{
-            MemberRoomLog myRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
-            if(!myRoomLog.getStatus().equals("NO")){
+            MemberRoomLog myRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
+            if(!myRoomLog.getStatus().equals(Status.NO)){
                 throw new CustomException(Code.C595);
             }
         } catch (Exception e){

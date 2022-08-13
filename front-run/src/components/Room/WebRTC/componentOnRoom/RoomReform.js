@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useContext, useRef,useEffect } from "react";
 import { useNavigate,useParams } from "react-router-dom";
+import { getCookie } from "../../../../Cookie";
 import { FetchUrl } from "../../../../store/communication";
 
 import "./RoomReform.css";
@@ -32,13 +33,6 @@ function RoomReform() {
     //Otpion
 
   const imgeRef = useRef();
-  function getCookie(name) {
-    const cookie = document.cookie
-      .split(";")
-      .map((cookie) => cookie.split("="))
-      .filter((cookie) => cookie[0] === name);
-    return cookie[0][1];
-  }
 
 
   console.log("INPUTS")

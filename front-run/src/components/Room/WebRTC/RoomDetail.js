@@ -415,7 +415,7 @@ class RoomDetail extends Component {
     const id = window.location.pathname.split("/")[2].substring(0);
     let mode = "MODE1";
 
-
+    console.log(id);
     fetch(`${FETCH_URL}/rooms/` + id, {
       headers: {
         accessToken: getCookie("accessToken"),
@@ -423,6 +423,7 @@ class RoomDetail extends Component {
     })
       .then((response) => {
         if (response.ok) {
+          console.log(response);
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {

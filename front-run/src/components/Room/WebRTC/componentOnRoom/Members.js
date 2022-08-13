@@ -63,13 +63,13 @@ function Members() {
 const LST=mstudy.map((name, memNo)=>(
 <div key={memNo} className="comps"> 
 
-  <img src={mstudy[memNo].images} alt="#"/>
+  <img src={mstudy[memNo].images} className="images" alt="#"/>
   <div>{mstudy[memNo].nickName}</div>
   <div>{mstudy[memNo].penalty}</div>
 </div>));
   return (
     <div className="backDiv">
-      <div>
+      <div className="LSTS">
         {LST}
 
       </div>

@@ -5,12 +5,12 @@
 
 .out{
 	position: relative;
-	width: 90em;
+	display: flex;
 	height: 90em;
 }
 .Main{
 	position: relative;
-	width: 80rem;
+	width:80rem;
 }
 	.Header{
 		position: relative;

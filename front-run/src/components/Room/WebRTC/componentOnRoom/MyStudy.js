@@ -1,6 +1,7 @@
 import {  now } from "jquery";
 import React from "react";
 import {useContext,useState,useEffect } from "react";
+import { getCookie } from "../../../../Cookie";
 import { FetchUrl } from "../../../../store/communication";
 import "./MyStudy.css";
 function MyStudy() {
@@ -15,14 +16,14 @@ function MyStudy() {
     "penalty" : 0
   })
   
-  let id=4;
+  const id = window.location.pathname.split("/")[2].substring(0);
   console.log("URL:"+url+"/"+id);
 
   useEffect(() => {
   
   fetch(url+"/"+id, {
       headers: {
-        //accessToken: getCookie("accessToken"),
+        accessToken: getCookie("accessToken"),
       },
     })
    .then((response) => {
@@ -31,7 +32,6 @@ function MyStudy() {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
-            console.log("ERR");
             let errorMessage = "";
             throw new Error(errorMessage);
           });
@@ -39,8 +39,6 @@ function MyStudy() {
       })
       .then((result) => {
         if (result != null) {
-          console.log(result);
-          console.log(result["responseData"]["room"]);
         setStudy(result["responseData"]["room"])
         }
       })

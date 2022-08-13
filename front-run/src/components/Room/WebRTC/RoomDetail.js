@@ -10,9 +10,7 @@ import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Members from "./componentOnRoom/Members";
 import MyStudy from "./componentOnRoom/MyStudy";
 import RoomReform from "./componentOnRoom/RoomReform";
-//import { getCookie } from "../../../Cookie";
-
-import AuthContext from "../../../store/auth-context";
+import { getCookie } from "../../../Cookie";
 
 //강제 리브세션=추방
 //방장 전용 기능 구현.
@@ -51,34 +49,29 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-    //this.getMedia();
+    this.getMedia();
   }
 
   componentDidMount() {
     this.joinSession();
     window.addEventListener("beforeunload", this.onbeforeunload);
-    // this.joinSession();
   }
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.onbeforeunload);
   }
-
   onbeforeunload(event) {
     this.leaveSession();
   }
-
   handleChangeSessionId(e) {
     this.setState({
       mySessionId: e.target.value,
     });
   }
-
   handleChangeUserName(e) {
     this.setState({
       myUserName: e.target.value,
     });
   }
-
   handleMainVideoStream(stream) {
     if (this.state.mainStreamManager !== stream) {
       this.setState({
@@ -86,7 +79,6 @@ class RoomDetail extends Component {
       });
     }
   }
-
   deleteSubscriber(streamManager) {
     let subscribers = this.state.subscribers;
     let index = subscribers.indexOf(streamManager, 0);
@@ -97,9 +89,7 @@ class RoomDetail extends Component {
       });
     }
   }
-
   async getUserPermission() {}
-
   joinSession() {
     //세션조인
     // --- 1) Get an OpenVidu object ---
@@ -410,7 +400,7 @@ class RoomDetail extends Component {
     fetch(FETCH_URL, {
       method: "POST",
       headers: {
-        //  accessToken: this.getCookie("accessToken"),
+        accessToken: this.getCookie("accessToken"),
       },
     });
 
@@ -425,12 +415,10 @@ class RoomDetail extends Component {
     const id = window.location.pathname.split("/")[2].substring(0);
     let mode = "MODE1";
 
-    console.log("MYID");
-    console.log(id);
 
     fetch(`${FETCH_URL}/rooms/` + id, {
       headers: {
-        //accessToken: getCookie("accessToken"),
+        accessToken: getCookie("accessToken"),
       },
     })
       .then((response) => {
@@ -448,10 +436,11 @@ class RoomDetail extends Component {
           console.log("성공");
           console.log(result);
           console.log("백통신 결과입니다.");
+          this.state.sessionId=result.resPonseData;
         }
       })
       .catch((err) => {
-        console.log("ERR22");
+        console.log("백통신실패");
       });
 
     setInterval(() => {
@@ -472,8 +461,6 @@ class RoomDetail extends Component {
   async openTeli(id, mode) {
     const formData = new FormData();
     const json = { nickName: this.state.myUserName, roomId: id, mode: mode };
-    console.log("TESTHERE");
-    console.log(json);
     formData.append(
       "flaskDTO",
       new Blob([JSON.stringify(json)], { type: "application/json" }),
@@ -495,26 +482,12 @@ class RoomDetail extends Component {
     const blob = await imageCapture.takePhoto();
     formData.append("img", blob, "img");
 
-    console.log("여기가 비면 안됨");
-    console.log(formData);
-
-    console.log("KEYS:::");
-    for (let key of formData.keys()) {
-      console.log(key);
-    }
-    console.log("Values:::.");
-    for (let value of formData.values()) {
-      console.log(value);
-    }
-    console.log("폼");
-    fetch("https://watchme1.shop/flask/openCV", {
+   /*fetch("https://watchme1.shop/flask/openCV", {
       method: "POST",
       body: formData,
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
-          console.log("왜안되");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
@@ -535,45 +508,8 @@ class RoomDetail extends Component {
       })
       .catch((err) => {
         console.log("ERR여기임");
-      }); /*
-  fetch("https://watchme1.shop/flask/test",
-  {
-    method:"POST",
-  })
-  .then((response) => {
-    console.log(response);
-    console.log("왜안나와");
-    if (response.ok) {
-      return response.json(); //ok떨어지면 바로 종료.
-    } else {
-      response.json().then((data) => {
-        let errorMessage = "";
-        throw new Error(errorMessage);
-      });
-    }
-  })
-  .then((result) => {
-    if (result != null) {
-      console.log("맞게옴")
-      console.log(result);
-      if(result.code===200)
-      {
-        console.log("200 완전성공");  
-
-      }
-      else if(result.code===205)
-      {
-        console.log("205");
-      }
-      else{
-        console.log("일단 여기서걸림.");
-        
-      }
-    }
-  })
-  .catch((err) => {
-    console.log("ERR여기임");
-  });*/
+      }); */
+  
   }
 
   render() {
@@ -583,121 +519,133 @@ class RoomDetail extends Component {
     return (
       <div className="container">
         {this.state.session === undefined ? null : (
-          <div id="session">
-            <div id="session-header">
-              <h1 id="session-title">{mySessionId}</h1>
-
-              {this.state.videoState && (
-                <button onClick={this.videoHandlerOff}>Video OFF</button>
-              )}
-              {!this.state.videoState && (
-                <button onClick={this.videoHandlerOn}>Video ON</button>
-              )}
-              {this.state.audioState && (
-                <button onClick={this.audioHandlerOff}>Audio OFF</button>
-              )}
-              {!this.state.audioState && (
-                <button onClick={this.audioHandlerOn}>Audio ON</button>
-              )}
-              {this.state.screenShare && (
-                <button onClick={this.screenShare}>화면공유</button>
-              )}
+          <div id="session" className="out">
+            <div className="Main">
+              <div id="session-header" className="Header">
+                <div id="session-title" className="headerTitle"><h1>{mySessionId}</h1></div>
+                <div className="headerButtons">
+                  <div className="btnTotal">
+                    {this.state.videoState && (
+                      <button onClick={this.videoHandlerOff} className="btns ">Video OFF</button>
+                    )}
+                    {!this.state.videoState && (
+                      <button onClick={this.videoHandlerOn} className="btns ">Video ON</button>
+                    )}
+                    {this.state.audioState && (
+                      <button onClick={this.audioHandlerOff} className="btns ">Audio OFF</button>
+                    )}
+                    {!this.state.audioState && (
+                      <button onClick={this.audioHandlerOn} className="btns ">Audio ON</button>
+                    )}
+                    {this.state.screenShare && (
+                      <button onClick={this.screenShare} className="btns">화면공유</button>
+                    )}
+                  </div>
+                </div>
+                 
+              </div>
+              <div className="myCams">
+                {
+                  //개인카메라
+                  this.state.mainStreamManager !== undefined ? (
+                    <div id="main-video" className="col-md-6">
+                      <UserVideoComponent
+                        streamManager={this.state.mainStreamManager}
+                        audioState={this.state.audioState}
+                      />
+                      <input
+                        className="btn btn-large btn-success"
+                        type="button"
+                        id="buttonSwitchCamera"
+                        onClick={this.switchCamera}
+                        value="내 화면을 다시 보기"
+                      />
+                    </div>
+                  ) : null
+                }
+                <div id="video-container" className="col-md-6">
+                  {this.state.publisher !== undefined ? (
+                    <div className="stream-container col-md-6 col-xs-6">
+                      <UserVideoComponent streamManager={this.state.publisher} />
+                    </div>
+                  ) : null}
+                </div>
+                <div className="others">
+                  {this.state.subscribers.map((sub, i) => (
+                    <div
+                      key={i}
+                      className="stream-container col-md-6 col-xs-6 "
+                      onClick={() => this.handleMainVideoStream(sub)}
+                    >
+                      <UserVideoComponent streamManager={sub} />
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="myCams">
-              {
-                //개인카메라
-                this.state.mainStreamManager !== undefined ? (
-                  <div id="main-video" className="col-md-6">
-                    <UserVideoComponent
-                      streamManager={this.state.mainStreamManager}
-                      audioState={this.state.audioState}
-                    />
+            <div className="Aside">
+              <div className="rightSide">
+                <div className="sideNav">
+                  <div className="linksUl">
+                    <Link to="./">
+                      <button className="linksLi">내 공부</button>
+                    </Link>
+                    <Link to="./members">
+                       <button className="linksLi">맴버목록</button>
+                    </Link>
+                    <Link to="./RoomReform">
+                      <button className="linksLi">방 수정</button>
+                    </Link>
+                  </div>
+                 
+                </div>
+                <div className="AsideMain">
+                  <div className="sideBoards">
+                    <Routes >
+                      <Route path="/" element={<MyStudy />} />
+                      <Route path="/members" element={<Members />} />
+                      <Route path="/RoomReform" element={<RoomReform />} />
+                    </Routes>
+                  </div>
+                  <div id="chat-container" className="chatBoards" >
+                  {this.state.publisher !== undefined &&
+                    this.state.publisher.stream !== undefined && (
+                      <div
+                        className="OT_root OT_publisher custom-class"
+                        style={chatDisplay}
+                      >
+                        <ChatComponent
+                          user={this.state.publisher}
+                          chatDisplay={this.state.chatDisplay}
+                          close={this.toggleChat}
+                          messageReceived={this.checkNotification}
+                        />
+                      </div>
+                    )}
+                    <canvas id="canvas" ></canvas>
+                  </div>
+                </div>
+                <div className="btnRight">
+                  <div className="btnRightInner">
                     <input
-                      className="btn btn-large btn-success"
+                        className="btn btn-large btn-danger btnR"
+                        type="button"
+                        id="buttonLeaveSession"
+                        onClick={this.leaveSession}
+                        value="방 나가기"
+                      />
+                    <input
+                      className="btn btn-large btn-danger btnR"
                       type="button"
-                      id="buttonSwitchCamera"
-                      onClick={this.switchCamera}
-                      value="내 화면을 다시 보기"
+                      id="buttonLeaveSession"
+                      onClick={this.closeRoom}
+                      value="방 닫기"
                     />
+                    <button className="btnR" onClick={() => this.toggleChat()}>채팅</button>
                   </div>
-                ) : null
-              }
-              <div id="video-container" className="col-md-6">
-                {this.state.publisher !== undefined ? (
-                  <div className="stream-container col-md-6 col-xs-6">
-                    <UserVideoComponent streamManager={this.state.publisher} />
-                  </div>
-                ) : null}
+                </div>
               </div>
-              <div className="others">
-                {this.state.subscribers.map((sub, i) => (
-                  <div
-                    key={i}
-                    className="stream-container col-md-6 col-xs-6 "
-                    onClick={() => this.handleMainVideoStream(sub)}
-                  >
-                    <UserVideoComponent streamManager={sub} />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div
-              style={{
-                display: "inline-block",
-                width: "1000px",
-                height: "500px",
-              }}
-            >
-              <ul className="linksUl">
-                <Link to="./">
-                  <li className="linksLi">내 공부</li>
-                </Link>
-                <Link to="./members">
-                  <li className="linksLi">맴버목록</li>
-                </Link>
-                <Link to="./RoomReform">
-                  <li className="linksLi">방 정보 수정</li>
-                </Link>
-              </ul>
-              <Routes>
-                <Route path="/" element={<MyStudy />} />
-                <Route path="/members" element={<Members />} />
-                <Route path="/RoomReform" element={<RoomReform />} />
-              </Routes>
-
-              {/**/}
-              <input
-                className="btn btn-large btn-danger"
-                type="button"
-                id="buttonLeaveSession"
-                onClick={this.leaveSession}
-                value="방 나가기"
-              />
-              <input
-                className="btn btn-large btn-danger"
-                type="button"
-                id="buttonLeaveSession"
-                onClick={this.closeRoom}
-                value="공부방 닫기"
-              />
-            </div>
-            <div id="chat-container">
-              <canvas id="canvas">\ </canvas>
-              <button onClick={() => this.toggleChat()}>채팅열기</button>
-              {this.state.publisher !== undefined &&
-                this.state.publisher.stream !== undefined && (
-                  <div
-                    className="OT_root OT_publisher custom-class"
-                    style={chatDisplay}
-                  >
-                    <ChatComponent
-                      user={this.state.publisher}
-                      chatDisplay={this.state.chatDisplay}
-                      close={this.toggleChat}
-                      messageReceived={this.checkNotification}
-                    />
-                  </div>
-                )}
+              
             </div>
           </div>
         )}

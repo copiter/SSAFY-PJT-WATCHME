@@ -49,20 +49,30 @@ function Members() {
         }
       })
     .then((result) => {
-      console.log(result);
-      console.log("맴버스 성공");
+      setStudy(result.responseData.log);
     })
     .catch((err) => {
       console.log("ERR");
     });
 	}, [])
 
-  let memNo=0;
+  let memNo=1;
+
+
+
+const LST=mstudy.map((name, memNo)=>(
+<div key={memNo} className="comps"> 
+
+  <img src={mstudy[memNo].images} alt="#"/>
+  <div>{mstudy[memNo].nickName}</div>
+  <div>{mstudy[memNo].penalty}</div>
+</div>));
   return (
     <div className="backDiv">
-      <img src={mstudy[memNo].images} alt="#"/>
-      <div>{mstudy[memNo].nickName}</div>
-      <div>{mstudy[memNo].penalty}</div>
+      <div>
+        {LST}
+
+      </div>
     </div>
   );  
 }

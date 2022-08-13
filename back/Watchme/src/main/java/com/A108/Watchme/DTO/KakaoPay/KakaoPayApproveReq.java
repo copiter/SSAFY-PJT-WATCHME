@@ -12,5 +12,4 @@ import lombok.Setter;
 public class KakaoPayApproveReq {
     private String tid;
     private String pg_token;
-    private int value;
 }

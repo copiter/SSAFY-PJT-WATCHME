@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,19 +47,12 @@ public class RoomService {
     private final CategoryRepository categoryRepository;
     private final S3Uploader s3Uploader;
 
-    public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images, HttpServletRequest request) {
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse createRoom(PostRoomReqDTO postRoomReqDTO, MultipartFile images, Long memberId) {
 
         ApiResponse result = new ApiResponse();
         System.out.println(postRoomReqDTO.getCategoryName());
 
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Long memberId;
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch(Exception e){
-            throw new CustomException(Code.C501);
-        }
                 String url = "https://popoimages.s3.ap-northeast-2.amazonaws.com/WatchMe/study.jpg";
             if(images!=null){
                 try {
@@ -67,10 +61,6 @@ public class RoomService {
                     throw new CustomException(Code.C512);
                 }
             }
-
-
-
-
                 Member member = memberRepository.findById(memberId).get();
                 Category category;
                 try{
@@ -87,6 +77,17 @@ public class RoomService {
                     }
                 } catch (Exception e){
                     throw new CustomException(Code.C599);
+                }
+
+                if(postRoomReqDTO.getRoomPwd()!=null){
+                    try{
+                        int pwd = postRoomReqDTO.getRoomPwd();
+                        if(Integer.toString(pwd).length()!=4){
+                            throw new CustomException(Code.C516);
+                        }
+                    } catch(Exception e){
+                        throw new CustomException(Code.C525);
+                    }
                 }
 
 
@@ -176,23 +177,14 @@ public class RoomService {
         return result;
     }
 
-
-    public ApiResponse joinRoom(Long roomId, JoinRoomDTO joinRoomDTO) {
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse joinRoom(Long roomId, JoinRoomDTO joinRoomDTO, Long memberId) {
         ApiResponse result = new ApiResponse();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId;
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch(Exception e){
-            throw new CustomException(Code.C501);
-        }
-
 
         try {
             Room room = roomRepository.findById(roomId).get();
-            if(!room.getMode().toString().equals("YES")){
-                result.setMessage("INVALID ACCESS");
-                result.setCode(513);
+            if(!room.getStatus().toString().equals("YES")){
+                throw new CustomException(Code.C522);
             }
             Integer roomPwd = room.getRoomInfo().getPwd();
             int pwd;
@@ -247,6 +239,7 @@ public class RoomService {
 
     }
 
+    @Transactional(rollbackFor = {Exception.class})
     public void outRoomFunc(Long roomId, Long memberId) {
         MemberRoomLog memberRoomLog;
        try{
@@ -293,16 +286,9 @@ public class RoomService {
 
         return null;
     }
-
-    public ApiResponse updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO, MultipartFile images) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId;
+    @Transactional(rollbackFor = {Exception.class})
+    public ApiResponse updateRoom(Long roomId, RoomUpdateDTO roomUpdateDTO, MultipartFile images, Long memberId) {
         Room room;
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch(Exception e){
-            throw new CustomException(Code.C501);
-        }
         CategoryList name = CategoryList.valueOf(roomUpdateDTO.getRoomCategory());
         Category category = categoryRepository.findByName(name);
         try{
@@ -330,6 +316,26 @@ public class RoomService {
             throw new CustomException(Code.C599);
         }
 
+        try{
+            MemberRoomLog myRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+            if(!myRoomLog.getStatus().equals("NO")){
+                throw new CustomException(Code.C595);
+            }
+        } catch (Exception e){
+            throw new CustomException(Code.C523);
+        }
+
+        if(roomUpdateDTO.getPwd()!=null){
+            try{
+                int pwd = roomUpdateDTO.getPwd();
+                if(Integer.toString(pwd).length()!=4){
+                    throw new CustomException(Code.C516);
+                }
+            } catch(Exception e){
+                throw new CustomException(Code.C525);
+            }
+        }
+
         if (memberId == room.getMember().getId()) {
 
                 room.setRoomCtg(category);
@@ -351,14 +357,7 @@ public class RoomService {
         }
         return apiResponse;
     }
-    public ApiResponse outRoom(Long roomId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId;
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch(Exception e){
-            throw new CustomException(Code.C501);
-        }
+    public ApiResponse outRoom(Long roomId, Long memberId) {
 
         outRoomFunc(roomId, memberId);
         ApiResponse apiResponse = new ApiResponse();
@@ -388,15 +387,8 @@ public class RoomService {
 
     }
 
-    public ApiResponse getRoomDet(Long roomId) {
+    public ApiResponse getRoomDet(Long roomId, Long memberId) {
         ApiResponse apiResponse = new ApiResponse();
-        Long memberId;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
         Room room;
         try{
             room = roomRepository.findById(roomId).get();
@@ -406,6 +398,9 @@ public class RoomService {
         MemberRoomLog memberRoomLog;
         try{
             memberRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+            if(!memberRoomLog.getStatus().equals("NO")){
+                throw new CustomException(Code.C595);
+            }
         } catch (Exception e){
             throw new CustomException(Code.C523);
         }
@@ -424,22 +419,22 @@ public class RoomService {
         return apiResponse;
     }
 
-    public ApiResponse getRoomMem(Long roomId) {
+    public ApiResponse getRoomMem(Long roomId, Long memberId) {
         ApiResponse apiResponse = new ApiResponse();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        try{
-            Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
-
         List<RoomDetMemDTO> memDTOList = new LinkedList<>();
         try{
             Room room = roomRepository.findById(roomId).get();
         } catch(Exception e){
             throw new CustomException(Code.C522);
         }
-
+        try{
+            MemberRoomLog myRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+            if(!myRoomLog.getStatus().equals("NO")){
+                throw new CustomException(Code.C595);
+            }
+        } catch (Exception e){
+            throw new CustomException(Code.C523);
+        }
 
         // 공부시간이 정산되지 않았으면 status가 NO임 => 공부중인 상태
         List<MemberRoomLog> memberRoomLogs = mrlRepository.findByRoomIdAndStatus(roomId, Status.NO);
@@ -454,21 +449,23 @@ public class RoomService {
         return apiResponse;
     }
 
-    public ApiResponse getRoomSetting(Long roomId) {
+    public ApiResponse getRoomSetting(Long roomId, Long memberId) {
         ApiResponse apiResponse = new ApiResponse();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long memberId;
-        try{
-            memberId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-        } catch (Exception e){
-            throw new CustomException(Code.C501);
-        }
         Room room;
         try{
             room = roomRepository.findById(roomId).get();
         } catch(Exception e){
             throw new CustomException(Code.C522);
         }
+        try{
+            MemberRoomLog myRoomLog = mrlRepository.findByMemberIdAndRoomId(memberId, roomId).get();
+            if(!myRoomLog.getStatus().equals("NO")){
+                throw new CustomException(Code.C595);
+            }
+        } catch (Exception e){
+            throw new CustomException(Code.C523);
+        }
+
         Long owner_id = room.getMember().getId();
         if(owner_id != memberId){
             throw new CustomException(Code.C530);

@@ -46,6 +46,13 @@ public class Group {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private Integer view;
+
+    /**
+     * 1 : 비공개 / 0: 공개
+     */
+    private Integer secret;
+
     @OneToMany(mappedBy = "group")
     private List<Sprint> sprints;
 
@@ -61,10 +68,4 @@ public class Group {
     @JsonManagedReference
     private List<GroupCategory> category;
 
-    private Integer view;
-
-    /**
-     * 1 : 비공개 / 0: 공개
-     */
-    private Integer secret;
 }

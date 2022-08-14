@@ -60,7 +60,8 @@ public enum Code {
     C596(596, "DTO ERROR"),
     C597(597, "KAKAO PAY ERROR" ),
     C598(598, "INVALID POINT VALUE" ),
-    C599(599, "DATE PARSING FAILED" );
+    C599(599, "DATE PARSING FAILED" ),
+    C554(554, "NO MEMBER ROOM LOG");
 
 
     private int errCode;

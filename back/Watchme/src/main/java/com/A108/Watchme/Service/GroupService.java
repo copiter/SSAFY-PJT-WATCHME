@@ -78,24 +78,21 @@ public class GroupService {
             Category category = categoryRepos.findByName(CategoryList.valueOf(ctgName));
 
             if (keyword == null) {
-                groupList = groupRepos.findAllByCategory_category(category, pageRequest).stream().collect(Collectors.toList());
+                groupList = groupRepos.findAllByCategory_categoryAndStatus(category, Status.YES, pageRequest).stream().collect(Collectors.toList());
 
             } else {
-                groupList = groupRepos.findAllByCategory_categoryAndGroupNameContaining(category, keyword, pageRequest).stream().collect(Collectors.toList());
+                groupList = groupRepos.findAllByCategory_categoryAndStatusAndGroupNameContaining(category, Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
             }
 
         } else {
             if (keyword == null) {
-                groupList = groupRepos.findAllByOrderByViewDesc(pageRequest).stream().collect(Collectors.toList());
+                groupList = groupRepos.findAllByStatusOrderByViewDesc(Status.YES, pageRequest).stream().collect(Collectors.toList());
 
             } else {
-                groupList = groupRepos.findAllByGroupNameContaining(keyword, pageRequest).stream().collect(Collectors.toList());
+                groupList = groupRepos.findAllByStatusAndGroupNameContaining(Status.YES, keyword, pageRequest).stream().collect(Collectors.toList());
             }
 
         }
-
-        // 삭제된 그룹 필터링
-        groupList = groupList.stream().filter(x -> x.getStatus() == Status.YES).collect(Collectors.toList());
 
         // 조회된 내역이 없는 경우
         if (groupList.isEmpty()) {
@@ -160,7 +157,7 @@ public class GroupService {
         Group group = checkGroup(groupId);
 
         // 삭제된 group의 경우
-        if (group.getStatus() == Status.NO) {
+        if (group.getStatus() == Status.NO || group.getStatus() == Status.DELETE) {
             throw new CustomException(Code.C510);
         }
 
@@ -594,6 +591,8 @@ public class GroupService {
             // TODO : Status만 DELETE로 바꾸면 될까? 다른 곳의 로직 체크!! ex.삭제되었지만 수정은 가능?
             group.setStatus(Status.DELETE);
 
+            groupRepos.save(group);
+
             result.setCode(200);
             result.setMessage("GROUP DELETE SUCCESS");
         } else {
@@ -611,10 +610,10 @@ public class GroupService {
 
         Group group = checkGroup(groupId);
 
-        List<MemberGroup> groupMember = group.getMemberGroupList();
+        List<Long> groupMemberId = group.getMemberGroupList().stream().map(x -> x.getMember().getId()).collect(Collectors.toList());
 
         // 그룹원이 아니면 Error
-        if (!group.getMemberGroupList().contains(currUser)) {
+        if (!groupMemberId.contains(currUserId)) {
             throw new CustomException(Code.C565);
         }
 
@@ -624,12 +623,23 @@ public class GroupService {
         List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).filter(x -> x.getId() != currUserId).collect(Collectors.toList());
 
         for (Member m : groupMembers) {
+            List<Integer> penalty = new ArrayList<>(Mode.values().length);
+            Collections.fill(penalty, 0);
+
+            List<PenaltyLog> penaltyLogList = plRepos.findAllByMemberId(m.getId());
+
+            if (penaltyLogList.size() != 0) {
+                for (Mode mode : Mode.values()) {
+                    penalty.add(mode.ordinal(), (int) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == mode.ordinal()).count());
+                }
+            }
             members.add(GroupMemberDetailResDTO.builder()
                     .nickName(m.getNickName())
                     // TODO : imgLink가 null로 오는 경우가 있다..?
                     .imgLink(m.getMemberInfo().getImageLink())
                     .email(m.getEmail())
                     .studyTime(m.getMemberInfo().getStudyTime())
+                    .penalty(penalty)
                     .build()
             );
         }
@@ -1003,31 +1013,28 @@ public class GroupService {
         Group group = checkGroup(groupId);
 
         Long currUserId = authUtil.memberAuth();
+        Member currUser = memberRepos.findById(currUserId).get();
 
-        Optional<Member> checkCurrUser = memberRepos.findById(currUserId);
+        if (currUser.getId() == group.getLeader().getId()) {
 
-        if (checkCurrUser.isPresent()) {
-            Member currUser = checkCurrUser.get();
+            List<String> ctg = group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList());
 
-            if (currUser.getId() == group.getLeader().getId()) {
+            UpdateFormResDTO updateFormResDTO = UpdateFormResDTO.builder()
+                    .id(group.getId())
+                    .name(group.getGroupName())
+                    .description(group.getGroupInfo().getDescription())
+                    .maxMember(group.getGroupInfo().getMaxMember())
+                    .ctg(ctg)
+                    .secret(group.getSecret() == 1 ? true : false)
+                    .imgLink(group.getGroupInfo().getImageLink())
+                    .build();
 
-                result.setResponseData("group", UpdateFormResDTO.builder()
-                        .id(group.getId())
-                        .name(group.getGroupName())
-                        .description(group.getGroupInfo().getDescription())
-                        .maxMember(group.getGroupInfo().getMaxMember())
-                        .ctg(group.getCategory().stream().map(x -> x.getCategory().getName().toString()).collect(Collectors.toList()))
-                        .display(group.getSecret())
-                        .imgLink(group.getGroupInfo().getImageLink())
-                        .build());
+            result.setResponseData("group", updateFormResDTO);
 
-                result.setCode(200);
-                result.setMessage("UPDATE-FORM SUCCESS");
-            } else {
-                throw new CustomException(Code.C565);
-            }
+            result.setCode(200);
+            result.setMessage("UPDATE-FORM SUCCESS");
         } else {
-            throw new CustomException(Code.C503);
+            throw new CustomException(Code.C565);
         }
 
         return result;

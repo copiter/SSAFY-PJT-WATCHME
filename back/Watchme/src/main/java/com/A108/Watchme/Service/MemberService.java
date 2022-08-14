@@ -244,10 +244,9 @@ public class MemberService {
 
                 List<WrapperMy> wraperList = new LinkedList<>();
 
-                List<Group> myGroupList = memberGroupRepository.findByMemberId(memberId).stream().map(x -> x.getGroup()).collect(Collectors.toList());
+                List<Group> myGroupList = memberGroupRepository.findByMemberId(memberId).stream().map(x -> x.getGroup()).filter(x->x.getStatus()==Status.YES).collect(Collectors.toList());
 
-                for (Group g :
-                        myGroupList) {
+                for (Group g : myGroupList) {
 
                     MyGroup myGroup = MyGroup.builder()
                             .id(g.getId())
@@ -271,12 +270,12 @@ public class MemberService {
 
                     // myData.penalty
                     List<Integer> penalty = new ArrayList<>(Mode.values().length);
-                    /*List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndSprintIn(currUser.getId(), g.getSprints());
 
-                    for (Mode m :
-                            Mode.values()) {
-                        penalty.add(rule.ordinal(), (int) (long) penaltyLogList.stream().filter(x -> x.getRule().getRuleName().ordinal() == rule.ordinal()).count());
-                    }*/
+                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndRoomIn(currUser.getId(), g.getSprints().stream().map(x->x.getRoom()).collect(Collectors.toList()));
+
+                    for (Mode m : Mode.values()) {
+                        penalty.add(m.ordinal(), (int) (long) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == m.ordinal()).count());
+                    }
 
                     MemberGroup currMemberGroup = memberGroupRepository.findByMemberIdAndGroupId(currUser.getId(), g.getId()).get();
 

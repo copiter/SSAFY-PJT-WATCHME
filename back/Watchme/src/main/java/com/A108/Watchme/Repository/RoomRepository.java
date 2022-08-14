@@ -3,6 +3,7 @@ package com.A108.Watchme.Repository;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.Category;
 import com.A108.Watchme.VO.Entity.room.Room;
+import com.A108.Watchme.VO.Entity.sprint.Sprint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,5 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     Page<Room> findAllByRoomCtgAndStatusAndRoomNameContaining(Category roomCtg, Status status,  String title, Pageable pageable);
 
+    List<Room> findAllBySprintIn(List<Sprint> sprints);
 }

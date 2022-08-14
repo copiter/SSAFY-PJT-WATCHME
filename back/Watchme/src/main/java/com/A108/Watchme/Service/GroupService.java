@@ -1,5 +1,6 @@
 package com.A108.Watchme.Service;
 
+import com.A108.Watchme.DTO.group.getGroupList.GroupMemberDetailResDTO;
 import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.group.*;
@@ -610,15 +611,25 @@ public class GroupService {
 
         Group group = checkGroup(groupId);
 
+        List<MemberGroup> groupMember = group.getMemberGroupList();
+
+        // 그룹원이 아니면 Error
+        if (!group.getMemberGroupList().contains(currUser)) {
+            throw new CustomException(Code.C565);
+        }
 
         // members
-        List<GroupMemberResDTO> members = new LinkedList<>();
+        List<GroupMemberDetailResDTO> members = new LinkedList<>();
 
-        List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).collect(Collectors.toList());
+        List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).filter(x -> x.getId() != currUserId).collect(Collectors.toList());
 
         for (Member m : groupMembers) {
-            members.add(GroupMemberResDTO.builder()
+            members.add(GroupMemberDetailResDTO.builder()
                     .nickName(m.getNickName())
+                    // TODO : imgLink가 null로 오는 경우가 있다..?
+                    .imgLink(m.getMemberInfo().getImageLink())
+                    .email(m.getEmail())
+                    .studyTime(m.getMemberInfo().getStudyTime())
                     .build()
             );
         }
@@ -631,7 +642,7 @@ public class GroupService {
             // 그룹 리더임
             List<GroupApplyLog> applyLogs = galRepos.findAllByGroupId(groupId);
 
-            applyLogs = applyLogs.stream().filter(x -> x.getStatus() != 0).collect(Collectors.toList());
+            applyLogs = applyLogs.stream().filter(x -> x.getStatus() != 1).collect(Collectors.toList());
 
             List<GroupApplyDTO> getApplies = new LinkedList<>();
 
@@ -640,18 +651,20 @@ public class GroupService {
 
                 //
                 List<Integer> penalty = new ArrayList<>(Mode.values().length);
+                Collections.fill(penalty, 0);
+
                 List<PenaltyLog> penaltyLogList = plRepos.findAllByMemberId(member.getId());
 
                 if (penaltyLogList.size() != 0) {
-                    for (Mode mode :
-                            Mode.values()) {
+                    for (Mode mode : Mode.values()) {
                         penalty.add(mode.ordinal(), (int) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == mode.ordinal()).count());
                     }
                 }
 
                 //
                 getApplies.add(new GroupApplyDTO().builder()
-                        .email(member.getEmail()).nickName(member.getNickName())
+                        .email(member.getEmail())
+                        .nickName(member.getNickName())
                         .imgLink(member.getMemberInfo().getImageLink())
                         .studyTime(member.getMemberInfo().getStudyTime())
                         .penalty(penalty)
@@ -689,7 +702,7 @@ public class GroupService {
         }
 
         if (groupApplyLog.isEmpty()) {
-            if(group.getGroupInfo().getMaxMember()==group.getGroupInfo().getCurrMember()){
+            if (group.getGroupInfo().getMaxMember() == group.getGroupInfo().getCurrMember()) {
                 throw new CustomException(Code.C568);
             }
 
@@ -720,40 +733,34 @@ public class GroupService {
     public ApiResponse cancelApply(Long groupId) {
         ApiResponse result = new ApiResponse();
 
-        Optional<Group> group = groupRepos.findById(groupId);
+        Group group = checkGroup(groupId);
 
-        if (group.isPresent()) {
-            Long currUserId = authUtil.memberAuth();
+        Long currUserId = authUtil.memberAuth();
+        Member member = memberRepos.findById(currUserId).get();
 
-            Optional<Member> member = memberRepos.findById(currUserId);
+        Optional<GroupApplyLog> checkGroupApplyLog = galRepos.findByMemberIdAndGroupId(currUserId, groupId);
 
-            if (member.isPresent()) {
-                Optional<GroupApplyLog> checkGroupApplyLog = galRepos.findByMemberIdAndGroupId(currUserId, groupId);
+        if (checkGroupApplyLog.isPresent()) {
+            // 로그에서 삭제
+            GroupApplyLog groupApplyLog = checkGroupApplyLog.get();
 
-                if (checkGroupApplyLog.isPresent()) {
-                    // 로그에서 삭제
-                    GroupApplyLog groupApplyLog = checkGroupApplyLog.get();
+            if (groupApplyLog.getStatus() == 0) {
+                galRepos.delete(groupApplyLog);
 
-                    if (groupApplyLog.getStatus() == 0) {
-                        galRepos.delete(groupApplyLog);
+                result.setCode(200);
+                result.setMessage("GROUP APPLY CANCLE SUCCESS");
 
-                        result.setCode(200);
-                        result.setMessage("GROUP APPLY CANCLE SUCCESS");
-                    } else if (groupApplyLog.getStatus() == 1) {
-                        throw new CustomException(Code.C509);
-                    } else if (groupApplyLog.getStatus() == 2) {
-                        throw new CustomException(Code.C566);
-                    }
-                } else {
-                    throw new CustomException(Code.C300);
-                }
-            } else {
-                throw new CustomException(Code.C503);
+            } else if (groupApplyLog.getStatus() == 1) {
+                throw new CustomException(Code.C509);
+
+            } else if (groupApplyLog.getStatus() == 2) {
+                throw new CustomException(Code.C566);
             }
 
         } else {
-            throw new CustomException(Code.C510);
+            throw new CustomException(Code.C300);
         }
+
         return result;
     }
 
@@ -767,46 +774,39 @@ public class GroupService {
             Group group = checkGroup.get();
 
             Long currUserId = authUtil.memberAuth();
+            Member currUser = memberRepos.findById(currUserId).get();
 
-            Optional<Member> checkCurrUser = memberRepos.findById(currUserId);
+            if (currUser.getId() == group.getLeader().getId()) {
+                Member applier = memberRepos.findByNickName(acceptApplyReqDTO.getNickName());
 
-            if (checkCurrUser.isPresent()) {
-                Member currUser = checkCurrUser.get();
+                Optional<GroupApplyLog> groupApplyLog = galRepos.findByMemberIdAndGroupId(applier.getId(), groupId);
 
-                if (currUser.getId() == group.getLeader().getId()) {
-                    Member applier = memberRepos.findByNickName(acceptApplyReqDTO.getNickName());
-
-                    Optional<GroupApplyLog> groupApplyLog = galRepos.findByMemberIdAndGroupId(applier.getId(), groupId);
-
-                    if (groupApplyLog.isPresent()) {
-                        if(group.getGroupInfo().getMaxMember()==group.getGroupInfo().getCurrMember()){
-                            throw new CustomException(Code.C568);
-                        }
-
-                        groupApplyLog.get().setStatus(1);
-                        groupApplyLog.get().setUpdate_date(new Date());
-
-                        galRepos.save(groupApplyLog.get());
-
-                        memberGroupRepos.save(MemberGroup.builder()
-                                .member(applier)
-                                .group(group)
-                                .createdAt(new Date())
-                                .groupRole(GroupRole.MEMBER)
-                                .build()
-                        );
-
-                        result.setCode(200);
-                        result.setMessage("GROUP APPLY ACCEPT SUCCESS");
-                    } else {
-                        throw new CustomException(Code.C300);
+                if (groupApplyLog.isPresent()) {
+                    if (group.getGroupInfo().getMaxMember() == group.getGroupInfo().getCurrMember()) {
+                        throw new CustomException(Code.C568);
                     }
 
+                    groupApplyLog.get().setStatus(1);
+                    groupApplyLog.get().setUpdate_date(new Date());
+
+                    galRepos.save(groupApplyLog.get());
+
+                    memberGroupRepos.save(MemberGroup.builder()
+                            .member(applier)
+                            .group(group)
+                            .createdAt(new Date())
+                            .groupRole(GroupRole.MEMBER)
+                            .build()
+                    );
+
+                    result.setCode(200);
+                    result.setMessage("GROUP APPLY ACCEPT SUCCESS");
                 } else {
-                    throw new CustomException(Code.C565);
+                    throw new CustomException(Code.C300);
                 }
+
             } else {
-                throw new CustomException(Code.C503);
+                throw new CustomException(Code.C565);
             }
         } else {
             throw new CustomException(Code.C510);

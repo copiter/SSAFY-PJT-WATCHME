@@ -160,4 +160,21 @@ public class MemberController {
 
     }
 
+
+    @GetMapping("/points")
+    public ApiResponse getMyPoint(){
+        ApiResponse apiResponse;
+
+        Long id = authUtil.memberAuth();
+        try{
+            apiResponse = memberService.getMyPoint(id);
+
+            apiResponse.setCode(200);
+            apiResponse.setMessage("GET MY POINT SUCCESS");
+        } catch (Exception e){
+            throw new CustomException(Code.C500);
+        }
+        return apiResponse;
+    }
+
 }

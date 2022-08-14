@@ -33,6 +33,8 @@ public class PointLog {
 
     @Column(name = "pg_token")
     private String pgToken;
+
+    // sprint entity에서 참조중
     @ManyToOne
     @JoinColumn(name = "sprint_id")
     private Sprint sprint;

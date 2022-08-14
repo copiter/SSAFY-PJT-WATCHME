@@ -90,7 +90,7 @@ public class MemberController {
     }
 
 
-    @GetMapping(value = "/mygroup")
+    @GetMapping("/mygroup")
     @ResponseBody
     public ApiResponse memberGroup() {
         return memberService.memberGroup();

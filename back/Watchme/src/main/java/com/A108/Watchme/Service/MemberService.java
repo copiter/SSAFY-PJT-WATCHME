@@ -1,6 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.Config.properties.AppProperties;
+import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.DTO.*;
 import com.A108.Watchme.DTO.Sprint.SprintGetResDTO;
@@ -78,6 +79,7 @@ public class MemberService {
     private final MailService mailService;
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final SprintRepository sprintRepository;
+    private final PointLogRepository pointLogRepository;
 
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
@@ -621,5 +623,54 @@ public class MemberService {
 
         return result;
     }
+
+
+    public ApiResponse getMyPoint(Long id) {
+        ApiResponse result = new ApiResponse();
+
+        Member currUser = memberRepository.findById(id).get();
+
+        List<PointLog> pointLogList = pointLogRepository.findAllByMemberId(currUser.getId());
+        List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberId(currUser.getId());
+
+        int chargePoint = 0;
+        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()==null).collect(Collectors.toList())) {
+            chargePoint += pl.getPointValue();
+        };
+
+        int getPoint = 0;
+        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()>0).collect(Collectors.toList())) {
+            getPoint += pl.getPointValue();
+        };
+
+        int losePoint = 0;
+        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()<0).collect(Collectors.toList())) {
+            losePoint += pl.getPointValue();
+        };
+
+        int sumPoint = chargePoint+getPoint-losePoint;
+
+        List<PointLogResDTO> pointList = new LinkedList<>();
+        for (PointLog pl : pointLogList) {
+            pointList.add(PointLogResDTO.builder()
+                    .date(format.format(pl.getCreatedAt()))
+                    .content(pl.getSprint().getName())
+                    .point(pl.getPointValue())
+                    .build());
+        }
+
+        result.setResponseData("sumPoint", sumPoint);
+        result.setResponseData("chargePoint", chargePoint);
+        result.setResponseData("getPoint", getPoint);
+        result.setResponseData("losePoint", losePoint);
+        result.setResponseData("pointList", pointList);
+
+        result.setCode(200);
+        result.setMessage("point 내역 반환성공");
+
+
+        return result;
+    }
+
 }
 

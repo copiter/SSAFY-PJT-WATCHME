@@ -11,6 +11,7 @@ import javax.validation.constraints.PositiveOrZero;
 public class SprintPostDTO {
     @NotBlank(message = "스프린트 이름을 입력하세요.")
     private String name;
+    // TODO : front에서 보내는 request 변수명 확인해볼것
     private String description;
     private String goal;
     private String startAt;

@@ -5,7 +5,7 @@ import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
 import ChatComponent from "./chat/ChatComponent";
 import { FetchUrl } from "../../../store/communication";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 
 import Members from "./componentOnRoom/Members";
 import MyStudy from "./componentOnRoom/MyStudy";
@@ -23,6 +23,7 @@ class RoomDetail extends Component {
 
     this.state = {
       mySessionId: "SessionA",
+      isRoomLeader:true,
       myUserName: "Participant" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined,
@@ -31,7 +32,8 @@ class RoomDetail extends Component {
       videoState: true, //보이도록
       audioState: true, //마이크 on
       screenShare: true, //화면공유 버튼
-      chatDisplay: "none",
+      isScreenShareNow:false,
+      chatDisplay: "block",
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -220,7 +222,7 @@ class RoomDetail extends Component {
 
     fetch(url, {
       method: "POST",
-      //headers:{accessToken: getCookie("accessToken")}
+      headers:{accessToken: getCookie("accessToken")}
     })
       .then((response) => {
         console.log(response);
@@ -310,37 +312,45 @@ class RoomDetail extends Component {
 
   //화면 공유 기능
   async screenShare() {
-    //기존 정보 저장
-    const latestPublisher = this.state.publisher;
-
-    //screenshare를 위한 publisher 생성
-    var newPublisher = this.OV.initPublisher(undefined, {
-      videoSource: "screen",
-    });
-
-    //mainStream 없애고 새로 생성한 stream 추가
-    await this.state.session.unpublish(this.state.mainStreamManager);
-    await this.state.session.publish(newPublisher);
-    this.setState({
-      mainStreamManager: newPublisher,
-      publisher: newPublisher,
-      screenShare: false,
-    });
-
-    console.log("Session screen connected");
+    try{
+      const latestPublisher = this.state.publisher;
+    
 
     //화면 공유 중지 누른 뒤 로직
-    newPublisher.stream
-      .getMediaStream()
-      .getVideoTracks()[0]
-      .addEventListener("ended", () => {
-        console.log('User pressed the "Stop sharing" button');
-        this.state.session.unpublish(newPublisher);
-        this.state.session.publish(latestPublisher);
-        this.setState({
-          screenShare: true,
+    if(this.state.isScreenShareNow){
+       newPublisher.stream
+        .getMediaStream()
+        .getVideoTracks()[0]
+        .addEventListener("ended", () => {
+          console.log('User pressed the "Stop sharing" button');
+          this.state.session.unpublish(newPublisher);
+          this.state.session.publish(latestPublisher);
+          this.setState({
+            screenShare: true,
+          });
         });
+    }
+    else{
+//기존 정보 저장
+          
+      //screenshare를 위한 publisher 생성
+      var newPublisher = this.OV.initPublisher(undefined, {
+        videoSource: "screen",
       });
+
+      //mainStream 없애고 새로 생성한 stream 추가
+      await this.state.session.unpublish(this.state.mainStreamManager);
+      await this.state.session.publish(newPublisher);
+      this.setState({
+        mainStreamManager: newPublisher,
+        publisher: newPublisher,
+      });
+
+    }
+      console.log(this.state.isScreenShareNow)
+      this.state.isScreenShareNow=!this.state.isScreenShareNow;
+    }
+    catch{}
   }
 
   //Video On / Off
@@ -435,9 +445,13 @@ class RoomDetail extends Component {
       .then((result) => {
         if (result != null) {
           console.log("성공");
-          console.log(result);
+          console.log(result.responseData.room);
           console.log("백통신 결과입니다.");
-          this.state.sessionId=result.resPonseData;
+          this.state.mySessionId=result.responseData.room.name;
+          this.state.isRoomLeader=(result.responseData.room.leaderTrue===0?false:true);
+          localStorage.setItem({"L":this.state.isRoomLeader});
+          console.log(this.state.isRoomLeader);
+          this.state.screenShare=(result.responseData.room.mode==="MODE1"?false:true)
         }
       })
       .catch((err) => {
@@ -516,7 +530,6 @@ class RoomDetail extends Component {
   render() {
     const mySessionId = this.state.mySessionId;
     var chatDisplay = { display: this.state.chatDisplay };
-
     return (
       <div className="container">
         {this.state.session === undefined ? null : (
@@ -545,8 +558,8 @@ class RoomDetail extends Component {
                 </div>
                  
               </div>
-              <div className="myCams">
-                {
+              <div className="cams">
+                <div className="myCams">{
                   //개인카메라
                   this.state.mainStreamManager !== undefined ? (
                     <div id="main-video" className="col-md-6">
@@ -564,12 +577,13 @@ class RoomDetail extends Component {
                     </div>
                   ) : null
                 }
-                <div id="video-container" className="col-md-6">
-                  {this.state.publisher !== undefined ? (
-                    <div className="stream-container col-md-6 col-xs-6">
-                      <UserVideoComponent streamManager={this.state.publisher} />
-                    </div>
-                  ) : null}
+                  <div id="video-container" className="col-md-6">{console.log(this.state.isScreenShareNow)}
+                    {this.state.publisher !== undefined &&this.state.isScreenShareNow? (
+                      <div className="stream-container col-md-6 col-xs-6">
+                        <UserVideoComponent streamManager={this.state.publisher} />
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="others">
                   {this.state.subscribers.map((sub, i) => (
@@ -592,11 +606,11 @@ class RoomDetail extends Component {
                       <button className="linksLi">내 공부</button>
                     </Link>
                     <Link to="./members">
-                       <button className="linksLi">맴버목록</button>
+                       <button className="linksLi">맴버</button>
                     </Link>
-                    <Link to="./RoomReform">
+                    {this.state.isRoomLeader?<Link to="./RoomReform">
                       <button className="linksLi">방 수정</button>
-                    </Link>
+                    </Link>:""}
                   </div>
                  
                 </div>
@@ -626,7 +640,9 @@ class RoomDetail extends Component {
                     <canvas id="canvas" ></canvas>
                   </div>
                 </div>
-                <div className="btnRight">
+                
+              </div>
+              <div className="btnRight">
                   <div className="btnRightInner">
                     <input
                         className="btn btn-large btn-danger btnR"
@@ -635,18 +651,16 @@ class RoomDetail extends Component {
                         onClick={this.leaveSession}
                         value="방 나가기"
                       />
-                    <input
+                    {this.state.isRoomLeader?<input
                       className="btn btn-large btn-danger btnR"
                       type="button"
                       id="buttonLeaveSession"
                       onClick={this.closeRoom}
                       value="방 닫기"
-                    />
+                    />:""}
                     <button className="btnR" onClick={() => this.toggleChat()}>채팅</button>
                   </div>
                 </div>
-              </div>
-              
             </div>
           </div>
         )}

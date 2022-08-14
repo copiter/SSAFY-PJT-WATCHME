@@ -6,7 +6,6 @@
 .out{
 	position: relative;
 	display: flex;
-	height: 90em;
 }
 .Main{
 	position: relative;
@@ -45,7 +44,7 @@
 			.btnVedioOFF{
 				position: flex;
 			}
-	.myCams{
+	.cams{
 		position: relative;
 		width: 100%;
 		height: 50rem;
@@ -53,9 +52,13 @@
 		flex-wrap: wrap;
 		background-color: gainsboro;
 	}
+	.myCams{
+		
+	}
 .Aside{
 	position: relative;
 	width:30rem;
+	top:1rem;
 }
 .rightSide{
 	position: relative;
@@ -68,13 +71,13 @@
 		
 	}
 	.AsideMain{
-		margin: 5%;
+		margin-top:1rem;
 		background-color: 858585;
 	}
 	.sideBoards{
 		position: relative;
 		width: 100%;
-		height: 35rem;
+		height: 50rem;
 	}
 
 		.linksUl{
@@ -96,20 +99,21 @@
 		
 		position: absolute;
 		display: block;
-		top:40%;
-		width: 100%;
-		height: 23rem;
+		top:50%;
+		margin-left: 1.4rem;
+		width: 90%;
+		height: 24rem;
 	}
 	.btnRight{
 		position: relative;
-		width: 100%;
-		height: 5rem;
+		width: 100%;	
+		top:-1.5rem;
 
 	}
 		.btnRightInner{
 			position: relative;
-			margin-left: 10%;
-			top:0.7rem;
+			margin-left: 15%;
+			top:-5rem;
 		}
 			.btnR
 			{

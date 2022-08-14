@@ -497,7 +497,7 @@ class RoomDetail extends Component {
     const blob = await imageCapture.takePhoto();
     formData.append("img", blob, "img");
 
-   /*fetch("https://watchme1.shop/flask/openCV", {
+   fetch("https://watchme1.shop/flask/openCV", {
       method: "POST",
       body: formData,
     })
@@ -516,15 +516,36 @@ class RoomDetail extends Component {
           if (result.code === 200) {
             console.log("오류없음");
           } else if (result.code === 205) {
-            alert();
-          } else {
+            this.errorFound();
+          } else if(result.code === 202){
+            
+          }
+          else if(result.code==504){
+            console.log("504에러");
+          }
+          else if(result.code===522)
+          {
+            console.log("522에러");
+          }
+          else if(result.code==553)
+          {
+            console.log("553에러");
           }
         }
       })
       .catch((err) => {
         console.log("ERR여기임");
-      }); */
+      }); 
   
+  }
+
+
+
+  errorFound(){
+    alert("감지되었습니다.");
+  }
+  ban(){
+    alert("벌점이 과다로 추방되었습니다.");
   }
 
   render() {
@@ -612,7 +633,6 @@ class RoomDetail extends Component {
                       <button className="linksLi">방 수정</button>
                     </Link>:""}
                   </div>
-                 
                 </div>
                 <div className="AsideMain">
                   <div className="sideBoards">
@@ -636,8 +656,7 @@ class RoomDetail extends Component {
                           messageReceived={this.checkNotification}
                         />
                       </div>
-                    )}
-                    <canvas id="canvas" ></canvas>
+                    )}  
                   </div>
                 </div>
                 

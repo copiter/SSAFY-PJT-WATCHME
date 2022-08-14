@@ -124,6 +124,7 @@
   padding: 25px 50px;
   background: #e0e2e6;
   border-radius: 8px;
+  min-width: 150px;
   max-width: 260px;
 }
 
@@ -151,6 +152,7 @@
 #mypage__setting {
   text-align: end;
   border-left: 1px dotted #eff0f2;
+  min-width: 160px;
 }
 #mypage__setting > strong {
   margin-bottom: 35px;

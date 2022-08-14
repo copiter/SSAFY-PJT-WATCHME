@@ -27,6 +27,7 @@ function GroupDetailMembers(props) {
         if (data.code === 200) {
           setMemData(data.responseData);
         } else {
+          console.log(data);
           ErrorCode(data);
         }
       } catch (e) {

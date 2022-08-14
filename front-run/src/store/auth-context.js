@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { FetchUrl } from "./communication";
-import { getCookie } from "../Cookie";
+import { getCookie, removeCookie } from "../Cookie";
 import ErrorCode from "../Error/ErrorCode";
 
 const AuthContext = React.createContext({
@@ -24,28 +24,22 @@ export const AuthContextProvider = (props) => {
 
   const logoutHandler = () => {
     sessionStorage.removeItem("userData");
-
-    if (!!getCookie("accessToken")) {
-      fetch(`${FETCH_URL}/members/auth/logout`, {
-        method: "POST",
-        headers: {
-          accessToken: getCookie("accessToken"),
-        },
+    fetch(`${FETCH_URL}/members/auth/logout`, {
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          window.location.replace(window.location.origin);
+          removeCookie("accessToken");
+        }
       })
-        .then((response) => response.json())
-        .then((result) => {
-          if (result.code === 501) {
-            ErrorCode(result);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      document.cookie =
-        "accessToken" + "=; expires=Thu, 01 Jan 1999 00:00:10 GMT;";
-      window.location.reload();
-    }
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const contextValue = {

@@ -41,8 +41,6 @@ function GroupRecruit() {
       .then((result) => {
         if (result.code === 200) {
           setGroups(result["responseData"]["groups"]);
-        } else {
-          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -56,7 +54,9 @@ function GroupRecruit() {
     fetch(
       url +
         "?" +
-        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
+        (inputs.ctg === "" || inputs.ctg === "all"
+          ? ""
+          : "ctg=" + inputs.ctg + "&") +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
@@ -71,11 +71,11 @@ function GroupRecruit() {
         console.log(err);
       });
     // inputs.keyword = "";
+    // setInputs((values) => ({ ...values, [inputs.keyword]: "" }));
   };
 
   const addMore = (event) => {
     //값 입력 안받은상태임
-    page++;
     fetch(
       url +
         "?" +
@@ -86,6 +86,7 @@ function GroupRecruit() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
+          page++;
           setGroups([...groups, ...result.responseData.groups]);
         } else {
           ErrorCode(result);

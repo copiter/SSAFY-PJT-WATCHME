@@ -31,7 +31,6 @@ function GroupCreate() {
     maxMember: 0,
     ctg: [false, false, false, false],
     secret: "",
-    pwd: null,
   });
   const navigate = useNavigate();
 
@@ -83,7 +82,6 @@ function GroupCreate() {
       maxMember: inputs.maxMember,
       ctg: ctgs,
       secret: inputs.secret,
-      pwd: inputs.pwd,
     };
 
     const formData = new FormData();

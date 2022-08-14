@@ -133,7 +133,7 @@ function GroupDetailSprint(props) {
           <strong>
             모집중인 스프린트<i>(👇클릭)</i>
           </strong>
-          {props.role === 0 && (
+          {props.role === 0 && sprintJoin.length > 0 && (
             <button onClick={sprintDelete}>스프린트 삭제</button>
           )}
         </div>

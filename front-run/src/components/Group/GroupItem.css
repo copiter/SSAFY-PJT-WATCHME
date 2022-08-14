@@ -2,6 +2,11 @@
   border-radius: 8px;
   overflow: hidden;
 }
+#mypage-mygroup .backdrop {
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
 
 #groups__whole article {
   display: inline-block;

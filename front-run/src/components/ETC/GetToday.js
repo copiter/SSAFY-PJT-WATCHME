@@ -1,6 +1,6 @@
-function GetToday() {
+function GetToday(day) {
   var today = new Date();
-  var dd = today.getDate();
+  var dd = today.getDate() + Number(day);
   var mm = today.getMonth() + 1; //January is 0 so need to add 1 to make it 1!
   var yyyy = today.getFullYear();
 

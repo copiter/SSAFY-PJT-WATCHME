@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +38,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoomService {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 종료");
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MRLRepository mrlRepository;
@@ -71,7 +74,9 @@ public class RoomService {
                 }
                 Date date;
                 try{
-                    date = format.parse(postRoomReqDTO.getEndTime());
+                    LocalDateTime localparseTime = LocalDateTime.parse(postRoomReqDTO.getEndTime());
+                    String needDate = localparseTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    date = new Date(format.parse(needDate).getTime());
                     if(date.before(DateTime.now().toDate())){
                         throw new CustomException(Code.C527);
                     }
@@ -89,7 +94,6 @@ public class RoomService {
                         throw new CustomException(Code.C525);
                     }
                 }
-
 
                 Room room = Room.builder()
                         .roomName(postRoomReqDTO.getRoomName())
@@ -308,7 +312,9 @@ public class RoomService {
         }
         Date date;
         try{
-            date = format.parse(roomUpdateDTO.getEndAt());
+            LocalDateTime localparseTime = LocalDateTime.parse(roomUpdateDTO.getEndAt());
+            String needDate = localparseTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            date = new Date(format.parse(needDate).getTime());
             if(date.before(DateTime.now().toDate())){
                 throw new CustomException(Code.C527);
             }
@@ -481,7 +487,7 @@ public class RoomService {
                 .roomPwd((room.getRoomInfo().getPwd()==null)? -1:room.getRoomInfo().getPwd())
                 .img(room.getRoomInfo().getImageLink())
                 .num(room.getRoomInfo().getMaxMember())
-                .endTime(format.format(room.getRoomInfo().getEndAt()))
+                .endTime(format2.format(room.getRoomInfo().getEndAt()))
                 .build());
 
         apiResponse.setCode(200);

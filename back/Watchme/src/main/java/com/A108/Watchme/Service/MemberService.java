@@ -100,6 +100,10 @@ public class MemberService {
                 .point(0)
                 .imageLink(url)
                 .score(0)
+                .studyTime(0)
+                .studyTimeDay(0)
+                .studyTimeMonth(0)
+                .studyTimeWeek(0)
                 .build());
 
         result.setMessage("MEMBER INSERT SUCCESS");

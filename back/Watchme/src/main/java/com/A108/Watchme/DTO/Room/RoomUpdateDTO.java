@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @Getter
@@ -19,7 +20,7 @@ public class RoomUpdateDTO {
     private Integer pwd;
     private String endAt;
     private String roomDescription;
-    @NotBlank(message = "인원을 입력하세요.")
+    @NotNull(message = "인원을 입력하세요.")
     @Positive(message = "인원은 0보다 큰 값이 들어가야 합니다.")
     private Integer roomMemberMaxNo;
     private String roomCategory;

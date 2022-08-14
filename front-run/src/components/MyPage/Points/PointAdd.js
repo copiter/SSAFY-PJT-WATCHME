@@ -68,22 +68,31 @@ function PointAdd() {
 
 
 
-
   return (
     <>
-      <form onSubmit={handleSubmit}>
-          <div>충전할 금액을 선택하세요</div>
-        <select onChange={handleChange} name="valueSelect">
-          <option value="1000" >1,000</option>
-          <option value="5000" >5,000</option>
-          <option value="10000" >10,000</option>
-          <option value="20000" >20,000</option>
-          <option value="50000" >50,000</option>
-          <option value="100000" >10,0000</option>
-          <option value="Free" >직접입력</option>
-        </select>
-        {isShown&&<input type="number"  className="dirInput" name="valueInputs"placeholder="금액을 입력하세요" onChange={handleChange}/>}
-        <div><button type="submit">제출</button></div>
+      <form className="kakaopay-form-frame" onSubmit={handleSubmit}>
+        
+        <div className="return-btn"><input type="button" value='돌아가기' /> </div>
+        <div className='selection'>💎결제수단을 선택하세요</div>
+        <div className='kakaopay-pay1'>
+        <input type="button" className='kakaopay-pay-item' value='카카오페이' />
+        <input type="button" className='kakaopay-pay-item' value='신용카드' />
+          <input type="button" className='kakaopay-pay-item' value='휴대폰' />
+          </div>
+        <div className='kakaopay-pay1'>
+        <input type="button" className='kakaopay-pay-item' value='계좌이체' />      
+        <input type="button" className='kakaopay-pay-item' value='기타' />
+        <input type="button" className='kakaopay-pay-item' value='네이버페이' />
+        </div>
+        <div className='kakaopay-money'>💰 결제 금액<input placeholder='금액을 입력해주세요.'/></div>
+        <div className='money-selection'>충전할 금액을 선택하세요</div>        
+        <div className='kakaopay-money-btn'>
+          <input value='+ 1만원' type="button" className='kakaopay-money-btn-item'  />
+        <input type="button" className='kakaopay-money-btn-item' value='+ 3만원'></input>
+        <input type="button" className='kakaopay-money-btn-item' value='+ 5만원'></input>
+          <input type="button" className='kakaopay-money-btn-item' value='+ 10만원'></input>
+          </div>
+        <input className='kakaopay-charge-btn' type="submit" value='충전'></input>
       </form>
     </>
   );

@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import GroupItem from "./GroupItem";
+import ErrorCode from "../../Error/ErrorCode";
 
 import "./GroupRecruit.css";
 import { FetchUrl } from "../../store/communication";
@@ -128,24 +129,20 @@ function GroupRecruit() {
           : "ctg=" + ARR[event.target.value] + "&") +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
-        } else {
-          console.log("제출Case4");
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        console.log(1);
-        console.log(result["responseData"]["groups"]);
-        setGroups(result["responseData"]["groups"]);
+        if (result.code === 200) {
+          setGroups(result["responseData"]["groups"]);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         console.log("ERROR");
       });
   };
+
+  console.log(groups);
 
   return (
     <div id="open-group">
@@ -226,10 +223,10 @@ function GroupRecruit() {
             <Link className="header__link" to="/GroupCreate">
               그룹 만들기
             </Link>
-            <button className="header__filter">
+            {/* <button className="header__filter">
               <img src={filter} alt="필터" />
               Filters
-            </button>
+            </button> */}
           </div>
           {/*아직 미구현예정 */}
         </div>

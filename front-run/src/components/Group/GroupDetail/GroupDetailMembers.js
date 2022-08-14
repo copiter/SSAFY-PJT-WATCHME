@@ -3,9 +3,11 @@ import { getCookie } from "../../../Cookie";
 
 import "./GroupDetailMembers.css";
 import json from "../../json/groupdetailmembers.json";
+import ErrorCode from "../../../Error/ErrorCode";
 
 function GroupDetailMembers(props) {
-  const [memData, setMemData] = useState(json.responseData);
+  const [memData, setMemData] = useState({ appliers: [], members: [] });
+  const [reload, setReload] = useState(false);
   const role = props.myData.role;
   const url = props.url;
 
@@ -23,14 +25,16 @@ function GroupDetailMembers(props) {
         if (data.code === 200) {
           setMemData(data.responseData);
         } else {
-          alert(data.message);
+          ErrorCode(data);
         }
       } catch (e) {
         alert(`통신 실패 ` + e);
       }
     };
     getDatas();
-  }, []);
+  }, [reload]);
+
+  console.log(memData);
 
   function leaveGroupHandler() {
     const ask = window.confirm("탈퇴하시겠습니까?");
@@ -48,24 +52,20 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/leave", config);
-        const data = await response.json();
+      const response = await fetch(url + "/leave", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert("그룹 탈퇴 되었습니다");
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert(e);
+      if (data.code === 200) {
+        alert("그룹 탈퇴 되었습니다");
+        window.location.reload();
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
   }
 
-  function confirmJoinHandler(e) {
-    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
+  function confirmJoinHandler(nickName) {
     const ask = window.confirm(`[${nickName}]님을 가입 승인하시겠습니까?`);
     if (!ask) {
       return;
@@ -80,24 +80,20 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/applies/accept", config);
-        const data = await response.json();
+      const response = await fetch(url + "/applies/accept", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert("가입 승인되었습니다");
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert("통신 " + e);
+      if (data.code === 200) {
+        alert("가입 승인되었습니다");
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
   }
 
-  function refuseJoinHandler(e) {
-    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
+  function refuseJoinHandler(nickName) {
     const ask = window.confirm(`[${nickName}]님을 반려하시겠습니까?`);
     if (!ask) {
       return;
@@ -112,26 +108,20 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/applies/decline", config);
-        const data = await response.json();
+      const response = await fetch(url + "/applies/decline", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert("반려되었습니다");
-        } else {
-          alert(data.message);
-        }
-        window.location.reload();
-        props.setNavBar(2);
-      } catch (e) {
-        alert("반려 실패 " + e);
+      if (data.code === 200) {
+        alert("반려되었습니다");
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
   }
 
-  function expulsionHandler(e) {
-    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
+  function expulsionHandler(nickName) {
     const ask = window.confirm(`[${nickName}]님을 강퇴 하시겠습니까?`);
     if (!ask) {
       return;
@@ -147,26 +137,20 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/kick", config);
-        const data = await response.json();
+      const response = await fetch(url + "/kick", config);
+      const data = await response.json();
 
-        if (data.code === 200) {
-          alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
-        } else {
-          alert(data.message);
-        }
-        window.location.reload();
-        props.setNavBar(2);
-      } catch (e) {
-        alert(`통신 ` + e);
+      if (data.code === 200) {
+        alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
   }
 
-  function transferHandler(e) {
-    const nickName = e.target.parentNode.parentNode.outerText.split("\n")[0];
+  function transferHandler(nickName) {
     const ask = window.confirm(
       `[${nickName}]님으로 리더 권한을 이전 하시겠습니까?`
     );
@@ -184,18 +168,13 @@ function GroupDetailMembers(props) {
       },
     };
     const getDatas = async () => {
-      try {
-        const response = await fetch(url + "/leader-toss", config);
-        const data = await response.json();
-        if (data.code === 200) {
-          alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
-        } else {
-          alert(data.message);
-        }
-        window.location.reload();
-        props.setNavBar(2);
-      } catch (e) {
-        alert(`통신 ` + e);
+      const response = await fetch(url + "/leader-toss", config);
+      const data = await response.json();
+      if (data.code === 200) {
+        alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
+        setReload(!reload);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();
@@ -205,16 +184,18 @@ function GroupDetailMembers(props) {
     <div id="group-detail__members">
       <div id="group-detail__members-title">
         <strong>그룹멤버</strong>
-        <button
-          className="group-detail__members-btn"
-          onClick={leaveGroupHandler}
-        >
-          그룹 탈퇴
-        </button>
+        {role === 1 && (
+          <button
+            className="group-detail__members-btn"
+            onClick={leaveGroupHandler}
+          >
+            그룹 탈퇴
+          </button>
+        )}
       </div>
       <div id="group-detail__members-content">
         <ul>
-          {memData.appliers &&
+          {memData.appliers !== null &&
             memData.appliers.map((applier, index) => (
               <li key={index} className="group-detail__appliers-item">
                 <div
@@ -231,31 +212,39 @@ function GroupDetailMembers(props) {
                 <div className="group-detail__members-item-achieve">
                   <div>
                     <span>공부시간</span>
-                    <span className="medium-text">{`${parseInt(
-                      applier.studyTime / 60
-                    )}시간 ${applier.studyTime % 60}분`}</span>
+                    <span className="medium-text">
+                      {applier.hasOwnProperty("studyTime")
+                        ? `${parseInt(applier.studyTime / 60)}시간 ${
+                            applier.studyTime % 60
+                          }분`
+                        : "0분"}
+                    </span>
                   </div>
                   <div>
                     <span>페널티 횟수</span>
                     <span className="medium-text">
-                      {`📱${applier.penalty[0]} / 😴${applier.penalty[1]}`}
+                      {/* {`😴${applier.penalty[0]} / 📱${applier.penalty[1]}`} */}
                     </span>
                   </div>
                 </div>
                 {role === 0 && (
-                  <div className="members-btn">
-                    <button
-                      className="group-detail__members-btn appliers"
-                      onClick={confirmJoinHandler}
-                    >
-                      승인
-                    </button>
-                    <button
-                      className="group-detail__members-btn"
-                      onClick={refuseJoinHandler}
-                    >
-                      반려
-                    </button>
+                  <div className="dropdown">
+                    {/* <div className="members-btn"></div> */}
+                    <button className="dropbtn">관리</button>
+                    <div className="dropdown-content">
+                      <button
+                        className="group-detail__members-btn appliers"
+                        onClick={() => confirmJoinHandler(applier.nickName)}
+                      >
+                        승인
+                      </button>
+                      <button
+                        className="group-detail__members-btn"
+                        onClick={() => refuseJoinHandler(applier.nickName)}
+                      >
+                        반려
+                      </button>
+                    </div>
                   </div>
                 )}
               </li>
@@ -279,31 +268,41 @@ function GroupDetailMembers(props) {
                 <div className="group-detail__members-item-achieve">
                   <div>
                     <span>공부시간</span>
-                    <span className="medium-text">{`${parseInt(
-                      member.studyTime / 60
-                    )}시간 ${member.studyTime % 60}분`}</span>
+                    <span className="medium-text">
+                      {member.hasOwnProperty("studyTime")
+                        ? `${parseInt(member.studyTime / 60)}시간 ${
+                            member.studyTime % 60
+                          }분`
+                        : "0분"}
+                    </span>
                   </div>
                   <div>
                     <span>페널티 횟수</span>
                     <span className="medium-text">
-                      {`📱${member.penalty[0]} / 😴${member.penalty[1]}`}
+                      {member.hasOwnProperty("penalty")
+                        ? `${member.penalty}`
+                        : "0분"}
                     </span>
                   </div>
                 </div>
                 {role === 0 && (
-                  <div className="members-btn">
-                    <button
-                      className="group-detail__members-btn"
-                      onClick={expulsionHandler}
-                    >
-                      강퇴
-                    </button>
-                    <button
-                      className="group-detail__members-btn handover"
-                      onClick={transferHandler}
-                    >
-                      이전
-                    </button>
+                  <div className="dropdown">
+                    {/* <div className="members-btn"></div> */}
+                    <button className="dropbtn">관리</button>
+                    <div className="dropdown-content">
+                      <button
+                        className="group-detail__members-btn"
+                        onClick={() => expulsionHandler(member.nickName)}
+                      >
+                        강퇴
+                      </button>
+                      <button
+                        className="group-detail__members-btn handover"
+                        onClick={() => transferHandler(member.nickName)}
+                      >
+                        이전
+                      </button>
+                    </div>
                   </div>
                 )}
               </li>

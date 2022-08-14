@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../Cookie";
 
 import "./GroupItem.css";
 
@@ -9,6 +10,10 @@ function GroupItem(props) {
   const navigate = useNavigate();
 
   function enteringGroup(id) {
+    if (getCookie("accessToken") === undefined) {
+      alert("로그인을 해주세요");
+      return;
+    }
     navigate(`/GroupDetail/${id}`);
   }
 

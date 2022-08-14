@@ -8,13 +8,18 @@ import json from "../../json/groupdetail.json";
 import GroupDetailHome from "./GroupDetailHome";
 import GroupDetailSprint from "./GroupDetailSprint";
 import GroupDetailMembers from "./GroupDetailMembers";
+import ErrorCode from "../../../Error/ErrorCode";
 
-// props 에 id, pwd 실려서 내려옴
-function GroupDetail(props) {
-  const [isCrew, setIsCrew] = useState(false);
-  const [resData, setResData] = useState(json.responseData);
+function GroupDetail() {
+  const [resData, setResData] = useState({
+    group: {},
+    members: [],
+    myData: {},
+    sprints: [],
+    leader: {},
+    groupData: {},
+  });
   const [navBar, setNavBar] = useState(0);
-  const [isJoinCheck, setIsJoinCheck] = useState(false);
 
   //groupId 구하기
   const pathnameArr = window.location.pathname.split("/");
@@ -23,26 +28,22 @@ function GroupDetail(props) {
   //데이터 요청
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/groups/${groupId}`;
+
   useEffect(() => {
-    const config = {
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url, config);
+    (async () => {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
+      });
       const data = await response.json();
       if (data.code === 200) {
         setResData(data.responseData);
-        setIsCrew(true);
       } else {
-        alert("그룹원이 아닙니다");
-        window.history.back();
-        console.log(data.message);
+        ErrorCode(data);
       }
-    };
-    getDatas();
+    })();
   }, []);
 
   console.log(resData);
@@ -61,9 +62,8 @@ function GroupDetail(props) {
 
         if (data.code === 200) {
           alert("그룹 가입 신청되었습니다");
-          setIsJoinCheck(true);
         } else {
-          alert(data.message);
+          ErrorCode(data);
         }
       } catch (e) {
         alert(`통신 실패 ` + e);
@@ -86,9 +86,8 @@ function GroupDetail(props) {
 
         if (data.code === 200) {
           alert("신청 취소되었습니다");
-          setIsJoinCheck(false);
         } else {
-          alert(data.message);
+          ErrorCode(data);
         }
       } catch (e) {
         alert(`통신 실패 ` + e);
@@ -115,16 +114,21 @@ function GroupDetail(props) {
 
   return (
     <>
-      {resData.myData.role === 2 && (
+      {resData.myData.role === 2 && resData.myData.assign !== null && (
         <div id="group-detail__joinBtn">
-          {!isJoinCheck && (
+          {resData.myData.assign === 0 && (
             <button id="join_submit" onClick={joinHandler}>
               그룹 참가하기 🏹
             </button>
           )}
-          {isJoinCheck && (
+          {resData.myData.assign === 1 && (
             <button id="join_cancel" onClick={joinCancelHandler}>
               그룹 참가 취소
+            </button>
+          )}
+          {resData.myData.assign === 2 && (
+            <button id="join_cancel" onClick={joinHandler}>
+              반려되었습니다
             </button>
           )}
         </div>
@@ -144,11 +148,12 @@ function GroupDetail(props) {
             </div>
             <div id="group-detail__etc">
               <ul id="group-detail__etc__ctg">
-                {resData.group.ctg.map((item, index) => (
-                  <li key={index} className="group-detail__etc__ctg-item">
-                    {item}
-                  </li>
-                ))}
+                {resData.group.hasOwnProperty("ctg") &&
+                  resData.group.ctg.map((item, index) => (
+                    <li key={index} className="group-detail__etc__ctg-item">
+                      {item}
+                    </li>
+                  ))}
               </ul>
               <div id="group-detail__etc__member">
                 🗽 {resData.group.currMember}/{resData.group.maxMember}

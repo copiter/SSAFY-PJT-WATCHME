@@ -1,5 +1,6 @@
 #my-group {
   margin: 75px 10vw;
+  min-width: 1000px;
 }
 #my-group > strong {
   font-weight: 700;
@@ -87,6 +88,7 @@
   padding: 25px 33px;
   background: #d9d9d9;
   border-radius: 15px;
+  min-width: 280px;
 }
 
 .my-group__achvmnt > ul > li {

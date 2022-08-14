@@ -3,10 +3,12 @@ import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
+import ErrorCode from "../../Error/ErrorCode";
 
 import GroupItem from "../Group/GroupItem";
 import Banner from "./Banner";
 import RoomItem from "../Room/RoomItem";
+import MyStudyInfo from "./MyStudyInfo";
 
 import "./MainPage.css";
 import jsons from "../json/main";
@@ -22,15 +24,16 @@ function MainPage() {
 
   let rooms, groups, myGroups, userInformation;
 
-  const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
+  // const [isLoggedIn, setIsLoggedIn] = useState();
+  const isLoggedIn = !!getCookie("accessToken");
 
-  const [datas, setDatas] = useState(jsons.responseData);
-
-  //쿠키를 받아오기 위한
-  // let cookie;
-  // (async function () {
-  //   cookie = await getCookie("accessToken");
-  // })();
+  // const [datas, setDatas] = useState(jsons.responseData);
+  const [datas, setDatas] = useState({
+    myGroups: [],
+    member: {},
+    rooms: [],
+    groups: [],
+  });
 
   useEffect(() => {
     const getDatas = async () => {
@@ -56,12 +59,13 @@ function MainPage() {
   rooms = datas["rooms"];
   groups = datas["groups"];
 
-  // userInformation = datas["member"];
-  // myGroups = datas["myGroups"];
   if (isLoggedIn) {
     userInformation = datas["member"];
     myGroups = datas["myGroups"];
-    let myNickName=localStorage.setItem('nickName',userInformation["nickName"]);
+     let myNickName = localStorage.setItem(
+       "nickName",
+       userInformation["nickName"]
+     );
   }
 
   console.log(datas);
@@ -125,57 +129,10 @@ function MainPage() {
                     나의 공부시간
                   </div>
                   <Link to="MyPage">
-                    <div id="mypage__myinfor__mystudy__infor">
-                      {/* <img
-                      src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=464&q=80"
-                      width="128px"
-                      height="128px"
-                      alt="#"
-                    /> */}
-                      <div id="fighting-text">오늘도 파이팅!</div>
-                      <ul id="mypage__myinfor__mystudy__infor__text">
-                        <li>
-                          <span className="mystudy__infor__text-left">
-                            오늘 공부시간
-                          </span>
-                          <span>
-                            {`${parseInt(
-                              userInformation["studyTimeToday"] / 60
-                            )}시간 ${userInformation["studyTimeToday"] % 60}분`}
-                          </span>
-                        </li>
-                        <li>
-                          <span className="mystudy__infor__text-left">
-                            이번주 공부시간
-                          </span>
-                          <span>
-                            {`${parseInt(
-                              userInformation["studyTimeWeek"] / 60
-                            )}시간 ${userInformation["studyTimeWeek"] % 60}분`}
-                          </span>
-                        </li>
-                        <li>
-                          <span className="mystudy__infor__text-left">
-                            이번달 공부시간
-                          </span>
-                          <span>
-                            {`${parseInt(
-                              userInformation["studyTimeMonth"] / 60
-                            )}시간 ${userInformation["studyTimeMonth"] % 60}분`}
-                          </span>
-                        </li>
-                        <li>
-                          <span className="mystudy__infor__text-left">
-                            총 공부시간
-                          </span>
-                          <span>
-                            {`${parseInt(
-                              userInformation["studyTimeTotal"] / 60
-                            )}시간 ${userInformation["studyTimeTotal"] % 60}분`}
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
+                    <MyStudyInfo
+                      userInformation={userInformation}
+                      isMainPage={true}
+                    />
                   </Link>
                 </div>
               </div>

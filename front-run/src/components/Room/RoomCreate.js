@@ -5,6 +5,7 @@ import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
 
 import "./RoomCreate.css";
+import ErrorCode from "../../Error/ErrorCode";
 
 function RoomCreate() {
   //방생성 요청 보내기
@@ -53,22 +54,13 @@ function RoomCreate() {
         accessToken: getCookie("accessToken"),
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            console.log("ERR");
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        if (result != null) {
+        if (result.code === 200) {
           alert("방생성이 완료되었습니다.");
           navigate("/RoomDetail/" + result.responseData.roomId);
-          //window.location.reload(); //리다이렉션관련
+        } else {
+          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -169,25 +161,16 @@ function RoomCreate() {
                   value={inputs.endTime || ""}
                   onChange={handleChange}
                 />
-                <span>비공개</span>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    name="display"
-                    value={inputs.display}
-                    onChange={toggleChange}
-                  />
-                  <div className="slider round"></div>
-                </label>
+                
 
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input
-                  type="text"
+                  type="password"
                   name="roomPwd"
                   value={inputs.roomPwd || ""}
                   onChange={handleChange}
                   maxLength="4"
-                  minLength="4"
+                  minLength="0"
                   placeholder="비밀번호 4자리"
                 />
               </div>

@@ -29,7 +29,7 @@ function GroupCreate() {
     description: "",
     maxMember: 0,
     ctg: [false, false, false, false],
-    // secret: false,
+    secret: "",
     pwd: null,
   });
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ function GroupCreate() {
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
     const name = event.target.name;
-    setInputs((values) => ({ ...values, [name]: isChecked ? false : true }));
+    setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
   };
 
   //URL
@@ -81,7 +81,7 @@ function GroupCreate() {
       description: inputs.description,
       maxMember: inputs.maxMember,
       ctg: ctgs,
-      // secret: inputs.secret,
+      secret: inputs.secret,
       pwd: inputs.pwd,
     };
 
@@ -158,6 +158,7 @@ function GroupCreate() {
                   name="name"
                   value={inputs.name || ""}
                   onChange={handleChange}
+                  required
                   placeholder="그룹 이름을 적으세요"
                 />
               </div>
@@ -167,6 +168,7 @@ function GroupCreate() {
                   name="description"
                   value={inputs.description || ""}
                   onChange={handleChange}
+                  required
                   placeholder="간단한 설명을 적으세요"
                 />
               </div>
@@ -178,6 +180,7 @@ function GroupCreate() {
                     value={inputs.maxMember ? inputs.maxMember : ""}
                     onChange={handleChange}
                     accept="number"
+                    required
                     placeholder="인원수를 선택하세요(1~25)"
                   />
                 </div>
@@ -192,7 +195,7 @@ function GroupCreate() {
                     />
                     <span className="slider round"></span>
                   </label>
-                  <input
+                  {/* <input
                     type="password"
                     name="pwd"
                     value={inputs.pwd || ""}
@@ -201,7 +204,7 @@ function GroupCreate() {
                     maxLength="4"
                     minLength="4"
                     placeholder={!isChecked ? "공개방입니다" : "비밀번호 4자리"}
-                  />
+                  /> */}
                 </div>
               </div>
             </div>

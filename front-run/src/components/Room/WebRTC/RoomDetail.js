@@ -5,13 +5,12 @@ import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
 import ChatComponent from "./chat/ChatComponent";
 import { FetchUrl } from "../../../store/communication";
-import { Routes, Route ,Link,Navigate } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 
 import Members from "./componentOnRoom/Members";
 import MyStudy from "./componentOnRoom/MyStudy";
 import RoomReform from "./componentOnRoom/RoomReform";
-
-import AuthContext from "../../../store/auth-context";
+import { getCookie } from "../../../Cookie";
 
 //강제 리브세션=추방
 //방장 전용 기능 구현.
@@ -24,6 +23,7 @@ class RoomDetail extends Component {
 
     this.state = {
       mySessionId: "SessionA",
+      isRoomLeader:true,
       myUserName: "Participant" + Math.floor(Math.random() * 100),
       session: undefined,
       mainStreamManager: undefined,
@@ -32,10 +32,9 @@ class RoomDetail extends Component {
       videoState: true, //보이도록
       audioState: true, //마이크 on
       screenShare: true, //화면공유 버튼
-      chatDisplay: "none",
-
+      isScreenShareNow:false,
+      chatDisplay: "block",
     };
-    //setInterval(()=>{alert("TEST콘솔로그입니다")},1000);
 
     this.joinSession = this.joinSession.bind(this);
     this.getUserPermission = this.getUserPermission.bind(this);
@@ -52,36 +51,29 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-   this.getMedia();
+    this.getMedia();
   }
 
-
-
   componentDidMount() {
-    this.joinSession()
+    this.joinSession();
     window.addEventListener("beforeunload", this.onbeforeunload);
-    // this.joinSession();
   }
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.onbeforeunload);
   }
-
   onbeforeunload(event) {
     this.leaveSession();
   }
-
   handleChangeSessionId(e) {
     this.setState({
       mySessionId: e.target.value,
     });
   }
-
   handleChangeUserName(e) {
     this.setState({
       myUserName: e.target.value,
     });
   }
-
   handleMainVideoStream(stream) {
     if (this.state.mainStreamManager !== stream) {
       this.setState({
@@ -89,7 +81,6 @@ class RoomDetail extends Component {
       });
     }
   }
-
   deleteSubscriber(streamManager) {
     let subscribers = this.state.subscribers;
     let index = subscribers.indexOf(streamManager, 0);
@@ -100,18 +91,17 @@ class RoomDetail extends Component {
       });
     }
   }
-
   async getUserPermission() {}
-
-  joinSession() {//세션조인
+  joinSession() {
+    //세션조인
     // --- 1) Get an OpenVidu object ---
     this.OV = new OpenVidu();
-    
-    let myNickName=localStorage.getItem('nickName');
+
+    let myNickName = localStorage.getItem("nickName");
     console.log("닉네임");
     console.log(myNickName);
     this.setState({
-      myUserName: myNickName
+      myUserName: myNickName,
     });
     // --- 2) Init a session ---
     this.setState(
@@ -119,7 +109,6 @@ class RoomDetail extends Component {
         session: this.OV.initSession(),
       },
       () => {
-        
         var mySession = this.state.session;
 
         // --- 3) Specify the actions when events take place in the session ---
@@ -158,7 +147,8 @@ class RoomDetail extends Component {
           // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
           mySession
             .connect(token, { clientData: this.state.myUserName })
-            .then(async () => {//브라우저 비디오, 오디오 권한 설정
+            .then(async () => {
+              //브라우저 비디오, 오디오 권한 설정
               try {
                 var devices = await navigator.mediaDevices.getUserMedia({
                   video: true,
@@ -170,10 +160,7 @@ class RoomDetail extends Component {
                 );
               }
 
-              devices = await this.OV.getDevices();//디바이스 없으면 가져옴
-   
-   
-
+              devices = await this.OV.getDevices(); //디바이스 없으면 가져옴
 
               var videoDevices = devices.filter(
                 (device) => device.kind === "videoinput"
@@ -218,66 +205,60 @@ class RoomDetail extends Component {
       }
     );
   }
-  
-  leaveSession() {//세션 탈출
+
+  leaveSession() {
+    //세션 탈출
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
     clearInterval();
-      
+
     const mySession = this.state.session;
-    const FETCH_URL=FetchUrl._currentValue;
-    const id=window.location.pathname.split("/")[2].substring(1);
-    const url = `${FETCH_URL}/rooms/`+id+'/leave';
+    const FETCH_URL = FetchUrl._currentValue;
+    const id = window.location.pathname.split("/")[2].substring(0);
+    const url = `${FETCH_URL}/rooms/` + id + "/leave";
 
-    
-
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
+    console.log(id);
+    console.log(url);
     console.log("방나가기 시도");
-    fetch(url,{
-      method:"POST",
+
+    fetch(url, {
+      method: "POST",
       headers:{accessToken: getCookie("accessToken")}
     })
-    .then((response) => {
-      console.log(response);
-      if (response.ok) {
-        return response.json(); //ok떨어지면 바로 종료.
-      } else {
-        response.json().then((data) => {
-          console.log("ERR방나기 실패");
-          let errorMessage = "";
-          throw new Error(errorMessage);
-        });
-      }
-    })
-    .then((result) => {
-      if (result != null) {
-        console.log(result); 
-        if(result.code===200)
-        {
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("리스폰스 성공");
+          return response.json(); //ok떨어지면 바로 종료.
+        } else {
+          response.json().then((data) => {
+            console.log("ERR방나기 실패");
+            let errorMessage = "";
+            throw new Error(errorMessage);
+          });
         }
-        else{
-
-          console.log("오류가 발생하였습니다.");
+      })
+      .then((result) => {
+        console.log("RES:");
+        if (result != null) {
+          console.log("NOTNULL:");
+          console.log(result);
+          if (result.code === 200) {
+            console.log("방나가기 성공");
+          } else {
+            console.log("오류가 발생하였습니다.");
+          }
         }
-      }
-    })
-    .catch((err) => {
-      console.log("ERR여기 못나감"); 
-    });
-   
+      })
+      .catch((err) => {
+        console.log("ERR여기 못나감");
+      });
 
     // Empty all properties...
     this.OV = null;
-    try{
+    try {
       mySession.disconnect();
-      window.location.href="../";
-    }
-    catch{
+      window.location.href = "../../";
+    } catch {
       console.log("디스콘실패");
     }
     this.setState({
@@ -290,8 +271,8 @@ class RoomDetail extends Component {
     });
   }
 
-  
-  async switchCamera() {//카메라 교환
+  async switchCamera() {
+    //카메라 교환
     try {
       const devices = await this.OV.getDevices();
       var videoDevices = devices.filter(
@@ -331,37 +312,45 @@ class RoomDetail extends Component {
 
   //화면 공유 기능
   async screenShare() {
-    //기존 정보 저장
-    const latestPublisher = this.state.publisher;
-
-    //screenshare를 위한 publisher 생성
-    var newPublisher = this.OV.initPublisher(undefined, {
-      videoSource: "screen",
-    });
-
-    //mainStream 없애고 새로 생성한 stream 추가
-    await this.state.session.unpublish(this.state.mainStreamManager);
-    await this.state.session.publish(newPublisher);
-    this.setState({
-      mainStreamManager: newPublisher,
-      publisher: newPublisher,
-      screenShare: false,
-    });
-
-    console.log("Session screen connected");
+    try{
+      const latestPublisher = this.state.publisher;
+    
 
     //화면 공유 중지 누른 뒤 로직
-    newPublisher.stream
-      .getMediaStream()
-      .getVideoTracks()[0]
-      .addEventListener("ended", () => {
-        console.log('User pressed the "Stop sharing" button');
-        this.state.session.unpublish(newPublisher);
-        this.state.session.publish(latestPublisher);
-        this.setState({
-          screenShare: true,
+    if(this.state.isScreenShareNow){
+       newPublisher.stream
+        .getMediaStream()
+        .getVideoTracks()[0]
+        .addEventListener("ended", () => {
+          console.log('User pressed the "Stop sharing" button');
+          this.state.session.unpublish(newPublisher);
+          this.state.session.publish(latestPublisher);
+          this.setState({
+            screenShare: true,
+          });
         });
+    }
+    else{
+//기존 정보 저장
+          
+      //screenshare를 위한 publisher 생성
+      var newPublisher = this.OV.initPublisher(undefined, {
+        videoSource: "screen",
       });
+
+      //mainStream 없애고 새로 생성한 stream 추가
+      await this.state.session.unpublish(this.state.mainStreamManager);
+      await this.state.session.publish(newPublisher);
+      this.setState({
+        mainStreamManager: newPublisher,
+        publisher: newPublisher,
+      });
+
+    }
+      console.log(this.state.isScreenShareNow)
+      this.state.isScreenShareNow=!this.state.isScreenShareNow;
+    }
+    catch{}
   }
 
   //Video On / Off
@@ -416,89 +405,63 @@ class RoomDetail extends Component {
     });
   }
 
-
-  closeRoom()
-  {
-      
-    const FETCH_URL=FetchUrl._currentValue;
+  closeRoom() {
+    const FETCH_URL = FetchUrl._currentValue;
     fetch(FETCH_URL, {
       method: "POST",
       headers: {
         accessToken: this.getCookie("accessToken"),
       },
+    });
+
+    this.closeSession();
+    this.banALL();
+  }
+  closeSession() {}
+  banALL() {}
+
+  async getMedia() {
+    const FETCH_URL = FetchUrl._currentValue;
+    const id = window.location.pathname.split("/")[2].substring(0);
+    let mode = "MODE1";
+
+    console.log(id);
+    fetch(`${FETCH_URL}/rooms/` + id, {
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
     })
-
-
-
-    this.closeSession()
-    this.banALL()
-  }
-  closeSession(){
-    
-  }
-  banALL(){
-
-  }
-
-  async  getMedia() {
-    /*
-    let imageCapture;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {pan: true, tilt: true, zoom: true},
+      .then((response) => {
+        if (response.ok) {
+          console.log(response);
+          return response.json(); //ok떨어지면 바로 종료.
+        } else {
+          response.json().then((data) => {
+            let errorMessage = "";
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((result) => {
+        if (result != null) {
+          console.log("성공");
+          console.log(result.responseData.room);
+          console.log("백통신 결과입니다.");
+          this.state.mySessionId=result.responseData.room.name;
+          this.state.isRoomLeader=(result.responseData.room.leaderTrue===0?false:true);
+          localStorage.setItem({"L":this.state.isRoomLeader});
+          console.log(this.state.isRoomLeader);
+          this.state.screenShare=(result.responseData.room.mode==="MODE1"?false:true)
+        }
+      })
+      .catch((err) => {
+        console.log("백통신실패");
       });
-      const video = document.querySelector('video');
-      video.srcObject = stream;
 
-      const [track] = stream.getVideoTracks();
-      imageCapture = new ImageCapture(track);
-
-      const capabilities = track.getCapabilities();
-      const settings = track.getSettings();
-
-      for (const ptz of ['pan', 'tilt', 'zoom']) {
-        // Check whether pan/tilt/zoom is available or not.
-        if (!(ptz in settings)) continue;
-
-        // Map it to a slider element.
-        const input = document.getElementById(ptz);
-        input.min = capabilities[ptz].min;
-        input.max = capabilities[ptz].max;
-        input.step = capabilities[ptz].step;
-        input.value = settings[ptz];
-        input.disabled = false;
-        input.oninput = async event => {
-          try {
-            // Warning: Chrome requires advanced constraints.
-            await track.applyConstraints({[ptz]: input.value});
-          } catch (err) {
-            console.error("applyConstraints() failed: ", err);
-          }
-        };
-      }
-    } catch (err) {
-      console.error(err);
-    }*/
- 
-
-
-  
-    const FETCH_URL=FetchUrl._currentValue;
-    const id=window.location.pathname.split("/")[2].substring(1);
-    function getCookie(name) {
-      const cookie = document.cookie
-        .split(";")
-        .map((cookie) => cookie.split("="))
-        .filter((cookie) => cookie[0] === name);
-      return cookie[0][1];
-    }
-
-
-    
-  
-
-    
-/*
+    setInterval(() => {
+      this.openTeli(id, mode);
+    }, 3000);
+    /*
     try {
       const blob = await imageCapture.takePhoto();
       const image = document.querySelector('img');
@@ -509,216 +472,201 @@ class RoomDetail extends Component {
       console.error("takePhoto() failed: ", err);
     }
     */
-
-    let json;
-    fetch(`${FETCH_URL}/rooms/`+id, {
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-    .then((response) => {
-      if (response.ok) {
-        return response.json(); //ok떨어지면 바로 종료.
-      } else {
-        response.json().then((data) => {
-          let errorMessage = "";
-          throw new Error(errorMessage);
-        });
-      }
-    })
-    .then((result) => {
-      if (result != null) {
-      }
-    })
-    .catch((err) => {
-      console.log("ERR22");
-    });
-    
-   
-    /*const blob = await imageCapture.takePhoto();
-    formData.append("file",blob );*/
-
-    
-
-
+  }
+  async openTeli(id, mode) {
     const formData = new FormData();
-    json={"nickName":this.state.myUserName,
-    "roomId":id,
-    "mode":"MODE2"};
+    const json = { nickName: this.state.myUserName, roomId: id, mode: mode };
     formData.append(
       "flaskDTO",
-      new Blob([JSON.stringify(json)], { type: "application/json" })
+      new Blob([JSON.stringify(json)], { type: "application/json" }),
+      "flaskDTO"
     );
-    
 
-    console.log("TESTHERE");
-    console.log(json);
-    fetch("https://watchme1.shop/flask/openCV",
-        {
-          method:"POST",
-          body: formData,
-          mode: "cors",
-          headers: {
-            "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
-          },
-        })
-        .then((response) => {
-          console.log(response);
-          console.log("왜안되");
-          if (response.ok) {
-            return response.json(); //ok떨어지면 바로 종료.
+    let imageCapture;
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { pan: true, tilt: true, zoom: true },
+      });
+
+      const [track] = stream.getVideoTracks();
+      imageCapture = new ImageCapture(track);
+    } catch (err) {
+      console.error(err);
+    }
+    const blob = await imageCapture.takePhoto();
+    formData.append("img", blob, "img");
+
+   /*fetch("https://watchme1.shop/flask/openCV", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json(); //ok떨어지면 바로 종료.
+        } else {
+          response.json().then((data) => {
+            let errorMessage = "";
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((result) => {
+        if (result != null) {
+          if (result.code === 200) {
+            console.log("오류없음");
+          } else if (result.code === 205) {
+            alert();
           } else {
-            response.json().then((data) => {
-              let errorMessage = "";
-              throw new Error(errorMessage);
-            });
           }
-        })
-        .then((result) => {
-          if (result != null) {
-            if(result.code===200)
-            {
-              console.log("200")
+        }
+      })
+      .catch((err) => {
+        console.log("ERR여기임");
+      }); */
   
-            }
-            else if(result.code===205)
-            {
-              console.log("205")
-            }
-            else{
-              
-            }
-          }
-        })
-        .catch((err) => {
-          console.log("ERR여기임");
-        });
-
   }
 
-
-
-
-
-
-
-
-  render() { 
+  render() {
     const mySessionId = this.state.mySessionId;
     var chatDisplay = { display: this.state.chatDisplay };
-
     return (
-      <div className="container">{this.state.session === undefined ? (null) : (
-        <div id="session">
-          <div id="session-header">
-            <h1 id="session-title">{mySessionId}</h1>
-            
-
-            {this.state.videoState && (
-              <button onClick={this.videoHandlerOff}>Video OFF</button>
-            )}
-            {!this.state.videoState && (
-              <button onClick={this.videoHandlerOn}>Video ON</button>
-            )}
-            {this.state.audioState && (
-              <button onClick={this.audioHandlerOff}>Audio OFF</button>
-            )}
-            {!this.state.audioState && (
-              <button onClick={this.audioHandlerOn}>Audio ON</button>
-            )}
-            {this.state.screenShare && (
-              <button onClick={this.screenShare}>화면공유</button>
-            )}
-          </div>
-          <div className="myCams">
-            {//개인카메라
-            this.state.mainStreamManager !== undefined ? (
-              <div id="main-video" className="col-md-6">
-                <UserVideoComponent
-                  streamManager={this.state.mainStreamManager}
-                  audioState={this.state.audioState}
-                />
-                <input
-                  className="btn btn-large btn-success"
-                  type="button"
-                  id="buttonSwitchCamera"
-                  onClick={this.switchCamera}
-                  value="내 화면을 다시 보기"
-                />
-              </div>
-            ) : null}
-            <div id="video-container" className="col-md-6">
-              {this.state.publisher !== undefined ? (
-                <div className="stream-container col-md-6 col-xs-6">
-                  <UserVideoComponent streamManager={this.state.publisher} />
-                </div>
-              ) : null}
-          </div>
-            <div className="others">
-              {this.state.subscribers.map((sub, i) => (
-                <div
-                  key={i}
-                  className="stream-container col-md-6 col-xs-6 "
-                  onClick={() => this.handleMainVideoStream(sub)}
-                >
-                  <UserVideoComponent streamManager={sub} />
-                </div>
-              ))}</div>
-          </div>
-<div style={{display:'inline-block',width:'1000px',height:'500px'}}>
-  <ul className="linksUl">
-    <Link to="./" ><li className="linksLi">내 공부</li></Link>
-    <Link to="./members" ><li className="linksLi">맴버목록</li></Link>
-    <Link to="./RoomReform" ><li className="linksLi">방 정보 수정</li></Link>
-  </ul>
-  <Routes>
-    <Route path="/" element={<MyStudy/>} />
-    <Route path="/members" element={<Members/>}/>
-    <Route path="/RoomReform" element={<RoomReform/>} />
-  </Routes>
-
-  {/**/}
-  <input
-    className="btn btn-large btn-danger"
-    type="button"
-    id="buttonLeaveSession"
-    onClick={this.leaveSession}
-    value="방 나가기"
-  />
-   <input
-    className="btn btn-large btn-danger"
-    type="button"
-    id="buttonLeaveSession"
-    onClick={this.closeRoom}
-    value="공부방 닫기"
-  />
-</div>
-            <div id="chat-container"><canvas id="canvas">\</canvas>
-              <button onClick={() => this.toggleChat()}>채팅열기</button>
-              {this.state.publisher !== undefined &&
-                this.state.publisher.stream !== undefined && (
-                  <div
-                    className="OT_root OT_publisher custom-class"
-                    style={chatDisplay}
-                  >
-                    <ChatComponent
-                      user={this.state.publisher}
-                      chatDisplay={this.state.chatDisplay}
-                      close={this.toggleChat}
-                      messageReceived={this.checkNotification}
-                    />
+      <div className="container">
+        {this.state.session === undefined ? null : (
+          <div id="session" className="out">
+            <div className="Main">
+              <div id="session-header" className="Header">
+                <div id="session-title" className="headerTitle"><h1>{mySessionId}</h1></div>
+                <div className="headerButtons">
+                  <div className="btnTotal">
+                    {this.state.videoState && (
+                      <button onClick={this.videoHandlerOff} className="btns ">Video OFF</button>
+                    )}
+                    {!this.state.videoState && (
+                      <button onClick={this.videoHandlerOn} className="btns ">Video ON</button>
+                    )}
+                    {this.state.audioState && (
+                      <button onClick={this.audioHandlerOff} className="btns ">Audio OFF</button>
+                    )}
+                    {!this.state.audioState && (
+                      <button onClick={this.audioHandlerOn} className="btns ">Audio ON</button>
+                    )}
+                    {this.state.screenShare && (
+                      <button onClick={this.screenShare} className="btns">화면공유</button>
+                    )}
                   </div>
-                )}
+                </div>
+                 
+              </div>
+              <div className="cams">
+                <div className="myCams">{
+                  //개인카메라
+                  this.state.mainStreamManager !== undefined ? (
+                    <div id="main-video" className="col-md-6">
+                      <UserVideoComponent
+                        streamManager={this.state.mainStreamManager}
+                        audioState={this.state.audioState}
+                      />
+                      <input
+                        className="btn btn-large btn-success"
+                        type="button"
+                        id="buttonSwitchCamera"
+                        onClick={this.switchCamera}
+                        value="내 화면을 다시 보기"
+                      />
+                    </div>
+                  ) : null
+                }
+                  <div id="video-container" className="col-md-6">{console.log(this.state.isScreenShareNow)}
+                    {this.state.publisher !== undefined &&this.state.isScreenShareNow? (
+                      <div className="stream-container col-md-6 col-xs-6">
+                        <UserVideoComponent streamManager={this.state.publisher} />
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+                <div className="others">
+                  {this.state.subscribers.map((sub, i) => (
+                    <div
+                      key={i}
+                      className="stream-container col-md-6 col-xs-6 "
+                      onClick={() => this.handleMainVideoStream(sub)}
+                    >
+                      <UserVideoComponent streamManager={sub} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="Aside">
+              <div className="rightSide">
+                <div className="sideNav">
+                  <div className="linksUl">
+                    <Link to="./">
+                      <button className="linksLi">내 공부</button>
+                    </Link>
+                    <Link to="./members">
+                       <button className="linksLi">맴버</button>
+                    </Link>
+                    {this.state.isRoomLeader?<Link to="./RoomReform">
+                      <button className="linksLi">방 수정</button>
+                    </Link>:""}
+                  </div>
+                 
+                </div>
+                <div className="AsideMain">
+                  <div className="sideBoards">
+                    <Routes >
+                      <Route path="/" element={<MyStudy />} />
+                      <Route path="/members" element={<Members />} />
+                      <Route path="/RoomReform" element={<RoomReform />} />
+                    </Routes>
+                  </div>
+                  <div id="chat-container" className="chatBoards" >
+                  {this.state.publisher !== undefined &&
+                    this.state.publisher.stream !== undefined && (
+                      <div
+                        className="OT_root OT_publisher custom-class"
+                        style={chatDisplay}
+                      >
+                        <ChatComponent
+                          user={this.state.publisher}
+                          chatDisplay={this.state.chatDisplay}
+                          close={this.toggleChat}
+                          messageReceived={this.checkNotification}
+                        />
+                      </div>
+                    )}
+                    <canvas id="canvas" ></canvas>
+                  </div>
+                </div>
+                
+              </div>
+              <div className="btnRight">
+                  <div className="btnRightInner">
+                    <input
+                        className="btn btn-large btn-danger btnR"
+                        type="button"
+                        id="buttonLeaveSession"
+                        onClick={this.leaveSession}
+                        value="방 나가기"
+                      />
+                    {this.state.isRoomLeader?<input
+                      className="btn btn-large btn-danger btnR"
+                      type="button"
+                      id="buttonLeaveSession"
+                      onClick={this.closeRoom}
+                      value="방 닫기"
+                    />:""}
+                    <button className="btnR" onClick={() => this.toggleChat()}>채팅</button>
+                  </div>
+                </div>
             </div>
           </div>
         )}
-        
       </div>
     );
   }
-
-
-
 
   /**
    * --------------------------

@@ -1,3 +1,13 @@
+#no-sprint {
+  border: 3px solid;
+  height: 130px;
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 130px;
+  text-align: center;
+}
+
 .sprint__content {
   display: flex;
   flex-direction: row;
@@ -127,12 +137,12 @@
 
 /* hover effect */
 .sprint-king {
-  display: none;
+  visibility: hidden;
 }
 .sprint__content:hover {
   position: relative;
-  background-color: rgba(0, 0, 0, 0.3);
-  opacity: 0.5;
+  background: #fff;
+  /* visibility: hidden; */
 }
 .sprint__content:hover .sprint-king {
   display: block;

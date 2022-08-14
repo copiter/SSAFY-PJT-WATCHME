@@ -48,6 +48,7 @@ public class RoomService {
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final RoomInfoRepository roomInfoRepository;
     private final CategoryRepository categoryRepository;
+    private final MemberRoomLogRepositoy memberRoomLogRepositoy;
     private final S3Uploader s3Uploader;
 
     @Transactional(rollbackFor = {Exception.class})
@@ -240,7 +241,6 @@ public class RoomService {
                         .build()
                 );
             }
-
     }
 
     @Transactional(rollbackFor = {Exception.class})
@@ -365,14 +365,41 @@ public class RoomService {
     }
     public ApiResponse outRoom(Long roomId, Long memberId) {
 
+        Room room;
+        try{
+            room = roomRepository.findById(roomId).get();
+        } catch (Exception e){
+            throw new CustomException(Code.C522);
+        }
+        System.out.println("___________");
+        System.out.println(memberId);
+        System.out.println(room.getMember().getId());
+        if(room.getMember().getId() == memberId ){
+
+            List<MemberRoomLog> mrlList;
+            try{
+                mrlList = memberRoomLogRepositoy.findAllByRoomIdAndStatus(roomId, Status.NO);
+            } catch (Exception e) {
+                throw new CustomException(Code.C554);
+            }
+            System.out.println(mrlList.size());
+            if(mrlList.size() != 1){
+                Long tossId = mrlList.get(0).getMember().getId();
+                if(tossId == memberId)
+                    tossId = mrlList.get(1).getMember().getId();
+                tossLeaderFunc(roomId, tossId);
+            }
+        }
+
         outRoomFunc(roomId, memberId);
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode(200);
         apiResponse.setMessage("OUT SUCCESS");
 
-
         return apiResponse;
     }
+
+
 
     public boolean roomPeople(Long roomId, int num) {
         Room room;
@@ -496,5 +523,37 @@ public class RoomService {
 
         return apiResponse;
 
+    }
+
+    public ApiResponse tossLeader(Long id, TossLeaderDTO tossLeaderDTO, Long memberId) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        Long tossId;
+        try {
+            tossId = memberRepository.findByNickName(tossLeaderDTO.getNickName()).getId();
+        } catch (Exception e) {
+            throw new CustomException(Code.C504);
+        }
+
+        Long roomId;
+        try {
+            roomId = roomRepository.findById(id).get().getId();
+        } catch(Exception e) {
+            throw new CustomException(Code.C522);
+        }
+        tossLeaderFunc(roomId, tossId);
+
+        apiResponse.setCode(200);
+        apiResponse.setMessage("SUCCESS TOSS LEADER");
+        return apiResponse;
+
+    }
+
+    private void tossLeaderFunc(Long roomId, Long tossId) {
+        Member member = memberRepository.findById(tossId).get();
+        Room room = roomRepository.findById(roomId).get();
+
+        room.setMember(member);
+        roomRepository.save(room);
     }
 }

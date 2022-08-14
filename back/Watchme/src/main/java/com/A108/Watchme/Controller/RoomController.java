@@ -3,6 +3,7 @@ package com.A108.Watchme.Controller;
 import com.A108.Watchme.DTO.Room.JoinRoomDTO;
 import com.A108.Watchme.DTO.Room.PostRoomReqDTO;
 import com.A108.Watchme.DTO.Room.RoomUpdateDTO;
+import com.A108.Watchme.DTO.Room.TossLeaderDTO;
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
@@ -103,5 +104,13 @@ public class RoomController {
         Long id = Long.valueOf(roomId);
         return roomService.updateRoom(id, roomUpdateDTO, images, memberId);
     }
+
+    @PostMapping("/rooms/{roomId}/toss-leader")
+    public ApiResponse tossLeader(@PathVariable(value = "roomId") int roomId, @RequestBody TossLeaderDTO tossLeaderDTO) {
+        Long memberId = authUtil.memberAuth();
+        Long id = Long.valueOf(roomId);
+        return roomService.tossLeader(id, tossLeaderDTO, memberId);
+    }
+
 }
 

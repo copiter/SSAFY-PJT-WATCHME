@@ -15,15 +15,15 @@ function MyPage() {
   const FETCH_URL = useContext(FetchUrl);
 
   //로컬 테스트 시
-  const [info, setInfo] = useState(userInfor.responseData);
+  // const [info, setInfo] = useState(userInfor.responseData);
   //실제 통신시
-  // const [info, setInfo] = useState({
-  //   studyByDay: [],
-  //   penalty: {},
-  //   member: {},
-  //   penaltyByDay: [],
-  //   rules: [],
-  // });
+  const [info, setInfo] = useState({
+    studyByDay: [],
+    penalty: {},
+    member: {},
+    penaltyByDay: [],
+    rules: [],
+  });
 
   let studydata = [["Day", "공부시간"]];
   let studydataPen = [["Day", "공부패널티"]];
@@ -63,7 +63,6 @@ function MyPage() {
 
   const url = `${FETCH_URL}/members`;
   useEffect(() => {
-    console.log("EFFECT");
     fetch(url, {
       headers: {
         accessToken: getCookie("accessToken"),
@@ -78,15 +77,11 @@ function MyPage() {
         }
       })
       .catch((err) => {
-        console.log("ERROR");
+        console.log(err);
       });
   }, []);
 
-  console.log(info.member);
-  console.log(info.penalty);
-  console.log(info.penaltyByDay); //이번달 패널티(일단위)
-  console.log(info.rules);
-  console.log(info.studyByDay); //이번달 공부시간(일단위)
+  console.log(info);
 
   return (
     <div id="mypage">

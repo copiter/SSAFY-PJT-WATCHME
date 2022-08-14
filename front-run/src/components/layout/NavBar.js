@@ -38,7 +38,7 @@ const NavBar = () => {
               <NavLink to="RoomRecruit">공개룸 모집</NavLink>
             </li>
             <li>
-              <NavLink to="GroupRecruit">스터디 모집</NavLink>
+              <NavLink to="GroupRecruit">스터디 그룹 모집</NavLink>
             </li>
             <li>
               <NavLink to="About">소식</NavLink>

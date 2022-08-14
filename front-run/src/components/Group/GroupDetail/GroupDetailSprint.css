@@ -7,6 +7,7 @@
 }
 
 #group-detail__sprint strong {
+  display: inline-block;
   font-weight: 700;
   font-size: 24px;
   line-height: 29px;
@@ -16,6 +17,35 @@
 #group-detail__sprint strong > i {
   font-size: 18px;
   color: #9a9a9a;
+}
+#sprint-join-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+#sprint-join button {
+  margin-right: 5px;
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+
+  background: #dc3545;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+#sprint-join button:hover {
+  opacity: 1;
 }
 
 #sprint-ongoing {

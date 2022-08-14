@@ -1,3 +1,13 @@
+#mypage-mygroup .group-specs {
+  border-radius: 8px;
+  overflow: hidden;
+}
+#mypage-mygroup .backdrop {
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
 #groups__whole article {
   display: inline-block;
   border: 1px solid #d9d9d9;

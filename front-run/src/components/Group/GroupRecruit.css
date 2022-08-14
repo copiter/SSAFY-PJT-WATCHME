@@ -164,7 +164,7 @@
 
 #groups__whole {
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(3, 329px);
   justify-content: center;
   column-gap: 30px;
   row-gap: 30px;

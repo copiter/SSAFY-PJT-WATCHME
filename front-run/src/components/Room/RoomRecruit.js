@@ -5,7 +5,6 @@ import { FetchUrl } from "../../store/communication";
 import RoomItem from "./RoomItem";
 
 import "./RoomRecruit.css";
-import getCookie from "../../Cookie";
 
 import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
@@ -87,19 +86,11 @@ function RoomRecruit() {
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword) +
         (inputs.secret === "" ? "" : "secret=" + inputs.secret)
     )
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
-        } else {
-          console.log("제출Case4");
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        console.log(1);
-        console.log(result["responseData"]["rooms"]);
-        setRooms(result["responseData"]["rooms"]);
+        if (result.code === 200) {
+          setRooms(result["responseData"]["rooms"]);
+        }
       })
       .catch((err) => {
         console.log("ERROR");
@@ -117,19 +108,13 @@ function RoomRecruit() {
         (page === "" || page === 1 ? "" : "page=" + page + "&") +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
-        } else {
-          console.log("C4");
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
-        setRooms(result);
-        //setRooms((values) => ({ ...values}+ result["responseData"]["rooms"]))
-        console.log(rooms);
+        if (result.code === 200) {
+          setRooms([...rooms, ...result.responseData.rooms]);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         console.log("ERROR");
@@ -219,25 +204,6 @@ function RoomRecruit() {
             <Link className="header__link" to="/RoomCreate">
               공개룸 만들기
             </Link>
-            {/*
-            <button className="header__filter">
-              <img src={filter} alt="필터" 
-              onClick={filterClicked}/>
-              Filters
-            </button>
-            <div className="filters">
-              <select defaultValue={1} name="secret" onChange={handleChange}>
-                <option value="0">비공개방</option>
-                <option value="1">공개방</option>
-                <option value="2">모두보기</option>
-              </select>
-              <select defaultValue={1} name="active" onChange={handleChange}>
-                <option value="0">비공개방</option>
-                <option value="1">공개방</option>
-                <option value="2">모두보기</option>
-              </select>
-              <input type="button" onClick={submitFilter} value="필터적용하기"/>
-            </div>*/}
           </div>
         </div>
 

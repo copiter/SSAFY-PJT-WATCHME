@@ -56,7 +56,7 @@ function ErrorCode(result) {
       alert(`에러코드 ${code} : 비밀번호 길이가 맞지 않습니다`);
       break;
     case 520:
-      alert(`에러코드 ${code} : 정보를 찾을 수 없습니다`);
+      alert(`에러코드 ${code} : 관련 정보가 없습니다`);
       break;
     case 521:
       alert(`에러코드 ${code} : 허용되지 않는 값입니다`);

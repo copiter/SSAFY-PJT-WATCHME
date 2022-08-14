@@ -5,6 +5,7 @@ import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
 
 import "./GroupCreate.css";
+import ErrorCode from "../../Error/ErrorCode";
 
 function GroupCreate() {
   const handleChangeSelect = (event) => {
@@ -30,7 +31,6 @@ function GroupCreate() {
     maxMember: 0,
     ctg: [false, false, false, false],
     secret: "",
-    pwd: null,
   });
   const navigate = useNavigate();
 
@@ -82,7 +82,6 @@ function GroupCreate() {
       maxMember: inputs.maxMember,
       ctg: ctgs,
       secret: inputs.secret,
-      pwd: inputs.pwd,
     };
 
     const formData = new FormData();
@@ -105,7 +104,7 @@ function GroupCreate() {
           alert("그룹이 생성되었습니다!");
           navigate(`/GroupDetail/${result.responseData.groupId}`);
         } else {
-          console.log(result);
+          ErrorCode(result);
         }
       })
       .catch((err) => {

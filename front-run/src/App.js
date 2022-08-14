@@ -28,6 +28,7 @@ import SprintCreate from "./components/Sprints/SprintCreate";
 //MyPage관련
 import MyPage from "./components/MyPage/MyPage";
 import PointAdd from "./components/MyPage/Points/PointAdd";
+import PointSuccess from "./components/MyPage/Points/PointSuccess";
 import PointRefund from "./components/MyPage/Points/PointRefund";
 
 //그외페이지
@@ -59,6 +60,7 @@ function App() {
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/PointAdd" element={<PointAdd />} />
         <Route path="/PointRefund" element={<PointRefund />} />
+        <Route path="/PointSuccess" element={<PointSuccess />} />
         <Route path="/About" element={<About />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="*" element={<NotFound />} />

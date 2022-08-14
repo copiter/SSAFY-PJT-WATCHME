@@ -450,17 +450,20 @@ class RoomDetail extends Component {
           this.state.mySessionId=result.responseData.room.name;
           this.state.isRoomLeader=(result.responseData.room.leaderTrue===0?false:true);
           localStorage.setItem({"L":this.state.isRoomLeader});
-          console.log(this.state.isRoomLeader);
+          console.log("뭐냐");  
           this.state.screenShare=(result.responseData.room.mode==="MODE1"?false:true)
+          console.log("모드");
+          mode=result.responseData.room.mode;
+          console.log("모드2");
+          setInterval(() => {
+            this.openTeli(id, mode);
+          }, 3000);
         }
       })
       .catch((err) => {
-        console.log("백통신실패");
+        console.log("백통신 실패");
       });
-
-    setInterval(() => {
-      this.openTeli(id, mode);
-    }, 3000);
+    
     /*
     try {
       const blob = await imageCapture.takePhoto();
@@ -474,6 +477,8 @@ class RoomDetail extends Component {
     */
   }
   async openTeli(id, mode) {
+    console.log(mode);
+    console.log("정상작동");
     const formData = new FormData();
     const json = { nickName: this.state.myUserName, roomId: id, mode: mode };
     formData.append(
@@ -545,6 +550,7 @@ class RoomDetail extends Component {
     alert("감지되었습니다.");
   }
   ban(){
+    
     alert("벌점이 과다로 추방되었습니다.");
   }
 

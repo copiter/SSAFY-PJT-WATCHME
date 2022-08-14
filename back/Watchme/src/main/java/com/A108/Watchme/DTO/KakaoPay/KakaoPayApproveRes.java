@@ -26,6 +26,10 @@ public class KakaoPayApproveRes {
     private String approved_at;
     private String payload;
 
+    public int getMoney(){
+        return getAmount().getTotal();
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor
@@ -36,6 +40,7 @@ public class KakaoPayApproveRes {
         private Integer vat;
         private Integer point;
         private Integer discount;
+        private Integer green_deposit;
     }
 
     @Getter

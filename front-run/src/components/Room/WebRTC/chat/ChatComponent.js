@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import IconButton from "@material-ui/core/IconButton";
 import Fab from "@material-ui/core/Fab";
-import HighlightOff from "@material-ui/icons/HighlightOff";
 import Send from "@material-ui/icons/Send";
 
 import "./ChatComponent.css";
@@ -97,9 +95,6 @@ export default class ChatComponent extends Component {
         <div id="chatComponent" style={styleChat}>
           <div id="chatToolbar">
             <span>{this.props.user.stream.session.sessionId} - CHAT</span>
-            <IconButton id="closeButton" onClick={this.close}>
-              <HighlightOff color="secondary" />
-            </IconButton>
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (

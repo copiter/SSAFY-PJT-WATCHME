@@ -45,7 +45,8 @@ function PointAdd() {
       })
       .then((result) => {
         if (result != null) {
-          console.log(result);
+          window.location.href =result.responseData.REDIRECT_URL;
+          localStorage.setItem("tid",result.responseData.tid);
         }
       })
       .catch((err) => {

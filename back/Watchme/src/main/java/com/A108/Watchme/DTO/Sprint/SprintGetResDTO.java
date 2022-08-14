@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class SprintGetResDTO {
     private Long sprintId;
-    private String sprintName;
+    private String name;
     private String description;
     private String goal;
     private Status status;

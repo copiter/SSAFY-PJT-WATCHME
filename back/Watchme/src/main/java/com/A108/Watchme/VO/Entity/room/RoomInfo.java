@@ -39,10 +39,5 @@ public class RoomInfo {
     @Column(name="img_link")
     private String imageLink;
 
-    /**
-     * 1 : 공개 2: 비공개
-     */
-    @Column(name="display")
-    private Integer display;
 
 }

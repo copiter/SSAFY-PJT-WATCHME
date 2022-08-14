@@ -1,5 +1,6 @@
 package com.A108.Watchme.VO.Entity.sprint;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,11 +12,14 @@ import java.util.Date;
 @Builder
 public class SprintInfo {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "sprint_id")
     private Long id;
 
-    @OneToOne(mappedBy = "sprintInfo")
+    @MapsId
+    @JoinColumn(name = "sprint_id")
+    @OneToOne
+    @JsonBackReference
     private Sprint sprint;
 
     @Column(name = "start_at")

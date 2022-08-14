@@ -11,11 +11,7 @@ import java.util.Date;
 @Builder
 public class MemberDataDTO {
 
-    private String email;
-    private String name;
     private String nickName;
-    private Gender gender;
-    private Date birth;
     private String profileImage;
 
     private Integer studyTimeToday;

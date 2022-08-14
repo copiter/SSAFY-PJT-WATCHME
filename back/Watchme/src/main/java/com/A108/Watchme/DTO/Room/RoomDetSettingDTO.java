@@ -16,6 +16,5 @@ public class RoomDetSettingDTO {
     private String categoryName;
     private Integer num;
     private String endTime;
-    private Integer display;
     private String img;
 }

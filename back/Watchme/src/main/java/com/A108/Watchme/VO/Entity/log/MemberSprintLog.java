@@ -28,4 +28,7 @@ public class MemberSprintLog {
     @ManyToOne
     @JoinColumn(name = "sprint_id")
     private Sprint sprint;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

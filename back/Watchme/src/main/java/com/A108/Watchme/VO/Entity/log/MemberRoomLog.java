@@ -39,6 +39,11 @@ public class MemberRoomLog {
     private Status status;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    @Column(name = "start_at")
+    private Date startAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "joined_at")
     private Date joinedAt;
 

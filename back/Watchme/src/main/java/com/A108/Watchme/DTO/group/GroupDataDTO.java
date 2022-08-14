@@ -13,13 +13,11 @@ import java.util.List;
 @Builder
 public class GroupDataDTO {
 
-    private Long ID;
-    private String groupName;
-    private String groupImage;
-    private String groupDescription;
-    private Integer groupMemberNo;
-    private Integer groupMemberMaxNo;
-    private Integer groupLookUp;
-    private List<CategoryList> groupCategory;
+    private Long id;
+    private String name;
+    private String description;
+    private Integer currMember;
+    private Integer maxMember;
+    private String imgLink;
 
 }

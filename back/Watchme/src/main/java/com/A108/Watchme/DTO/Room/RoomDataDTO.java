@@ -12,14 +12,15 @@ import java.util.List;
 @Builder
 public class RoomDataDTO {
 
-    private Long ID;
-    private String URL;
+    private Long id;
     private String roomName;
+    private String roomStatus;
+    private String ctgName;
+    private Integer maxNum;
+    private Integer nowNum;
+    private String endTime;
+    private String description;
     private String roomImage;
-    private String roomDescription;
-    private Integer roomMemberNo;
-    private Integer roomMemberMaxNo;
-    private Integer roomLookUp;
-    private CategoryList roomCategory;
+    private boolean secret;
 
 }

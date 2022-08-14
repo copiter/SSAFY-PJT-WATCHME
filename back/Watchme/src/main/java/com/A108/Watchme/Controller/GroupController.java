@@ -1,6 +1,7 @@
 package com.A108.Watchme.Controller;
 
 import com.A108.Watchme.DTO.*;
+import com.A108.Watchme.DTO.Sprint.SprintPostDTO;
 import com.A108.Watchme.DTO.group.GroupCreateReqDTO;
 import com.A108.Watchme.DTO.group.GroupKickReqDTO;
 import com.A108.Watchme.DTO.group.GroupReqDTO;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/groups")
@@ -23,8 +25,14 @@ public class GroupController {
     private GroupService groupService;
 
     @GetMapping
-    public ApiResponse getGroupList(@RequestParam(value = "ctg",required = false) String ctgName, @RequestParam(value = "keyword",required = false) String keyword, @RequestParam(value = "page",required = false) Integer page, @RequestParam(value = "active", required = false) Integer active, HttpServletRequest request){
-        return groupService.getGroupList(ctgName, keyword, page, active, request);
+    public ApiResponse getGroupList(@RequestParam(value = "ctg",required = false) String ctgName, @RequestParam(value = "keyword",required = false) String keyword, @RequestParam(value = "page",required = false) Integer page, HttpServletRequest request){
+        return groupService.getGroupList(ctgName, keyword, page, request);
+    }
+
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse createGroup(@RequestPart(value="groupCreateReqDTO") GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false, value = "images") MultipartFile image, HttpServletRequest request){
+        groupCreateReqDTO.getCtg().stream().forEach(System.out::println);
+        return groupService.createGroup(groupCreateReqDTO, image, request);
     }
 
     @PostMapping("/{groupId}")
@@ -35,13 +43,8 @@ public class GroupController {
         return groupService.getGroup(groupId, null);
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ApiResponse createGroup(@RequestPart GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request){
-        return groupService.createGroup(groupCreateReqDTO, image, request);
-    }
-
-    @PostMapping("/{groupId}/udpate")
-    public ApiResponse updateGroup(@PathVariable(value = "groupId") Long groupId, @RequestPart GroupUpdateReqDTO groupUpdateReqDTO, @RequestPart(required = false) MultipartFile image, HttpServletRequest request) {
+    @PostMapping(value = "/{groupId}/update",consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponse updateGroup(@PathVariable(value = "groupId") Long groupId, @RequestPart(value="groupUpdateReqDTO") GroupUpdateReqDTO groupUpdateReqDTO, @RequestPart(required = false, value = "images") MultipartFile image, HttpServletRequest request) {
         return groupService.updateGroup(groupId, groupUpdateReqDTO, image, request);
     }
 

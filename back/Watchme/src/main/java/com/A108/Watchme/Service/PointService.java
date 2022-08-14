@@ -4,11 +4,17 @@ import com.A108.Watchme.DTO.KakaoPay.KakaoPayApproveReq;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayApproveRes;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayReq;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayRes;
+import com.A108.Watchme.Exception.CustomException;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberRepository;
+import com.A108.Watchme.Repository.PointLogRepository;
+import com.A108.Watchme.VO.Entity.log.PointLog;
+import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.oauth.entity.UserPrincipal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,10 +26,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PointService {
-    private MemberRepository memberRepository;
+    private final PointLogRepository pointLogRepository;
+    private final MemberRepository memberRepository;
 
     public KakaoPayRes kakaoPayReady(Long id, Integer point) {
         System.out.println("hello");
@@ -77,7 +87,7 @@ public class PointService {
 
         return kakaoPayRes;
     }
-    public KakaoPayApproveRes kakaoPayApprove(Long id, String pg_token, KakaoPayApproveReq kakaoPayApproveReq){
+    public KakaoPayApproveRes kakaoPayApprove(Long id, KakaoPayApproveReq kakaoPayApproveReq){
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "KakaoAK f40f549f7b42eada530093aefb9689ab");
@@ -87,7 +97,7 @@ public class PointService {
         params.add("tid", kakaoPayApproveReq.getTid());
         params.add("partner_order_id", "포인트 결제");
         params.add("partner_user_id", Long.toString(id));
-        params.add("pg_token", pg_token);
+        params.add("pg_token", kakaoPayApproveReq.getPg_token());
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(params, headers);
@@ -108,5 +118,17 @@ public class PointService {
             exception.printStackTrace();
         }
         return kakaoPayApproveRes;
+    }
+
+    public void pointSave(String pg_token, int value, Long id) {
+        Optional<Member> member = memberRepository.findById(id);
+        member.get().getMemberInfo().setPoint(member.get().getMemberInfo().getPoint()+value);
+        pointLogRepository.save(PointLog.builder()
+                .member(member.get())
+                .createdAt(new Date())
+                .pointValue(value)
+                .pgToken(pg_token)
+                .build());
+
     }
 }

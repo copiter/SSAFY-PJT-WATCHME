@@ -280,7 +280,7 @@ function GroupReform() {
               </div>
             </div>
             <button type="submit" onSubmit={handleSubmit}>
-              생성하기
+              수정하기
             </button>
           </div>
         </div>

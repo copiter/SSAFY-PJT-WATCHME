@@ -11,6 +11,7 @@ import GroupDetailMembers from "./GroupDetailMembers";
 import ErrorCode from "../../../Error/ErrorCode";
 
 function GroupDetail() {
+  // const [resData, setResData] = useState(json.responseData);
   const [resData, setResData] = useState({
     group: {},
     members: [],
@@ -40,6 +41,9 @@ function GroupDetail() {
       const data = await response.json();
       if (data.code === 200) {
         setResData(data.responseData);
+      } else if (data.code === 501) {
+        window.history.back();
+        alert("비공개 방입니다");
       } else {
         ErrorCode(data);
       }
@@ -191,10 +195,18 @@ function GroupDetail() {
             <GroupDetailHome resData={resData} groupId={groupId} />
           )}
           {navBar === 1 && (
-            <GroupDetailSprint href={FETCH_URL} groupId={groupId} />
+            <GroupDetailSprint
+              href={FETCH_URL}
+              groupId={groupId}
+              role={resData.myData.role}
+            />
           )}
           {navBar === 2 && (
-            <GroupDetailMembers myData={resData.myData} url={url} />
+            <GroupDetailMembers
+              myData={resData.myData}
+              url={url}
+              href={FETCH_URL}
+            />
           )}
         </>
       </div>

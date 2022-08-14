@@ -1,12 +1,12 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FetchUrl } from "../../store/communication";
+
 import GroupItem from "./GroupItem";
 import ErrorCode from "../../Error/ErrorCode";
 
 import "./GroupRecruit.css";
-import { FetchUrl } from "../../store/communication";
-import getCookie from "../../Cookie";
 
 import btnPlane from "../../img/Icons/btn-plane.png";
 import filter from "../../img/Icons/filter.png";
@@ -42,7 +42,7 @@ function GroupRecruit() {
         if (result.code === 200) {
           setGroups(result["responseData"]["groups"]);
         } else {
-          console.log(result);
+          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -59,58 +59,40 @@ function GroupRecruit() {
         (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          setGroups(result["responseData"]["groups"]);
         } else {
-          console.log("제출Case4");
+          ErrorCode(result);
         }
       })
-      .then((result) => {
-        console.log(1);
-        console.log(result["responseData"]["groups"]);
-        setGroups(result["responseData"]["groups"]);
-      })
       .catch((err) => {
-        console.log("ERROR");
+        console.log(err);
       });
+    // inputs.keyword = "";
   };
 
   const addMore = (event) => {
     //값 입력 안받은상태임
     page++;
-    console.log(
-      "실제로 들어가야하는 방식 : "(
-        url +
-          "?" +
-          (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
-          (page === "" || page === 1 ? "" : "page=" + page + "&") +
-          "keyword=석인방"
-      )
-    );
     fetch(
       url +
         "?" +
         (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
         (page === "" || page === 1 ? "" : "page=" + page + "&") +
-        "keyword=석인방"
+        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
-      .then((response) => {
-        if (response.bodyUsed) {
-          console.log("재사용됨");
-        } else if (response.ok) {
-          return response.json();
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          setGroups([...groups, ...result.responseData.groups]);
         } else {
-          console.log("C4");
+          ErrorCode(result);
         }
       })
-      .then((result) => {
-        setGroups(result["responseData"]["groups"]);
-      })
       .catch((err) => {
-        console.log("ERROR");
+        console.log(err);
       });
   };
 
@@ -120,7 +102,6 @@ function GroupRecruit() {
     const ARR = ["all", "공무원", "취업", "수능", "자격증", "기타"];
 
     setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
-    console.log(ARR[event.target.value]);
     fetch(
       url +
         "?" +
@@ -138,11 +119,11 @@ function GroupRecruit() {
         }
       })
       .catch((err) => {
-        console.log("ERROR");
+        console.log(err);
       });
   };
 
-  console.log(groups);
+  // console.log(groups);
 
   return (
     <div id="open-group">
@@ -228,7 +209,6 @@ function GroupRecruit() {
               Filters
             </button> */}
           </div>
-          {/*아직 미구현예정 */}
         </div>
         <ul id="groups__whole" value={0}>
           {groups.map((group, index) => {

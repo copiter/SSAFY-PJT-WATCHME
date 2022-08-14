@@ -182,6 +182,8 @@
 }
 
 .sprint-summary-content > p {
+  text-align: center;
+  line-height: 180px;
   font-weight: 700;
   font-size: 24px;
 

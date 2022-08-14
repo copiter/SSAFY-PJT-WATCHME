@@ -70,6 +70,10 @@ function MainPage() {
 
   console.log(datas);
 
+  function toGroupRecruit() {
+    navigate("/GroupRecruit");
+  }
+
   return (
     <>
       <div id="outer">
@@ -98,11 +102,8 @@ function MainPage() {
                   {/*그룹 아무것도 가입안한경우 */}
                   {myGroups.length === 0 && (
                     <>
-                      <div id="myGroup-title">
-                        <span>
-                          가입한 그룹이 없습니다. 새로 가입해보시는건
-                          어떠신가요?
-                        </span>
+                      <div id="myGroup-title" onClick={toGroupRecruit}>
+                        <span>가입한 그룹이 없습니다. 둘러보세요!</span>
                       </div>
                     </>
                   )}

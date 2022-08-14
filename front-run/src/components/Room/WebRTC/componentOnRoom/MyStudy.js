@@ -12,8 +12,8 @@ function MyStudy() {
 	const [study, setStudy] = useState({
     "name" :"123" ,        
     "startTime" : "2022-08-10 14:42",
-    "mode" : "MODE1",
-    "penalty" : 0
+    "mode" : "MODE2",
+    "penalty" : 13
   })
   
   const id = window.location.pathname.split("/")[2].substring(0);
@@ -21,6 +21,7 @@ function MyStudy() {
 
   useEffect(() => {
   
+    console.log('TESTHERE');
   fetch(url+"/"+id, {
       headers: {
         accessToken: getCookie("accessToken"),
@@ -47,27 +48,34 @@ function MyStudy() {
       });
     }, []);
       
+    
 let DN=new Date(now()).getTime();
 let D1=new Date((study.startTime)).getTime();
 let studyTimes=DN-D1;
+console.log(studyTimes);
 return (
     <div className="backDiv">
-      <div className="borders">
-        <div className="stduyTime">
-          공부시간
-          <div className="studyTimeTime">{studyTimes/1000/60/60>1?parseInt(studyTimes/1000/60/60)+"시간:":""}{parseInt(studyTimes/1000/60)%60?parseInt(studyTimes/1000/60)%60+"분":""}</div>
-        </div>
-        <div className="stduypanelty">
-          내 패널티
-          <div className="studyTimeTime">{study.penalty}</div>
-        </div>
-        <div className="rule">
-          사용중인 규칙
-          <div className="studyTimeTime">{study.mode==="MODE1"?"자율":study.mode==="MODE2"?"졸림 감지":study.mode==="MODE3"?"스마트폰 감시":"화면공유 필수"}
+      <div className="borders"><div className="borders-inner">
+        <div className="clock">
+          <div className="stduyTime">
+            공부시간
           </div>
+          <div className="studyTimeTime">{studyTimes/1000/60/60>=10?(parseInt(studyTimes/1000/60/60)):(studyTimes/1000/60/60>=1)?"0"+(studyTimes/1000/60/60>=1):"00"}:{!parseInt(studyTimes/1000/60)%60?"00":(parseInt(studyTimes/1000/60)/10>=1?"":"0")+parseInt(studyTimes/1000/60)%60}</div>
+          
+        </div>
+        <div className="otherInformaations">
+          <div className="rule">
+            📝 적용중인 규칙
+            <div className="studyRuleRule">{study.mode==="MODE1"?"자율":study.mode==="MODE2"?"졸림 감지":study.mode==="MODE3"?"스마트폰":"화면공유"}
+            <div className="studyPanemtyPanelty">{study.mode!=="MODE1"?study.penalty:""}</div>
+          </div>
+        
+        </div>
         </div>
         
-      </div>
+        
+        
+      </div></div>
     </div>
   );
 }

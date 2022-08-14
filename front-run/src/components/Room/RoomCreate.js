@@ -161,25 +161,16 @@ function RoomCreate() {
                   value={inputs.endTime || ""}
                   onChange={handleChange}
                 />
-                <span>비공개</span>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    name="display"
-                    value={inputs.display}
-                    onChange={toggleChange}
-                  />
-                  <div className="slider round"></div>
-                </label>
+                
 
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input
-                  type="text"
+                  type="password"
                   name="roomPwd"
                   value={inputs.roomPwd || ""}
                   onChange={handleChange}
                   maxLength="4"
-                  minLength="4"
+                  minLength="0"
                   placeholder="비밀번호 4자리"
                 />
               </div>

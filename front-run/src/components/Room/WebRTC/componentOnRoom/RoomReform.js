@@ -1,9 +1,8 @@
 import React from "react";
 import { useState, useContext, useRef,useEffect } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { getCookie } from "../../../../Cookie";
 import { FetchUrl } from "../../../../store/communication";
-
 import "./RoomReform.css";
 //outputs.status
 
@@ -24,12 +23,8 @@ function RoomReform() {
   
   
   const id=window.location.pathname.split("/")[2].substring(0 );
-  console.log("id");
-  console.log(id);
   const url1 = `${FETCH_URL}/rooms/`+id+`/settings`;
   const url = `${FETCH_URL}/rooms/`+id+`/update`;
-  console.log(url1);
-  console.log(url);
     //Otpion
 
   const imgeRef = useRef();
@@ -39,14 +34,18 @@ function RoomReform() {
   console.log(inputs);
 
 
+
   useEffect(() => {
+    console.log("REFORM START");
   fetch(url1, {
     headers: {
       accessToken: getCookie("accessToken"),
     },
   })
     .then((response) => {
+      console.log(response);
       if (response.ok) {
+        console.log("resOK");
         return response.json(); //ok떨어지면 바로 종료.
       } else {
         response.json().then((data) => {
@@ -58,6 +57,8 @@ function RoomReform() {
     })
     .then((result) => {
       if (result != null) {
+        console.log("resultOK");
+        console.log("result.responseData.room");
         setInputs(result.responseData.room);
         
         //navigate("/RoomDetail/:" + result.responseData.roomId);
@@ -72,29 +73,37 @@ function RoomReform() {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append("images", imgeRef.current.files[0]);
+    let outputs={
+      roomName: inputs.roomName,
+      mode: inputs.mode, //MODE1, MODE2, MODE3
+      pwd: inputs.roomPwd,
+      roomDescription:inputs.description,
+      roomCategory: inputs.categoryName, 
+      roomMemberMaxNo: inputs.num,
+      endAt: inputs.endTime,
+    };
+    console.log("outputs");
+    console.log(outputs);
     formData.append(
       "roomUpdateDTO",
-      new Blob([JSON.stringify({
-        roomName: inputs.roomName,
-        mode: inputs.mode, //MODE1, MODE2, MODE3
-        pwd: inputs.roomPwd,
-        roomDescription:inputs.description,
-        roomCategory: inputs.categoryName, 
-        roomMemberMaxNo: inputs.num,
-        endAt: inputs.endTime,
-      })], { type: "application/json" })
+      new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
+    if(imgeRef!==null&&imgeRef!==""&&imgeRef.current.files[0]!==undefined){
+      formData.append("images", imgeRef.current.files[0])};
     
     console.log("OUTPUTSHERE");
+    console.log("KEY");
     for (let key of formData.keys()) {
       console.log(key);
     }
-    console.log("KEY");
+    console.log("values");
     for (let value of formData.values()) {
       console.log(value);
     }
     console.log("END");
+
+
+    console.log(formData);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -116,8 +125,9 @@ function RoomReform() {
       })
       .then((result) => {
         if (result != null) {
+          console.log("성공");
           //navigate("/RoomDetail/:" + result.responseData.roomId);
-          //navigate("./");
+          navigate("./");
           //window.location.reload(); //리다이렉션관련
         }
       })
@@ -132,7 +142,7 @@ function RoomReform() {
   };
   return (
     <div className="body-frame">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="floatRIGHT">
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
           <div className="room-image">
@@ -208,25 +218,15 @@ function RoomReform() {
               <div className="line">
                 <span>종료기간</span>
                     <input
-                      type="date"
+                      type="datetime-local"
                       name="endTime"
                       value={inputs.endTime || ""}
                       onChange={handleChange}
                     />
-                <span>비공개</span>
-                <label className="switch">
-                  <input
-                    type="checkbox"
-                    name="display"
-                    value={inputs.display || ""}
-                    onChange={handleChange}
-                  />
-                  <span className="slider round"></span>
-                </label>
 
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input
-                  type="text"
+                  type="password"
                   name="roomPwd"
                   value={inputs.roomPwd || ""}
                   onChange={handleChange}
@@ -242,19 +242,31 @@ function RoomReform() {
               <div className="rules-title">📝 규칙</div>
               <div className="rules-box">
                 <label>
-                  <input type="checkbox" />
+                  <input type="radio" value="MODE1"
+                    checked={inputs.mode==="MODE1"?"checked":""}
+                    onChange={handleChange}
+                    name="mode"/>
                   감시없음
                 </label>
                 <label>
-                  <input type="checkbox" />
-                  스마트폰감지
-                </label>
-                <label>
-                  <input type="checkbox" />
+                  <input type="radio" value="MODE2"
+                    checked={inputs.mode==="MODE2"?"checked":""}
+                    onChange={handleChange}
+                    name="mode"/>
                   졸음감지
                 </label>
                 <label>
-                  <input type="checkbox" />
+                  <input type="radio" value="MODE3"
+                    checked={inputs.mode==="MODE3"?"checked":""}
+                    onChange={handleChange}
+                    name="mode"/>
+                  스마트폰감지
+                </label>
+                <label>
+                  <input type="radio" value="MODE4"
+                    checked={inputs.mode==="MODE4"?"checked":""}
+                    onChange={handleChange}
+                    name="mode"/>
                   화면공유
                 </label>
               </div>

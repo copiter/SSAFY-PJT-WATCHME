@@ -2,6 +2,7 @@ import React, { useRef, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
+import GetToday from "../ETC/GetToday";
 
 import "./SprintCreate.css";
 
@@ -31,15 +32,40 @@ function SprintCreate(props) {
   const modeInputRef = useRef();
   const imgeRef = useRef();
 
-  //오늘날짜
-  const day = new Date();
-  const today = `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;
-
   // 파일처리
   const [fileImage, setFileImage] = useState("");
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
+
+  function dateCheck() {
+    if (
+      startAtInputRef.current.value === "" ||
+      endAtInputRef.current.value === ""
+    ) {
+      return;
+    }
+    if (startAtInputRef.current.value >= endAtInputRef.current.value) {
+      alert("시작일자는 종료일자보다 빨라야 합니다");
+      endAtInputRef.current.value = "";
+    }
+  }
+
+  function timeCheck() {
+    if (
+      routineStartAtInputRef.current.value === "" ||
+      routineEndAtInputRef.current.value === ""
+    ) {
+      return;
+    }
+    if (
+      routineStartAtInputRef.current.value ===
+      routineEndAtInputRef.current.value
+    ) {
+      alert("루틴 시작과 종료는 달라야 합니다");
+      routineEndAtInputRef.current.value = "";
+    }
+  }
 
   //submit
   const handleSubmit = (event) => {
@@ -131,9 +157,10 @@ function SprintCreate(props) {
                 <input
                   type="date"
                   required
-                  min={today}
+                  min={GetToday(1)}
                   max="9999-12-31"
                   ref={startAtInputRef}
+                  onChange={dateCheck}
                 />
               </label>
               <label>
@@ -141,19 +168,34 @@ function SprintCreate(props) {
                 <input
                   type="date"
                   required
-                  min={today}
+                  min={
+                    startAtInputRef.current
+                      ? startAtInputRef.current.value
+                      : GetToday(1)
+                  }
                   max="9999-12-31"
                   ref={endAtInputRef}
+                  onChange={dateCheck}
                 />
               </label>
 
               <label>
                 루틴 시작시각을 선택하세요
-                <input type="time" required ref={routineStartAtInputRef} />
+                <input
+                  type="time"
+                  required
+                  ref={routineStartAtInputRef}
+                  onChange={timeCheck}
+                />
               </label>
               <label>
                 루틴 종료시각을 선택하세요
-                <input type="time" required ref={routineEndAtInputRef} />
+                <input
+                  type="time"
+                  required
+                  ref={routineEndAtInputRef}
+                  onChange={timeCheck}
+                />
               </label>
 
               <label>

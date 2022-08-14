@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getCookie } from "../../../Cookie";
+import { useNavigate } from "react-router-dom";
 
 import "./GroupDetailMembers.css";
 import json from "../../json/groupdetailmembers.json";
@@ -9,7 +10,8 @@ function GroupDetailMembers(props) {
   const [memData, setMemData] = useState({ appliers: [], members: [] });
   const [reload, setReload] = useState(false);
   const role = props.myData.role;
-  const url = props.url;
+  const url = props.url; //${FETCH_URL}/groups/${groupId}
+  const navigate = useNavigate();
 
   useEffect(() => {
     const config = {
@@ -25,6 +27,7 @@ function GroupDetailMembers(props) {
         if (data.code === 200) {
           setMemData(data.responseData);
         } else {
+          console.log(data);
           ErrorCode(data);
         }
       } catch (e) {
@@ -35,6 +38,32 @@ function GroupDetailMembers(props) {
   }, [reload]);
 
   console.log(memData);
+
+  function deleteGroupHandler() {
+    const ask = window.confirm("그룹을 정말 삭제하시겠습니까?");
+    if (!ask) {
+      return;
+    }
+
+    const config = {
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    };
+    const getDatas = async () => {
+      const response = await fetch(url + "/delete", config);
+      const data = await response.json();
+
+      if (data.code === 200) {
+        alert("그룹 삭제 되었습니다");
+        navigate("/");
+      } else {
+        ErrorCode(data);
+      }
+    };
+    getDatas();
+  }
 
   function leaveGroupHandler() {
     const ask = window.confirm("탈퇴하시겠습니까?");
@@ -192,6 +221,14 @@ function GroupDetailMembers(props) {
             그룹 탈퇴
           </button>
         )}
+        {role === 0 && (
+          <button
+            className="group-detail__members-btn"
+            onClick={deleteGroupHandler}
+          >
+            그룹 삭제
+          </button>
+        )}
       </div>
       <div id="group-detail__members-content">
         <ul>
@@ -230,7 +267,7 @@ function GroupDetailMembers(props) {
                 {role === 0 && (
                   <div className="dropdown">
                     {/* <div className="members-btn"></div> */}
-                    <button className="dropbtn">관리</button>
+                    <button className="dropbtn">가입</button>
                     <div className="dropdown-content">
                       <button
                         className="group-detail__members-btn appliers"

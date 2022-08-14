@@ -5,10 +5,12 @@ import SprintItem from "./SprintItem";
 import { getCookie } from "../../../Cookie";
 import json from "../../json/groupdetailsprint.json";
 import "./GroupDetailSprint.css";
+import ErrorCode from "../../../Error/ErrorCode";
 
 function GroupDetailSprint(props) {
   const [sprints, setSprints] = useState([]);
   // const [sprints, setSprints] = useState(json.responseData.sprints);
+  const [reload, setReload] = useState(false);
 
   const navigate = useNavigate();
 
@@ -29,12 +31,10 @@ function GroupDetailSprint(props) {
 
       if (data.code === 200) {
         setSprints(data.responseData.sprints);
-      } else {
-        console.log(data);
       }
     };
     getDatas();
-  }, []);
+  }, [reload]);
 
   //sprint 분류
   let sprintJoin = {},
@@ -49,8 +49,33 @@ function GroupDetailSprint(props) {
       sprintDone.push(sprint);
     }
   });
-  console.log(sprintOngoing);
 
+  function sprintDelete() {
+    const ask = window.confirm("모집중인 스프린트를 삭제하시겠습니까?");
+    if (!ask) {
+      return;
+    }
+    fetch(`${props.href}/sprints/${sprintJoin.sprintId}/delete`, {
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        if (result.code === 200) {
+          alert("모집중인 스프린트를 삭제했습니다");
+          setReload(!reload);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        alert("통신실패 " + err);
+      });
+  }
   function sprintJoinHandler() {
     const ask = window.confirm("스프린트 참가신청 하시겠습니까?");
     if (!ask) {
@@ -69,10 +94,8 @@ function GroupDetailSprint(props) {
         console.log(result);
         if (result.code === 200) {
           alert("스프린트에 정상적으로 참가신청 되었습니다");
-        } else if (result.code === 535) {
-          alert("그룹원이 아닙니다");
         } else {
-          alert(result.message);
+          ErrorCode(result);
         }
       })
       .catch((err) => {
@@ -90,8 +113,12 @@ function GroupDetailSprint(props) {
         return response.json();
       })
       .then((result) => {
-        const roomId = result.reponseData.roomId;
-        navigate(`/RoomDetail/${roomId}`);
+        if (result.code === 200) {
+          const roomId = result.reponseData.roomId;
+          navigate(`/RoomDetail/${roomId}`);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         alert("입장실패 " + err);
@@ -102,9 +129,14 @@ function GroupDetailSprint(props) {
     <div id="group-detail__sprint">
       {/* sprintJoin */}
       <div id="sprint-join">
-        <strong>
-          모집중인 스프린트<i>(👇클릭)</i>
-        </strong>
+        <div id="sprint-join-header">
+          <strong>
+            모집중인 스프린트<i>(👇클릭)</i>
+          </strong>
+          {props.role === 0 && sprintJoin.length > 0 && (
+            <button onClick={sprintDelete}>스프린트 삭제</button>
+          )}
+        </div>
         <SprintItem sprint={sprintJoin} handler={sprintJoinHandler} />
       </div>
 

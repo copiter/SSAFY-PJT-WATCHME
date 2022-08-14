@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import ErrorCode from "../../Error/ErrorCode";
 
 function MyGroups() {
-  const [datas, setDatas] = useState(json.responseData.myGroups);
-  // const [datas, setDatas] = useState({ myGroups: [] });
+  // const [datas, setDatas] = useState(json.responseData.myGroups);
+  const [datas, setDatas] = useState({ myGroups: [] });
   const navigate = useNavigate();
 
   const FETCH_URL = useContext(FetchUrl);

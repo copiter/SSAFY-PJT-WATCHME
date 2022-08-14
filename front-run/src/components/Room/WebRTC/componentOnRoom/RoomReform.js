@@ -49,7 +49,7 @@ function RoomReform() {
         return response.json(); //ok떨어지면 바로 종료.
       } else {
         response.json().then((data) => {
-          console.log("ERR");
+          console.log("리스폰스오류");
           let errorMessage = "";
           throw new Error(errorMessage);
         });
@@ -60,13 +60,16 @@ function RoomReform() {
         console.log("resultOK");
         console.log("result.responseData.room");
         setInputs(result.responseData.room);
+        if(inputs.roomPwd===null||inputs.roomPwd===""){
+          inputs.roomPwd=""}
+          
         
         //navigate("/RoomDetail/:" + result.responseData.roomId);
         //window.location.reload(); //리다이렉션관련
       }
     })
     .catch((err) => {
-      console.log("ERR");
+      console.log("에러체크입니다.");
     });
   }, [])
   const handleSubmit = (event) => {
@@ -117,7 +120,7 @@ function RoomReform() {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
-            console.log("ERR");
+            console.log("post 리스폰스오류입니다.");
             let errorMessage = "";
             throw new Error(errorMessage);
           });
@@ -132,7 +135,7 @@ function RoomReform() {
         }
       })
       .catch((err) => {
-        console.log("ERR");
+        console.log("에러 POST");
       });
   };
 

@@ -71,7 +71,7 @@ public class GroupService {
             page = 1;
         }
         // TODO : 10개씩 보여주는 거 맞는지?
-        PageRequest pageRequest = PageRequest.of(page - 1, 10);
+        PageRequest pageRequest = PageRequest.of(page - 1, 9);
 
         if (ctgName != null) {
             Category category = categoryRepos.findByName(CategoryList.valueOf(ctgName));
@@ -105,9 +105,14 @@ public class GroupService {
         // getGroupList(Res DTO) : 그룹 리스트 반환
         List<GroupListResDTO> getGroupList = new LinkedList<>();
 
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1);
+
         for (Group g : groupList) {
             // sprint : 진행할 예정인 sprint
-            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().after(new Date())).collect(Collectors.toList());
+            // TODO : 모집예정 sprint가 있음에도 불구하고 null로 반환함
+            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().after(cal.getTime())).collect(Collectors.toList());
 
             // sprint 중 첫번째 항목을 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
             Sprint currSprint;
@@ -175,7 +180,7 @@ public class GroupService {
         // sprintResDTOList : 반환 DTO List
         List<SprintResDTO> sprintResDTOList;
 
-        List<Sprint> sprintList = sprintRepos.findAllByGroupId(groupId);
+        List<Sprint> sprintList = sprintRepos.findAllByGroupId(groupId).stream().filter(x -> x.getStatus() == Status.ING).collect(Collectors.toList());
 
         if (!sprintList.isEmpty()) {
             sprintResDTOList = new LinkedList<>();
@@ -227,6 +232,8 @@ public class GroupService {
             }
 
             result.setResponseData("sprints", sprintResDTOList);
+        } else {
+            result.setResponseData("sprints", new LinkedList<>());
         }
 
 
@@ -450,7 +457,7 @@ public class GroupService {
                     .status(Status.YES)
                     .view(0)
                     // TODO : secret을 받는다면 여기에서 set 해줄 것
-                    .secret(0)
+                    .secret(groupCreateReqDTO.getSecret())
                     .build();
 
 
@@ -682,6 +689,10 @@ public class GroupService {
         }
 
         if (groupApplyLog.isEmpty()) {
+            if(group.getGroupInfo().getMaxMember()==group.getGroupInfo().getCurrMember()){
+                throw new CustomException(Code.C568);
+            }
+
             galRepos.save(GroupApplyLog.builder()
                     .member(currUser)
                     .group(group)
@@ -768,6 +779,10 @@ public class GroupService {
                     Optional<GroupApplyLog> groupApplyLog = galRepos.findByMemberIdAndGroupId(applier.getId(), groupId);
 
                     if (groupApplyLog.isPresent()) {
+                        if(group.getGroupInfo().getMaxMember()==group.getGroupInfo().getCurrMember()){
+                            throw new CustomException(Code.C568);
+                        }
+
                         groupApplyLog.get().setStatus(1);
                         groupApplyLog.get().setUpdate_date(new Date());
 

@@ -484,7 +484,7 @@ public class RoomService {
                 .roomName(room.getRoomName())
                 .categoryName(room.getRoomCtg().getName().toString())
                 .description(room.getRoomInfo().getDescription())
-                .roomPwd((room.getRoomInfo().getPwd()==null)? -1:room.getRoomInfo().getPwd())
+                .roomPwd((room.getRoomInfo().getPwd()==null)? null:room.getRoomInfo().getPwd())
                 .img(room.getRoomInfo().getImageLink())
                 .num(room.getRoomInfo().getMaxMember())
                 .endTime(format2.format(room.getRoomInfo().getEndAt()))

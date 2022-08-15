@@ -20,16 +20,7 @@ function GroupReform() {
   const nameInputRef = useRef();
   const descriptionInputRef = useRef();
   const maxMemberInputRef = useRef();
-  const ctgInputRef = useRef();
   const secretInputRef = useRef();
-
-  const [selectCtg, setSelectCtg] = useState("ND");
-
-  const handleSelectCtg = (e) => {
-    // console.log(e.target.value);
-    // setSelectCtg(e.target.value);
-    console.log(ctgInputRef.current.value);
-  };
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
@@ -108,15 +99,19 @@ function GroupReform() {
 
   const [isChecked, setIsChecked] = useState(false);
   const handleChangeCheck = (event) => {
-    secretInputRef.current.value = !secretInputRef.current.value;
-    console.log(secretInputRef.current.value);
-    // setIsChecked((current) => !current);
-    // const name = event.target.name;
-    // setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
+    setIsChecked((current) => !current);
+    const name = event.target.name;
+    setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
   };
 
   const imgeRef = useRef();
+  const [fileImage, setFileImage] = useState("");
+  const saveFileImage = (event) => {
+    console.log(event.target.files[0]);
+    setFileImage(URL.createObjectURL(event.target.files[0]));
+  };
 
+  // 수정
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -154,7 +149,7 @@ function GroupReform() {
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
-    fetch(url, {
+    fetch(`url/${groupId}/update`, {
       method: "POST",
       body: formData,
       headers: {
@@ -164,7 +159,7 @@ function GroupReform() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          alert("그룹이 생성되었습니다!");
+          alert("그룹이 수정되었습니다!");
           navigate(`/GroupDetail/${result.responseData.groupId}`);
         } else {
           ErrorCode(result);
@@ -175,11 +170,6 @@ function GroupReform() {
       });
   };
 
-  const [fileImage, setFileImage] = useState("");
-  const saveFileImage = (event) => {
-    console.log(event.target.files[0]);
-    setFileImage(URL.createObjectURL(event.target.files[0]));
-  };
   return (
     <div id="group-create">
       <Link to={`/GroupDetail/${groupId}`} className="back-to-recruit">

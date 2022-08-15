@@ -22,18 +22,29 @@ class RoomDetail extends Component {
     super(props);
 
     this.state = {
-      mySessionId: "SessionA",
-      isRoomLeader:true,
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      //방데이터
+      mySessionId: "SessionA",//세션이름
+      myUserName: "Participant" + Math.floor(Math.random() * 100),//내 닉네임.
+      isRoomLeader: true,//방장인지 체크->방장전용 데이터 보임
+      mode: "MODE1",
+
+      //카메라 설정 데이터
+      videoState: true, //보이도록
+      audioState: true, //마이크 on
+      screenShare: true, //화면공유 버튼,
+      //채팅관련 설정 데이터
+      chatDisplay: "block",
+
+      //내 카메라 및 영상 배치 관련 데이터
       session: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
+      latestPublisher: undefined,
+
+      //전체 카메라 관련 데이터
       subscribers: [],
-      videoState: true, //보이도록
-      audioState: true, //마이크 on
-      screenShare: true, //화면공유 버튼
-      isScreenShareNow:false,
-      chatDisplay: "block",
+      isScreenShareNow: false,
+      screenShareCameraNeeded: false,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -44,14 +55,14 @@ class RoomDetail extends Component {
     this.audioHandlerOn = this.audioHandlerOn.bind(this);
     this.audioHandlerOff = this.audioHandlerOff.bind(this);
     this.switchCamera = this.switchCamera.bind(this);
-    this.screenShare = this.screenShare.bind(this);
+    this.shareScreen = this.shareScreen.bind(this);
     this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
     this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-    this.getMedia();
+    this.shareScreenCancle=this.shareScreenCancle.bind(this);
   }
 
   componentDidMount() {
@@ -92,120 +103,6 @@ class RoomDetail extends Component {
     }
   }
   async getUserPermission() {}
-  joinSession() {
-    //세션조인
-    // --- 1) Get an OpenVidu object ---
-    this.OV = new OpenVidu();
-
-    let myNickName = localStorage.getItem("nickName");
-    console.log("닉네임");
-    console.log(myNickName);
-    this.setState({
-      myUserName: myNickName,
-    });
-    // --- 2) Init a session ---
-    this.setState(
-      {
-        session: this.OV.initSession(),
-      },
-      () => {
-        var mySession = this.state.session;
-
-        // --- 3) Specify the actions when events take place in the session ---
-
-        // On every new Stream received...
-        mySession.on("streamCreated", (event) => {
-          // Subscribe to the Stream to receive it. Second parameter is undefined
-          // so OpenVidu doesn't create an HTML video by its own
-          var subscriber = mySession.subscribe(event.stream, undefined);
-          var subscribers = this.state.subscribers;
-          subscribers.push(subscriber);
-
-          // Update the state with the new subscribers
-          this.setState({
-            subscribers: subscribers,
-          });
-        });
-
-        // On every Stream destroyed...
-        mySession.on("streamDestroyed", (event) => {
-          // Remove the stream from 'subscribers' array
-          this.deleteSubscriber(event.stream.streamManager);
-        });
-
-        // On every asynchronous exception...
-        mySession.on("exception", (exception) => {
-          console.warn(exception);
-        });
-
-        // --- 4) Connect to the session with a valid user token ---
-
-        // 'getToken' method is simulating what your server-side should do.
-        // 'token' parameter should be retrieved and returned by your own backend
-        this.getToken().then((token) => {
-          // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
-          // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-          mySession
-            .connect(token, { clientData: this.state.myUserName })
-            .then(async () => {
-              //브라우저 비디오, 오디오 권한 설정
-              try {
-                var devices = await navigator.mediaDevices.getUserMedia({
-                  video: true,
-                  audio: true,
-                });
-              } catch (e) {
-                alert(
-                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요"
-                );
-              }
-
-              devices = await this.OV.getDevices(); //디바이스 없으면 가져옴
-
-              var videoDevices = devices.filter(
-                (device) => device.kind === "videoinput"
-              );
-
-              // --- 5) Get your own camera stream ---
-
-              // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
-              // element: we will manage it on our own) and with the desired properties
-              let publisher = this.OV.initPublisher(undefined, {
-                audioSource: undefined, // The source of audio. If undefined default microphone
-                videoSource: videoDevices[0].deviceId, // The source of video. If undefined default webcam
-                publishAudio: this.state.audioState, // Whether you want to start publishing with your audio unmuted or not
-                publishVideo: this.state.videoState, // Whether you want to start publishing with your video enabled or not
-                resolution: "640x480", // The resolution of your video
-                frameRate: 30, // The frame rate of your video
-                insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
-                mirror: false, // Whether to mirror your local video or not
-              });
-
-              // --- 6) Publish your stream ---
-
-              mySession.publish(publisher);
-
-              console.log("퍼블리셔", publisher);
-
-              // Set the main video in the page to display our webcam and store our Publisher
-              this.setState({
-                currentVideoDevice: videoDevices[0],
-                mainStreamManager: publisher,
-                publisher: publisher,
-              });
-            })
-            .catch((error) => {
-              console.log(
-                "There was an error connecting to the session:",
-                error.code,
-                error.message
-              );
-            });
-        });
-      }
-    );
-  }
-
   leaveSession() {
     //세션 탈출
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
@@ -222,7 +119,7 @@ class RoomDetail extends Component {
 
     fetch(url, {
       method: "POST",
-      headers:{accessToken: getCookie("accessToken")}
+      headers: { accessToken: getCookie("accessToken") },
     })
       .then((response) => {
         console.log(response);
@@ -264,7 +161,7 @@ class RoomDetail extends Component {
     this.setState({
       session: undefined,
       subscribers: [],
-      mySessionId: "SessionA",
+      mySessionId: "SessionA" + Math.floor(Math.random() * 100),
       myUserName: "Participant" + Math.floor(Math.random() * 100),
       mainStreamManager: undefined,
       publisher: undefined,
@@ -310,65 +207,81 @@ class RoomDetail extends Component {
     }
   }
 
-  //화면 공유 기능
-  async screenShare() {
-    try{
-      const latestPublisher = this.state.publisher;
-    
 
-    //화면 공유 중지 누른 뒤 로직
-    if(this.state.isScreenShareNow){
-       newPublisher.stream
-        .getMediaStream()
-        .getVideoTracks()[0]
-        .addEventListener("ended", () => {
-          console.log('User pressed the "Stop sharing" button');
-          this.state.session.unpublish(newPublisher);
-          this.state.session.publish(latestPublisher);
-          this.setState({
-            screenShare: true,
-          });
-        });
-    }
-    else{
-//기존 정보 저장
-          
-      //screenshare를 위한 publisher 생성
+  
+  //오디오 관련
+  audioHandlerOn() {
+  }
+  audioHandlerOff() {
+    this.state.publisher.publishAudio(false);
+
+    this.setState({
+      audioState: false,
+    });
+  }
+
+
+
+
+  //화면 공유 기능
+  async shareScreen() {
+    try {
+      const latestPublisher = this.state.publisher;
       var newPublisher = this.OV.initPublisher(undefined, {
         videoSource: "screen",
       });
-
       //mainStream 없애고 새로 생성한 stream 추가
       await this.state.session.unpublish(this.state.mainStreamManager);
       await this.state.session.publish(newPublisher);
+      await this.state.session.unpublish(this.state.mainStreamManager);
+      await this.state.session.publish(latestPublisher);
       this.setState({
         mainStreamManager: newPublisher,
-        publisher: newPublisher,
+        publisher: latestPublisher,
+        isScreenShareNow:true,
+        screenShareCameraNeeded:true,
       });
-
-    }
-      console.log(this.state.isScreenShareNow)
-      this.state.isScreenShareNow=!this.state.isScreenShareNow;
-    }
-    catch{}
+    } catch {}
+  }
+  async shareScreenCancle(){
+    const latestPublisher = this.state.publisher;
+    this.setState({
+      isScreenShareNow:false,
+      screenShareCameraNeeded:false,
+    }); 
+    await this.state.session.unpublish(this.state.publisher);
+    await this.state.session.publish(latestPublisher);
+    
+    /*
+     //화면 공유 중지 누른 뒤 로직
+      newPublisher.stream
+      .getMediaStream()
+      .getVideoTracks()[0]
+      .addEventListener("ended", () => {
+        console.log('User pressed the "Stop sharing" button');
+        this.state.session.unpublish(newPublisher);
+        this.state.session.publish(latestPublisher);
+       
+      });*/
   }
 
-  //Video On / Off
+
+
+//방 기본설정들, 문제없이 진행됨.
+  //비디오 키고 끄기관련
   videoHandlerOn() {
     this.setState({
       videoState: true,
-      screenShare: true,
     });
     this.state.publisher.publishVideo(true);
   }
   videoHandlerOff() {
     this.setState({
       videoState: false,
-      screenShare: false,
     });
     this.state.publisher.publishVideo(false);
   }
-  //Audio ON / OFF
+  //오디오 관련
   audioHandlerOn() {
     this.state.publisher.publishAudio(true);
 
@@ -384,8 +297,8 @@ class RoomDetail extends Component {
       audioState: false,
     });
   }
-
-  toggleChat(property) {
+  //채팅관련
+  toggleChat(property) {//채팅 열고 닫기
     let display = property;
 
     if (display === undefined) {
@@ -398,14 +311,16 @@ class RoomDetail extends Component {
       this.setState({ chatDisplay: display });
     }
   }
-
-  checkNotification(event) {
+  checkNotification(event) {//채팅용
     this.setState({
       messageReceived: this.state.chatDisplay === "none",
     });
   }
 
-  closeRoom() {
+
+
+
+  closeRoom() {//아직 구현안됨.
     const FETCH_URL = FetchUrl._currentValue;
     fetch(FETCH_URL, {
       method: "POST",
@@ -420,12 +335,14 @@ class RoomDetail extends Component {
   closeSession() {}
   banALL() {}
 
-  async getMedia() {
+
+
+
+  
+  joinSession() {
+    //방데이터 세팅을 위한 백과의 통신
     const FETCH_URL = FetchUrl._currentValue;
     const id = window.location.pathname.split("/")[2].substring(0);
-    let mode = "MODE1";
-
-    console.log(id);
     fetch(`${FETCH_URL}/rooms/` + id, {
       headers: {
         accessToken: getCookie("accessToken"),
@@ -433,7 +350,6 @@ class RoomDetail extends Component {
     })
       .then((response) => {
         if (response.ok) {
-          console.log(response);
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
@@ -444,56 +360,157 @@ class RoomDetail extends Component {
       })
       .then((result) => {
         if (result != null) {
-          console.log("성공");
+          console.log("리저트 테스트");
           console.log(result.responseData.room);
-          console.log("백통신 결과입니다.");
-          this.state.mySessionId=result.responseData.room.name;
-          this.state.isRoomLeader=(result.responseData.room.leaderTrue===0?false:true);
-          localStorage.setItem({"L":this.state.isRoomLeader});
-          console.log("뭐냐");  
-          this.state.screenShare=(result.responseData.room.mode==="MODE1"?false:true)
-          console.log("모드");
-          mode=result.responseData.room.mode;
-          console.log("모드2");
+          this.setState(
+            {
+              mySessionId : result.responseData.room.name,
+              isRoomLeader :result.responseData.room.leaderTrue === 0 ? false : true,
+              screenShare:result.responseData.room.mode === "MODE1" ? false : true,
+              mode : result.responseData.room.mode
+            }
+          );
+          this.joinSessionSetOpenVidu(result.responseData.room.name)
           setInterval(() => {
-            this.openTeli(id, mode);
+            this.openTeli(id,result.responseData.room.name, result.responseData.room.mode);
           }, 3000);
         }
       })
       .catch((err) => {
         console.log("백통신 실패");
       });
-    
-    /*
-    try {
-      const blob = await imageCapture.takePhoto();
-      const image = document.querySelector('img');
-      image.src = URL.createObjectURL(blob);
-      console.log(blob);
-      console.log(image);
-    } catch (err) {
-      console.error("takePhoto() failed: ", err);
-    }
-    */
+
+    //통신용 개인 닉네임 확인
+    let myNickName = localStorage.getItem("nickName");
+    this.setState({
+      myUserName: myNickName,
+    });
+
+
   }
-  async openTeli(id, mode) {
-    console.log(mode);
-    console.log("정상작동");
+  async joinSessionSetOpenVidu(newSessionId){
+    
+    console.log("오픈비두 테스트");
+    console.log(this.state,);
+    //오픈비두 세팅
+    this.OV = new OpenVidu();
+    this.setState(
+      {
+        session: this.OV.initSession(),
+      },
+      () => {
+        var mySession = this.state.session;
+        // --- 3) Specify the actions when events take place in the session ---
+        // On every new Stream received...
+        mySession.on("streamCreated", (event) => {
+          // Subscribe to the Stream to receive it. Second parameter is undefined
+          // so OpenVidu doesn't create an HTML video by its own
+          var subscriber = mySession.subscribe(event.stream, undefined);
+          var subscribers = this.state.subscribers;
+          subscribers.push(subscriber);
+          this.setState({ subscribers: subscribers });
+        });
+      
+        this.sessionStreamCheck();
+
+        // --- 4) Connect to the session with a valid user token ---
+        // 'getToken' method is simulating what your server-side should do.
+        // 'token' parameter should be retrieved and returned by your own backend
+        this.getToken(newSessionId).then((token) => {
+          // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+          // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+          mySession
+            .connect(token, { clientData: this.state.myUserName })
+            .then(async () => {
+              //브라우저 비디오, 오디오 권한 설정
+              try {
+                var devices = await navigator.mediaDevices.getUserMedia({
+                  video: true,
+                  audio: true,
+                });
+              } catch (e) {
+                alert(
+                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요"
+                );
+              }
+
+              devices = await this.OV.getDevices(); //디바이스 없으면 가져옴
+              var videoDevices = devices.filter(
+                (device) => device.kind === "videoinput"
+              );
+              // --- 5) Get your own camera stream ---
+              // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
+              // element: we will manage it on our own) and with the desired properties
+              let publisher = this.OV.initPublisher(undefined, {
+                audioSource: undefined, // The source of audio. If undefined default microphone
+                videoSource: videoDevices[0].deviceId, // The source of video. If undefined default webcam
+                publishAudio: this.state.audioState, // Whether you want to start publishing with your audio unmuted or not
+                publishVideo: this.state.videoState, // Whether you want to start publishing with your video enabled or not
+                resolution: "640x480", // The resolution of your video
+                frameRate: 30, // The frame rate of your video
+                insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+                mirror: false, // Whether to mirror your local video or not
+              });
+
+              // --- 6) Publish your stream ---
+
+              mySession.publish(publisher);
+              // Set the main video in the page to display our webcam and store our Publisher
+              this.setState({
+                currentVideoDevice: videoDevices[0],
+                mainStreamManager: publisher,
+                publisher: publisher,
+              });
+            })
+            .catch((error) => {
+              console.log("오픈비드 JoinSession에러입니다.")
+              console.log(
+                "There was an error connecting to the session:",
+                error.code,
+                error.message
+              );
+            });
+        });
+      }
+    );
+  }
+
+  sessionStreamCheck()
+  {
+    
+    var mySession = this.state.session;
+    // 스트림 파괴될때마다 'subscribers' array에서 스트림 제거
+    mySession.on("streamDestroyed", (event) => {
+      this.deleteSubscriber(event.stream.streamManager);
+    });
+    //비정상적인 예외사항 발생시 경고날림
+    mySession.on("exception", (exception) => {
+      console.warn(exception);
+    });
+
+  }
+  async openTeli(id,) {
+    //특정 기간마다 반복해서
+    //포멧 만들기
+    //JSON넣기
     const formData = new FormData();
-    const json = { nickName: this.state.myUserName, roomId: id, mode: mode };
+    const json = {
+      nickName: this.state.myUserName,
+      roomId: id,
+      mode: this.state.mode,
+    };
     formData.append(
       "flaskDTO",
       new Blob([JSON.stringify(json)], { type: "application/json" }),
       "flaskDTO"
     );
 
+    //이미지 넣기
     let imageCapture;
-
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const stream = await navigator.mlogediaDevices.getUserMedia({
         video: { pan: true, tilt: true, zoom: true },
       });
-
       const [track] = stream.getVideoTracks();
       imageCapture = new ImageCapture(track);
     } catch (err) {
@@ -502,7 +519,12 @@ class RoomDetail extends Component {
     const blob = await imageCapture.takePhoto();
     formData.append("img", blob, "img");
 
-   fetch("https://watchme1.shop/flask/openCV", {
+    this.viduSendFormatToVidu(formData);
+    this.sessionStreamCheck();
+  }
+  viduSendFormatToVidu(formData){
+    
+    fetch("https://watchme1.shop/flask/openCV", {
       method: "POST",
       body: formData,
     })
@@ -522,36 +544,35 @@ class RoomDetail extends Component {
             console.log("오류없음");
           } else if (result.code === 205) {
             this.errorFound();
-          } else if(result.code === 202){
-            
-          }
-          else if(result.code==504){
+          } else if (result.code === 202) {
+            this.ban();
+          } else if (result.code === 504) {
             console.log("504에러");
-          }
-          else if(result.code===522)
-          {
+          } else if (result.code === 522) {
             console.log("522에러");
-          }
-          else if(result.code==553)
-          {
+          } else if (result.code === 553) {
             console.log("553에러");
           }
         }
       })
       .catch((err) => {
         console.log("ERR여기임");
-      }); 
-  
+      });
   }
 
 
-
-  errorFound(){
-    alert("감지되었습니다.");
+  errorFound() {
+    if (this.state.mode === "MODE2") {
+      alert("졸음이 감지되었습니다.");
+    } else if (this.state.mode === "MODE3") {
+      alert("스마트폰이 감지되었습니다");
+    } else {
+      console.log("알수없는에러");
+    }
   }
-  ban(){
-    
+  ban() {
     alert("벌점이 과다로 추방되었습니다.");
+    window.location.href = "../";
   }
 
   render() {
@@ -563,51 +584,72 @@ class RoomDetail extends Component {
           <div id="session" className="out">
             <div className="Main">
               <div id="session-header" className="Header">
-                <div id="session-title" className="headerTitle"><h1>{mySessionId}</h1></div>
+                <div id="session-title" className="headerTitle">
+                  <h1>{mySessionId}</h1>
+                </div>
                 <div className="headerButtons">
                   <div className="btnTotal">
                     {this.state.videoState && (
-                      <button onClick={this.videoHandlerOff} className="btns ">Video OFF</button>
+                      <button onClick={this.videoHandlerOff} className="btns ">
+                        Video OFF
+                      </button>
                     )}
                     {!this.state.videoState && (
-                      <button onClick={this.videoHandlerOn} className="btns ">Video ON</button>
+                      <button onClick={this.videoHandlerOn} className="btns ">
+                        Video ON
+                      </button>
                     )}
                     {this.state.audioState && (
-                      <button onClick={this.audioHandlerOff} className="btns ">Audio OFF</button>
+                      <button onClick={this.audioHandlerOff} className="btns ">
+                        Audio OFF
+                      </button>
                     )}
                     {!this.state.audioState && (
-                      <button onClick={this.audioHandlerOn} className="btns ">Audio ON</button>
+                      <button onClick={this.audioHandlerOn} className="btns ">
+                        Audio ON
+                      </button>
                     )}
-                    {this.state.screenShare && (
-                      <button onClick={this.screenShare} className="btns">화면공유</button>
+                    {this.state.screenShare&&!this.state.isScreenShareNow && (
+                      <button onClick={this.shareScreen} className="btns">
+                        화면공유  
+                      </button>
+                    )}
+                     {this.state.screenShare &&this.state.isScreenShareNow&& (
+                      <button onClick={this.shareScreenCancle} className="btns">
+                        화면공유 취소
+                      </button>
                     )}
                   </div>
                 </div>
-                 
               </div>
               <div className="cams">
-                <div className="myCams">{
-                  //개인카메라
-                  this.state.mainStreamManager !== undefined ? (
-                    <div id="main-video" className="col-md-6">
-                      <UserVideoComponent
-                        streamManager={this.state.mainStreamManager}
-                        audioState={this.state.audioState}
-                      />
-                      <input
-                        className="btn btn-large btn-success"
-                        type="button"
-                        id="buttonSwitchCamera"
-                        onClick={this.switchCamera}
-                        value="내 화면을 다시 보기"
-                      />
-                    </div>
-                  ) : null
-                }
-                  <div id="video-container" className="col-md-6">{console.log(this.state.isScreenShareNow)}
-                    {this.state.publisher !== undefined &&this.state.isScreenShareNow? (
+                <div className="myCams">
+                  {
+                    //개인카메라
+                    this.state.mainStreamManager !== undefined ? (
+                      <div id="main-video" className="col-md-6">
+                        <UserVideoComponent
+                          streamManager={this.state.mainStreamManager}
+                          audioState={this.state.audioState}
+                        />
+                        <input
+                          className="btn btn-large btn-success"
+                          type="button"
+                          id="buttonSwitchCamera"
+                          onClick={this.switchCamera}
+                          value="내 화면을 다시 보기"
+                        />
+                      </div>
+                    ) : null
+                  }
+                  <div id="video-container" className="col-md-6">
+                    {this.state.publisher !== undefined 
+                    &&this.state.screenShareCameraNeeded
+                     ? (
                       <div className="stream-container col-md-6 col-xs-6">
-                        <UserVideoComponent streamManager={this.state.publisher} />
+                        <UserVideoComponent
+                          streamManager={this.state.publisher}
+                        />
                       </div>
                     ) : null}
                   </div>
@@ -633,59 +675,68 @@ class RoomDetail extends Component {
                       <button className="linksLi">내 공부</button>
                     </Link>
                     <Link to="./members">
-                       <button className="linksLi">맴버</button>
+                      <button className="linksLi">맴버</button>
                     </Link>
-                    {this.state.isRoomLeader?<Link to="./RoomReform">
-                      <button className="linksLi">방 수정</button>
-                    </Link>:""}
+                    {this.state.isRoomLeader ? (
+                      <Link to="./RoomReform">
+                        <button className="linksLi">방 수정</button>
+                      </Link>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
                 <div className="AsideMain">
                   <div className="sideBoards">
-                    <Routes >
+                    <Routes>
                       <Route path="/" element={<MyStudy />} />
                       <Route path="/members" element={<Members />} />
                       <Route path="/RoomReform" element={<RoomReform />} />
                     </Routes>
                   </div>
-                  <div id="chat-container" className="chatBoards" >
-                  {this.state.publisher !== undefined &&
-                    this.state.publisher.stream !== undefined && (
-                      <div
-                        className="OT_root OT_publisher custom-class"
-                        style={chatDisplay}
-                      >
-                        <ChatComponent
-                          user={this.state.publisher}
-                          chatDisplay={this.state.chatDisplay}
-                          close={this.toggleChat}
-                          messageReceived={this.checkNotification}
-                        />
-                      </div>
-                    )}  
+                  <div id="chat-container" className="chatBoards">
+                    {this.state.publisher !== undefined &&
+                      this.state.publisher.stream !== undefined && (
+                        <div
+                          className="OT_root OT_publisher custom-class"
+                          style={chatDisplay}
+                        >
+                          <ChatComponent
+                            user={this.state.publisher}
+                            chatDisplay={this.state.chatDisplay}
+                            close={this.toggleChat}
+                            messageReceived={this.checkNotification}
+                          />
+                        </div>
+                      )}
                   </div>
                 </div>
-                
               </div>
               <div className="btnRight">
-                  <div className="btnRightInner">
+                <div className="btnRightInner">
+                  <input
+                    className="btn btn-large btn-danger btnR"
+                    type="button"
+                    id="buttonLeaveSession"
+                    onClick={this.leaveSession}
+                    value="방 나가기"
+                  />
+                  {this.state.isRoomLeader ? (
                     <input
-                        className="btn btn-large btn-danger btnR"
-                        type="button"
-                        id="buttonLeaveSession"
-                        onClick={this.leaveSession}
-                        value="방 나가기"
-                      />
-                    {this.state.isRoomLeader?<input
                       className="btn btn-large btn-danger btnR"
                       type="button"
                       id="buttonLeaveSession"
                       onClick={this.closeRoom}
                       value="방 닫기"
-                    />:""}
-                    <button className="btnR" onClick={() => this.toggleChat()}>채팅</button>
-                  </div>
+                    />
+                  ) : (
+                    ""
+                  )}
+                  <button className="btnR" onClick={() => this.toggleChat()}>
+                    채팅
+                  </button>
                 </div>
+              </div>
             </div>
           </div>
         )}
@@ -705,12 +756,6 @@ class RoomDetail extends Component {
    *   3) The Connection.token must be consumed in Session.connect() method
    */
 
-  getToken() {
-    return this.createSession(this.state.mySessionId).then((sessionId) =>
-      this.createToken(sessionId)
-    );
-  }
-
   createSession(sessionId) {
     return new Promise((resolve, reject) => {
       var data = JSON.stringify({ customSessionId: sessionId });
@@ -723,7 +768,7 @@ class RoomDetail extends Component {
           },
         })
         .then((response) => {
-          console.log("CREATE SESION", response);
+          console.log("세션성공");
           resolve(response.data.id);
         })
         .catch((response) => {
@@ -755,6 +800,11 @@ class RoomDetail extends Component {
     });
   }
 
+  getToken(newSessionId) {
+    return this.createSession(this.state.newSessionId).then((sessionId) =>
+    this.createToken(sessionId)
+    );
+  }
   createToken(sessionId) {
     return new Promise((resolve, reject) => {
       var data = {};
@@ -774,10 +824,12 @@ class RoomDetail extends Component {
           }
         )
         .then((response) => {
-          console.log("TOKEN", response);
           resolve(response.data.token);
         })
-        .catch((error) => reject(error));
+        .catch((error) => {
+          console.log("생성실패")
+          reject(error)
+        });
     });
   }
 }

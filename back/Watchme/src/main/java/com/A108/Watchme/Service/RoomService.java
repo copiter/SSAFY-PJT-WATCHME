@@ -126,6 +126,8 @@ public class RoomService {
 
 
     public ApiResponse getRoomList(String ctgName, int page, String keyword) {
+        System.out.println(ctgName);
+        System.out.println(keyword);
         ApiResponse result = new ApiResponse();
         PageRequest pageRequest = PageRequest.of(page - 1, 10);
         List<Room> roomList;

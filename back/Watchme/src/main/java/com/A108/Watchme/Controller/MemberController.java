@@ -77,8 +77,9 @@ public class MemberController {
     @PostMapping("/auth/social-signup")
     @ResponseBody
     public ApiResponse socialSignUp(@Valid @RequestBody SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
-                                    HttpServletResponse response, Authentication authentication) throws ParseException {
-        return memberService.memberInsert(socialSignUpRequestDTO, request, response ,authentication);
+                                    HttpServletResponse response) throws ParseException {
+
+        return memberService.memberInsert(socialSignUpRequestDTO, request, response);
     }
 
     @PostMapping("/auth/find-email")

@@ -33,13 +33,24 @@ public class CookieUtil {
 //
 ////        cookie.setValue(LocalDateTime.now().toString());
 //        cookie.setMaxAge(maxAge);
-        ResponseCookie cookie1 =ResponseCookie.from(name,value)
-                .domain("")
-                .sameSite("None")
-                .secure(true)
-                .path("/")
-                .maxAge(maxAge)
-                .build();
+        ResponseCookie cookie1;
+        if(name.equals("accessToken")){
+            cookie1 =ResponseCookie.from(name,value)
+                    .domain("")
+                    .path("/")
+                    .maxAge(maxAge)
+                    .build();
+        }
+        else{
+            cookie1 =ResponseCookie.from(name,value)
+                    .domain("")
+                    .sameSite("None")
+                    .secure(true)
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(maxAge)
+                    .build();
+        }
         response.addHeader("Set-Cookie",cookie1.toString());
     }
 

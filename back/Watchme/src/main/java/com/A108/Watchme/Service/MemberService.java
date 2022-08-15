@@ -170,13 +170,15 @@ public class MemberService {
         return result;
     }
 
-    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ParseException {
+    public ApiResponse memberInsert(SocialSignUpRequestDTO socialSignUpRequestDTO, HttpServletRequest request,
+                                    HttpServletResponse response) throws ParseException {
         ApiResponse result = new ApiResponse();
-
-        String email = ((UserPrincipal) authentication.getPrincipal()).getName();
-        Member member = memberRepository.findByEmail(email);
-
-        Date now = new Date();
+        if(nickNameCheckFunc(socialSignUpRequestDTO.getNickName())){
+            throw new CustomException(Code.C515);
+        }
+        Member member = memberRepository.findById(authUtil.memberAuth()).get();
+        System.out.println("memberId");
+        System.out.println(member.getId());
         memberInfoRepository.save(MemberInfo.builder()
                 .member(member)
                 .gender(socialSignUpRequestDTO.getGender())
@@ -186,39 +188,9 @@ public class MemberService {
                 .score(0)
                 .build());
 
-        AuthToken accessToken = tokenProvider.createAuthToken(member.getId(),
-                ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode()
-                , new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
 
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
-
-        AuthToken refreshToken = tokenProvider.createAuthToken(
-                appProperties.getAuth().getTokenSecret(),
-                new Date(now.getTime() + refreshTokenExpiry)
-        );
-
-        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.getEmail());
-
-        // 원래 RefreshToken이 있으면 갱신해줘야함
-        if (oldRefreshToken.isPresent()) {
-            RefreshToken token = refreshTokenRepository.findById(oldRefreshToken.get().getId()).get();
-            token.setToken(refreshToken.getToken());
-            refreshTokenRepository.save(token);
-        }
-        // 없으면 생성
-        else {
-            refreshTokenRepository.save(RefreshToken.builder()
-                    .token(refreshToken.getToken())
-                    .email(member.getEmail())
-                    .build());
-        }
-
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
         result.setMessage("SOCAIL LOGIN SUCCESS");
         result.setCode(200);
-        result.setResponseData("accessToken", accessToken.getToken());
         return result;
     }
 
@@ -417,10 +389,13 @@ public class MemberService {
         @Transactional
         public ApiResponse memberUpdate (UpdateRequestDTO updateRequestDTO, MultipartFile image){
             ApiResponse result = new ApiResponse();
+
             try {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-
+                    if(nickNameCheckFunc(updateRequestDTO.getNickName())){
+                        throw new CustomException(Code.C515);
+                    }
                     Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
 
                     if (currUser.isPresent()) {

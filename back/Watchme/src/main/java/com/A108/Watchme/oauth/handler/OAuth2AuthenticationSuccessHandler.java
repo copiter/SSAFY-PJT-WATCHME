@@ -59,6 +59,52 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         MemberInfo memberInfo = member.getMemberInfo();
             // 정보입력을 위한 이동
             if(memberInfo.getName()==null){
+                OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
+                ProviderType providerType = ProviderType.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
+
+                OidcUser user = ((OidcUser) authentication.getPrincipal());
+                // memberId 가지고오기
+                Long memberId = memberRepository.findByEmail(authentication.getName()).getId();
+                OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
+                Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
+
+                RoleType roleType = hasAuthority(authorities, RoleType.ADMIN.getCode()) ? RoleType.ADMIN : RoleType.USER;
+
+                Date now = new Date();
+                AuthToken accessToken = tokenProvider.createAuthToken(
+                        memberId,
+                        roleType.getCode(),
+                        new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+                );
+
+                // refresh 토큰 설정
+                long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+
+                AuthToken refreshToken = tokenProvider.createAuthToken(
+                        appProperties.getAuth().getTokenSecret(),
+                        new Date(now.getTime() + refreshTokenExpiry)
+                );
+
+                Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(userInfo.getEmail());
+
+                // 원래 RefreshToken이 있으면 갱신해줘야함
+                if(oldRefreshToken.isPresent()){
+                    RefreshToken  token = refreshTokenRepository.findById(oldRefreshToken.get().getId()).get();
+                    token.setToken(refreshToken.getToken());
+                    refreshTokenRepository.save(token);
+                }
+                // 없으면 생성
+                else{
+                    refreshTokenRepository.save(RefreshToken.builder()
+                            .token(refreshToken.getToken())
+                            .email(userInfo.getEmail())
+                            .build());
+                }
+
+                int cookieMaxAge = (int) refreshTokenExpiry / 60;
+                CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+                CookieUtil.addCookie(response,"accessToken",accessToken.getToken(),cookieMaxAge);
+                CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
                 getRedirectStrategy().sendRedirect(request, response, "https://watchme1.shop/slogin");
             }
 

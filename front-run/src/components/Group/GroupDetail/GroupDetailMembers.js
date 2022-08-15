@@ -39,6 +39,10 @@ function GroupDetailMembers(props) {
 
   console.log(memData);
 
+  function reformGroupHandler() {
+    navigate(`/GroupReform/${props.groupId}`);
+  }
+
   function deleteGroupHandler() {
     const ask = window.confirm("그룹을 정말 삭제하시겠습니까?");
     if (!ask) {
@@ -222,12 +226,20 @@ function GroupDetailMembers(props) {
           </button>
         )}
         {role === 0 && (
-          <button
-            className="group-detail__members-btn"
-            onClick={deleteGroupHandler}
-          >
-            그룹 삭제
-          </button>
+          <div>
+            <button
+              className="group-detail__leader-btn"
+              onClick={reformGroupHandler}
+            >
+              그룹 수정
+            </button>
+            <button
+              className="group-detail__members-btn"
+              onClick={deleteGroupHandler}
+            >
+              그룹 삭제
+            </button>
+          </div>
         )}
       </div>
       <div id="group-detail__members-content">
@@ -260,7 +272,9 @@ function GroupDetailMembers(props) {
                   <div>
                     <span>페널티 횟수</span>
                     <span className="medium-text">
-                      {/* {`😴${applier.penalty[0]} / 📱${applier.penalty[1]}`} */}
+                      {resData.myData.hasOwnProperty("penalty")
+                        ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]}`
+                        : null}{" "}
                     </span>
                   </div>
                 </div>
@@ -316,9 +330,9 @@ function GroupDetailMembers(props) {
                   <div>
                     <span>페널티 횟수</span>
                     <span className="medium-text">
-                      {member.hasOwnProperty("penalty")
-                        ? `${member.penalty}`
-                        : "0분"}
+                      {resData.myData.hasOwnProperty("penalty")
+                        ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]}`
+                        : null}
                     </span>
                   </div>
                 </div>

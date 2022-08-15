@@ -34,27 +34,44 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  position: relative;
 }
 
-.group-image .group-image__upload {
-  margin: 50px 0 30px 0;
+.group-image .group-image__upload-reform {
+  /* margin: 50px 0 30px 0; */
 
-  width: 160px;
-  height: 160px;
+  padding: 5px 8px;
   background: #d9d9d9;
   text-indent: -10000px;
+  width: 130px;
+  border-radius: 10px;
 
-  border-radius: 50%;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  background: transparent;
+  cursor: pointer;
+  /* font-size: 10px; */
 }
 
 .group-image__upload::file-selector-button {
-  display: none;
+  display: block;
 }
 
 .group-image__message {
+  display: inline-block;
   font-weight: 500;
   font-size: 16px;
   letter-spacing: -1px;
+
+  position: absolute;
+  top: 46%;
+  padding: 5px 8px;
+  border-radius: 5px;
+  background: #d9d9d9;
 }
 
 /* 배치 */

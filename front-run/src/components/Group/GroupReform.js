@@ -17,6 +17,20 @@ function GroupReform() {
   });
   const navigate = useNavigate();
 
+  const nameInputRef = useRef();
+  const descriptionInputRef = useRef();
+  const maxMemberInputRef = useRef();
+  const ctgInputRef = useRef();
+  const secretInputRef = useRef();
+
+  const [selectCtg, setSelectCtg] = useState("ND");
+
+  const handleSelectCtg = (e) => {
+    // console.log(e.target.value);
+    // setSelectCtg(e.target.value);
+    console.log(ctgInputRef.current.value);
+  };
+
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/groups`;
@@ -24,6 +38,12 @@ function GroupReform() {
   //groupId 구하기
   const pathnameArr = window.location.pathname.split("/");
   const groupId = +pathnameArr[pathnameArr.length - 1];
+
+  const [zeroBox, setZeroBox] = useState(false);
+  const [firstBox, setFirstBox] = useState(false);
+  const [secondBox, setSecondBox] = useState(false);
+  const [thirdBox, setThirdBox] = useState(false);
+  const [fourthBox, setFourthBox] = useState(false);
 
   useEffect(() => {
     fetch(`${url}/${groupId}/update-form`, {
@@ -35,8 +55,24 @@ function GroupReform() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          console.log(result);
-          setInputs(result.responseData);
+          const group = result.responseData.group;
+          nameInputRef.current.value = group.name;
+          descriptionInputRef.current.value = group.description;
+          maxMemberInputRef.current.value = group.maxMember;
+          setFileImage(group.imgLink);
+          for (let item of group.ctg) {
+            if (item === "공무원") {
+              setZeroBox(true);
+            } else if (item === "취업") {
+              setFirstBox(true);
+            } else if (item === "수능") {
+              setSecondBox(true);
+            } else if (item === "코딩") {
+              setThirdBox(true);
+            } else {
+              setFourthBox(true);
+            }
+          }
         } else {
           ErrorCode(result);
         }
@@ -72,9 +108,11 @@ function GroupReform() {
 
   const [isChecked, setIsChecked] = useState(false);
   const handleChangeCheck = (event) => {
-    setIsChecked((current) => !current);
-    const name = event.target.name;
-    setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
+    secretInputRef.current.value = !secretInputRef.current.value;
+    console.log(secretInputRef.current.value);
+    // setIsChecked((current) => !current);
+    // const name = event.target.name;
+    // setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
   };
 
   const imgeRef = useRef();
@@ -139,11 +177,12 @@ function GroupReform() {
 
   const [fileImage, setFileImage] = useState("");
   const saveFileImage = (event) => {
+    console.log(event.target.files[0]);
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
   return (
     <div id="group-create">
-      <Link to="/GroupRecruit" className="back-to-recruit">
+      <Link to={`/GroupDetail/${groupId}`} className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>
       <form onSubmit={handleSubmit}>
@@ -163,50 +202,65 @@ function GroupReform() {
                 }}
               />
             )}
-            <input
-              type="file"
-              name="img"
-              accept="image/*"
-              onChange={saveFileImage}
-              className="group-image__upload"
-              ref={imgeRef}
-            />
+            <label>
+              사진 넣기
+              <input
+                type="file"
+                name="img"
+                accept="image/*"
+                onChange={saveFileImage}
+                className="group-image__upload-reform"
+                ref={imgeRef}
+              />
+            </label>
             <div className="group-image__message">그룹 사진을 올리세요</div>
           </div>
           <div className="group-infor">
             {/*우측부분*/}
             <div className="group-type">
               <div className="line">
-                <input
-                  type="text"
-                  name="name"
-                  value={inputs.name || ""}
-                  onChange={handleChange}
-                  required
-                  placeholder="그룹 이름을 적으세요"
-                />
+                <label>
+                  그룹이름
+                  <input
+                    type="text"
+                    name="name"
+                    value={inputs.name || ""}
+                    onChange={handleChange}
+                    required
+                    placeholder="그룹 이름을 적으세요"
+                    ref={nameInputRef}
+                  />
+                </label>
               </div>
               <div className="line">
-                <input
-                  type="text"
-                  name="description"
-                  value={inputs.description || ""}
-                  onChange={handleChange}
-                  required
-                  placeholder="간단한 설명을 적으세요"
-                />
+                <label>
+                  그룹설명
+                  <input
+                    type="text"
+                    name="description"
+                    value={inputs.description || ""}
+                    onChange={handleChange}
+                    required
+                    placeholder="간단한 설명을 적으세요"
+                    ref={descriptionInputRef}
+                  />
+                </label>
               </div>
               <div id="group-twin">
                 <div className="line">
-                  <input
-                    type="number"
-                    name="maxMember"
-                    value={inputs.maxMember ? inputs.maxMember : ""}
-                    onChange={handleChange}
-                    accept="number"
-                    required
-                    placeholder="인원수를 선택하세요(1~25)"
-                  />
+                  <label>
+                    최대인원
+                    <input
+                      type="number"
+                      name="maxMember"
+                      value={inputs.maxMember ? inputs.maxMember : ""}
+                      onChange={handleChange}
+                      accept="number"
+                      required
+                      placeholder="인원수를 선택하세요(1~25)"
+                      ref={maxMemberInputRef}
+                    />
+                  </label>
                 </div>
                 <div className="line">
                   <span>비공개</span>
@@ -216,19 +270,11 @@ function GroupReform() {
                       name="secret"
                       value={isChecked}
                       onChange={handleChangeCheck}
+                      ref={secretInputRef}
+                      // checked={secretInputRef}
                     />
                     <span className="slider round"></span>
                   </label>
-                  {/* <input
-                    type="password"
-                    name="pwd"
-                    value={inputs.pwd || ""}
-                    onChange={handleChange}
-                    disabled={!isChecked}
-                    maxLength="4"
-                    minLength="4"
-                    placeholder={!isChecked ? "공개방입니다" : "비밀번호 4자리"}
-                  /> */}
                 </div>
               </div>
             </div>
@@ -242,6 +288,7 @@ function GroupReform() {
                     type="checkbox"
                     onChange={handleChangeSelect}
                     value="공무원"
+                    checked={zeroBox}
                   />
                   공무원
                 </label>
@@ -250,6 +297,7 @@ function GroupReform() {
                     type="checkbox"
                     onChange={handleChangeSelect}
                     value="취업"
+                    checked={firstBox}
                   />
                   취업
                 </label>
@@ -258,6 +306,7 @@ function GroupReform() {
                     type="checkbox"
                     onChange={handleChangeSelect}
                     value="수능"
+                    checked={secondBox}
                   />
                   수능
                 </label>
@@ -266,6 +315,7 @@ function GroupReform() {
                     type="checkbox"
                     onChange={handleChangeSelect}
                     value="코딩"
+                    checked={thirdBox}
                   />
                   코딩
                 </label>
@@ -274,6 +324,7 @@ function GroupReform() {
                     type="checkbox"
                     onChange={handleChangeSelect}
                     value="기타"
+                    checked={fourthBox}
                   />
                   기타
                 </label>

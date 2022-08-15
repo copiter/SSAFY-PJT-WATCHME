@@ -272,8 +272,8 @@ function GroupDetailMembers(props) {
                   <div>
                     <span>페널티 횟수</span>
                     <span className="medium-text">
-                      {resData.myData.hasOwnProperty("penalty")
-                        ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]}`
+                      {applier.hasOwnProperty("penalty")
+                        ? `😴${applier.penalty[1]} / 📱${applier.penalty[2]}`
                         : null}{" "}
                     </span>
                   </div>
@@ -330,8 +330,8 @@ function GroupDetailMembers(props) {
                   <div>
                     <span>페널티 횟수</span>
                     <span className="medium-text">
-                      {resData.myData.hasOwnProperty("penalty")
-                        ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]}`
+                      {member.hasOwnProperty("penalty")
+                        ? `😴${member.penalty[1]} / 📱${member.penalty[2]}`
                         : null}
                     </span>
                   </div>

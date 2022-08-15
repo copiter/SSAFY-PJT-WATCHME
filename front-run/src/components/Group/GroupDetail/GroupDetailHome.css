@@ -181,9 +181,12 @@
   border-radius: 20px;
 }
 
-.sprint-summary-content > p {
-  text-align: center;
+.sprint-summary-content.none > p {
   line-height: 180px;
+  text-align: center;
+}
+
+.sprint-summary-content > p {
   font-weight: 700;
   font-size: 24px;
 

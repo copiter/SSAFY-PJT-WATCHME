@@ -74,7 +74,7 @@ function GroupReform() {
         console.log(err);
       });
   }, []);
-  console.log(inputs);
+  // console.log(inputs);
 
   const handleChangeSelect = (event) => {
     const value = event.target.value;
@@ -107,6 +107,7 @@ function GroupReform() {
   const [isChecked, setIsChecked] = useState(false);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
+    console.log(isChecked);
     const name = event.target.name;
     setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
   };
@@ -185,7 +186,7 @@ function GroupReform() {
       </Link>
       <form onSubmit={handleSubmit}>
         <div className="form-frame">
-          <div className="group-image">
+          <div className="group-image-reform">
             {fileImage && (
               <img
                 /*이미지 띄워지는곳 */
@@ -265,8 +266,6 @@ function GroupReform() {
                       name="secret"
                       value={isChecked}
                       onChange={handleChangeCheck}
-                      // ref={secretInputRef}
-                      // checked={secretInputRef}
                     />
                     <span className="slider round"></span>
                   </label>

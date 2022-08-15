@@ -14,7 +14,7 @@ function ErrorCode(result) {
       alert(`에러코드 ${code} : 내부 서버 에러`);
       break;
     case 501:
-      alert(`에러코드 ${code} : JWT 토큰 에러`);
+      alert(`에러코드 ${code} : 로그인을 해주세요`);
       break;
     case 502:
       alert(`에러코드 ${code} : 로그인 실패`);

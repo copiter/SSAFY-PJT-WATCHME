@@ -84,6 +84,15 @@ public class MemberService {
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
         ApiResponse result = new ApiResponse();
+
+        if(emailCheckFunc(signUpRequestDTO.getEmail())){
+            throw new CustomException(Code.C514);
+        }
+
+        if(nickNameCheckFunc(signUpRequestDTO.getNickName())){
+            throw new CustomException(Code.C515);
+        }
+
         String encPassword = bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword());
         Member member = memberRepository.save(Member.builder()
                 .email(signUpRequestDTO.getEmail())
@@ -112,6 +121,8 @@ public class MemberService {
         result.setResponseData("DATA", "Success");
         return result;
     }
+
+
 
     public ApiResponse login(HttpServletRequest request, HttpServletResponse response, LoginRequestDTO loginRequestDTO) {
         ApiResponse result = new ApiResponse();
@@ -445,10 +456,8 @@ public class MemberService {
         public ApiResponse emailCheck (CheckEmailDTO checkEmailDTO){
             ApiResponse apiResponse = new ApiResponse();
 
-            Member member = memberRepository.findByEmail(checkEmailDTO.getEmail());
-
-            if (member != null) {
-                throw new CustomException(Code.C505);
+            if(emailCheckFunc(checkEmailDTO.getEmail())){
+                throw new CustomException(Code.C514);
             }
             apiResponse.setCode(200);
             apiResponse.setMessage("AVAILABLE EMAIL");
@@ -459,8 +468,7 @@ public class MemberService {
         public ApiResponse nickNameCheck (CheckNickNameDTO checkNickNameDTO){
             ApiResponse apiResponse = new ApiResponse();
 
-            Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
-            if (member != null) {
+            if(nickNameCheckFunc(checkNickNameDTO.getNickName())){
                 throw new CustomException(Code.C515);
             }
 
@@ -671,5 +679,16 @@ public class MemberService {
         return result;
     }
 
+    private boolean nickNameCheckFunc(String nickName) {
+        Member member = memberRepository.findByNickName(nickName);
+        if(member != null) return true;
+        return false;
+    }
+
+    private boolean emailCheckFunc(String email) {
+        Member member = memberRepository.findByEmail(email);
+        if(member != null) return true;
+        return false;
+    }
 }
 

@@ -59,6 +59,8 @@ function RoomCreate() {
         if (result.code === 200) {
           alert("방생성이 완료되었습니다.");
           navigate("/RoomDetail/" + result.responseData.roomId);
+        } else if (result.code === 501) {
+          alert("로그인을 하세요");
         } else {
           ErrorCode(result);
         }
@@ -162,7 +164,6 @@ function RoomCreate() {
                   value={inputs.endTime || ""}
                   onChange={handleChange}
                 />
-                
 
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input

@@ -20,7 +20,7 @@ function SignUp() {
   const navigate = useNavigate();
 
   // 오늘 고르기
-  const today = GetToday();
+  const today = GetToday(0);
 
   const handleSelectSex = (e) => {
     setSelectSex(e.target.value);

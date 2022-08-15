@@ -100,7 +100,7 @@ function GroupRecruit() {
   const ctgChange = (event) => {
     //카테고리 변동(LI라서 이방법 사용)
     event.preventDefault();
-    const ARR = ["all", "공무원", "취업", "수능", "자격증", "기타"];
+    const ARR = ["all", "공무원", "취업", "수능", "자격증","코딩", "기타"];
 
     setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
     fetch(
@@ -194,9 +194,16 @@ function GroupRecruit() {
               자격증
             </li>
             <li
-              className={inputs.ctg === "기타" ? "active" : ""}
+              className={inputs.ctg === "코딩" ? "active" : ""}
               onClick={ctgChange}
               value={5}
+            >
+              코딩
+            </li>
+            <li
+              className={inputs.ctg === "기타" ? "active" : ""}
+              onClick={ctgChange}
+              value={6}
             >
               기타
             </li>

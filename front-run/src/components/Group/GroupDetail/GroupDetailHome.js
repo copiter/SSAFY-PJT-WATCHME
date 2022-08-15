@@ -118,7 +118,7 @@ const GroupDetailHome = (props) => {
           </div>
           <div id="sprint-summary-card">
             {resData.sprints.length === 0 && (
-              <div className="sprint-summary-content">
+              <div className="sprint-summary-content none">
                 <p id="sprint-none">진행 중인 스프린트가 없습니다!</p>
               </div>
             )}

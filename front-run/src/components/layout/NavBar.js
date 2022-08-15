@@ -5,7 +5,6 @@ import { getCookie } from "../../Cookie";
 
 import "./NavBar.css";
 import logo from "../../img/logo.png";
-import tmp_picture from "../../img/tmp_picture.PNG";
 
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
@@ -16,10 +15,6 @@ const NavBar = () => {
   const logoutHandler = () => {
     authCtx.logout();
   };
-
-  if (!isLoggedIn) {
-    logoutHandler();
-  }
 
   return (
     <header className="navbar">

@@ -2,6 +2,7 @@ import React, { useState, Fragment, useRef, useContext } from "react";
 import { FetchUrl } from "../../store/communication";
 import AuthContext from "../../store/auth-context";
 import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../Cookie";
 
 import accept from "../../img/Icons/accept.png";
 import cancel from "../../img/Icons/cancel.png";
@@ -76,7 +77,6 @@ function SocialLogin() {
     // Interacting with server
     fetch(url, {
       method: "POST",
-      withCredentials: true,
       body: JSON.stringify({
         name: enteredName,
         nickName: enteredNickname,
@@ -84,6 +84,7 @@ function SocialLogin() {
         birth: enteredBirthday,
       }),
       headers: {
+        accessToken: getCookie("accessToken"),
         "content-type": "application/json",
       },
     })

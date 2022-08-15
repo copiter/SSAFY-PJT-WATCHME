@@ -54,7 +54,11 @@ const GroupDetailHome = (props) => {
               </li>
               <li>
                 <small>😥 페널티 받은 횟수 </small>
-                {/* <span>{`📱${penalty[0]} / 😴${penalty[1]}`}</span> */}
+                <span>
+                  {resData.myData.hasOwnProperty("penalty")
+                    ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]}`
+                    : null}
+                </span>
               </li>
               <li>
                 <small>📆 그룹 가입일</small>

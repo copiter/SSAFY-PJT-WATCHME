@@ -48,7 +48,7 @@
   color: #545454;
 }
 .group-detail__appliers-item {
-  border: 2px solid #4fd1d9;
+  border: 3px solid #4fd1d9;
 }
 .group-detail__members-item {
   border: 1px solid #9d9d9d;
@@ -71,7 +71,7 @@
   display: block;
 }
 .group-detail__appliers-item small {
-  color: #ffffff;
+  color: #d9d9d9;
   font-weight: 600;
   font-size: 8px;
 }
@@ -112,6 +112,32 @@
   color: #ffffff;
 
   cursor: pointer;
+}
+.group-detail__leader-btn {
+  margin-right: 10px;
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+
+  background: #4fd1d9;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+  color: #000;
+
+  cursor: pointer;
+}
+.group-detail__leader-btn:hover {
+  opacity: 1;
+}
+.group-detail__leader-btn:active {
+  transform: scale(0.98);
 }
 
 .group-detail__members-btn.handover {

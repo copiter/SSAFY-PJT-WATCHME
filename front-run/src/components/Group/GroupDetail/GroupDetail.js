@@ -221,6 +221,7 @@ function GroupDetail() {
                 myData={resData.myData}
                 url={url}
                 href={FETCH_URL}
+                groupId={groupId}
               />
             )}
           </>

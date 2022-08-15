@@ -73,7 +73,7 @@ function RoomCreate() {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
   return (
-    <div className="body-frame">
+    <div className="body-frame-create">
       <Link to="/RoomRecruit" className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>

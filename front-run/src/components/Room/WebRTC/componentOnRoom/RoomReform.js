@@ -25,16 +25,7 @@ function RoomReform() {
   const id=window.location.pathname.split("/")[2].substring(0 );
   const url1 = `${FETCH_URL}/rooms/`+id+`/settings`;
   const url = `${FETCH_URL}/rooms/`+id+`/update`;
-    //Otpion
-
   const imgeRef = useRef();
-
-
-  console.log("INPUTS")
-  console.log(inputs);
-
-
-
   useEffect(() => {
     console.log("REFORM START");
   fetch(url1, {
@@ -74,7 +65,6 @@ function RoomReform() {
   }, [])
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const formData = new FormData();
     let outputs={
       roomName: inputs.roomName,
@@ -85,28 +75,12 @@ function RoomReform() {
       roomMemberMaxNo: inputs.num,
       endAt: inputs.endTime,
     };
-    console.log("outputs");
-    console.log(outputs);
     formData.append(
       "roomUpdateDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
     if(imgeRef!==null&&imgeRef!==""&&imgeRef.current.files[0]!==undefined){
       formData.append("images", imgeRef.current.files[0])};
-    
-    console.log("OUTPUTSHERE");
-    console.log("KEY");
-    for (let key of formData.keys()) {
-      console.log(key);
-    }
-    console.log("values");
-    for (let value of formData.values()) {
-      console.log(value);
-    }
-    console.log("END");
-
-
-    console.log(formData);
     fetch(url, {
       method: "POST",
       body: formData,
@@ -114,31 +88,28 @@ function RoomReform() {
         accessToken: getCookie("accessToken"),
       },
     })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            console.log("post 리스폰스오류입니다.");
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
+    .then((response) => {
+      console.log(response);
+      if (response.ok) {
+        return response.json(); //ok떨어지면 바로 종료.
+      } else {
+        response.json().then((data) => {
+          console.log("post 리스폰스오류입니다.");
+          let errorMessage = "";
+          throw new Error(errorMessage);
+        });
         }
       })
-      .then((result) => {
-        if (result != null) {
-          console.log("성공");
-          //navigate("/RoomDetail/:" + result.responseData.roomId);
-          navigate("./");
-          //window.location.reload(); //리다이렉션관련
-        }
-      })
-      .catch((err) => {
-        console.log("에러 POST");
-      });
+    .then((result) => {
+      if (result != null) {
+        console.log("성공");
+        navigate("./");
+      }
+    })
+    .catch((err) => {
+      console.log("에러 POST");
+    });
   };
-
   const [fileImage, setFileImage] = useState();
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));

@@ -1,10 +1,10 @@
-.body-frame {
+.body-frame-create {
   width: 1090px;
   height: 600px;
   margin: 27px auto;
   padding: 16px;
 }
-.body-frame .back-to-recruit {
+.body-frame-create .back-to-recruit {
   margin-left: 10px;
 
   display: inline-block;
@@ -19,7 +19,7 @@
   text-align: center;
 }
 
-.body-frame .form-frame {
+.body-frame-create .form-frame {
   display: flex;
   flex-direction: row;
   padding: 10px;

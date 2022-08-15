@@ -47,9 +47,11 @@ function GroupReform() {
       .then((result) => {
         if (result.code === 200) {
           const group = result.responseData.group;
+          console.log(group);
           nameInputRef.current.value = group.name;
           descriptionInputRef.current.value = group.description;
           maxMemberInputRef.current.value = group.maxMember;
+          // secretInputRef.current.value = group.secret;
           setFileImage(group.imgLink);
           for (let item of group.ctg) {
             if (item === "공무원") {
@@ -60,7 +62,7 @@ function GroupReform() {
               setSecondBox(true);
             } else if (item === "코딩") {
               setThirdBox(true);
-            } else {
+            } else if (item === "기타") {
               setFourthBox(true);
             }
           }
@@ -79,14 +81,19 @@ function GroupReform() {
 
     if (value === "공무원") {
       inputs.ctg[0] = !inputs.ctg[0];
+      setZeroBox(!zeroBox);
     } else if (value === "취업") {
       inputs.ctg[1] = !inputs.ctg[1];
+      setFirstBox(!firstBox);
     } else if (value === "수능") {
       inputs.ctg[2] = !inputs.ctg[2];
+      setSecondBox(!secondBox);
     } else if (value === "코딩") {
       inputs.ctg[3] = !inputs.ctg[3];
+      setThirdBox(!thirdBox);
     } else if (value === "기타") {
       inputs.ctg[4] = !inputs.ctg[4];
+      setFourthBox(!fourthBox);
     }
     // console.log(inputs.ctg);
   };
@@ -135,12 +142,13 @@ function GroupReform() {
     }
     //inputs.cgs
     const outputs = {
-      name: inputs.name,
-      description: inputs.description,
-      maxMember: inputs.maxMember,
+      name: nameInputRef.current.value,
+      description: descriptionInputRef.current.value,
+      maxMember: maxMemberInputRef.current.value,
       ctg: ctgs,
       secret: inputs.secret,
     };
+    console.log(outputs);
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
@@ -149,7 +157,7 @@ function GroupReform() {
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
-    fetch(`url/${groupId}/update`, {
+    fetch(`${url}/${groupId}/update`, {
       method: "POST",
       body: formData,
       headers: {
@@ -160,7 +168,7 @@ function GroupReform() {
       .then((result) => {
         if (result.code === 200) {
           alert("그룹이 수정되었습니다!");
-          navigate(`/GroupDetail/${result.responseData.groupId}`);
+          navigate(`/GroupDetail/${groupId}`);
         } else {
           ErrorCode(result);
         }
@@ -192,17 +200,14 @@ function GroupReform() {
                 }}
               />
             )}
-            <label>
-              사진 넣기
-              <input
-                type="file"
-                name="img"
-                accept="image/*"
-                onChange={saveFileImage}
-                className="group-image__upload-reform"
-                ref={imgeRef}
-              />
-            </label>
+            <input
+              type="file"
+              name="img"
+              accept="image/*"
+              onChange={saveFileImage}
+              className="group-image__upload-reform"
+              ref={imgeRef}
+            />
             <div className="group-image__message">그룹 사진을 올리세요</div>
           </div>
           <div className="group-infor">
@@ -214,8 +219,8 @@ function GroupReform() {
                   <input
                     type="text"
                     name="name"
-                    value={inputs.name || ""}
-                    onChange={handleChange}
+                    // value={inputs.name || ""}
+                    // onChange={handleChange}
                     required
                     placeholder="그룹 이름을 적으세요"
                     ref={nameInputRef}
@@ -228,8 +233,8 @@ function GroupReform() {
                   <input
                     type="text"
                     name="description"
-                    value={inputs.description || ""}
-                    onChange={handleChange}
+                    // value={1}
+                    // onChange={handleChange}
                     required
                     placeholder="간단한 설명을 적으세요"
                     ref={descriptionInputRef}
@@ -243,8 +248,8 @@ function GroupReform() {
                     <input
                       type="number"
                       name="maxMember"
-                      value={inputs.maxMember ? inputs.maxMember : ""}
-                      onChange={handleChange}
+                      // value={inputs.maxMember ? inputs.maxMember : ""}
+                      // onChange={handleChange}
                       accept="number"
                       required
                       placeholder="인원수를 선택하세요(1~25)"
@@ -260,7 +265,7 @@ function GroupReform() {
                       name="secret"
                       value={isChecked}
                       onChange={handleChangeCheck}
-                      ref={secretInputRef}
+                      // ref={secretInputRef}
                       // checked={secretInputRef}
                     />
                     <span className="slider round"></span>

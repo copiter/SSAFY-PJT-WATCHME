@@ -186,6 +186,7 @@ function RoomReform() {
                   <option value="취업">취업</option>
                   <option value="수능">수능</option>
                   <option value="자격증">자격증</option>
+                  <option value="코딩">코딩</option>
                   <option value="기타">기타</option>
                 </select>
               </div>

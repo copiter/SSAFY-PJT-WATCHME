@@ -30,6 +30,8 @@ import MyPage from "./components/MyPage/MyPage";
 import PointAdd from "./components/MyPage/Points/PointAdd";
 import PointSuccess from "./components/MyPage/Points/PointSuccess";
 import PointRefund from "./components/MyPage/Points/PointRefund";
+import PointCancel from "./components/MyPage/Points/PointCancel";
+import PointFail from "./components/MyPage/Points/PointFail";
 
 //그외페이지
 import MainPage from "./components/MainPage/MainPage";
@@ -61,6 +63,8 @@ function App() {
         <Route path="/PointAdd" element={<PointAdd />} />
         <Route path="/PointRefund" element={<PointRefund />} />
         <Route path="/PointSuccess" element={<PointSuccess />} />
+        <Route path="/PointCancel" element={<PointCancel />} />
+        <Route path="/PointFail" element={<PointFail />} />
         <Route path="/About" element={<About />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="*" element={<NotFound />} />

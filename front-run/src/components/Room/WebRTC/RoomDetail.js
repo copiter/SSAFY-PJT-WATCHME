@@ -208,27 +208,22 @@ class RoomDetail extends Component {
     }
   }
 
+  //오디오 관련
+  audioHandlerOn() {}
+  audioHandlerOff() {
+    this.state.publisher.publishAudio(false);
+
+    this.setState({
+      audioState: false,
+    });
+  }
 
   //화면 공유 기능
   async shareScreen() {
-
-
-    const latestPublisher = this.state.publisher
-
-
-;
-    this.state.handleMainVideoStream(newPublisher)
-    var newPublisher = this.OV.initPublisher(undefined, {
-      videoSource: "screen",
-    });
-    if (this.state.firstTimeToCreateSreenShare) {
-      //mainStream 없애고 새로 생성한 stream 추가\\
-      this.setState({
-        mainStreamManager: newPublisher,
-        publisher: latestPublisher,
-        isScreenShareNow: true,
-        screenShareCameraNeeded: true,
-        firstTimeToCreateSreenShare: false,
+    try {
+      const latestPublisher = this.state.publisher;
+      var newPublisher = this.OV.initPublisher(undefined, {
+        videoSource: "screen",
       });
 
 
@@ -367,11 +362,7 @@ class RoomDetail extends Component {
               result.responseData.room.mode === "MODE1" ? false : true,
             mode: result.responseData.room.mode,
           });
-          
-          sessionStorage.setItem(
-            "roomName",result.responseData.room.name
-          );
-          this.joinSessionSetOpenVidu(id);
+          this.joinSessionSetOpenVidu(result.responseData.room.name);
           setInterval(() => {
             this.openTeli(
               id,
@@ -621,10 +612,27 @@ class RoomDetail extends Component {
               </div>
               <div className="cams">
                 <div className="myCams">
-                 
-                  <div id="video-container" className="subVideo">
+                  {
+                    //개인카메라
+                    this.state.mainStreamManager !== undefined ? (
+                      <div id="main-video" className="col-md-6">
+                        <UserVideoComponent
+                          streamManager={this.state.mainStreamManager}
+                          audioState={this.state.audioState}
+                        />
+                        <input
+                          className="btn btn-large btn-success"
+                          type="button"
+                          id="buttonSwitchCamera"
+                          onClick={this.switchCamera}
+                          value="내 화면을 다시 보기"
+                        />
+                      </div>
+                    ) : null
+                  }
+                  <div id="video-container" className="col-md-6">
                     {this.state.publisher !== undefined &&
-                    !this.state.firstTimeToCreateSreenShare ? (
+                    this.state.screenShareCameraNeeded ? (
                       <div className="stream-container col-md-6 col-xs-6">
                         <UserVideoComponent
                           streamManager={this.state.publisher}
@@ -783,7 +791,7 @@ class RoomDetail extends Component {
   }
 
   getToken(newSessionId) {
-    return this.createSession(newSessionId).then((sessionId) =>
+    return this.createSession(this.state.newSessionId).then((sessionId) =>
       this.createToken(sessionId)
     );
   }

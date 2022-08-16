@@ -24,7 +24,8 @@
   justify-content: space-between;
   margin-bottom: 5px;
 }
-#sprint-join button {
+#sprint-join > button,
+#sprint-done button {
   margin-right: 5px;
   padding: 10px;
   width: fit-content;

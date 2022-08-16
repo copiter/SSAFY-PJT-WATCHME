@@ -19,13 +19,13 @@
   text-align: center;
 }
 
-#group-create .form-frame {
+#group-create #form-frame-create {
   display: flex;
   flex-direction: row;
   padding: 10px;
 }
 
-.form-frame .group-image {
+#form-frame-create .group-image {
   width: 279px;
   height: 500px;
   background: #eff0f2;
@@ -34,17 +34,32 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  position: relative;
+}
+#blank-layer {
+  position: absolute;
+  top: 55px;
+
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+
+  background: #d9d9d9;
+  z-index: 1;
 }
 
-.group-image .group-image__upload {
-  margin: 50px 0 30px 0;
+.group-image #group-image__upload {
+  position: absolute;
+  top: 55px;
 
-  width: 160px;
-  height: 160px;
-  background: #d9d9d9;
-  /* text-indent: -9999px; */
-
+  width: 150px;
+  height: 150px;
+  background: transparent;
+  text-indent: -9999px;
   border-radius: 50%;
+  cursor: pointer;
+  z-index: 100;
 }
 
 .group-image__upload::file-selector-button {
@@ -55,10 +70,13 @@
   font-weight: 500;
   font-size: 16px;
   letter-spacing: -1px;
+
+  position: absolute;
+  top: 50%;
 }
 
 /* 배치 */
-.form-frame .group-infor {
+#form-frame-create .group-infor {
   display: flex;
   flex-direction: column;
   flex-grow: 1;

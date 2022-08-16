@@ -100,13 +100,13 @@ function GroupRecruit() {
   const ctgChange = (event) => {
     //카테고리 변동(LI라서 이방법 사용)
     event.preventDefault();
-    const ARR = ["", "공무원", "취업", "수능", "자격증","코딩", "기타"];
+    const ARR = ["", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
 
     setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
     fetch(
       url +
         "?" +
-        (ARR[event.target.value] === "" || ARR[event.target.value] === "all"
+        (ARR[event.target.value] === ""
           ? ""
           : "ctg=" + ARR[event.target.value] + "&") +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)

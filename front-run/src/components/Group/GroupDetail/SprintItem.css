@@ -96,20 +96,41 @@
   text-align: center;
   width: 230px;
 }
-#sprint-join__content-item-fee > span {
+#sprint-join__content-item-fee span {
   font-size: 20px;
   line-height: 24px;
 }
-#sprint-join__content-item-fee > small {
+#sprint-join__content-item-fee small {
   font-size: 14px;
   line-height: 17px;
   color: #9a9a9a;
   transform: translateX(16px);
 }
+#sprint-cancel-button {
+  width: 50px;
+  margin-left: 10px;
+
+  background: #dc3545;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+
+  cursor: pointer;
+
+  z-index: 2;
+}
 
 /* 스프린트 현황 */
 .sprint__content-item-status {
   width: 230px;
+  z-index: 0;
 }
 .content-status-title {
   display: inline-block;

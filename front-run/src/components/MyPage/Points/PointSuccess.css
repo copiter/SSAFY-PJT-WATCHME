@@ -1,0 +1,11 @@
+.point-success{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.point-success-msg{
+    margin-top: 10%;
+    font-size: 75px;
+    margin-bottom: 3%;
+}

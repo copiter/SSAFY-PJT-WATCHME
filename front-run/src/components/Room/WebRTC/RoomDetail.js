@@ -207,15 +207,6 @@ class RoomDetail extends Component {
     }
   }
 
-  //오디오 관련
-  audioHandlerOn() {}
-  audioHandlerOff() {
-    this.state.publisher.publishAudio(false);
-
-    this.setState({
-      audioState: false,
-    });
-  }
 
   //화면 공유 기능
   async shareScreen() {
@@ -494,7 +485,7 @@ class RoomDetail extends Component {
     //이미지 넣기
     let imageCapture;
     try {
-      const stream = await navigator.mlogediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { pan: true, tilt: true, zoom: true },
       });
       const [track] = stream.getVideoTracks();

@@ -23,12 +23,11 @@ function RoomReform() {
   
   
   const id=window.location.pathname.split("/")[2].substring(0 );
-  const url1 = `${FETCH_URL}/rooms/`+id+`/settings`;
-  const url = `${FETCH_URL}/rooms/`+id+`/update`;
+  const urlSetting = `${FETCH_URL}/rooms/`+id+`/settings`;
+  const urlUpdate = `${FETCH_URL}/rooms/`+id+`/update`;
   const imgeRef = useRef();
   useEffect(() => {
-    console.log("REFORM START");
-  fetch(url1, {
+  fetch(urlSetting, {
     headers: {
       accessToken: getCookie("accessToken"),
     },
@@ -36,7 +35,6 @@ function RoomReform() {
     .then((response) => {
       console.log(response);
       if (response.ok) {
-        console.log("resOK");
         return response.json(); //ok떨어지면 바로 종료.
       } else {
         response.json().then((data) => {
@@ -53,10 +51,6 @@ function RoomReform() {
         setInputs(result.responseData.room);
         if(inputs.roomPwd===null||inputs.roomPwd===""){
           inputs.roomPwd=""}
-          
-        
-        //navigate("/RoomDetail/:" + result.responseData.roomId);
-        //window.location.reload(); //리다이렉션관련
       }
     })
     .catch((err) => {
@@ -69,19 +63,20 @@ function RoomReform() {
     let outputs={
       roomName: inputs.roomName,
       mode: inputs.mode, //MODE1, MODE2, MODE3
-      pwd: inputs.roomPwd,
+      pwd: (inputs.roomPwd===null||inputs.roomPwd===""?"":inputs.roomPwd),
       roomDescription:inputs.description,
       roomCategory: inputs.categoryName, 
       roomMemberMaxNo: inputs.num,
       endAt: inputs.endTime,
     };
+    console.log(outputs);
     formData.append(
       "roomUpdateDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
     if(imgeRef!==null&&imgeRef!==""&&imgeRef.current.files[0]!==undefined){
       formData.append("images", imgeRef.current.files[0])};
-    fetch(url, {
+    fetch(urlUpdate, {
       method: "POST",
       body: formData,
       headers: {

@@ -198,7 +198,7 @@ function RoomCreate() {
                     value="MODE2"
                     onChange={handleChange}
                   />
-                  스마트폰감지
+                  졸음감지
                 </label>
                 <label>
                   <input
@@ -207,7 +207,7 @@ function RoomCreate() {
                     value="MODE3"
                     onChange={handleChange}
                   />
-                  졸음감지
+                  스마트폰감지
                 </label>
                 <label>
                   <input

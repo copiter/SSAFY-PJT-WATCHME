@@ -106,8 +106,7 @@ const Login = () => {
           <div className="email">이메일로 회원가입</div>
         </Link>
         <a
-          href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=
-          https://watchme1.shop/api/login/authorization/kakao?redirect_uri=https://watchme2.shop/slogin`}
+          href={`${FETCH_URL}/oauth2/authorization/kakao?redirect_uri=https://watchme1.shop`}
         >
           <div className="kakao">
             <img src={kakao} alt="카카오" width={28} />
@@ -115,8 +114,7 @@ const Login = () => {
           </div>
         </a>
         <a
-          href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=
-          https://watchme1.shop/api/login/oauth2/code/naver`}
+          href={`${FETCH_URL}/oauth2/authorization/naver?redirect_uri=https://watchme1.shop`}
         >
           <div className="naver">
             <img src={naver} alt="네이버" width={40} />
@@ -124,8 +122,7 @@ const Login = () => {
           </div>
         </a>
         <a
-          href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=	
-          https://watchme1.shop/api/login/authorization/google`}
+          href={`${FETCH_URL}/oauth2/authorization/google?redirect_uri=https://watchme1.shop`}
         >
           <div className="google">
             <img src={google} alt="구글" width={40} />

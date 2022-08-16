@@ -61,7 +61,7 @@ const [studyTimes, setStudyTimes] = useState(0);
 
 
 console.log(studyTimes);
-let hours=studyTimes/1000/60/60,minutes=(studyTimes/1000/60)%60;
+let hours=studyTimes/1000/60/60,minutes=(studyTimes/1000/60)%60,seconds=(studyTimes/1000)%60;
 return (
   <div className="backDiv">
     <div className="borders"><div className="borders-inner">
@@ -75,6 +75,10 @@ return (
         "00"}
         :{minutes>=10? parseInt(minutes):
         minutes>=1?("0"+parseInt(minutes)):
+        "00"}
+        
+        :{seconds>=10? parseInt(seconds):
+        seconds>=1?("0"+parseInt(seconds)):
         "00"}
         </div>
         

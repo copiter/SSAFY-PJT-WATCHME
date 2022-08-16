@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface GroupApplyLogRegistory extends JpaRepository<GroupApplyLog, Long> {
 
+    List<GroupApplyLog> findAllByMemberId(Long id);
     List<GroupApplyLog> findAllByGroupId(Long id);
     long countByGroupIdAndStatus(Long id, int status);
     Optional<GroupApplyLog> findByMemberIdAndGroupId(Long id, Long groupId);

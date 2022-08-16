@@ -82,6 +82,7 @@ public class MemberService {
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final SprintRepository sprintRepository;
     private final PointLogRepository pointLogRepository;
+    private final GroupApplyLogRegistory groupApplyLogRegistory;
 
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
@@ -229,7 +230,7 @@ public class MemberService {
 
                 List<WrapperMy> wraperList = new LinkedList<>();
 
-                List<Group> myGroupList = memberGroupRepository.findByMemberId(memberId).stream().map(x -> x.getGroup()).filter(x->x.getStatus()==Status.YES).collect(Collectors.toList());
+                List<Group> myGroupList = groupApplyLogRegistory.findAllByMemberId(memberId).stream().filter(x->x.getStatus()==1).map(x -> x.getGroup()).collect(Collectors.toList());
 
                 for (Group g : myGroupList) {
 

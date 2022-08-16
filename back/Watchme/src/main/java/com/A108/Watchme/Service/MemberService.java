@@ -269,7 +269,7 @@ public class MemberService {
                     }
 
                     // myData.penalty
-                    List<Integer> penalty = new ArrayList<>(Mode.values().length);
+                    List<Integer> penalty = new ArrayList<>();
 
                     List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndRoomIn(currUser.getId(), g.getSprints().stream().map(x->x.getRoom()).collect(Collectors.toList()));
 

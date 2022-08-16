@@ -162,7 +162,7 @@ public class RoomService {
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {
-            if(room.getRoomCtg().getName().equals(CategoryList.스프린트)){
+            if(room.getRoomCtg().getName().equals(CategoryList.스프린트) && !room.getStatus().equals(Status.YES)){
                 continue;
             }
             getRooms.add(new GetRoomResDTO().builder()

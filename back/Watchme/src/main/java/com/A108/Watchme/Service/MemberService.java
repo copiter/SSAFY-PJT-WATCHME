@@ -36,6 +36,7 @@ import com.A108.Watchme.oauth.token.AuthToken;
 import com.A108.Watchme.oauth.token.AuthTokenProvider;
 import com.A108.Watchme.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -62,6 +63,7 @@ import java.util.UUID;
 public class MemberService {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat format3 = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
     private AuthUtil authUtil;
@@ -244,7 +246,7 @@ public class MemberService {
 
                 List<WrapperMy> wraperList = new LinkedList<>();
 
-                List<Group> myGroupList = memberGroupRepository.findByMemberId(memberId).stream().map(x -> x.getGroup()).filter(x->x.getStatus()==Status.YES).collect(Collectors.toList());
+                List<Group> myGroupList = memberGroupRepository.findByMemberId(memberId).stream().map(x -> x.getGroup()).filter(x -> x.getStatus() == Status.YES).collect(Collectors.toList());
 
                 for (Group g : myGroupList) {
 
@@ -271,7 +273,7 @@ public class MemberService {
                     // myData.penalty
                     List<Integer> penalty = new ArrayList<>();
 
-                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndRoomIn(currUser.getId(), g.getSprints().stream().map(x->x.getRoom()).collect(Collectors.toList()));
+                    List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndRoomIn(currUser.getId(), g.getSprints().stream().map(x -> x.getRoom()).collect(Collectors.toList()));
 
                     for (Mode m : Mode.values()) {
                         penalty.add(m.ordinal(), (int) (long) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == m.ordinal()).count());
@@ -306,195 +308,195 @@ public class MemberService {
 
         return result;
     }
-        public ApiResponse findPW (FindPwDTO resetPwDTO){
-            ApiResponse result = new ApiResponse();
 
-            Member member = memberRepository.findByEmail(resetPwDTO.getEmail());
+    public ApiResponse findPW(FindPwDTO resetPwDTO) {
+        ApiResponse result = new ApiResponse();
 
-            if (member == null || !member.getMemberInfo().getName().equals(resetPwDTO.getName())) {
-                throw new CustomException(Code.C504);
-            }
+        Member member = memberRepository.findByEmail(resetPwDTO.getEmail());
 
-
-
-            String uuid = UUID.randomUUID().toString();
-
-            memberEmailKeyRepository.save(MemberEmailKey.builder()
-                    .member(member)
-                    .emailKey((uuid))
-                    .createdAt(new Date())
-                    .build());
-
-
-            // localhost:81 바꿔주기;
-            String email = member.getEmail();
-            String subject = "Watchme 사이트 비밀번호 초기화 메일입니다. ";
-            String text = "<p>Watchme 사이트 비밀번호를 초기화 합니다. </p><p>아래 링크를 클릭하셔서 비밀번호 초기화를 완료하세요.</p>"
-                    + "<form action='http://localhost:3000/changePWD' method='GET'>"
-                    + "<input type='hidden' name='emailKey' value= '" + uuid + "'/> "
-                    + "<input type='submit' value='비밀번호 초기화'/>"
-                    + "</form></div>";
-            mailService.sendMail(email, subject, text);
-            result.setMessage("EMAIL SEND SUCCESS");
-            return result;
+        if (member == null || !member.getMemberInfo().getName().equals(resetPwDTO.getName())) {
+            throw new CustomException(Code.C504);
         }
 
-        public ApiResponse resetPW (ResetPwDTO resetPwDTO){
-            ApiResponse result = new ApiResponse();
-            MemberEmailKey memberEmailKey = memberEmailKeyRepository.findByEmailKey(resetPwDTO.getEmailKey());
-            if(memberEmailKey == null){
-                throw new CustomException(Code.C505);
-            }
 
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1);
+        String uuid = UUID.randomUUID().toString();
 
-                if (memberEmailKey.getCreatedAt().compareTo(cal.getTime()) < 0) {
-                    // 유효 기간을 넘겼다.
-                    // 삭제 : 이메일 초기화 키
-                    // 시간 제한을 넘긴 인증 코드 삭제
-                    memberEmailKeyRepository.deleteById(memberEmailKey.getId());
+        memberEmailKeyRepository.save(MemberEmailKey.builder()
+                .member(member)
+                .emailKey((uuid))
+                .createdAt(new Date())
+                .build());
 
-                    throw new CustomException(Code.C506);
 
-                }
-                Member member;
-                try{
-                    member = memberRepository.findById(memberEmailKey.getId()).get();
-                } catch (Exception e){
-                    throw new CustomException(Code.C504);
-                }
+        // localhost:81 바꿔주기;
+        String email = member.getEmail();
+        String subject = "Watchme 사이트 비밀번호 초기화 메일입니다. ";
+        String text = "<p>Watchme 사이트 비밀번호를 초기화 합니다. </p><p>아래 링크를 클릭하셔서 비밀번호 초기화를 완료하세요.</p>"
+                + "<form action='http://localhost:3000/changePWD' method='GET'>"
+                + "<input type='hidden' name='emailKey' value= '" + uuid + "'/> "
+                + "<input type='submit' value='비밀번호 초기화'/>"
+                + "</form></div>";
+        mailService.sendMail(email, subject, text);
+        result.setMessage("EMAIL SEND SUCCESS");
+        return result;
+    }
 
-                    String encPassword = bCryptPasswordEncoder.encode(resetPwDTO.getPassword());
-                    member.setPwd(encPassword);
+    public ApiResponse resetPW(ResetPwDTO resetPwDTO) {
+        ApiResponse result = new ApiResponse();
+        MemberEmailKey memberEmailKey = memberEmailKeyRepository.findByEmailKey(resetPwDTO.getEmailKey());
+        if (memberEmailKey == null) {
+            throw new CustomException(Code.C505);
+        }
 
-                    memberEmailKeyRepository.deleteById(member.getId());
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -1);
 
-                    result.setMessage("PASSWORD RESET SUCCESS");
+        if (memberEmailKey.getCreatedAt().compareTo(cal.getTime()) < 0) {
+            // 유효 기간을 넘겼다.
+            // 삭제 : 이메일 초기화 키
+            // 시간 제한을 넘긴 인증 코드 삭제
+            memberEmailKeyRepository.deleteById(memberEmailKey.getId());
+
+            throw new CustomException(Code.C506);
+
+        }
+        Member member;
+        try {
+            member = memberRepository.findById(memberEmailKey.getId()).get();
+        } catch (Exception e) {
+            throw new CustomException(Code.C504);
+        }
+
+        String encPassword = bCryptPasswordEncoder.encode(resetPwDTO.getPassword());
+        member.setPwd(encPassword);
+
+        memberEmailKeyRepository.deleteById(member.getId());
+
+        result.setMessage("PASSWORD RESET SUCCESS");
+        result.setCode(200);
+        return result;
+    }
+
+    public ApiResponse resetPwMp(ResetPwMpDTO resetPwMpDTO) {
+        ApiResponse result = new ApiResponse();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long id;
+        try {
+            id = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
+        } catch (Exception e) {
+            throw new CustomException(Code.C501);
+        }
+        Member member = memberRepository.findById(id).get();
+
+
+        if (bCryptPasswordEncoder.matches(resetPwMpDTO.getPassword(), member.getPwd())) {
+
+            String encPassword = bCryptPasswordEncoder.encode(resetPwMpDTO.getNewPassword());
+
+            member.setPwd(encPassword);
+
+            result.setMessage("RESET PASSWORD SUCCESS");
+            result.setCode(200);
+        } else {
+            throw new CustomException(Code.C513);
+        }
+
+        return result;
+    }
+
+    @Transactional
+    public ApiResponse memberUpdate(UpdateRequestDTO updateRequestDTO, MultipartFile image) {
+        ApiResponse result = new ApiResponse();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+
+                Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
+
+                if (currUser.isPresent()) {
+                    String url = currUser.get().getMemberInfo().getImageLink();
+                    try {
+                        url = s3Uploader.upload(image, "Watchme");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        currUser.get().setNickName(updateRequestDTO.getNickName());
+                        currUser.get().getMemberInfo().setName(updateRequestDTO.getName());
+                        currUser.get().getMemberInfo().setBirth(updateRequestDTO.getBirth());
+                        currUser.get().getMemberInfo().setGender(updateRequestDTO.getGender());
+                        currUser.get().getMemberInfo().setDescription(updateRequestDTO.getDescription());
+                        memberRepository.save(currUser.get());
+                        memberInfoRepository.save(currUser.get().getMemberInfo());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     result.setCode(200);
-                    return result;
-        }
+                    result.setMessage("UPDATE SUCCESS");
 
-        public ApiResponse resetPwMp (ResetPwMpDTO resetPwMpDTO){
-            ApiResponse result = new ApiResponse();
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    Long id;
-                    try{
-                        id = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
-                    } catch(Exception e){
-                        throw new CustomException(Code.C501);
-                    }
-                    Member member = memberRepository.findById(id).get();
-
-
-                    if (bCryptPasswordEncoder.matches(resetPwMpDTO.getPassword(), member.getPwd())) {
-
-                        String encPassword = bCryptPasswordEncoder.encode(resetPwMpDTO.getNewPassword());
-
-                        member.setPwd(encPassword);
-
-                        result.setMessage("RESET PASSWORD SUCCESS");
-                        result.setCode(200);
-                    } else {
-                        throw new CustomException(Code.C513);
-                    }
-
-            return result;
-        }
-
-        @Transactional
-        public ApiResponse memberUpdate (UpdateRequestDTO updateRequestDTO, MultipartFile image){
-            ApiResponse result = new ApiResponse();
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
-
-                    Optional<Member> currUser = memberRepository.findById(Long.parseLong(((UserDetails) (authentication.getPrincipal())).getUsername()));
-
-                    if (currUser.isPresent()) {
-                        String url = currUser.get().getMemberInfo().getImageLink();
-                        try {
-                            url = s3Uploader.upload(image, "Watchme");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            currUser.get().setNickName(updateRequestDTO.getNickName());
-                            currUser.get().getMemberInfo().setName(updateRequestDTO.getName());
-                            currUser.get().getMemberInfo().setBirth(updateRequestDTO.getBirth());
-                            currUser.get().getMemberInfo().setGender(updateRequestDTO.getGender());
-                            currUser.get().getMemberInfo().setDescription(updateRequestDTO.getDescription());
-                            memberRepository.save(currUser.get());
-                            memberInfoRepository.save(currUser.get().getMemberInfo());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        result.setCode(200);
-                        result.setMessage("UPDATE SUCCESS");
-
-                    }
                 }
-            } catch (Exception e) {
-                throw new CustomException(Code.C501);
             }
-
-            return result;
+        } catch (Exception e) {
+            throw new CustomException(Code.C501);
         }
 
-        public ApiResponse emailCheck (CheckEmailDTO checkEmailDTO){
-            ApiResponse apiResponse = new ApiResponse();
+        return result;
+    }
 
-            Member member = memberRepository.findByEmail(checkEmailDTO.getEmail());
+    public ApiResponse emailCheck(CheckEmailDTO checkEmailDTO) {
+        ApiResponse apiResponse = new ApiResponse();
 
-            if (member != null) {
-                throw new CustomException(Code.C505);
-            }
-            apiResponse.setCode(200);
-            apiResponse.setMessage("AVAILABLE EMAIL");
-            return apiResponse;
+        Member member = memberRepository.findByEmail(checkEmailDTO.getEmail());
 
+        if (member != null) {
+            throw new CustomException(Code.C505);
+        }
+        apiResponse.setCode(200);
+        apiResponse.setMessage("AVAILABLE EMAIL");
+        return apiResponse;
+
+    }
+
+    public ApiResponse nickNameCheck(CheckNickNameDTO checkNickNameDTO) {
+        ApiResponse apiResponse = new ApiResponse();
+
+        Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
+        if (member != null) {
+            throw new CustomException(Code.C515);
         }
 
-        public ApiResponse nickNameCheck (CheckNickNameDTO checkNickNameDTO){
-            ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(200);
+        apiResponse.setMessage("AVAILABLE NiCK NAME");
+        return apiResponse;
 
-            Member member = memberRepository.findByNickName(checkNickNameDTO.getNickName());
-            if (member != null) {
-                throw new CustomException(Code.C515);
-            }
-
-            apiResponse.setCode(200);
-            apiResponse.setMessage("AVAILABLE NiCK NAME");
-            return apiResponse;
-
-        }
+    }
 
     public ApiResponse getMySprints(Long memberId) {
         ApiResponse apiResponse = new ApiResponse();
         List<MemberGroup> memberGroupList = memberGroupRepository.findAllByMemberId(memberId);
-        if(memberGroupList.isEmpty()){
+        if (memberGroupList.isEmpty()) {
             throw new CustomException(Code.C520);
         }
         List<SprintGetResDTO> sprintList = new LinkedList<>();
-        for(MemberGroup memberGroup : memberGroupList){
+        for (MemberGroup memberGroup : memberGroupList) {
             List<Sprint> sprints = sprintRepository.findAllByGroupId(memberGroup.getGroup().getId());
-            if(sprints.isEmpty()){
+            if (sprints.isEmpty()) {
                 throw new CustomException(Code.C520);
             }
-            for(Sprint sprint : sprints){
-                if(sprint.getStatus().equals(Status.DELETE)){
+            for (Sprint sprint : sprints) {
+                if (sprint.getStatus().equals(Status.DELETE)) {
                     continue;
                 }
                 int myTime = 0;
                 int sumTime = 0;
                 int myPenalty = 0;
-                int kingTime=0;
-                int count=0;
-                if(memberId != -1){
+                int kingTime = 0;
+                int count = 0;
+                if (memberId != -1) {
                     myPenalty = penaltyLogRegistory.countByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
                     Optional<MemberRoomLog> myData = mrlRepository.findByMember_idAndRoom_id(memberId, sprint.getRoom().getId());
-                    if(myData.isPresent()) {
+                    if (myData.isPresent()) {
                         myTime = myData.get().getStudyTime();
                     }
                 }
@@ -502,21 +504,19 @@ public class MemberService {
                 Optional<MemberRoomLog> memberRoomLog = mrlRepository.findTopByRoomIdOrderByStudyTimeDesc(sprint.getRoom().getId());
 
 
-                if(summ.isPresent()) {
+                if (summ.isPresent()) {
                     sumTime = summ.get();
                 }
 
-                String nickName=sprint.getGroup().getLeader().getNickName();
+                String nickName = sprint.getGroup().getLeader().getNickName();
 
 
-                if(memberRoomLog.isPresent()){
+                if (memberRoomLog.isPresent()) {
                     nickName = memberRoomLog.get().getMember().getNickName();
                     kingTime = memberRoomLog.get().getStudyTime();
                     count = penaltyLogRegistory.countByMemberIdAndRoomId(memberRoomLog.get().getMember().getId(), sprint.getRoom().getId());
                 }
                 int sumPenalty = penaltyLogRegistory.countByRoomId(sprint.getRoom().getId());
-
-
 
 
                 SprintGetResDTO sprintGetResDTO = new SprintGetResDTO().builder()
@@ -547,7 +547,7 @@ public class MemberService {
         apiResponse.setCode(200);
         apiResponse.setMessage("SUCCESS MY SPRINT");
         apiResponse.setResponseData("sprints", sprintList);
-        return  apiResponse;
+        return apiResponse;
     }
 
     // 멤버 정보를 가지고 오는 서비스 함수
@@ -600,7 +600,7 @@ public class MemberService {
 
         List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), Date.from(cal.toInstant()));
 
-        if(myStudyLog.size()!=0){
+        if (myStudyLog.size() != 0) {
             myStudyLog.stream().forEach(x -> studyByDay[x.getStartAt().getDate() - 1] += x.getStudyTime());
         }
 
@@ -612,7 +612,7 @@ public class MemberService {
 
         for (Mode m :
                 Mode.values()) {
-            resMyPenalty.put(m.toString(), penaltyLogRegistory.countByMember_idAndMode(currUser.getId(),m));
+            resMyPenalty.put(m.toString(), penaltyLogRegistory.countByMember_idAndMode(currUser.getId(), m));
         }
 
         result.setResponseData("penalty", resMyPenalty);
@@ -629,31 +629,38 @@ public class MemberService {
 
         Member currUser = memberRepository.findById(id).get();
 
-        List<PointLog> pointLogList = pointLogRepository.findAllByMemberId(currUser.getId());
-        List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberId(currUser.getId());
+        PageRequest myPoint = PageRequest.of(0, 100);
+
+        List<PointLog> pointLogListAll = pointLogRepository.findAllByMemberId(currUser.getId()).stream().collect(Collectors.toList());
 
         int chargePoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()==null).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() == null).collect(Collectors.toList())) {
             chargePoint += pl.getPointValue();
-        };
+        }
+        ;
 
         int getPoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()>0).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() > 0).collect(Collectors.toList())) {
             getPoint += pl.getPointValue();
-        };
+        }
+        ;
 
         int losePoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()<0).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() < 0).collect(Collectors.toList())) {
             losePoint += pl.getPointValue();
-        };
+        }
+        ;
+        losePoint = -losePoint;
 
-        int sumPoint = chargePoint+getPoint-losePoint;
+        int sumPoint = chargePoint + getPoint - losePoint;
 
         List<PointLogResDTO> pointList = new LinkedList<>();
+        List<PointLog> pointLogList = pointLogRepository.findAllByMemberIdOrderByCreatedAt(currUser.getId(), myPoint).stream().collect(Collectors.toList());
+
         for (PointLog pl : pointLogList) {
             pointList.add(PointLogResDTO.builder()
-                    .date(format.format(pl.getCreatedAt()))
-                    .content(pl.getSprint().getName())
+                    .date(format3.format(pl.getCreatedAt()))
+                    .content(pl.getSprint() != null ? pl.getSprint().getName() : "충전/환급")
                     .point(pl.getPointValue())
                     .build());
         }

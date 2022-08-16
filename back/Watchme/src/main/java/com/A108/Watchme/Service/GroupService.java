@@ -458,6 +458,7 @@ public class GroupService {
                     .createdAt(new Date())
                     .status(Status.YES)
                     .view(0)
+                    // TODO : Front에서 어떤 변수명으로 주는지 확인
                     .secret(groupCreateReqDTO.getSecret())
                     .build();
 

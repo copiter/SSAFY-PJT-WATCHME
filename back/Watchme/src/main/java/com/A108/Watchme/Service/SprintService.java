@@ -72,10 +72,13 @@ public class SprintService {
         } catch (Exception e){
             throw new CustomException(Code.C533);
         }
+        if(sprint.getStatus().equals(Status.DELETE)){
+            throw new CustomException(Code.C571);
+        }
 
         // 이미 시작한 거면 삭제 X
         if(!sprint.getStatus().equals(Status.YES)){
-            throw new CustomException(Code.C541);
+            throw new CustomException(Code.C543);
         }
 
         // 리더가 아닌 경우
@@ -119,7 +122,7 @@ public class SprintService {
         Optional<Sprint> existSprint = sprintRepository.findByGroupIdAndStatus(groupId, Status.YES);
 
         if(existSprint.isPresent()){
-            throw new CustomException(Code.C543);
+            throw new CustomException(Code.C573);
         }
 
         Optional<Sprint> runningSprint = sprintRepository.findByGroupIdAndStatus(groupId, Status.ING);
@@ -133,14 +136,13 @@ public class SprintService {
                     throw new CustomException(Code.C544);
                 }
                 if(startDate.before(DateTime.now().toDate())){
-                    throw new CustomException(Code.C544);
+                    throw new CustomException(Code.C545);
                 }
                 if(!startDate.before(endDate)){
-                    throw new CustomException(Code.C544);
+                    throw new CustomException(Code.C546);
                 }
 
             } catch(Exception e){
-                System.out.println("ERROR1");
                 throw new CustomException(Code.C599);
             }
         }
@@ -212,7 +214,6 @@ public class SprintService {
 
 
             } catch (ParseException e) {
-                System.out.println("ERROR12");
                 throw new CustomException(Code.C599);
             } catch (Exception e){
                 throw new CustomException(Code.C500);
@@ -325,11 +326,11 @@ public class SprintService {
         MemberGroup memberGroup;
         try {
             sprint = sprintRepository.findById(sprintId).get();
-            if(!sprint.getStatus().equals(Status.YES)){
-                throw new CustomException(Code.C537);
-            }
         } catch (Exception e){
             throw new CustomException(Code.C533);
+        }
+        if(!sprint.getStatus().equals(Status.YES)){
+            throw new CustomException(Code.C537);
         }
 
         ApiResponse apiResponse = new ApiResponse();
@@ -352,14 +353,20 @@ public class SprintService {
 
         // 스프린트에 참가 로그 남김
         Optional<MemberSprintLog> memberSprintLog = mslRepository.findByMemberIdAndSprintId(memberId, sprintId);
-        if(memberSprintLog.isPresent()){
+        if(memberSprintLog.isPresent()&&memberSprintLog.get().getStatus().equals(Status.YES)){
             throw new CustomException(Code.C534);
         }
-        mslRepository.save(MemberSprintLog.builder()
-                .sprint(sprint)
-                .member(member)
-                .status(Status.YES)
-                .build());
+        if(!memberSprintLog.isPresent()){
+            mslRepository.save(MemberSprintLog.builder()
+                    .sprint(sprint)
+                    .member(member)
+                    .status(Status.YES)
+                    .build());
+        }
+        if(!memberSprintLog.get().getStatus().equals(Status.YES)){
+            memberSprintLog.get().setStatus(Status.YES);
+        }
+
         member.getMemberInfo().setPoint(member.getMemberInfo().getPoint()-sprint.getSprintInfo().getFee());
 
         pointLogRepository.save(PointLog.builder()
@@ -395,13 +402,14 @@ public class SprintService {
         }
 
         if(memberSprintLog.get().getStatus().equals(Status.DELETE)){
-            throw new CustomException(Code.C552);
+            throw new CustomException(Code.C547);
         }
-
+        roomService.roomPeople(memberSprintLog.get().getSprint().getRoom().getId(),1);
         roomService.joinRoomFunc(memberSprintLog.get().getSprint().getRoom().getId(),memberId);
 
         apiResponse.setCode(200);
         apiResponse.setMessage("SUCCESS START SPRINT");
+        apiResponse.setResponseData("roomId",memberSprintLog.get().getSprint().getRoom().getId());
 
         return apiResponse;
     }
@@ -413,11 +421,11 @@ public class SprintService {
         Member member = memberRepository.findById(memberId).get();
         try{
             sprint = sprintRepository.findById(sprintId).get();
-            if(!sprint.getStatus().equals(Status.NO)){
-                throw new CustomException(Code.C570);
-            }
         } catch (Exception e){
             throw new CustomException(Code.C533);
+        }
+        if(!sprint.getStatus().equals(Status.NO)){
+            throw new CustomException(Code.C570);
         }
         Optional<PointLog> myLog = pointLogRepository.findByMemberIdAndSprintIdAndFinish(memberId, sprintId, 1);
         // 정산 받았으면

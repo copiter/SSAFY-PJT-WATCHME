@@ -26,7 +26,7 @@ public class AuthUtil {
             memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
 
             if(!memberRepository.existsById(memberId)){
-                throw new CustomException(Code.C504);
+                throw new CustomException(Code.C503);
             }
         }
         catch(Exception e){

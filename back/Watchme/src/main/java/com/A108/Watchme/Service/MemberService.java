@@ -136,9 +136,11 @@ public class MemberService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         Date now = new Date();
-        Member member = memberRepository.findByEmail(loginRequestDTO.getEmail());
-
-        AuthToken accessToken = tokenProvider.createAuthToken(member.getId(),
+        Optional<Member> member = memberRepository.findByEmail(loginRequestDTO.getEmail());
+        if(!member.isPresent()){
+            throw new CustomException(Code.C503);
+        }
+        AuthToken accessToken = tokenProvider.createAuthToken(member.get().getId(),
                 ((UserPrincipal) authentication.getPrincipal()).getRoleType().getCode()
                 , new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()));
 
@@ -149,7 +151,7 @@ public class MemberService {
                 new Date(now.getTime() + refreshTokenExpiry)
         );
 
-        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.getEmail());
+        Optional<RefreshToken> oldRefreshToken = refreshTokenRepository.findByEmail(member.get().getEmail());
 
         // 원래 RefreshToken이 있으면 갱신해줘야함
         if (oldRefreshToken.isPresent()) {
@@ -161,7 +163,7 @@ public class MemberService {
         else {
             refreshTokenRepository.save(RefreshToken.builder()
                     .token(refreshToken.getToken())
-                    .email(member.getEmail())
+                    .email(member.get().getEmail())
                     .build());
         }
 
@@ -206,13 +208,13 @@ public class MemberService {
 
     public ApiResponse findEmail(FindEmailRequestDTO findEmailRequestDTO) {
         ApiResponse result = new ApiResponse();
-        Member member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
+        Optional<Member> member = memberRepository.findByNickName(findEmailRequestDTO.getNickName());
 
-        if (member == null || !member.getMemberInfo().getName().equals(findEmailRequestDTO.getName())) {
+        if (!member.isPresent() || !member.get().getMemberInfo().getName().equals(findEmailRequestDTO.getName())) {
             throw new CustomException(Code.C504);
         } else {
             result.setMessage("FIND EMAIL SUCCESS");
-            result.setResponseData("email", member.getEmail());
+            result.setResponseData("email", member.get().getEmail());
             result.setCode(200);
         }
 
@@ -302,9 +304,9 @@ public class MemberService {
         public ApiResponse findPW (FindPwDTO resetPwDTO){
             ApiResponse result = new ApiResponse();
 
-            Member member = memberRepository.findByEmail(resetPwDTO.getEmail());
+            Optional<Member> member = memberRepository.findByEmail(resetPwDTO.getEmail());
 
-            if (member == null || !member.getMemberInfo().getName().equals(resetPwDTO.getName())) {
+            if (!member.isPresent() || !member.get().getMemberInfo().getName().equals(resetPwDTO.getName())) {
                 throw new CustomException(Code.C504);
             }
 
@@ -313,14 +315,14 @@ public class MemberService {
             String uuid = UUID.randomUUID().toString();
 
             memberEmailKeyRepository.save(MemberEmailKey.builder()
-                    .member(member)
+                    .member(member.get())
                     .emailKey((uuid))
                     .createdAt(new Date())
                     .build());
 
 
             // localhost:81 바꿔주기;
-            String email = member.getEmail();
+            String email = member.get().getEmail();
             String subject = "Watchme 사이트 비밀번호 초기화 메일입니다. ";
             String text = "<p>Watchme 사이트 비밀번호를 초기화 합니다. </p><p>아래 링크를 클릭하셔서 비밀번호 초기화를 완료하세요.</p>"
                     + "<form action='http://localhost:3000/changePWD' method='GET'>"
@@ -676,14 +678,14 @@ public class MemberService {
     }
 
     private boolean nickNameCheckFunc(String nickName) {
-        Member member = memberRepository.findByNickName(nickName);
-        if(member != null) return true;
+        Optional<Member> member = memberRepository.findByNickName(nickName);
+        if(member.isPresent()) return true;
         return false;
     }
 
     private boolean emailCheckFunc(String email) {
-        Member member = memberRepository.findByEmail(email);
-        if(member != null) return true;
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if(member.isPresent()) return true;
         return false;
     }
 }

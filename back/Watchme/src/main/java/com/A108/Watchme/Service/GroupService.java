@@ -529,7 +529,7 @@ public class GroupService {
         GroupInfo groupInfo = groupInfoRepos.findById(groupId).get();
 
         if (currUser.getId() != group.getLeader().getId()) {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C536);
         }
 
         String url = group.getGroupInfo().getImageLink();
@@ -600,7 +600,7 @@ public class GroupService {
             result.setCode(200);
             result.setMessage("GROUP DELETE SUCCESS");
         } else {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C536);
         }
 
         return result;
@@ -618,7 +618,7 @@ public class GroupService {
 
         // 그룹원이 아니면 Error
         if (!groupMemberId.contains(currUserId)) {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C548);
         }
 
         // members
@@ -719,7 +719,7 @@ public class GroupService {
 
         // 이미 멤버인 경우
         if (groupMembers.contains(currUserId)) {
-            throw new CustomException(Code.C509);
+            throw new CustomException(Code.C572);
         }
 
         if (groupApplyLog.isEmpty()) {
@@ -774,7 +774,7 @@ public class GroupService {
                 result.setMessage("GROUP APPLY CANCLE SUCCESS");
 
             } else if (groupApplyLog.getStatus() == 1) {
-                throw new CustomException(Code.C509);
+                throw new CustomException(Code.C572);
 
             } else if (groupApplyLog.getStatus() == 2) {
                 throw new CustomException(Code.C566);
@@ -797,9 +797,9 @@ public class GroupService {
         Group group = checkGroup(groupId);
 
         if (currUser.getId() == group.getLeader().getId()) {
-            Member applier = memberRepos.findByNickName(acceptApplyReqDTO.getNickName());
+            Optional<Member> applier = memberRepos.findByNickName(acceptApplyReqDTO.getNickName());
 
-            Optional<GroupApplyLog> groupApplyLog = galRepos.findByMemberIdAndGroupId(applier.getId(), groupId);
+            Optional<GroupApplyLog> groupApplyLog = galRepos.findByMemberIdAndGroupId(applier.get().getId(), groupId);
 
             if (groupApplyLog.isPresent()) {
                 if (group.getGroupInfo().getMaxMember() == group.getGroupInfo().getCurrMember()) {
@@ -816,7 +816,7 @@ public class GroupService {
                 galRepos.save(groupApplyLog.get());
 
                 memberGroupRepos.save(MemberGroup.builder()
-                        .member(applier)
+                        .member(applier.get())
                         .group(group)
                         .createdAt(new Date())
                         .groupRole(GroupRole.MEMBER)
@@ -830,7 +830,7 @@ public class GroupService {
             }
 
         } else {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C536);
         }
 
         return result;
@@ -848,7 +848,7 @@ public class GroupService {
         if (currUser.getId() == group.getLeader().getId()) {
             Member member;
             try {
-                member = memberRepos.findByNickName(declineApplyReqDTO.getNickName());
+                member = memberRepos.findByNickName(declineApplyReqDTO.getNickName()).get();
             } catch (Exception e) {
                 throw new CustomException(Code.C504);
             }
@@ -858,7 +858,7 @@ public class GroupService {
             if (checkgroupApplyLog.isPresent()) {
                 GroupApplyLog groupApplyLog = checkgroupApplyLog.get();
                 if (groupApplyLog.getStatus() == 1) {
-                    throw new CustomException(Code.C509);
+                    throw new CustomException(Code.C572);
 
                 } else if (groupApplyLog.getStatus() == 0) {
                     groupApplyLog.setStatus(2);
@@ -868,7 +868,7 @@ public class GroupService {
                     result.setMessage("GROUP APPLY DECLINE SUCCESS");
 
                 } else if (groupApplyLog.getStatus() == 2) {
-                    throw new CustomException(Code.C595);
+                    throw new CustomException(Code.C300);
 
                 } else {
                     throw new CustomException(Code.C500);
@@ -879,7 +879,7 @@ public class GroupService {
             }
 
         } else {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C536);
         }
 
 
@@ -910,7 +910,7 @@ public class GroupService {
                     result.setMessage("GROUP LEAVE SUCCESS");
 
                 } else {
-                    throw new CustomException(Code.C565);
+                    throw new CustomException(Code.C300);
                 }
 
             } else {
@@ -936,7 +936,7 @@ public class GroupService {
         if (currUser.getId() == group.getLeader().getId()) {
             Member member;
             try {
-                member = memberRepos.findByNickName(leaderTossReqDTO.getNickName());
+                member = memberRepos.findByNickName(leaderTossReqDTO.getNickName()).get();
             } catch (Exception e) {
                 throw new CustomException(Code.C504);
             }
@@ -958,11 +958,11 @@ public class GroupService {
                 result.setCode(200);
                 result.setMessage("GROUP LEADER CHANGE SUCCESS");
             } else {
-                throw new CustomException(Code.C565);
+                throw new CustomException(Code.C300);
             }
 
         } else {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C536);
         }
 
 
@@ -979,7 +979,12 @@ public class GroupService {
             Long currUserId = authUtil.memberAuth();
 
             if (currUserId == checkGroup.get().getLeader().getId()) {
-                Member member = memberRepos.findByNickName(groupKickReqDTO.getNickName());
+                Member member;
+                try{
+                     member = memberRepos.findByNickName(groupKickReqDTO.getNickName()).get();
+                } catch(Exception e){
+                    throw new CustomException(Code.C504);
+                }
 
                 Optional<GroupApplyLog> checkGroupApplyLog = galRepos.findByMemberIdAndGroupId(member.getId(), groupId);
                 Optional<MemberGroup> memberGroup = memberGroupRepos.findByMemberIdAndGroupId(member.getId(), groupId);
@@ -1002,7 +1007,7 @@ public class GroupService {
                 }
 
             } else {
-                throw new CustomException(Code.C565);
+                throw new CustomException(Code.C536);
             }
         } else {
             throw new CustomException(Code.C510);
@@ -1038,7 +1043,7 @@ public class GroupService {
             result.setCode(200);
             result.setMessage("UPDATE-FORM SUCCESS");
         } else {
-            throw new CustomException(Code.C565);
+            throw new CustomException(Code.C536);
         }
 
         return result;

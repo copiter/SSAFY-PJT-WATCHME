@@ -1,6 +1,8 @@
 package com.A108.Watchme.oauth.handler;
 
 import com.A108.Watchme.Config.properties.AppProperties;
+import com.A108.Watchme.Exception.CustomException;
+import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.RefreshTokenRepository;
@@ -55,8 +57,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         System.out.println(authentication.getName());
         System.out.println(authentication.getPrincipal());
 
-        Member member = memberRepository.findByEmail(email);
-        MemberInfo memberInfo = member.getMemberInfo();
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if(!member.isPresent()){
+            throw new CustomException(Code.C500);
+        }
+        MemberInfo memberInfo = member.get().getMemberInfo();
             // 정보입력을 위한 이동
             if(memberInfo.getName()==null){
                 OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
@@ -64,7 +69,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
                 OidcUser user = ((OidcUser) authentication.getPrincipal());
                 // memberId 가지고오기
-                Long memberId = memberRepository.findByEmail(authentication.getName()).getId();
+                Long memberId = memberRepository.findByEmail(authentication.getName()).get().getId();
                 OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
                 Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
 
@@ -137,7 +142,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         OidcUser user = ((OidcUser) authentication.getPrincipal());
         // memberId 가지고오기
-        Long memberId = memberRepository.findByEmail(authentication.getName()).getId();
+        Long memberId = memberRepository.findByEmail(authentication.getName()).get().getId();
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
         Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
 

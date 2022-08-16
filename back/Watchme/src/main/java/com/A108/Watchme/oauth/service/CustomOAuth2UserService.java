@@ -53,16 +53,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(providerType, user.getAttributes());
 
-        Member savedUser = memberRepository.findByEmail(userInfo.getEmail());
+        Optional<Member> savedUser = memberRepository.findByEmail(userInfo.getEmail());
         // 동일한 이메일로 가입한 계정이 있으면
-        if (savedUser != null) {
+        if (savedUser.isPresent()) {
             // EMAIL로 가입된 계정이 있을시에
-            if ((savedUser.getProviderType()).toString().equals("EMAIL")) {
+            if ((savedUser.get().getProviderType()).toString().equals("EMAIL")) {
                 // EMAIL에서 소셜로그인 계정으로 바꿔준다.
-                savedUser.setProviderType(providerType);
+                savedUser.get().setProviderType(providerType);
             }
             // 그 외로 먼저 가입된 계정이 있을 때 다른 걸로 로그인하라고 띄워준다.
-            if (!providerType.equals(savedUser.getProviderType())) {
+            if (!providerType.equals(savedUser.get().getProviderType())) {
                 throw new CustomException(Code.C509);
             }
         }
@@ -70,10 +70,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 신규 가입 계정인 경우
         else {
-            savedUser = createUser(userInfo, providerType);
+            Member newMember = createUser(userInfo, providerType);
+            return UserPrincipal.create(newMember, user.getAttributes(), userInfo.getImageUrl());
         }
 
-        return UserPrincipal.create(savedUser, user.getAttributes(), userInfo.getImageUrl());
+        return UserPrincipal.create(savedUser.get(), user.getAttributes(), userInfo.getImageUrl());
     }
 
     private Member createUser(OAuth2UserInfo userInfo, ProviderType providerType) {

@@ -11,6 +11,7 @@ import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import json from "../json/roomrecruit.json";
 import ErrorCode from "../../Error/ErrorCode";
+import { getCookie } from "../../Cookie";
 
 let page = 1;
 
@@ -74,7 +75,7 @@ function RoomRecruit() {
   const ctgChange = (event) => {
     //
     event.preventDefault();
-    const ARR = ["all", "공무원", "취업", "수능", "자격증","코딩" ,"기타"];
+    const ARR = ["all", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
     setInputs((values) => ({ ...values, category: ARR[event.target.value] }));
     console.log(ARR[event.target.value]);
     fetch(
@@ -120,8 +121,6 @@ function RoomRecruit() {
         console.log("ERROR");
       });
   };
-
-  function filterClicked() {}
 
   return (
     <div id="open-room">

@@ -147,6 +147,9 @@ function GroupDetail() {
                 반려되었습니다
               </button>
             )}
+            {resData.myData.assign === 3 && (
+              <button id="join_cancel">강퇴되었습니다</button>
+            )}
           </div>
         )}
         <div id="group-detail">

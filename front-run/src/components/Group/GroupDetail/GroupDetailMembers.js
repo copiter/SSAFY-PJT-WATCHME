@@ -351,7 +351,7 @@ function GroupDetailMembers(props) {
                         className="group-detail__members-btn handover"
                         onClick={() => transferHandler(member.nickName)}
                       >
-                        이전
+                        권한이전
                       </button>
                     </div>
                   </div>

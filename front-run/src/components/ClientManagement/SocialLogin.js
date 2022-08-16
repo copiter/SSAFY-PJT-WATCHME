@@ -7,7 +7,7 @@ import { getCookie } from "../../Cookie";
 import accept from "../../img/Icons/accept.png";
 import cancel from "../../img/Icons/cancel.png";
 
-import "./SocialLogin.css"; // 동일한 CSS 파일 사용
+import "./SocialLogin.css";
 import ErrorCode from "../../Error/ErrorCode";
 
 function SocialLogin() {

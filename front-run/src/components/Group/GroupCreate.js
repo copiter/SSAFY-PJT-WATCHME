@@ -8,6 +8,15 @@ import "./GroupCreate.css";
 import ErrorCode from "../../Error/ErrorCode";
 
 function GroupCreate() {
+  //로그인 안 되었으면 내쫓김
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // if (getCookie("accessToken") === undefined) {
+  //   alert("로그인을 해주세요");
+  //   window.history.back();
+  // } else {
+  //   setIsLoggedIn(true);
+  // }
+
   const handleChangeSelect = (event) => {
     const value = event.target.value;
 
@@ -30,7 +39,7 @@ function GroupCreate() {
     description: "",
     maxMember: 0,
     ctg: [false, false, false, false],
-    secret: "",
+    secret: 0,
   });
   const navigate = useNavigate();
 
@@ -40,7 +49,7 @@ function GroupCreate() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
     const name = event.target.name;
@@ -116,13 +125,15 @@ function GroupCreate() {
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
+
+  //if (isLoggedIn) {
   return (
     <div id="group-create">
       <Link to="/GroupRecruit" className="back-to-recruit">
         &lt; 목록으로 돌아가기
       </Link>
       <form onSubmit={handleSubmit}>
-        <div className="form-frame">
+        <div id="form-frame-create">
           <div className="group-image">
             {fileImage && (
               <img
@@ -135,15 +146,17 @@ function GroupCreate() {
                   width: "150px",
                   height: "150px",
                   borderRadius: "50%",
+                  zIndex: "10",
                 }}
               />
             )}
+            <div id="blank-layer"></div>
             <input
               type="file"
               name="img"
               accept="image/*"
               onChange={saveFileImage}
-              className="group-image__upload"
+              id="group-image__upload"
               ref={imgeRef}
             />
             <div className="group-image__message">그룹 사진을 올리세요</div>
@@ -195,15 +208,15 @@ function GroupCreate() {
                     <span className="slider round"></span>
                   </label>
                   {/* <input
-                    type="password"
-                    name="pwd"
-                    value={inputs.pwd || ""}
-                    onChange={handleChange}
-                    disabled={!isChecked}
-                    maxLength="4"
-                    minLength="4"
-                    placeholder={!isChecked ? "공개방입니다" : "비밀번호 4자리"}
-                  /> */}
+                      type="password"
+                      name="pwd"
+                      value={inputs.pwd || ""}
+                      onChange={handleChange}
+                      disabled={!isChecked}
+                      maxLength="4"
+                      minLength="4"
+                      placeholder={!isChecked ? "공개방입니다" : "비밀번호 4자리"}
+                    /> */}
                 </div>
               </div>
             </div>
@@ -262,6 +275,7 @@ function GroupCreate() {
       </form>
     </div>
   );
+  //}
 }
 
 export default GroupCreate;

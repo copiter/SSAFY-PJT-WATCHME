@@ -4,6 +4,7 @@ import "./SprintItem.css";
 
 function SprintItem(props) {
   const sprint = props.sprint;
+  console.log(sprint);
   const title =
     sprint.status === "YES"
       ? "참가하시려면 클릭하세요"

@@ -185,7 +185,7 @@ function SignUp() {
                   src={fileImage}
                 />
               )}
-
+              <div id="blank-layer-signup"></div>
               <span className="signup-left-addimage">
                 프로필 사진을 올려주세요
               </span>

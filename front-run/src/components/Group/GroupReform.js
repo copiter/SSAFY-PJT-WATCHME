@@ -9,18 +9,14 @@ import ErrorCode from "../../Error/ErrorCode";
 
 function GroupReform() {
   const [inputs, setInputs] = useState({
-    name: "",
-    description: "",
-    maxMember: 0,
     ctg: [false, false, false, false],
-    secret: "",
+    secret: 0,
   });
   const navigate = useNavigate();
 
   const nameInputRef = useRef();
   const descriptionInputRef = useRef();
   const maxMemberInputRef = useRef();
-  const secretInputRef = useRef();
 
   //URL
   const FETCH_URL = useContext(FetchUrl);
@@ -47,11 +43,9 @@ function GroupReform() {
       .then((result) => {
         if (result.code === 200) {
           const group = result.responseData.group;
-          console.log(group);
           nameInputRef.current.value = group.name;
           descriptionInputRef.current.value = group.description;
           maxMemberInputRef.current.value = group.maxMember;
-          // secretInputRef.current.value = group.secret;
           setFileImage(group.imgLink);
           for (let item of group.ctg) {
             if (item === "공무원") {
@@ -74,7 +68,6 @@ function GroupReform() {
         console.log(err);
       });
   }, []);
-  // console.log(inputs);
 
   const handleChangeSelect = (event) => {
     const value = event.target.value;
@@ -95,7 +88,6 @@ function GroupReform() {
       inputs.ctg[4] = !inputs.ctg[4];
       setFourthBox(!fourthBox);
     }
-    // console.log(inputs.ctg);
   };
 
   const handleChange = (event) => {
@@ -104,7 +96,7 @@ function GroupReform() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
     console.log(isChecked);
@@ -147,7 +139,7 @@ function GroupReform() {
       description: descriptionInputRef.current.value,
       maxMember: maxMemberInputRef.current.value,
       ctg: ctgs,
-      secret: inputs.secret,
+      secret: isChecked ? 0 : 1,
     };
     console.log(outputs);
 
@@ -220,8 +212,6 @@ function GroupReform() {
                   <input
                     type="text"
                     name="name"
-                    // value={inputs.name || ""}
-                    // onChange={handleChange}
                     required
                     placeholder="그룹 이름을 적으세요"
                     ref={nameInputRef}
@@ -234,8 +224,6 @@ function GroupReform() {
                   <input
                     type="text"
                     name="description"
-                    // value={1}
-                    // onChange={handleChange}
                     required
                     placeholder="간단한 설명을 적으세요"
                     ref={descriptionInputRef}
@@ -249,8 +237,6 @@ function GroupReform() {
                     <input
                       type="number"
                       name="maxMember"
-                      // value={inputs.maxMember ? inputs.maxMember : ""}
-                      // onChange={handleChange}
                       accept="number"
                       required
                       placeholder="인원수를 선택하세요(1~25)"

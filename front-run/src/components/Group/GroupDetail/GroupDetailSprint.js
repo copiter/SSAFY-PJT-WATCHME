@@ -50,6 +50,34 @@ function GroupDetailSprint(props) {
     }
   });
 
+  function sprintCal() {
+    const ask = window.confirm("정산하시겠습니까?");
+    if (!ask) {
+      return;
+    }
+    fetch(`${props.href}/sprints/${sprintJoin.sprintId}/`, {
+      // url!!!!!!!!!!!!
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        if (result.code === 200) {
+          alert("정산되었습니다");
+          setReload(!reload);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        alert("통신실패 " + err);
+      });
+  }
+
   function sprintDelete() {
     const ask = window.confirm("모집중인 스프린트를 삭제하시겠습니까?");
     if (!ask) {
@@ -124,6 +152,32 @@ function GroupDetailSprint(props) {
         alert("입장실패 " + err);
       });
   }
+  function sprintCancel() {
+    const ask = window.confirm("스프린트 참가 취소하시겠습니까?");
+    if (!ask) {
+      return;
+    }
+    fetch(`${url}/${sprintJoin.sprintId}/cancel`, {
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        if (result.code === 200) {
+          alert("성공적으로 취소되었습니다");
+          setReload(!reload);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        alert("입장실패 " + err);
+      });
+  }
 
   return (
     <div id="group-detail__sprint">
@@ -133,11 +187,18 @@ function GroupDetailSprint(props) {
           <strong>
             모집중인 스프린트<i>(👇클릭)</i>
           </strong>
+          {props.role !== 2 && sprintJoin.joined && (
+            <button onClick={sprintCancel}>스프린트 참가 취소</button>
+          )}
           {props.role === 0 && sprintJoin.length > 0 && (
             <button onClick={sprintDelete}>스프린트 삭제</button>
           )}
         </div>
-        <SprintItem sprint={sprintJoin} handler={sprintJoinHandler} />
+        <SprintItem
+          sprint={sprintJoin}
+          handler={sprintJoinHandler}
+          sprintCancel={sprintCancel}
+        />
       </div>
 
       {/* sprintOngoing */}
@@ -149,7 +210,12 @@ function GroupDetailSprint(props) {
       </div>
       {sprintDone.length > 0 && (
         <div id="sprint-done">
-          <strong>지난 스프린트</strong>
+          <div id="sprint-done-header">
+            <strong>지난 스프린트</strong>
+            {props.role !== 2 && sprintDone.length > 0 && (
+              <button onClick={sprintCal}>스프린트 정산</button>
+            )}
+          </div>
 
           {sprintDone.map((sprint, index) => {
             return <SprintItem sprint={sprint} key={index} />;

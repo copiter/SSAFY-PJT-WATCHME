@@ -23,9 +23,9 @@ class RoomDetail extends Component {
 
     this.state = {
       //방데이터
-      mySessionId: "SessionA",//세션이름
-      myUserName: "Participant" + Math.floor(Math.random() * 100),//내 닉네임.
-      isRoomLeader: true,//방장인지 체크->방장전용 데이터 보임
+      mySessionId: "SessionA", //세션이름
+      myUserName: "Participant" + Math.floor(Math.random() * 100), //내 닉네임.
+      isRoomLeader: true, //방장인지 체크->방장전용 데이터 보임
       mode: "MODE1",
 
       //카메라 설정 데이터
@@ -62,7 +62,7 @@ class RoomDetail extends Component {
     this.onbeforeunload = this.onbeforeunload.bind(this);
     this.toggleChat = this.toggleChat.bind(this);
     this.checkNotification = this.checkNotification.bind(this);
-    this.shareScreenCancle=this.shareScreenCancle.bind(this);
+    this.shareScreenCancle = this.shareScreenCancle.bind(this);
   }
 
   componentDidMount() {
@@ -207,11 +207,8 @@ class RoomDetail extends Component {
     }
   }
 
-
-  
   //오디오 관련
-  audioHandlerOn() {
-  }
+  audioHandlerOn() {}
   audioHandlerOff() {
     this.state.publisher.publishAudio(false);
 
@@ -219,9 +216,6 @@ class RoomDetail extends Component {
       audioState: false,
     });
   }
-
-
-
 
   //화면 공유 기능
   async shareScreen() {
@@ -238,20 +232,20 @@ class RoomDetail extends Component {
       this.setState({
         mainStreamManager: newPublisher,
         publisher: latestPublisher,
-        isScreenShareNow:true,
-        screenShareCameraNeeded:true,
+        isScreenShareNow: true,
+        screenShareCameraNeeded: true,
       });
     } catch {}
   }
-  async shareScreenCancle(){
+  async shareScreenCancle() {
     const latestPublisher = this.state.publisher;
     this.setState({
-      isScreenShareNow:false,
-      screenShareCameraNeeded:false,
-    }); 
+      isScreenShareNow: false,
+      screenShareCameraNeeded: false,
+    });
     await this.state.session.unpublish(this.state.publisher);
     await this.state.session.publish(latestPublisher);
-    
+
     /*
      //화면 공유 중지 누른 뒤 로직
       newPublisher.stream
@@ -265,9 +259,7 @@ class RoomDetail extends Component {
       });*/
   }
 
-
-
-//방 기본설정들, 문제없이 진행됨.
+  //방 기본설정들, 문제없이 진행됨.
   //비디오 키고 끄기관련
   videoHandlerOn() {
     this.setState({
@@ -298,7 +290,8 @@ class RoomDetail extends Component {
     });
   }
   //채팅관련
-  toggleChat(property) {//채팅 열고 닫기
+  toggleChat(property) {
+    //채팅 열고 닫기
     let display = property;
 
     if (display === undefined) {
@@ -311,16 +304,15 @@ class RoomDetail extends Component {
       this.setState({ chatDisplay: display });
     }
   }
-  checkNotification(event) {//채팅용
+  checkNotification(event) {
+    //채팅용
     this.setState({
       messageReceived: this.state.chatDisplay === "none",
     });
   }
 
-
-
-
-  closeRoom() {//아직 구현안됨.
+  closeRoom() {
+    //아직 구현안됨.
     const FETCH_URL = FetchUrl._currentValue;
     fetch(FETCH_URL, {
       method: "POST",
@@ -335,10 +327,6 @@ class RoomDetail extends Component {
   closeSession() {}
   banALL() {}
 
-
-
-
-  
   joinSession() {
     //방데이터 세팅을 위한 백과의 통신
     const FETCH_URL = FetchUrl._currentValue;
@@ -362,17 +350,21 @@ class RoomDetail extends Component {
         if (result != null) {
           console.log("리저트 테스트");
           console.log(result.responseData.room);
-          this.setState(
-            {
-              mySessionId : result.responseData.room.name,
-              isRoomLeader :result.responseData.room.leaderTrue === 0 ? false : true,
-              screenShare:result.responseData.room.mode === "MODE1" ? false : true,
-              mode : result.responseData.room.mode
-            }
-          );
-          this.joinSessionSetOpenVidu(result.responseData.room.name)
+          this.setState({
+            mySessionId: result.responseData.room.name,
+            isRoomLeader:
+              result.responseData.room.leaderTrue === 0 ? false : true,
+            screenShare:
+              result.responseData.room.mode === "MODE1" ? false : true,
+            mode: result.responseData.room.mode,
+          });
+          this.joinSessionSetOpenVidu(result.responseData.room.name);
           setInterval(() => {
-            this.openTeli(id,result.responseData.room.name, result.responseData.room.mode);
+            this.openTeli(
+              id,
+              result.responseData.room.name,
+              result.responseData.room.mode
+            );
           }, 3000);
         }
       })
@@ -385,13 +377,10 @@ class RoomDetail extends Component {
     this.setState({
       myUserName: myNickName,
     });
-
-
   }
-  async joinSessionSetOpenVidu(newSessionId){
-    
+  async joinSessionSetOpenVidu(newSessionId) {
     console.log("오픈비두 테스트");
-    console.log(this.state,);
+    console.log(this.state);
     //오픈비두 세팅
     this.OV = new OpenVidu();
     this.setState(
@@ -410,7 +399,7 @@ class RoomDetail extends Component {
           subscribers.push(subscriber);
           this.setState({ subscribers: subscribers });
         });
-      
+
         this.sessionStreamCheck();
 
         // --- 4) Connect to the session with a valid user token ---
@@ -463,7 +452,7 @@ class RoomDetail extends Component {
               });
             })
             .catch((error) => {
-              console.log("오픈비드 JoinSession에러입니다.")
+              console.log("오픈비드 JoinSession에러입니다.");
               console.log(
                 "There was an error connecting to the session:",
                 error.code,
@@ -475,9 +464,7 @@ class RoomDetail extends Component {
     );
   }
 
-  sessionStreamCheck()
-  {
-    
+  sessionStreamCheck() {
     var mySession = this.state.session;
     // 스트림 파괴될때마다 'subscribers' array에서 스트림 제거
     mySession.on("streamDestroyed", (event) => {
@@ -487,9 +474,8 @@ class RoomDetail extends Component {
     mySession.on("exception", (exception) => {
       console.warn(exception);
     });
-
   }
-  async openTeli(id,) {
+  async openTeli(id) {
     //특정 기간마다 반복해서
     //포멧 만들기
     //JSON넣기
@@ -522,8 +508,7 @@ class RoomDetail extends Component {
     this.viduSendFormatToVidu(formData);
     this.sessionStreamCheck();
   }
-  viduSendFormatToVidu(formData){
-    
+  viduSendFormatToVidu(formData) {
     fetch("https://watchme1.shop/flask/openCV", {
       method: "POST",
       body: formData,
@@ -559,7 +544,6 @@ class RoomDetail extends Component {
         console.log("ERR여기임");
       });
   }
-
 
   errorFound() {
     if (this.state.mode === "MODE2") {
@@ -609,12 +593,12 @@ class RoomDetail extends Component {
                         Audio ON
                       </button>
                     )}
-                    {this.state.screenShare&&!this.state.isScreenShareNow && (
+                    {this.state.screenShare && !this.state.isScreenShareNow && (
                       <button onClick={this.shareScreen} className="btns">
-                        화면공유  
+                        화면공유
                       </button>
                     )}
-                     {this.state.screenShare &&this.state.isScreenShareNow&& (
+                    {this.state.screenShare && this.state.isScreenShareNow && (
                       <button onClick={this.shareScreenCancle} className="btns">
                         화면공유 취소
                       </button>
@@ -643,9 +627,8 @@ class RoomDetail extends Component {
                     ) : null
                   }
                   <div id="video-container" className="col-md-6">
-                    {this.state.publisher !== undefined 
-                    &&this.state.screenShareCameraNeeded
-                     ? (
+                    {this.state.publisher !== undefined &&
+                    this.state.screenShareCameraNeeded ? (
                       <div className="stream-container col-md-6 col-xs-6">
                         <UserVideoComponent
                           streamManager={this.state.publisher}
@@ -802,7 +785,7 @@ class RoomDetail extends Component {
 
   getToken(newSessionId) {
     return this.createSession(this.state.newSessionId).then((sessionId) =>
-    this.createToken(sessionId)
+      this.createToken(sessionId)
     );
   }
   createToken(sessionId) {
@@ -827,8 +810,8 @@ class RoomDetail extends Component {
           resolve(response.data.token);
         })
         .catch((error) => {
-          console.log("생성실패")
-          reject(error)
+          console.log("생성실패");
+          reject(error);
         });
     });
   }

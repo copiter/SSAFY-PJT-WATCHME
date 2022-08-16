@@ -71,7 +71,6 @@ public class GroupService {
         if (page == null) {
             page = 1;
         }
-        // TODO : 10개씩 보여주는 거 맞는지?
         PageRequest pageRequest = PageRequest.of(page - 1, 9);
 
         if (ctgName != null) {
@@ -256,8 +255,10 @@ public class GroupService {
             }
 
             // myData(비로그인)
-            List<Integer> penalties = new ArrayList<>(Mode.values().length);
-            Collections.fill(penalties, 0);
+            List<Integer> penalties = new ArrayList<>();
+            for(int i=0; i<Mode.values().length; i++){
+                penalties.add(0);
+            }
 
             result.setResponseData("myData", MyDataResDTO.builder()
                     .role(GroupRole.ANONYMOUS.ordinal())
@@ -325,7 +326,7 @@ public class GroupService {
                 }
 
                 // myData.penalty
-                List<Integer> penalty = new ArrayList<>(Mode.values().length);
+                List<Integer> penalty = new ArrayList<>();
 
                 List<PenaltyLog> penaltyLogList = plRepos.findAllByMemberIdAndRoomIn(currMember.getId(), group.getSprints().stream().map(x -> x.getRoom()).collect(Collectors.toList()));
 
@@ -377,7 +378,10 @@ public class GroupService {
                 }
 
                 // myData(비그릅원)
-                List<Integer> penalties = new ArrayList<>(Mode.values().length);
+                List<Integer> penalties = new ArrayList<>();
+                for(int i = 0; i<Mode.values().length; i++){
+                    penalties.add(0);
+                }
                 Collections.fill(penalties, 0);
 
                 Optional<GroupApplyLog> gal = galRepos.findByMemberIdAndGroupId(checkMember.get().getId(), groupId);
@@ -454,7 +458,6 @@ public class GroupService {
                     .createdAt(new Date())
                     .status(Status.YES)
                     .view(0)
-                    // TODO : secret을 받는다면 여기에서 set 해줄 것
                     .secret(groupCreateReqDTO.getSecret())
                     .build();
 
@@ -623,14 +626,17 @@ public class GroupService {
         List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).filter(x -> x.getId() != currUserId).collect(Collectors.toList());
 
         for (Member m : groupMembers) {
-            List<Integer> penalty = new ArrayList<>(Mode.values().length);
-            Collections.fill(penalty, 0);
+            List<Integer> penalty = new LinkedList<>();
 
             List<PenaltyLog> penaltyLogList = plRepos.findAllByMemberId(m.getId());
 
             if (penaltyLogList.size() != 0) {
                 for (Mode mode : Mode.values()) {
                     penalty.add(mode.ordinal(), (int) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == mode.ordinal()).count());
+                }
+            } else {
+                for (Mode mode : Mode.values()) {
+                    penalty.add(mode.ordinal(), 0);
                 }
             }
             members.add(GroupMemberDetailResDTO.builder()
@@ -660,14 +666,17 @@ public class GroupService {
                 Member member = applyLog.getMember();
 
                 //
-                List<Integer> penalty = new ArrayList<>(Mode.values().length);
-                Collections.fill(penalty, 0);
+                List<Integer> penalty = new LinkedList<>();
 
                 List<PenaltyLog> penaltyLogList = plRepos.findAllByMemberId(member.getId());
 
                 if (penaltyLogList.size() != 0) {
                     for (Mode mode : Mode.values()) {
                         penalty.add(mode.ordinal(), (int) penaltyLogList.stream().filter(x -> x.getMode().ordinal() == mode.ordinal()).count());
+                    }
+                } else {
+                    for (Mode mode : Mode.values()) {
+                        penalty.add(mode.ordinal(), 0);
                     }
                 }
 

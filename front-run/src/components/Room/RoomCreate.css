@@ -1,10 +1,10 @@
-.body-frame-create {
+.body-frame {
   width: 1090px;
   height: 600px;
   margin: 27px auto;
   padding: 16px;
 }
-.body-frame-create .back-to-recruit {
+.body-frame .back-to-recruit {
   margin-left: 10px;
 
   display: inline-block;
@@ -19,7 +19,7 @@
   text-align: center;
 }
 
-.body-frame-create .form-frame {
+.body-frame .form-frame {
   display: flex;
   flex-direction: row;
   padding: 10px;
@@ -45,6 +45,7 @@
   text-indent: -10000px;
 
   border-radius: 50%;
+  cursor: pointer;
 }
 
 .room-image__upload::file-selector-button {

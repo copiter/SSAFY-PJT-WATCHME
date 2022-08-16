@@ -46,9 +46,9 @@ public class PointService {
                 .quantity(1)
                 .total_amount(point)
                 .tax_free_amount(0)
-                .approval_url("http://localhost:3000/PointSuccess")
-                .fail_url("http://localhost:3000/PointFail")
-                .cancel_url("http://localhost:3000/PointCancel")
+                .approval_url("https://watchme1.shop/PointSuccess")
+                .fail_url("https://watchme1.shop/PointFail")
+                .cancel_url("https://watchme1.shop/PointCancel")
                 .build();
 
         RestTemplate rt = new RestTemplate();

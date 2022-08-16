@@ -624,7 +624,8 @@ public class GroupService {
         // members
         List<GroupMemberDetailResDTO> members = new LinkedList<>();
 
-        List<Member> groupMembers = group.getMemberGroupList().stream().map(x -> x.getMember()).filter(x -> x.getId() != currUserId && x.getStatus() == Status.YES).collect(Collectors.toList());
+        List<Member> groupMembers = galRepos.findAllByGroupId(group.getId())
+                .stream().filter(x->x.getStatus()==1).map(x->x.getMember()).collect(Collectors.toList());
 
         for (Member m : groupMembers) {
             List<Integer> penalty = new LinkedList<>();

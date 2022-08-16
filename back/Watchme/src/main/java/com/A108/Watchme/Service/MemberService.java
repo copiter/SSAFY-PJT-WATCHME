@@ -67,7 +67,7 @@ public class MemberService {
     SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
-    private AuthUtil authUtil;
+    private final AuthUtil authUtil;
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
     private final MSLRepository mslRepository;
@@ -181,17 +181,22 @@ public class MemberService {
         if(nickNameCheckFunc(socialSignUpRequestDTO.getNickName())){
             throw new CustomException(Code.C515);
         }
+        Long id = authUtil.memberAuth();
         Member member = memberRepository.findById(authUtil.memberAuth()).get();
         System.out.println("memberId");
         System.out.println(member.getId());
-        memberInfoRepository.save(MemberInfo.builder()
-                .member(member)
-                .gender(socialSignUpRequestDTO.getGender())
-                .name(socialSignUpRequestDTO.getName())
-                .birth(socialSignUpRequestDTO.getBirth())
-                .point(0)
-                .score(0)
-                .build());
+        member.getMemberInfo().setPoint(0);
+        member.getMemberInfo().setScore(0);
+        member.getMemberInfo().setBirth(socialSignUpRequestDTO.getBirth());
+        member.getMemberInfo().setGender(socialSignUpRequestDTO.getGender());
+        member.getMemberInfo().setName(socialSignUpRequestDTO.getName());
+        member.getMemberInfo().setStudyTime(0);
+        member.getMemberInfo().setStudyTimeMonth(0);
+        member.getMemberInfo().setStudyTimeDay(0);
+        member.getMemberInfo().setStudyTimeWeek(0);
+        member.setNickName(socialSignUpRequestDTO.getNickName());
+
+        memberRepository.save(member);
 
 
         result.setMessage("SOCAIL LOGIN SUCCESS");

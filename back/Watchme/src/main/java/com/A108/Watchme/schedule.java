@@ -29,7 +29,7 @@ public class schedule {
 
     Timestamp currTS = new Timestamp(System.currentTimeMillis());
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void studyTimeResetDay() {
         System.out.println("studyTime");
 

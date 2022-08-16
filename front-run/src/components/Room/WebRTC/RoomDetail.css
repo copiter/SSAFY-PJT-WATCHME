@@ -78,7 +78,7 @@
 	}
 .Aside{
 	position: relative;
-	width:30rem;
+	width:35rem;
 	top:1rem;
 }
 .rightSide{
@@ -96,7 +96,7 @@
 		background-color: 858585;
 	}
 	.sideBoards{
-		position: relative;
+		position: absolute;
 		width: 100%;
 		height: 50rem;
 	}

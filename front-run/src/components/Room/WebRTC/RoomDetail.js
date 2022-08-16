@@ -45,6 +45,8 @@ class RoomDetail extends Component {
       subscribers: [],
       isScreenShareNow: false,
       screenShareCameraNeeded: false,
+      firstTimeToCreateSreenShare: true,
+      fristCameraChange:true,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -54,7 +56,6 @@ class RoomDetail extends Component {
     this.videoHandlerOff = this.videoHandlerOff.bind(this);
     this.audioHandlerOn = this.audioHandlerOn.bind(this);
     this.audioHandlerOff = this.audioHandlerOff.bind(this);
-    this.switchCamera = this.switchCamera.bind(this);
     this.shareScreen = this.shareScreen.bind(this);
     this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
@@ -193,8 +194,8 @@ class RoomDetail extends Component {
 
           //newPublisher.once("accessAllowed", () => {
           await this.state.session.unpublish(this.state.mainStreamManager);
-
           await this.state.session.publish(newPublisher);
+          
           this.setState({
             currentVideoDevice: newVideoDevice,
             mainStreamManager: newPublisher,
@@ -207,38 +208,46 @@ class RoomDetail extends Component {
     }
   }
 
-  //오디오 관련
-  audioHandlerOn() {}
-  audioHandlerOff() {
-    this.state.publisher.publishAudio(false);
-
-    this.setState({
-      audioState: false,
-    });
-  }
 
   //화면 공유 기능
   async shareScreen() {
-    try {
-      const latestPublisher = this.state.publisher;
-      var newPublisher = this.OV.initPublisher(undefined, {
-        videoSource: "screen",
+
+
+    const latestPublisher = this.state.publisher
+
+
+;
+    this.state.handleMainVideoStream(newPublisher)
+    var newPublisher = this.OV.initPublisher(undefined, {
+      videoSource: "screen",
+    });
+    if (this.state.firstTimeToCreateSreenShare) {
+      //mainStream 없애고 새로 생성한 stream 추가\\
+      this.setState({
+        mainStreamManager: newPublisher,
+        publisher: latestPublisher,
+        isScreenShareNow: true,
+        screenShareCameraNeeded: true,
+        firstTimeToCreateSreenShare: false,
       });
+
+
+      await this.state.session.publish(newPublisher);
+    } else {
       //mainStream 없애고 새로 생성한 stream 추가
       await this.state.session.unpublish(this.state.mainStreamManager);
       await this.state.session.publish(newPublisher);
-      await this.state.session.unpublish(this.state.mainStreamManager);
-      await this.state.session.publish(latestPublisher);
       this.setState({
         mainStreamManager: newPublisher,
         publisher: latestPublisher,
         isScreenShareNow: true,
         screenShareCameraNeeded: true,
       });
-    } catch {}
+    }
   }
   async shareScreenCancle() {
     const latestPublisher = this.state.publisher;
+
     this.setState({
       isScreenShareNow: false,
       screenShareCameraNeeded: false,
@@ -358,6 +367,10 @@ class RoomDetail extends Component {
               result.responseData.room.mode === "MODE1" ? false : true,
             mode: result.responseData.room.mode,
           });
+          
+          sessionStorage.setItem(
+            "roomName",result.responseData.room.name
+          );
           this.joinSessionSetOpenVidu(id);
           setInterval(() => {
             this.openTeli(
@@ -494,7 +507,7 @@ class RoomDetail extends Component {
     //이미지 넣기
     let imageCapture;
     try {
-      const stream = await navigator.mlogediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { pan: true, tilt: true, zoom: true },
       });
       const [track] = stream.getVideoTracks();
@@ -608,30 +621,10 @@ class RoomDetail extends Component {
               </div>
               <div className="cams">
                 <div className="myCams">
-                  <div id="main-video" className="mainVideo">
-                    {
-                      //개인카메라
-                      this.state.mainStreamManager !== undefined ? (
-                        <>
-                          <UserVideoComponent
-                            streamManager={this.state.mainStreamManager}
-                            audioState={this.state.audioState}
-                          />
-                          <input
-                            className="btn btn-large btn-success"
-                            type="button"
-                            id="buttonSwitchCamera"
-                            onClick={this.switchCamera}
-                            value="내 화면을 다시 보기"
-                          />
-                        </>
-                      ) : null
-                    }
-                  </div>
+                 
                   <div id="video-container" className="subVideo">
-                    {
-                    this.state.publisher !== undefined &&
-                    this.state.screenShareCameraNeeded ? (
+                    {this.state.publisher !== undefined &&
+                    !this.state.firstTimeToCreateSreenShare ? (
                       <div className="stream-container col-md-6 col-xs-6">
                         <UserVideoComponent
                           streamManager={this.state.publisher}
@@ -639,13 +632,28 @@ class RoomDetail extends Component {
                       </div>
                     ) : null}
                   </div>
+                  <div id="main-video" className="mainVideo">
+                    {
+                      //개인카메라
+                      this.state.mainStreamManager !== undefined &&
+                      (this.state.isScreenShareNow ||
+                        this.state.firstTimeToCreateSreenShare) ? (
+                        <div className="stream-container col-md-6 col-xs-6">
+                          
+                          <UserVideoComponent
+                            streamManager={this.state.mainStreamManager}
+                            audioState={this.state.audioState}
+                          />
+                        </div>
+                      ) : null
+                    }
+                  </div>
                 </div>
                 <div className="others">
                   {this.state.subscribers.map((sub, i) => (
                     <div
                       key={i}
                       className="stream-container col-md-6 col-xs-6 "
-                      onClick={() => this.handleMainVideoStream(sub)}
                     >
                       <UserVideoComponent streamManager={sub} />
                     </div>

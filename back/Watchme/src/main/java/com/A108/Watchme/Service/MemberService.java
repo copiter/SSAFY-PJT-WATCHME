@@ -36,6 +36,7 @@ import com.A108.Watchme.oauth.token.AuthToken;
 import com.A108.Watchme.oauth.token.AuthTokenProvider;
 import com.A108.Watchme.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -61,6 +62,7 @@ import java.util.UUID;
 @Service
 public class MemberService {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format3 = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
     SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
@@ -612,31 +614,38 @@ public class MemberService {
 
         Member currUser = memberRepository.findById(id).get();
 
-        List<PointLog> pointLogList = pointLogRepository.findAllByMemberId(currUser.getId());
-        List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberId(currUser.getId());
+        PageRequest myPoint = PageRequest.of(0, 100);
+
+        List<PointLog> pointLogListAll = pointLogRepository.findAllByMemberId(currUser.getId()).stream().collect(Collectors.toList());
 
         int chargePoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()==null).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() == null).collect(Collectors.toList())) {
             chargePoint += pl.getPointValue();
-        };
+        }
+        ;
 
         int getPoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()>0).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() > 0).collect(Collectors.toList())) {
             getPoint += pl.getPointValue();
-        };
+        }
+        ;
 
         int losePoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()<0).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() < 0).collect(Collectors.toList())) {
             losePoint += pl.getPointValue();
-        };
+        }
+        ;
+        losePoint = -losePoint;
 
-        int sumPoint = chargePoint+getPoint-losePoint;
+        int sumPoint = chargePoint + getPoint - losePoint;
 
         List<PointLogResDTO> pointList = new LinkedList<>();
+        List<PointLog> pointLogList = pointLogRepository.findAllByMemberIdOrderByCreatedAt(currUser.getId(), myPoint).stream().collect(Collectors.toList());
+
         for (PointLog pl : pointLogList) {
             pointList.add(PointLogResDTO.builder()
-                    .date(format.format(pl.getCreatedAt()))
-                    .content(pl.getSprint().getName())
+                    .date(format3.format(pl.getCreatedAt()))
+                    .content(pl.getSprint() != null ? pl.getSprint().getName() : "충전/환급")
                     .point(pl.getPointValue())
                     .build());
         }

@@ -61,7 +61,8 @@ public enum Code {
     C597(597, "KAKAO PAY ERROR" ),
     C598(598, "INVALID POINT VALUE" ),
     C599(599, "DATE PARSING FAILED" ),
-    C554(554, "NO MEMBER ROOM LOG");
+    C554(554, "NO MEMBER ROOM LOG"),
+    C569(569, "ALREADY GET POINT" ), C570(570, "SPRINT NOT NO");
 
 
     private int errCode;

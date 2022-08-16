@@ -480,7 +480,7 @@ public class RoomService {
         }
 
         // 공부시간이 정산되지 않았으면 status가 NO임 => 공부중인 상태
-        List<MemberRoomLog> memberRoomLogs = mrlRepository.findByRoomIdAndStatus(roomId, Status.NO);
+        List<MemberRoomLog> memberRoomLogs = mrlRepository.findAllByRoomIdAndStatus(roomId, Status.NO);
         for(MemberRoomLog memberRoomLog : memberRoomLogs){
             Member member = memberRoomLog.getMember();
             int penalty = penaltyLogRegistory.countByMemberIdAndRoomId(member.getId(), roomId);

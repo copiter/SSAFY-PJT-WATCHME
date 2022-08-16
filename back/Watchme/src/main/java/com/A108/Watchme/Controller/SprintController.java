@@ -56,6 +56,13 @@ public class SprintController {
         return sprintService.startSprints(sid, memberId);
     }
 
+    @PostMapping("sprints/{sprintId}/points")
+    ApiResponse getSprintPoints(@PathVariable(value="sprintId") int sprintId){
+        Long memberId = authUtil.memberAuth();
+        Long sid = Long.valueOf(sprintId);
+        return sprintService.getPoints(sid, memberId);
+    }
+
 //    @PostMapping("sprints/{sprintId}/delete")
 //    ApiResponse deleteSprint(@PathVariable(value="sprintId") int sprintId){
 //        Long sid = Long.valueOf(sprintId);

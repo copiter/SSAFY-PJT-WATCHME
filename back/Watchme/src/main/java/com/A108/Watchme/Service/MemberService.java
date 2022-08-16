@@ -1,6 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.Config.properties.AppProperties;
+import com.A108.Watchme.VO.Entity.log.MemberSprintLog;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.DTO.*;
@@ -69,6 +70,7 @@ public class MemberService {
     private AuthUtil authUtil;
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
+    private final MSLRepository mslRepository;
     private final MemberGroupRepository memberGroupRepository;
     private final MRLRepository mrlRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -635,6 +637,10 @@ public class MemberService {
             losePoint += pl.getPointValue();
         }
         ;
+        List<MemberSprintLog> sprintLogs = mslRepository.findAllByMemberId(currUser.getId());
+        for(MemberSprintLog memberSprintLog : sprintLogs){
+            losePoint += memberSprintLog.getSprint().getSprintInfo().getFee();
+        }
         losePoint = -losePoint;
 
         int sumPoint = chargePoint + getPoint - losePoint;

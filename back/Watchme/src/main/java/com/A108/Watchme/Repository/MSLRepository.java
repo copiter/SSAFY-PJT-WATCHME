@@ -13,4 +13,6 @@ public interface MSLRepository extends JpaRepository<MemberSprintLog, Long> {
     List<MemberSprintLog> findAllBySprintId(Long sprintId);
 
     List<MemberSprintLog> findAllBySprintIdAndStatus(Long sprintId, Status status);
+
+    List<MemberSprintLog> findAllByMemberId(Long memberId);
 }

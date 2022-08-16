@@ -151,32 +151,18 @@ function RoomCreate() {
                     accept="number"
                     placeholder="인원수를 선택하세요(1~25)"
                   />
-                  <select
-                    name="categoryName"
-                    value={inputs.categoryName || ""}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      카테고리를 선택하세요
-                    </option>
-                    <option value="공무원">공무원</option>
-                    <option value="취업">취업</option>
-                    <option value="수능">수능</option>
-                    <option value="자격증">자격증</option>
-                    <option value="코딩">코딩</option>
-                    <option value="기타">기타</option>
-                  </select>
-                </div>
-                <div className="line">
-                  <span>종료기간</span>
+                  졸음감지
+                </label>
+                <label>
                   <input
                     type="datetime-local"
                     name="endTime"
                     value={inputs.endTime || ""}
                     onChange={handleChange}
                   />
-
-                  {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
+                  스마트폰감지
+                </label>
+                <label>
                   <input
                     type="password"
                     name="roomPwd"

@@ -106,46 +106,46 @@
   .message.left .msg-detail {
     padding-left: 65px;
   }
-  
-  .message.left .user-img {
-    left: -5px;
-    border: 1px solid #f0f0f094;
-  }
-  
-  .message.left .msg-detail .msg-content {
-    background-color: #f0f0f0;
-    float: left;
-  }
-  .message.left .msg-detail .msg-content span.triangle {
-    background-color: #f0f0f0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    left: -5px;
-  }
-  
-  /* End message from other user */
-  
-  /* Start my messages */
-  
-  .message.right .msg-detail .msg-info {
-    text-align: right;
-  }
-  .message.right .user-img {
-    right: -5px;
-    border: 1px solid #c8ffe8ab;
-  }
-  
-  .message.right .msg-detail .msg-content {
-    background-color: #c8ffe8;
-    float: right;
-  }
-  .message.right .msg-detail .msg-content span.triangle {
-    background-color: #c8ffe8;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    right: -5px;
-  }
-  
+                
+                .message.left .user-img {
+                  left: -5px;
+                  border: 1px solid #f0f0f094;
+                }
+                
+                .message.left .msg-detail .msg-content {
+                  background-color: #f0f0f0;
+                  float: left;
+                }
+                .message.left .msg-detail .msg-content span.triangle {
+                  background-color: #f0f0f0;
+                  border-bottom-width: 0;
+                  border-left-width: 0;
+                  left: -5px;
+                }
+                
+                /* End message from other user */
+                
+                /* Start my messages */
+                
+                .message.right .msg-detail .msg-info {
+                  text-align: right;
+                }
+                .message.right .user-img {
+                  right: -5px;
+                  border: 1px solid #ffcc33;
+                }
+                
+                .message.right .msg-detail .msg-content {
+                  background-color: #3f3fff;
+                  float: right;
+                }
+                .message.right .msg-detail .msg-content span.triangle {
+                  background-color: #ffcc33;
+                  border-bottom-width: 0;
+                  border-left-width: 0;
+                  right: -5px;
+                }
+                
   /* End my messages */
   
   #messageInput {

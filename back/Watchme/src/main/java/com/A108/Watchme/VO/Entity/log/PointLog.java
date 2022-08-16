@@ -25,7 +25,8 @@ public class PointLog {
     @Column(name = "point_value")
     private Integer pointValue;
 
-//    private Status status;
+    @Column(name="finish")
+    private Integer finish;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")

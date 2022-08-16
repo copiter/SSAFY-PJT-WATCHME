@@ -56,9 +56,18 @@ public class SprintController {
         return sprintService.startSprints(sid, memberId);
     }
 
-//    @PostMapping("sprints/{sprintId}/delete")
-//    ApiResponse deleteSprint(@PathVariable(value="sprintId") int sprintId){
-//        Long sid = Long.valueOf(sprintId);
-//        return sprintService.startSprints(sid);
-//    }
+    @PostMapping("sprints/{sprintId}/points")
+    ApiResponse getSprintPoints(@PathVariable(value="sprintId") int sprintId){
+        Long memberId = authUtil.memberAuth();
+        Long sid = Long.valueOf(sprintId);
+        return sprintService.getPoints(sid, memberId);
+    }
+
+    //스프린트 참가 취소
+    @PostMapping("sprints/{sprintId}/cancel")
+    ApiResponse cancelSprint(@PathVariable(value="sprintId") int sprintId){
+        Long memberId = authUtil.memberAuth();
+        Long sid = Long.valueOf(sprintId);
+        return sprintService.cancelSprint(sid, memberId);
+    }
 }

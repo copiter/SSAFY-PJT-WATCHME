@@ -5,6 +5,7 @@ import com.A108.Watchme.DTO.KakaoPay.KakaoPayApproveRes;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayReq;
 import com.A108.Watchme.DTO.KakaoPay.KakaoPayRes;
 import com.A108.Watchme.Exception.CustomException;
+import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.PointLogRepository;
@@ -130,5 +131,24 @@ public class PointService {
                 .pgToken(pg_token)
                 .build());
 
+    }
+
+    public ApiResponse pointReturn(Long id, int value) {
+        ApiResponse apiResponse = new ApiResponse();
+        Member member = memberRepository.findById(id).get();
+        int memberPoint = member.getMemberInfo().getPoint();
+        if(memberPoint < value){
+            throw new CustomException(Code.C538);
+        }
+        member.getMemberInfo().setPoint(memberPoint-value);
+        pointLogRepository.save(PointLog.builder()
+                .member(member)
+                .createdAt(new Date())
+                .pointValue(-value)
+                .build());
+        apiResponse.setCode(200);
+        apiResponse.setMessage("Return Success");
+
+        return apiResponse;
     }
 }

@@ -45,6 +45,8 @@ class RoomDetail extends Component {
       subscribers: [],
       isScreenShareNow: false,
       screenShareCameraNeeded: false,
+      firstTimeToCreateSreenShare: true,
+      fristCameraChange:true,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -54,7 +56,6 @@ class RoomDetail extends Component {
     this.videoHandlerOff = this.videoHandlerOff.bind(this);
     this.audioHandlerOn = this.audioHandlerOn.bind(this);
     this.audioHandlerOff = this.audioHandlerOff.bind(this);
-    this.switchCamera = this.switchCamera.bind(this);
     this.shareScreen = this.shareScreen.bind(this);
     this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
     this.handleChangeUserName = this.handleChangeUserName.bind(this);
@@ -193,8 +194,8 @@ class RoomDetail extends Component {
 
           //newPublisher.once("accessAllowed", () => {
           await this.state.session.unpublish(this.state.mainStreamManager);
-
           await this.state.session.publish(newPublisher);
+          
           this.setState({
             currentVideoDevice: newVideoDevice,
             mainStreamManager: newPublisher,
@@ -224,21 +225,24 @@ class RoomDetail extends Component {
       var newPublisher = this.OV.initPublisher(undefined, {
         videoSource: "screen",
       });
+
+
+      await this.state.session.publish(newPublisher);
+    } else {
       //mainStream 없애고 새로 생성한 stream 추가
       await this.state.session.unpublish(this.state.mainStreamManager);
       await this.state.session.publish(newPublisher);
-      await this.state.session.unpublish(this.state.mainStreamManager);
-      await this.state.session.publish(latestPublisher);
       this.setState({
         mainStreamManager: newPublisher,
         publisher: latestPublisher,
         isScreenShareNow: true,
         screenShareCameraNeeded: true,
       });
-    } catch {}
+    }
   }
   async shareScreenCancle() {
     const latestPublisher = this.state.publisher;
+
     this.setState({
       isScreenShareNow: false,
       screenShareCameraNeeded: false,
@@ -494,7 +498,7 @@ class RoomDetail extends Component {
     //이미지 넣기
     let imageCapture;
     try {
-      const stream = await navigator.mlogediaDevices.getUserMedia({
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { pan: true, tilt: true, zoom: true },
       });
       const [track] = stream.getVideoTracks();
@@ -636,13 +640,28 @@ class RoomDetail extends Component {
                       </div>
                     ) : null}
                   </div>
+                  <div id="main-video" className="mainVideo">
+                    {
+                      //개인카메라
+                      this.state.mainStreamManager !== undefined &&
+                      (this.state.isScreenShareNow ||
+                        this.state.firstTimeToCreateSreenShare) ? (
+                        <div className="stream-container col-md-6 col-xs-6">
+                          
+                          <UserVideoComponent
+                            streamManager={this.state.mainStreamManager}
+                            audioState={this.state.audioState}
+                          />
+                        </div>
+                      ) : null
+                    }
+                  </div>
                 </div>
                 <div className="others">
                   {this.state.subscribers.map((sub, i) => (
                     <div
                       key={i}
                       className="stream-container col-md-6 col-xs-6 "
-                      onClick={() => this.handleMainVideoStream(sub)}
                     >
                       <UserVideoComponent streamManager={sub} />
                     </div>
@@ -726,18 +745,6 @@ class RoomDetail extends Component {
       </div>
     );
   }
-
-  /**
-   * --------------------------
-   * SERVER-SIDE RESPONSIBILITY
-   * --------------------------
-   * These methods retrieve the mandatory user token from OpenVidu Server.
-   * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-   * the API REST, openvidu-java-client or openvidu-node-client):
-   *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-   *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-   *   3) The Connection.token must be consumed in Session.connect() method
-   */
 
   createSession(sessionId) {
     return new Promise((resolve, reject) => {

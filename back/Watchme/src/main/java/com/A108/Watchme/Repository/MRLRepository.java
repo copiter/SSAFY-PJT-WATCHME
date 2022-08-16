@@ -26,7 +26,7 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
 
     List<MemberRoomLog> findByMemberIdAndRoomIdIn(Long memberId, List<Long> roomId);
 
-    List<MemberRoomLog> findByRoomIdAndStatus(Long roomId, Status status);
+    List<MemberRoomLog> findAllByRoomIdAndStatus(Long roomId, Status status);
 
     @Query(value = "SELECT SUM(mrl.studyTime) " +
             "FROM MemberRoomLog mrl " +

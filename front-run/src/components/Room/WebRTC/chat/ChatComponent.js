@@ -94,7 +94,7 @@ export default class ChatComponent extends Component {
       <div id="chatContainer">
         <div id="chatComponent" style={styleChat}>
           <div id="chatToolbar">
-            <span>{this.props.user.stream.session.sessionId} - CHAT</span>
+            <span>{sessionStorage.getItem("roomName")}</span>
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (
@@ -109,12 +109,6 @@ export default class ChatComponent extends Component {
                     : " right")
                 }
               >
-                <canvas
-                  id={"userImg-" + i}
-                  width="60"
-                  height="60"
-                  className="user-img"
-                />
                 <div className="msg-detail">
                   <div className="msg-info">
                     <p> {data.nickname}</p>

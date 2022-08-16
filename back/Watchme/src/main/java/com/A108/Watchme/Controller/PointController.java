@@ -69,9 +69,10 @@ public class PointController {
     }
 
     @PostMapping("/points/return")
-    public ApiResponse apiResponse(@RequestParam(required = false, value="value") int value) {
+    public ApiResponse apiResponse(@RequestParam int value) {
         Long id = authUtil.memberAuth();
-        return null;
+
+        return pointService.pointReturn(id, value);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.A108.Watchme.Service;
 
 import com.A108.Watchme.Config.properties.AppProperties;
+import com.A108.Watchme.VO.Entity.log.MemberSprintLog;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.utils.AuthUtil;
 import com.A108.Watchme.DTO.*;
@@ -36,6 +37,7 @@ import com.A108.Watchme.oauth.token.AuthToken;
 import com.A108.Watchme.oauth.token.AuthTokenProvider;
 import com.A108.Watchme.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -61,12 +63,14 @@ import java.util.UUID;
 @Service
 public class MemberService {
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat format3 = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
     SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
     private final static long THREE_DAYS_MSEC = 259200000;
     private final static String REFRESH_TOKEN = "refresh_token";
     private AuthUtil authUtil;
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
+    private final MSLRepository mslRepository;
     private final MemberGroupRepository memberGroupRepository;
     private final MRLRepository mrlRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -80,6 +84,7 @@ public class MemberService {
     private final PenaltyLogRegistory penaltyLogRegistory;
     private final SprintRepository sprintRepository;
     private final PointLogRepository pointLogRepository;
+    private final GroupApplyLogRegistory groupApplyLogRegistory;
 
     @Transactional
     public ApiResponse memberInsert(SignUpRequestDTO signUpRequestDTO, String url) throws ParseException {
@@ -227,7 +232,7 @@ public class MemberService {
 
                 List<WrapperMy> wraperList = new LinkedList<>();
 
-                List<Group> myGroupList = memberGroupRepository.findByMemberId(memberId).stream().map(x -> x.getGroup()).filter(x->x.getStatus()==Status.YES).collect(Collectors.toList());
+                List<Group> myGroupList = groupApplyLogRegistory.findAllByMemberId(memberId).stream().filter(x->x.getStatus()==1).map(x -> x.getGroup()).collect(Collectors.toList());
 
                 for (Group g : myGroupList) {
 
@@ -252,7 +257,7 @@ public class MemberService {
                     }
 
                     // myData.penalty
-                    List<Integer> penalty = new ArrayList<>(Mode.values().length);
+                    List<Integer> penalty = new ArrayList<>();
 
                     List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberIdAndRoomIn(currUser.getId(), g.getSprints().stream().map(x->x.getRoom()).collect(Collectors.toList()));
 
@@ -612,31 +617,42 @@ public class MemberService {
 
         Member currUser = memberRepository.findById(id).get();
 
-        List<PointLog> pointLogList = pointLogRepository.findAllByMemberId(currUser.getId());
-        List<PenaltyLog> penaltyLogList = penaltyLogRegistory.findAllByMemberId(currUser.getId());
+        PageRequest myPoint = PageRequest.of(0, 100);
+
+        List<PointLog> pointLogListAll = pointLogRepository.findAllByMemberId(currUser.getId()).stream().collect(Collectors.toList());
 
         int chargePoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()==null).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() == null).collect(Collectors.toList())) {
             chargePoint += pl.getPointValue();
-        };
+        }
+        ;
 
         int getPoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()>0).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() > 0).collect(Collectors.toList())) {
             getPoint += pl.getPointValue();
-        };
+        }
+        ;
 
         int losePoint = 0;
-        for (PointLog pl : pointLogList.stream().filter(x->x.getSprint()!=null&&x.getPointValue()<0).collect(Collectors.toList())) {
+        for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() < 0).collect(Collectors.toList())) {
             losePoint += pl.getPointValue();
-        };
+        }
+        ;
+        List<MemberSprintLog> sprintLogs = mslRepository.findAllByMemberId(currUser.getId());
+        for(MemberSprintLog memberSprintLog : sprintLogs){
+            losePoint += memberSprintLog.getSprint().getSprintInfo().getFee();
+        }
+        losePoint = -losePoint;
 
-        int sumPoint = chargePoint+getPoint-losePoint;
+        int sumPoint = chargePoint + getPoint - losePoint;
 
         List<PointLogResDTO> pointList = new LinkedList<>();
+        List<PointLog> pointLogList = pointLogRepository.findAllByMemberIdOrderByCreatedAt(currUser.getId(), myPoint).stream().collect(Collectors.toList());
+
         for (PointLog pl : pointLogList) {
             pointList.add(PointLogResDTO.builder()
-                    .date(format.format(pl.getCreatedAt()))
-                    .content(pl.getSprint().getName())
+                    .date(format3.format(pl.getCreatedAt()))
+                    .content(pl.getSprint() != null ? pl.getSprint().getName() : "충전/환급")
                     .point(pl.getPointValue())
                     .build());
         }

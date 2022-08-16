@@ -247,12 +247,18 @@ public class SprintService {
                 int myPenalty = 0;
                 int kingTime=0;
                 int count=0;
+                boolean isJoined = false;
                 if(memberId != -1){
                     myPenalty = penaltyLogRegistory.countByMemberIdAndRoomId(memberId, sprint.getRoom().getId());
                     Optional<MemberRoomLog> myData = mrlRepository.findByMember_idAndRoom_id(memberId, sprint.getRoom().getId());
                     if(myData.isPresent()) {
                         myTime = myData.get().getStudyTime();
                     }
+                    Optional <MemberSprintLog> memberSprintLog = mslRepository.findByMemberIdAndSprintId(memberId, sprint.getId());
+                    if(memberSprintLog.isPresent()&& memberSprintLog.get().getStatus().equals(Status.YES)){
+                        isJoined = true;
+                    }
+
                 }
 
                 Optional<Integer> summ = mrlRepository.getSprintData(sprint.getRoom().getId());
@@ -297,6 +303,7 @@ public class SprintService {
                         .penaltySum(sumPenalty)
                         .myPenalty(myPenalty)
                         .myStudy(myTime)
+                        .isJoined(isJoined)
                         .fee(sprint.getSprintInfo().getFee())
                         .build();
                 sprintGetResDTOList.add(sprintGetResDTO);
@@ -315,7 +322,6 @@ public class SprintService {
     @Transactional(rollbackFor = {Exception.class})
     public ApiResponse joinSprints(Long sprintId, Long memberId){
         Sprint sprint;
-
         MemberGroup memberGroup;
         try {
             sprint = sprintRepository.findById(sprintId).get();
@@ -401,5 +407,77 @@ public class SprintService {
     }
 
 
+    public ApiResponse getPoints(Long sprintId, Long memberId) {
+        ApiResponse apiResponse = new ApiResponse();
+        Sprint sprint;
+        Member member = memberRepository.findById(memberId).get();
+        try{
+            sprint = sprintRepository.findById(sprintId).get();
+            if(!sprint.getStatus().equals(Status.NO)){
+                throw new CustomException(Code.C570);
+            }
+        } catch (Exception e){
+            throw new CustomException(Code.C533);
+        }
+        Optional<PointLog> myLog = pointLogRepository.findByMemberIdAndSprintIdAndFinish(memberId, sprintId, 1);
+        // 정산 받았으면
+        if(myLog.isPresent()){
+            throw new CustomException(Code.C569);
+        }
+        List<MemberSprintLog> memberSprintLogs = mslRepository.findAllBySprintIdAndStatus(sprintId, Status.YES);
+        List<PointLog> pointLogs = pointLogRepository.findAllByMemberIdAndSprintId(memberId, sprintId);
+        if(pointLogs.isEmpty()){
+            throw new CustomException(Code.C523);
+        }
 
+        int points = 0;
+        for(PointLog pointLog : pointLogs){
+            points += pointLog.getPointValue();
+        }
+        points += (2*sprint.getSprintInfo().getFee());
+        points += (sprint.getSumPoint()/memberSprintLogs.size());
+        pointLogRepository.save(PointLog.builder()
+                .pointValue(points)
+                        .createdAt(new Date())
+                        .sprint(sprint)
+                        .member(member)
+                        .finish(1)
+                .build());
+        int myPoint = member.getMemberInfo().getPoint();
+        member.getMemberInfo().setPoint(myPoint+points);
+        apiResponse.setCode(200);
+        apiResponse.setMessage("Success");
+        apiResponse.setResponseData("points", points);
+        return apiResponse;
+    }
+
+    public ApiResponse cancelSprint(Long sid, Long memberId) {
+        ApiResponse apiResponse = new ApiResponse();
+        MemberSprintLog sprintLog;
+        Member member = memberRepository.findById(memberId).get();
+        Sprint sprint = sprintRepository.findById(sid).get();
+        try{
+           sprintLog  = mslRepository.findByMemberIdAndSprintId(memberId, sid).get();
+           if(!sprintLog.getStatus().equals(Status.YES)){
+               throw new CustomException(Code.C523);
+           }
+        } catch (Exception e){
+            throw new CustomException(Code.C523);
+        }
+        int fee = sprint.getSprintInfo().getFee();
+        pointLogRepository.save(PointLog.builder()
+                        .member(member)
+                        .sprint(sprint)
+                        .createdAt(new Date())
+                        .pointValue(fee)
+                .build());
+        int myPoint = member.getMemberInfo().getPoint();
+        member.getMemberInfo().setPoint(myPoint + fee);
+
+        sprintLog.setStatus(Status.NO);
+        apiResponse.setCode(200);
+        apiResponse.setMessage("Success");
+
+        return apiResponse;
+    }
 }

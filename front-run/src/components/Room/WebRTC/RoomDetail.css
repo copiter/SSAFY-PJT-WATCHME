@@ -53,11 +53,32 @@
 		background-color: gainsboro;
 	}
 	.myCams{
+		position: relative;
+		margin-top: 1rem;
+		width: 100%;
+		height: 15rem;
+		display:flex;
 		
+	}
+	.mainVideo{
+		position: relative;
+		margin-left:15%;
+		width:20rem;
+	}
+	.subVideo
+	{
+		position: relative;
+		margin-left:15%;
+		width:20rem;
+
+	}
+	.others{
+		display:flex;
+		flex-wrap: wrap;
 	}
 .Aside{
 	position: relative;
-	width:30rem;
+	width:35rem;
 	top:1rem;
 }
 .rightSide{
@@ -75,7 +96,7 @@
 		background-color: 858585;
 	}
 	.sideBoards{
-		position: relative;
+		position: absolute;
 		width: 100%;
 		height: 50rem;
 	}
@@ -129,10 +150,6 @@
 
 
 
-.others{
-	display:flex;
-	flex-wrap: wrap;
-}
 .routerBackGorund
 {
 }

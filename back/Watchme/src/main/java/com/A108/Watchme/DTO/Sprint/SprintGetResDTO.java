@@ -30,4 +30,5 @@ public class SprintGetResDTO {
     private Integer myStudy;
     private Integer myPenalty;
     private Integer fee;
+    private boolean isJoined;
 }

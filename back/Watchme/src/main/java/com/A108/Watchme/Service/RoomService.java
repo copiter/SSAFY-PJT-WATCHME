@@ -41,6 +41,7 @@ public class RoomService {
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final MRLRepository mrlRepository;
@@ -161,7 +162,7 @@ public class RoomService {
 
         List<GetRoomResDTO> getRooms = new LinkedList<>();
         for (Room room : roomList) {
-            if(room.getRoomCtg().getName().equals(CategoryList.스프린트)){
+            if(room.getRoomCtg().getName().equals(CategoryList.스프린트) && !room.getStatus().equals(Status.YES)){
                 continue;
             }
             getRooms.add(new GetRoomResDTO().builder()
@@ -314,9 +315,13 @@ public class RoomService {
         }
         Date date;
         try{
-            LocalDateTime localparseTime = LocalDateTime.parse(roomUpdateDTO.getEndAt());
-            String needDate = localparseTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            date = new Date(format.parse(needDate).getTime());
+            try{
+                LocalDateTime localparseTime = LocalDateTime.parse(roomUpdateDTO.getEndAt());
+                String needDate = localparseTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                date = new Date(format.parse(needDate).getTime());
+            } catch(Exception e){
+                date=(format2.parse(roomUpdateDTO.getEndAt()));
+            }
             if(date.before(DateTime.now().toDate())){
                 throw new CustomException(Code.C527);
             }
@@ -411,9 +416,10 @@ public class RoomService {
             throw new CustomException(Code.C522);
         }
         if (room.getRoomInfo().getMaxMember() >= (room.getRoomInfo().getCurrMember() + num)) {
-            room.getRoomInfo().setCurrMember(room.getRoomInfo().getCurrMember() + num);
+            int man = room.getRoomInfo().getCurrMember();
+            room.getRoomInfo().setCurrMember(man + num);
             // 마지막사람이 나가면 닫아줌
-            if(room.getRoomInfo().getCurrMember()==0){
+            if(man+num==0){
                 room.setStatus(Status.NO);
             }
             return true;
@@ -474,7 +480,7 @@ public class RoomService {
         }
 
         // 공부시간이 정산되지 않았으면 status가 NO임 => 공부중인 상태
-        List<MemberRoomLog> memberRoomLogs = mrlRepository.findByRoomIdAndStatus(roomId, Status.NO);
+        List<MemberRoomLog> memberRoomLogs = mrlRepository.findAllByRoomIdAndStatus(roomId, Status.NO);
         for(MemberRoomLog memberRoomLog : memberRoomLogs){
             Member member = memberRoomLog.getMember();
             int penalty = penaltyLogRegistory.countByMemberIdAndRoomId(member.getId(), roomId);
@@ -516,7 +522,7 @@ public class RoomService {
                 .roomPwd((room.getRoomInfo().getPwd()==null)? null:room.getRoomInfo().getPwd())
                 .img(room.getRoomInfo().getImageLink())
                 .num(room.getRoomInfo().getMaxMember())
-                .endTime(format2.format(room.getRoomInfo().getEndAt()))
+                .endTime(format3.format(room.getRoomInfo().getEndAt()))
                 .build());
 
         apiResponse.setCode(200);

@@ -1,4 +1,3 @@
-import {  now } from "jquery";
 import React from "react";
 import {useContext,useState,useEffect } from "react";
 import { getCookie } from "../../../../Cookie";
@@ -11,7 +10,7 @@ function MyStudy() {
 
 	const [study, setStudy] = useState({
     "name" :"123" ,        
-    "startTime" : "2022-08-10 14:42",
+    "startTime" : "2022-08-15 22:10",
     "mode" : "MODE2",
     "penalty" : 13
   })
@@ -40,7 +39,12 @@ function MyStudy() {
       })
       .then((result) => {
         if (result != null) {
-        setStudy(result["responseData"]["room"])
+        setStudy(result.responseData.room);
+        setInterval(() => {
+          console.log("STUDYTIME-체크");
+          console.log(new Date().getTime()-new Date(result.responseData.room.startTime).getTime());
+          setStudyTimes(new Date().getTime()-new Date(result.responseData.room.startTime).getTime());
+        }, 1000);
         }
       })
       .catch((err) => {
@@ -52,21 +56,11 @@ function MyStudy() {
 
 
 
-const [studyTimes, setStudyTimes] = useState(
-0)
+const [studyTimes, setStudyTimes] = useState(0);
 
 
-useEffect(() => {
-  const id = setInterval(() => {
-    let DN=new Date(now()).getTime();
-    setStudyTimes(DN-D1);
-  }, 30000);
-  return () => clearInterval(id);
-}, 10000);
-
-let D1=new Date((study.startTime)).getTime();
 console.log(studyTimes);
-let hours=studyTimes/1000/60/60,minutes=studyTimes/1000/60%60;
+let hours=studyTimes/1000/60/60,minutes=(studyTimes/1000/60)%60,seconds=(studyTimes/1000)%60;
 return (
   <div className="backDiv">
     <div className="borders"><div className="borders-inner">
@@ -75,11 +69,15 @@ return (
           공부시간
         </div>
         <div className="studyTimeTime">
-        {hours>=10? parseInt(hours):
-        hours>=1?("0"+parseInt(hours)):
+        {hours-9>=10? parseInt(hours-9):
+        hours-9>=1?("0"+parseInt(hours-9)):
         "00"}
         :{minutes>=10? parseInt(minutes):
         minutes>=1?("0"+parseInt(minutes)):
+        "00"}
+        
+        :{seconds>=10? parseInt(seconds):
+        seconds>=1?("0"+parseInt(seconds)):
         "00"}
         </div>
         

@@ -69,6 +69,9 @@ function RoomReform() {
       roomMemberMaxNo: inputs.num,
       endAt: inputs.endTime,
     };
+    console.log("인풋");
+    console.log(inputs);
+    console.log("아웃풋");
     console.log(outputs);
     formData.append(
       "roomUpdateDTO",
@@ -110,19 +113,21 @@ function RoomReform() {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
   return (
-    <div className="body-frame">
-      <form onSubmit={handleSubmit} className="floatRIGHT">
+    <div className="backDiv">
+      <div className="borders">
+    <div className="body-frame-reform">
+      <form onSubmit={handleSubmit} className="floatRIGHT"><div className="formInner">
         {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
-        <div className="form-frame">
+        <div className="form-frame-reform">
           <div className="room-image">
           <img
             alt="sample"
             src={fileImage?fileImage:inputs.img}
             style={{
               position: "absolute",
-              marginTop: "55px",
-              width: "150px",
-              height: "150px",
+              marginTop: "50px",
+              width: "160px",
+              height: "160px",
               borderRadius: "50%",
               pointerEvents:"none"
             }}
@@ -138,11 +143,11 @@ function RoomReform() {
             />
             <div className="room-image__message">미팅룸 사진을 올리세요</div>
           </div>
-          <div className="room-infor">
+          <div className="room-infor-reform">
             {/*우측부분*/}
 
             <div className="input-type">
-              <div className="line">
+              <div className="line-create">
                 <input
                   type="text"
                   name="roomName"
@@ -151,7 +156,7 @@ function RoomReform() {
                   placeholder="미팅룸 이름을 적으세요"
                 />
               </div>
-              <div className="line">
+              <div className="line-create">
                 <input
                   type="text"
                   name="description"
@@ -160,7 +165,7 @@ function RoomReform() {
                   placeholder="간단한 설명을 적으세요"
                 />
               </div>
-              <div className="line">
+              <div className="line-create">
                 <input
                   type="number"
                   name="num"
@@ -185,7 +190,7 @@ function RoomReform() {
                   <option value="기타">기타</option>
                 </select>
               </div>
-              <div className="line">
+              <div className="line-create">
                 <span>종료기간</span>
                     <input
                       type="datetime-local"
@@ -193,7 +198,6 @@ function RoomReform() {
                       value={inputs.endTime || ""}
                       onChange={handleChange}
                     />
-
                 {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                 <input
                   type="password"
@@ -210,7 +214,7 @@ function RoomReform() {
             <div className="input-rules">
               {/*규칙입니다. 현재 진행파트아닙니다. */}
               <div className="rules-title">📝 규칙</div>
-              <div className="rules-box">
+              <div className="rules-box-create">
                 <label>
                   <input type="radio" value="MODE1"
                     checked={inputs.mode==="MODE1"?"checked":""}
@@ -239,12 +243,14 @@ function RoomReform() {
                     name="mode"/>
                   화면공유
                 </label>
+               <button type="submit" className="submit">수정하기</button>
               </div>
             </div>
-            <button type="submit">수정하기</button>
           </div>
         </div>
-      </form>
+      </div></form>
+    </div>
+    </div>
     </div>
   );
 }

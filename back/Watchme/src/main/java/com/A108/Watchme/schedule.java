@@ -29,8 +29,9 @@ public class schedule {
 
     Timestamp currTS = new Timestamp(System.currentTimeMillis());
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void studyTimeResetDay(){
+    @Scheduled(cron = "0 * * * * *")
+    public void studyTimeResetDay() {
+        System.out.println("studyTime");
 
         List<MemberInfo> memberInfoList = memberInfoRepository.findAll();
 
@@ -40,14 +41,23 @@ public class schedule {
         cal.add(Calendar.DATE, -1);
         currTS.setTime(cal.getTime().getTime());
 
-        for (MemberInfo mI : memberInfoList) {
-            List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberId(mI.getId()).stream().filter((m)->m.getJoinedAt().before(currTS)).collect(Collectors.toList());
+        System.out.println(currTS.toString());
 
+        for (MemberInfo mI : memberInfoList) {
             Integer studyTimeDay = 0;
 
-            for (MemberRoomLog mrl :
-                    memberRoomLogList) {
-                studyTimeDay+= mrl.getStudyTime();
+            List<MemberRoomLog> memberRoomLogList = mrlRepository.findAllByMemberId(mI.getId())
+                    .stream().filter((m) -> m.getJoinedAt().after(currTS) && m.getStudyTime() != null).collect(Collectors.toList()
+                    );
+
+            for (MemberRoomLog mrl : memberRoomLogList) {
+                System.out.println("-----------------");
+                System.out.println(mI.getId());
+                System.out.println(mrl.getId());
+                System.out.println(mrl.getStudyTime());
+                System.out.println("-----------------");
+
+                studyTimeDay += mrl.getStudyTime();
             }
 
             mI.setStudyTimeDay(studyTimeDay);
@@ -58,8 +68,8 @@ public class schedule {
 
     }
 
-    @Scheduled(cron = "0 0 0 * * 0")
-    public void studyTimeResetWeek(){
+    @Scheduled(cron = "0 17 18 * * *")
+    public void studyTimeResetWeek() {
 
         List<MemberInfo> memberInfoList = memberInfoRepository.findAll();
 
@@ -69,13 +79,14 @@ public class schedule {
         currTS.setTime(cal.getTime().getTime());
 
         for (MemberInfo mI : memberInfoList) {
-            List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberId(mI.getId()).stream().filter((m)->m.getJoinedAt().before(currTS)).collect(Collectors.toList());
+            List<MemberRoomLog> memberRoomLogList = mrlRepository.findAllByMemberId(mI.getId())
+                    .stream().filter((m) -> m.getJoinedAt().after(currTS)).collect(Collectors.toList());
 
             Integer studyTimeDay = 0;
 
             for (MemberRoomLog mrl :
                     memberRoomLogList) {
-                studyTimeDay+= mrl.getStudyTime();
+                studyTimeDay += mrl.getStudyTime();
             }
 
             mI.setStudyTimeDay(studyTimeDay);
@@ -86,8 +97,8 @@ public class schedule {
 
     }
 
-    @Scheduled(cron = "0 0 0 1 * *")
-    public void studyTimeResetMonth(){
+    @Scheduled(cron = "0 17 18 * * *")
+    public void studyTimeResetMonth() {
 
         List<MemberInfo> memberInfoList = memberInfoRepository.findAll();
 
@@ -97,13 +108,14 @@ public class schedule {
         currTS.setTime(cal.getTime().getTime());
 
         for (MemberInfo mI : memberInfoList) {
-            List<MemberRoomLog> memberRoomLogList = mrlRepository.findByMemberId(mI.getId()).stream().filter((m)->m.getJoinedAt().before(currTS)).collect(Collectors.toList());
+            List<MemberRoomLog> memberRoomLogList = mrlRepository.findAllByMemberId(mI.getId())
+                    .stream().filter((m) -> m.getJoinedAt().after(currTS)).collect(Collectors.toList());
 
             Integer studyTimeDay = 0;
 
             for (MemberRoomLog mrl :
                     memberRoomLogList) {
-                studyTimeDay+= mrl.getStudyTime();
+                studyTimeDay += mrl.getStudyTime();
             }
 
             mI.setStudyTimeDay(studyTimeDay);
@@ -114,8 +126,8 @@ public class schedule {
 
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    public void startSprint(){
+    @Scheduled(cron = "0 17 18 * * *")
+    public void startSprint() {
         Calendar cal = Calendar.getInstance();
 
         cal.setTime(currTS);
@@ -125,16 +137,16 @@ public class schedule {
 
         // 시작 전 스프린트
         List<Sprint> sprintListYes = sprintRepository.findAllByStatus(Status.YES);
-        sprintListYes.stream().filter(x->x.getSprintInfo().getStartAt().after(new Date())).forEach(x->x.setStatus(Status.ING));
+        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
 
         sprintRepository.saveAll(sprintListYes);
 
 
         // 진행 중 스프린트
         List<Sprint> sprintListIng = sprintRepository.findAllByStatus(Status.ING);
-        sprintListIng.stream().filter(x->x.getSprintInfo().getEndAt().before(new Date())).forEach(x->x.setStatus(Status.NO));
+        sprintListIng.stream().filter(x -> x.getSprintInfo().getEndAt().before(new Date())).forEach(x -> x.setStatus(Status.NO));
 
         sprintRepository.saveAll(sprintListIng);
-        }
-
     }
+
+}

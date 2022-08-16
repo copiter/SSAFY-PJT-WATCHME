@@ -143,35 +143,37 @@ function RoomCreate() {
                   />
                 </div>
                 <div className="line">
-                  <input
-                    type="number"
-                    name="num"
-                    value={inputs.num ? inputs.num : ""}
-                    onChange={handleChange}
-                    accept="number"
-                    placeholder="인원수를 선택하세요(1~25)"
-                  />
-                  졸음감지
-                </label>
-                <label>
-                  <input
-                    type="datetime-local"
-                    name="endTime"
-                    value={inputs.endTime || ""}
-                    onChange={handleChange}
-                  />
-                  스마트폰감지
-                </label>
-                <label>
-                  <input
-                    type="password"
-                    name="roomPwd"
-                    value={inputs.roomPwd || ""}
-                    onChange={handleChange}
-                    maxLength="4"
-                    minLength="0"
-                    placeholder="비밀번호 4자리"
-                  />
+                  <label>
+                    <input
+                      type="number"
+                      name="num"
+                      value={inputs.num ? inputs.num : ""}
+                      onChange={handleChange}
+                      accept="number"
+                      placeholder="인원수를 선택하세요(1~25)"
+                    />
+                    졸음감지
+                  </label>
+                  <label>
+                    <input
+                      type="datetime-local"
+                      name="endTime"
+                      value={inputs.endTime || ""}
+                      onChange={handleChange}
+                    />
+                    스마트폰감지
+                  </label>
+                  <label>
+                    <input
+                      type="password"
+                      name="roomPwd"
+                      value={inputs.roomPwd || ""}
+                      onChange={handleChange}
+                      maxLength="4"
+                      minLength="0"
+                      placeholder="비밀번호 4자리"
+                    />
+                  </label>
                 </div>
               </div>
 

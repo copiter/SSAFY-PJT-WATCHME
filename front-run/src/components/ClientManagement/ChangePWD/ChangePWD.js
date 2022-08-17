@@ -3,6 +3,7 @@ import "./ChangePWD.css";
 import { useContext, useState, useEffect } from "react";
 import { FetchUrl } from "../../../store/communication";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import swal from "sweetalert";
 
 function ChangePWD() {
   const url = `${useContext(FetchUrl)}`;

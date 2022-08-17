@@ -24,25 +24,25 @@ function GroupRecruit() {
     keyword: "",
   });
 
-  // const [groups, setGroups] = useState(groupJsons.responseData.groups);
-  const [groups, setGroups] = useState({ groups: [] });
-  const [groupPage, setGroupPage]=useState(1);
-
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
+  // const [groups, setGroups] = useState(groupJsons.responseData.groups);
+  const [groups, setGroups] = useState({ groups: [] });
+  const [groupPage, setGroupPage]=useState(1);
+
   //URL
   const url = `${FETCH_URL}/groups`;
   useEffect(() => {
+    setGroupPage(1);
     fetch(url)
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
           setGroups(result["responseData"]["groups"]);
-          setGroupPage(1);
         }
       })
       .catch((err) => {
@@ -76,31 +76,7 @@ function GroupRecruit() {
     // setInputs((values) => ({ ...values, [inputs.keyword]: "" }));
   };
 
-  const addMore = (event) => {
-    //값 입력 안받은상태임
-    event.preventDefault();
-    let page=parseInt(parseInt(groupPage)+1);
-    console.log(page);
-    fetch(
-      url +
-        "?" +
-        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
-        "page=" + page + "&"+
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.code === 200) {
-          setGroups([...groups, ...result.responseData.groups]);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-      setGroupPage(page)
-  };
+  
 
   const ctgChange = (event) => {
     //카테고리 변동(LI라서 이방법 사용)
@@ -129,7 +105,31 @@ function GroupRecruit() {
         console.log(err);
       });
   };
-
+  const addMore = (event) => {
+    //값 입력 안받은상태임
+    event.preventDefault();
+    let page=parseInt(parseInt(groupPage)+1);
+    console.log(page);
+    fetch(
+      url +
+        "?" +
+        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
+        "page=" + page + "&"+
+        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          setGroups([...groups, ...result.responseData.groups]);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      setGroupPage(page)
+  };
   // console.log(groups);
 
   return (

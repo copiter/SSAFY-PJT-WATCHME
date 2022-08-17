@@ -9,6 +9,7 @@ import cancel from "../../img/Icons/cancel.png";
 
 import "./SocialLogin.css";
 import ErrorCode from "../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function SocialLogin() {
   const FETCH_URL = useContext(FetchUrl);
@@ -51,7 +52,7 @@ function SocialLogin() {
           setIsNickNameDup(true);
         }
       } catch (e) {
-        alert("통신 실패 " + e);
+        swal("통신실패", "", "error");
       }
     };
     getDatas();
@@ -61,10 +62,10 @@ function SocialLogin() {
     event.preventDefault();
 
     if (isNickNameDup) {
-      alert("닉네임 중복확인이 필요합니다");
+      swal("닉네임 중복확인이 필요합니다", "", "error");
       return;
     } else if (isNickNameDup === null) {
-      alert("닉네임 중복확인이 필요합니다");
+      swal("닉네임 중복확인이 필요합니다", "", "error");
       return;
     }
 
@@ -91,14 +92,14 @@ function SocialLogin() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          alert("회원가입 되었습니다");
+          swal("회원가입 되었습니다", "", "success");
           navigate("/");
         } else {
           ErrorCode(result);
         }
       })
       .catch((err) => {
-        alert(err.message);
+        swal("통신실패", "", "error");
       });
   };
 

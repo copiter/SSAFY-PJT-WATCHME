@@ -15,41 +15,42 @@ function RoomItem(props) {
   const FETCH_URL = useContext(FetchUrl);
 
   async function enteringRoom(id, secret) {
-    console.log(id, secret);
     //방들어가기 문제없이 작동
     const url = `${FETCH_URL}/rooms/${id}/join`;
 
-    function configWithPwd() {
-      const pwd = window.prompt("비공개 방입니다. 비밀번호를 입력해주세요:");
-      if (!pwd) {
-        return;
-      }
-      return {
-        method: "POST",
-        body: JSON.stringify({ pwd: pwd }),
-        headers: {
-          accessToken: getCookie("accessToken"),
-          "Content-Type": "application/json",
-        },
-      };
-    }
-    function configNoPwd() {
-      return {
-        method: "POST",
-        headers: {
-          accessToken: getCookie("accessToken"),
-        },
-      };
-    }
-
-    let config;
-    if (room.secret) {
-      config = await configWithPwd();
+    //비공개 방
+    if (secret) {
+      swal("비공개 방입니다. 비밀번호를 입력해주세요:", {
+        content: "input",
+      }).then((pwd) => {
+        const config = {
+          method: "POST",
+          body: JSON.stringify({ pwd: pwd }),
+          headers: {
+            accessToken: getCookie("accessToken"),
+            "Content-Type": "application/json",
+          },
+        };
+        fetch(url, config)
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.code == 200) {
+              navigate(`/RoomDetail/${id}`);
+            } else {
+              ErrorCode(result);
+            }
+          })
+          .catch((err) => {
+            swal("로그인 후 이용부탁드립니다", "", "error");
+          });
+      });
     } else {
-      config = configNoPwd();
-    }
-
-    try {
+      const config = {
+        method: "POST",
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
+      };
       fetch(url, config)
         .then((response) => response.json())
         .then((result) => {
@@ -62,8 +63,6 @@ function RoomItem(props) {
         .catch((err) => {
           swal("로그인 후 이용부탁드립니다", "", "error");
         });
-    } catch {
-      swal("로그인 후 이용부탁드립니다", "", "error");
     }
   }
 

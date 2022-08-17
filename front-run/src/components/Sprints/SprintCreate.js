@@ -5,6 +5,7 @@ import { getCookie } from "../../Cookie";
 import GetToday from "../ETC/GetToday";
 
 import "./SprintCreate.css";
+import swal from "sweetalert";
 
 function SprintCreate(props) {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ function SprintCreate(props) {
       return;
     }
     if (startAtInputRef.current.value >= endAtInputRef.current.value) {
-      alert("시작일자는 종료일자보다 빨라야 합니다");
+      swal("시작일자는 종료일자보다 빨라야 합니다", "", "error");
       endAtInputRef.current.value = "";
     }
   }
@@ -62,7 +63,7 @@ function SprintCreate(props) {
       routineStartAtInputRef.current.value ===
       routineEndAtInputRef.current.value
     ) {
-      alert("루틴 시작과 종료는 달라야 합니다");
+      swal("루틴 시작과 종료는 달라야 합니다", "", "error");
       routineEndAtInputRef.current.value = "";
     }
   }
@@ -100,8 +101,7 @@ function SprintCreate(props) {
         return response.json();
       })
       .then((result) => {
-        console.log(result);
-        alert("방이 성공적으로 생성되었습니다");
+        swal("방이 성공적으로 생성되었습니다", "", "success");
         navigate(`/GroupDetail/${groupId}`);
       })
       .catch((err) => {

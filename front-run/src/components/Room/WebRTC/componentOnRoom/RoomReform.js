@@ -1,191 +1,237 @@
-import React from "react";
-import { useState, useContext, useRef, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { getCookie } from "../../../../Cookie";
-import { FetchUrl } from "../../../../store/communication";
+
+import React, { Component } from 'react';
+import swal from 'sweetalert';
+
+
+import { FetchUrl } from '../../../../store/communication';
+import ErrorCode from '../../../../Error/ErrorCode';
+import { getCookie } from '../../../../Cookie';
+
+
 import "./RoomReform.css";
-//outputs.status
+import  './RoomReform.css';
+import { startTransition } from 'react';
+import { data } from 'jquery';
 
-function RoomReform() {
-  //방생성 요청 보내기
-  const [inputs, setInputs] = useState({});
-  const navigate = useNavigate();
 
-  const handleChange = (event) => {
+export class RoomReform extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      starDistroyed:true,
+      imgeRef:"",
+      fileImage:"",
+    }
+  }
+
+
+
+  handleChange=(event)=>{
     const name = event.target.name;
     const value = event.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
+    this.setState((values) => ({ ...values,[name]:value}));
+  }
 
-  //URL
-  const FETCH_URL = useContext(FetchUrl);
 
-  const id = window.location.pathname.split("/")[2].substring(0);
-  const urlSetting = `${FETCH_URL}/rooms/` + id + `/settings`;
-  const urlUpdate = `${FETCH_URL}/rooms/` + id + `/update`;
-  const imgeRef = useRef();
-  useEffect(() => {
-    fetch(urlSetting, {
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            console.log("리스폰스오류");
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((result) => {
-        if (result != null) {
-          console.log("resultOK");
-          console.log("result.responseData.room");
-          setInputs(result.responseData.room);
-          if (inputs.roomPwd === null || inputs.roomPwd === "") {
-            inputs.roomPwd = "";
-          }
-        }
-      })
-      .catch((err) => {
-        console.log("에러체크입니다.");
-      });
-  }, []);
-  const handleSubmit = (event) => {
+
+  handleSubmit = (event) =>  {
     event.preventDefault();
     const formData = new FormData();
-    let outputs = {
-      roomName: inputs.roomName,
-      mode: inputs.mode, //MODE1, MODE2, MODE3
-      pwd:
-        inputs.roomPwd === null || inputs.roomPwd === "" ? "" : inputs.roomPwd,
-      roomDescription: inputs.description,
-      roomCategory: inputs.categoryName,
-      roomMemberMaxNo: inputs.num,
-      endAt: inputs.endTime,
-    };
-    console.log("인풋");
-    console.log(inputs);
-    console.log("아웃풋");
+    let outputs={
+      roomName: this.state.roomName,
+      mode: this.state.mode, //MODE1, MODE2, MODE3
+      pwd: (this.state.roomPwd===null||this.state.roomPwd===""?null:this.state.roomPwd),
+      roomDescription:this.state.description,
+      roomCategory: this.state.categoryName, 
+      roomMemberMaxNo: this.state.num,
+      endAt: this.state.endTime,
+    }
+    console.log("아우풋이었습니다.")
     console.log(outputs);
+    console.log("아우풋이었습니다.")
     formData.append(
       "roomUpdateDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
-    if (
-      imgeRef !== null &&
-      imgeRef !== "" &&
-      imgeRef.current.files[0] !== undefined
-    ) {
-      formData.append("images", imgeRef.current.files[0]);
-    }
-    fetch(urlUpdate, {
-      method: "POST",
-      body: formData,
+    
+    if(this.state.imgeRef!==null&&this.state.imgeRef!==""&&this.state.imgeRef.current.files[0]!==undefined)
+    { formData.append("images", this.state.imgeRef.current.files[0])}
+    console.log("URL입니다.");
+    console.log(FetchUrl._currentValue+'/rooms/'+window.location.pathname.split("/")[2].substring(0 )+'/update');
+    fetch(
+      FetchUrl._currentValue+'/rooms/'+window.location.pathname.split("/")[2].substring(0 )+'/update',
+      {
+        method: "POST",
+        body: formData,
+        headers: {accessToken: getCookie("accessToken")},
+    })
+    .then((response) => {
+      console.log(response);
+      if (response.ok) {
+        console.log("오류검출없음");
+        return response.json(); //ok떨어지면 바로 종료.
+      } else {
+        response.json().then((errorResult) => {
+          ErrorCode(errorResult);
+          let errorMessage = "리스폰스오류입니다";
+          throw new Error(errorMessage);
+        });
+      }
+    })
+    .then((result) => {
+      if (result != null) {
+        console.log(result);
+        console.log("최종테스트");
+        swal("방정보가 수정되었습니다");
+        this.exitModal();
+      }
+    })
+    .catch((err) => {
+      console.log("에러 POST");
+      swal("에러가 발생하였습니다.");
+    });
+
+  }
+  
+  
+  saveFileImage = (event) => {
+    this.setState({
+      fileImage:URL.createObjectURL(event.target.files[0]),
+    })
+    
+  }
+
+
+//시작시 한번만 실행
+  getRoomDataSetting(){
+    console.log("모달_룸정보가져오기_테스트")
+    fetch(FetchUrl._currentValue+'/rooms/'+window.location.pathname.split("/")[2].substring(0 )+'/settings',
+    {
       headers: {
         accessToken: getCookie("accessToken"),
       },
     })
       .then((response) => {
-        console.log(response);
         if (response.ok) {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
-          response.json().then((data) => {
-            console.log("post 리스폰스오류입니다.");
-            let errorMessage = "";
+          response.json().then((errorResult) => {
+            let errorMessage = "리스폰스오류입니다";
             throw new Error(errorMessage);
           });
         }
       })
       .then((result) => {
         if (result != null) {
-          console.log("성공");
-          navigate("./");
+          let datas=result.responseData.room;
+          console.log("GETDataResult");
+          console.log("GETDataResult끝");
+          this.setState(datas);
         }
       })
       .catch((err) => {
-        console.log("에러 POST");
-      });
-  };
-  const [fileImage, setFileImage] = useState();
-  const saveFileImage = (event) => {
-    setFileImage(URL.createObjectURL(event.target.files[0]));
-  };
-  return (
-    <div className="backDiv">
-      <div className="borders">
-        <div className="body-frame-reform">
-          <form onSubmit={handleSubmit} className="floatRIGHT">
-            <div className="formInner">
+        console.log("에러체크입니다.");
+      });;
+
+      this.setState({starDistroyed:null})
+  }
+
+
+  
+
+  exitModal(){
+    this.setState({starDistroyed:true});
+    this.props.close();
+    
+  }
+  
+
+
+  render() {
+    // 열기, 닫기, 모달 헤더 텍스트를 부모로부터 받아옴
+    const { open, close, header } = this.props;
+    if(this.state.starDistroyed!==null&&this.state.starDistroyed===true)
+    {
+      this.getRoomDataSetting();
+    }
+    return (
+      <div className={open ? 'openModal modal' : 'modal'}>
+        {open ? (
+          <section>
+            <header>
+              {header}
+              <button className="close" onClick={close}>
+                &times;닫기
+              </button>
+            </header>
+            <main>
+            <form onSubmit={this.handleSubmit}>
               {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
-              <div className="form-frame-reform">
-                <div className="room-image">
+              <div className="form-frame">
+                <div className="room-imageReform">
                   <img
-                    alt="sample"
-                    src={fileImage ? fileImage : inputs.img}
-                    style={{
-                      position: "absolute",
-                      marginTop: "50px",
-                      width: "160px",
-                      height: "160px",
-                      borderRadius: "50%",
-                      pointerEvents: "none",
-                    }}
-                  />
+                      alt="sample"
+                      src={this.state.fileImage!==""&&this.state.fileImage!==null?this.state.fileImage:this.state.img}
+                      style={{
+                        position: "absolute",
+                        marginTop: "55px",
+                        width: "150px",
+                        height: "150px",
+                        borderRadius: "50%",
+                        pointerEvents: "none",
+                      }}
+                      className="room-image__uploadReformFile"
+                    />
                   {/*룸 이미지, 좌측부분 */}
                   <input
                     type="file"
                     name="roomImage"
                     accept="image/*"
-                    onChange={saveFileImage}
-                    className="room-image__upload"
-                    ref={imgeRef}
+                    onChange={this.saveFileImage}
+                    className="room-image__uploadReform"
+                    ref={this.state.imgeRef}
                   />
-                  <div className="room-image__message">
-                    미팅룸 사진을 올리세요
-                  </div>
+                  <div className="room-image__messageReform">미팅룸 사진을 올리세요</div>
                 </div>
-                <div className="room-infor-reform">
+                <div className="room-inforReform">
                   {/*우측부분*/}
 
-                  <div className="input-type">
-                    <div className="line-create">
+                  <div className="input-typeReform">
+                    <div className="lineReform">
+                      <div className='lineReformLeftDescript'>방이름</div>
                       <input
                         type="text"
                         name="roomName"
-                        value={inputs.roomName || ""}
-                        onChange={handleChange}
+                        value={this.state.roomName || ""}
+                        onChange={this.handleChange}
                         placeholder="미팅룸 이름을 적으세요"
                       />
                     </div>
-                    <div className="line-create">
+                    <div className="lineReform">
+                      <div className='lineReformLeftDescriptLine2'>설명</div>
                       <input
                         type="text"
                         name="description"
-                        value={inputs.description || ""}
-                        onChange={handleChange}
+                        value={this.state.description || ""}
+                        onChange={this.handleChange}
                         placeholder="간단한 설명을 적으세요"
                       />
                     </div>
-                    <div className="line-create">
+                    <div className="lineReform">
+                      <div className='lineReformLeftDescriptLine3'>인원수</div>
                       <input
                         type="number"
                         name="num"
-                        value={inputs.num ? inputs.num : ""}
-                        onChange={handleChange}
+                        value={this.state.num ? this.state.num : ""}
+                        onChange={this.handleChange}
                         accept="number"
                         placeholder="인원수를 선택하세요(1~25)"
                       />
+                      <div className='lineReformDescriptLine4'>목표</div>
                       <select
                         name="categoryName"
-                        value={inputs.categoryName || ""}
-                        onChange={handleChange}
+                        value={this.state.categoryName || ""}
+                        onChange={this.handleChange}
                       >
                         <option value="" disabled>
                           카테고리를 선택하세요
@@ -194,26 +240,36 @@ function RoomReform() {
                         <option value="취업">취업</option>
                         <option value="수능">수능</option>
                         <option value="자격증">자격증</option>
-                        <option value="코딩">코딩</option>
                         <option value="기타">기타</option>
                       </select>
                     </div>
-                    <div className="line-create">
+                    <div className="lineReform">
                       <span>종료기간</span>
                       <input
                         type="datetime-local"
                         name="endTime"
-                        value={inputs.endTime || ""}
-                        onChange={handleChange}
+                        value={this.state.endTime || ""}
+                        onChange={this.handleChange} className="endTime"
                       />
+
+                      <span>비공개</span>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          name="secret"
+                          value={this.state.isChecked}
+                          onChange={this.handleChangeCheck}
+                        />
+                        <span className="slider round"></span>
+                      </label>
                       {/*checkbox이외의 방법으로 구현예정시 알려주세요.*/}
                       <input
                         type="password"
                         name="roomPwd"
-                        value={inputs.roomPwd || ""}
-                        onChange={handleChange}
+                        value={this.state.roomPwd || ""}
+                        onChange={this.handleChange}
                         maxLength="4"
-                        minLength="4"
+                        minLength="0"
                         placeholder="비밀번호 4자리"
                       />
                     </div>
@@ -222,60 +278,56 @@ function RoomReform() {
                   <div className="input-rules">
                     {/*규칙입니다. 현재 진행파트아닙니다. */}
                     <div className="rules-title">📝 규칙</div>
-                    <div className="rules-box-create">
+                    <div className="rules-box-reform">
                       <label>
                         <input
                           type="radio"
-                          value="MODE1"
-                          checked={inputs.mode === "MODE1" ? "checked" : ""}
-                          onChange={handleChange}
                           name="mode"
+                          value="MODE1"
+                          checked={this.state.mode==="MODE1"?"checked":""}
+                          onChange={this.handleChange}
                         />
                         감시없음
                       </label>
                       <label>
                         <input
                           type="radio"
-                          value="MODE2"
-                          checked={inputs.mode === "MODE2" ? "checked" : ""}
-                          onChange={handleChange}
                           name="mode"
-                        />
-                        졸음감지
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
                           value="MODE3"
-                          checked={inputs.mode === "MODE3" ? "checked" : ""}
-                          onChange={handleChange}
-                          name="mode"
+                          checked={this.state.mode==="MODE3"?"checked":""}
+                          onChange={this.handleChange}
                         />
                         스마트폰감지
                       </label>
                       <label>
                         <input
                           type="radio"
-                          value="MODE4"
-                          checked={inputs.mode === "MODE4" ? "checked" : ""}
-                          onChange={handleChange}
                           name="mode"
+                          value="MODE2"
+                          checked={this.state.mode==="MODE2"?"checked":""}
+                          onChange={this.handleChange}
+                        />
+                        졸음감지
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          name="mode"
+                          value="MODE4"
+                          checked={this.state.mode==="MODE4"?"checked":""}
+                          onChange={this.handleChange}
                         />
                         화면공유
                       </label>
-                      <button type="submit" className="submit">
-                        수정하기
-                      </button>
                     </div>
                   </div>
+                  <button type="submit">수정하기</button>
                 </div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form></main>
+          </section>
+        ) : null}
       </div>
-    </div>
-  );
+    );
+  }
 }
-
-export default RoomReform;

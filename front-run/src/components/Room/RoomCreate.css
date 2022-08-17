@@ -106,7 +106,9 @@ select option[value=""][disabled] {
 :focus {
   outline: none;
 }
-
+.endTime{
+  font-size: 12px;
+}
 .input-type .line:nth-child(4) {
   display: flex;
   flex-direction: row;

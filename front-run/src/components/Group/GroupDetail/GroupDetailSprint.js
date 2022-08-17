@@ -169,8 +169,7 @@ function GroupDetailSprint(props) {
       })
       .then((result) => {
         if (result.code === 200) {
-          const roomId = result.reponseData.roomId;
-          navigate(`/RoomDetail/${roomId}`);
+          navigate(`/RoomDetail/`+ result.responseData.roomId);
         } else {
           ErrorCode(result);
         }

@@ -13,7 +13,6 @@ import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import groupJsons from "../json/groupRec.json";
 
-let page = 1;
 
 function GroupRecruit() {
   //Search 못맞춰서 작동 안됩니다...
@@ -27,6 +26,7 @@ function GroupRecruit() {
 
   // const [groups, setGroups] = useState(groupJsons.responseData.groups);
   const [groups, setGroups] = useState({ groups: [] });
+  const [groupPage, setGroupPage]=useState(1);
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -42,6 +42,7 @@ function GroupRecruit() {
       .then((result) => {
         if (result.code === 200) {
           setGroups(result["responseData"]["groups"]);
+          setGroupPage(1);
         }
       })
       .catch((err) => {
@@ -77,17 +78,19 @@ function GroupRecruit() {
 
   const addMore = (event) => {
     //값 입력 안받은상태임
+    event.preventDefault();
+    let page=parseInt(parseInt(groupPage)+1);
+    console.log(page);
     fetch(
       url +
         "?" +
         (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
-        (page === "" || page === 1 ? "" : "page=" + page + "&") +
+        "page=" + page + "&"+
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          page++;
           setGroups([...groups, ...result.responseData.groups]);
         } else {
           ErrorCode(result);
@@ -96,12 +99,14 @@ function GroupRecruit() {
       .catch((err) => {
         console.log(err);
       });
+      setGroupPage(page)
   };
 
   const ctgChange = (event) => {
     //카테고리 변동(LI라서 이방법 사용)
     event.preventDefault();
     const ARR = ["", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
+    setGroupPage(1);
 
     setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
     fetch(

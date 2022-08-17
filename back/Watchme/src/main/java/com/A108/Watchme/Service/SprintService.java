@@ -402,8 +402,14 @@ public class SprintService {
         if(memberSprintLog.get().getStatus().equals(Status.DELETE)){
             throw new CustomException(Code.C547);
         }
-        roomService.roomPeople(memberSprintLog.get().getSprint().getRoom().getId(),1);
-        roomService.joinRoomFunc(memberSprintLog.get().getSprint().getRoom().getId(),memberId);
+        MemberSprintLog msl = memberSprintLog.get();
+        System.out.println(msl.getSprint());
+        System.out.println(msl.getSprint().getRoom());
+        System.out.println(msl.getSprint().getRoom().getId());
+        Long id =msl.getSprint().getRoom().getId();
+        System.out.println(id);
+        boolean a = roomService.roomPeople(id,1);
+        roomService.joinRoomFunc(msl.getSprint().getRoom().getId(),memberId);
 
         apiResponse.setCode(200);
         apiResponse.setMessage("SUCCESS START SPRINT");

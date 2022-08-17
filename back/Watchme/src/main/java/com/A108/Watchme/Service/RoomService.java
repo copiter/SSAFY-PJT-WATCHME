@@ -193,9 +193,9 @@ public class RoomService {
         ApiResponse result = new ApiResponse();
 
         Room room;
-        try{
+        try {
             room = roomRepository.findById(roomId).get();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException(Code.C500);
         }
         if (!room.getStatus().toString().equals("YES")) {
@@ -203,8 +203,8 @@ public class RoomService {
         }
         Integer roomPwd = room.getRoomInfo().getPwd();
         int pwd;
-        if(room.getRoomInfo().getPwd()!=null&&joinRoomDTO.getPwd()==null){
-            throw new CustomException(Code.C552);
+        if (room.getRoomInfo().getPwd() != null && joinRoomDTO.getPwd() == null) {
+            throw new CustomException(Code.C551);
         }
 
         if (joinRoomDTO == null) {
@@ -239,9 +239,9 @@ public class RoomService {
         Member member = memberRepository.findById(memberId).get();
 
         Room room;
-        try{
+        try {
             room = roomRepository.findById(roomId).get();
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new CustomException(Code.C522);
         }
 
@@ -420,12 +420,14 @@ public class RoomService {
 
 
     public boolean roomPeople(Long roomId, int num) {
-        Room room;
+        Room room = roomRepository.findById(roomId).get();
+        System.out.println(1);
         try {
             room = roomRepository.findById(roomId).get();
         } catch (Exception e) {
             throw new CustomException(Code.C522);
         }
+        System.out.println(2);
         if (room.getRoomInfo().getMaxMember() >= (room.getRoomInfo().getCurrMember() + num)) {
             int man = room.getRoomInfo().getCurrMember();
             room.getRoomInfo().setCurrMember(man + num);

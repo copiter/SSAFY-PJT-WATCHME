@@ -1000,10 +1000,12 @@ public class GroupService {
                 if (checkGroupApplyLog.isPresent() && memberGroup.isPresent()) {
                     GroupApplyLog groupApplyLog = checkGroupApplyLog.get();
 
-                    // TODO : front에 알려주기. status=3이면 벤 당한거다!!
+                    group.getGroupInfo().setCurrMember(group.getGroupInfo().getCurrMember()-1);
+
                     groupApplyLog.setStatus(3);
                     groupApplyLog.setUpdate_date(new Date());
 
+                    groupRepos.save(group);
                     galRepos.save(groupApplyLog);
 
                     memberGroupRepos.delete(memberGroup.get());

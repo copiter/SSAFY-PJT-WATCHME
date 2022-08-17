@@ -116,7 +116,6 @@ export class RoomReform extends Component {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((errorResult) => {
-            ErrorCode(errorResult);
             let errorMessage = "리스폰스오류입니다";
             throw new Error(errorMessage);
           });

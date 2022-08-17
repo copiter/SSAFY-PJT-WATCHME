@@ -19,57 +19,59 @@ function MyStudy(props) {
   console.log("URL:" + url + "/" + id);
 
   useEffect(() => {
-    console.log("TESTHERE");
-    fetch(url + "/" + id, {
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((data) => {
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
+    setInterval(() => {
+      console.log("TESTHERE");
+      fetch(url + "/" + id, {
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
       })
-      .then((result) => {
-        if (result != null) {
-          setStudy(result.responseData.room);
-          setInterval(() => {
-            console.log("STUDYTIME-체크");
-            console.log(
-              new Date().getTime() -
-                new Date(result.responseData.room.startTime).getTime()
-            );
+        .then((response) => {
+          console.log(response);
+          if (response.ok) {
+            return response.json(); //ok떨어지면 바로 종료.
+          } else {
+            response.json().then((data) => {
+              let errorMessage = "";
+              throw new Error(errorMessage);
+            });
+          }
+        })
+        .then((result) => {
+          if (result != null) {
+            setStudy(result.responseData.room);
             setStudyTimes(
               new Date().getTime() -
                 new Date(result.responseData.room.startTime).getTime()
             );
-          }, 1000);
-        }
-      })
-      .catch((err) => {
-        console.log("ERR");
-      });
+          }
+        })
+        .catch((err) => {
+          console.log("ERR");
+        });
+      // console.log("STUDYTIME-체크");
+      // console.log(
+      //   new Date().getTime() -
+      //     new Date(result.responseData.room.startTime).getTime()
+      // );
+    }, 1000);
   }, []);
+
+  console.log("스터디여기", study);
 
   const [studyTimes, setStudyTimes] = useState(0);
   const [errorLogs, setErrorLogs] = useState([{}]);
-  console.log("errorLogs", errorLogs);
 
   useEffect(() => {
     const time = new Date().toTimeString().split(" ")[0];
     let modeArray = [{ mode: props.mode, time: time }, ...errorLogs];
-    // if (modeArray.length > 5) {
-    //   modeArray.pop();
-    // }
-    console.log(modeArray);
+    if (modeArray.length > 5) {
+      modeArray.pop();
+    }
     setErrorLogs(modeArray);
-  }, [props.mode]);
+    console.log("바뀜");
+    console.log("errorLogs", errorLogs);
+  }, [props.newError]);
 
   console.log(studyTimes);
   let hours = studyTimes / 1000 / 60 / 60,
@@ -118,7 +120,7 @@ function MyStudy(props) {
           </p>
         </div>
         <div id="study-rule__error">
-          {errorLogs.length > 0 &&
+          {errorLogs.length > 2 &&
             errorLogs.map((log, index) => {
               return (
                 <div className="study-rule__error-item" key={index}>
@@ -130,7 +132,9 @@ function MyStudy(props) {
                       ? " 졸림 감지"
                       : log.mode === "MODE3"
                       ? " 스마트폰"
-                      : " 화면공유"}
+                      : log.mode === "MODE4"
+                      ? " 화면공유"
+                      : ""}
                   </span>
                 </div>
               );

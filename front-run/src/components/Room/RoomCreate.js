@@ -212,7 +212,7 @@ function RoomCreate() {
                   <input
                     type="radio"
                     name="mode"
-                    value="MODE2"
+                    value="MODE3"
                     onChange={handleChange}
                   />
                   스마트폰감지
@@ -221,7 +221,7 @@ function RoomCreate() {
                   <input
                     type="radio"
                     name="mode"
-                    value="MODE3"
+                    value="MODE2"
                     onChange={handleChange}
                   />
                   졸음감지

@@ -116,20 +116,23 @@
   flex-direction: column;
   align-items: center;
 }
-.room-imageReform img{
+.room-imageReform {
   position: relative;
-  top:300px;
 }
-.imgout{
+.room-imageReform img {
+  position: absolute;
+  top: 0px;
+}
+.imgout {
   position: relative;
-  top:0px;
+  top: 0px;
 }
-.room-image__uploadReform{
+.room-image__uploadReform {
   font-size: 0px;
   width: 160px;
   height: 160px;
   position: absolute;
-  margin-top:40px;
+  margin-top: 40px;
   font-display: none;
 }
 .room-image .room-image__uploadReform {
@@ -167,11 +170,11 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  top:15px;
+  top: 15px;
   gap: 14px;
 }
-.lineReform{
-  margin-left:150px;
+.lineReform {
+  margin-left: 150px;
 }
 .input-typeReform .lineReform input,
 .input-typeReform .lineReform select {
@@ -190,28 +193,25 @@
   line-height: 34px;
   color: #000;
 }
-.lineReformLeftDescript
-{
+.lineReformLeftDescript {
   position: relative;
   font-size: 15px;
-  top:30px;
+  top: 30px;
 }
-.lineReformLeftDescriptLine2{
-  
+.lineReformLeftDescriptLine2 {
   position: relative;
-  font-size: 15px; 
-  top:20px;
+  font-size: 15px;
+  top: 20px;
 }
-.lineReformLeftDescriptLine3{
-  
+.lineReformLeftDescriptLine3 {
   position: relative;
-  font-size: 15px; 
-  top:10px;
-}.lineReformDescriptLine4{
-  
+  font-size: 15px;
+  top: 10px;
+}
+.lineReformDescriptLine4 {
   position: relative;
-  top:10px;
-  font-size: 15px; 
+  top: 10px;
+  font-size: 15px;
 }
 .input-typeReform .lineReform:nth-child(3) {
   display: flex;
@@ -220,8 +220,8 @@
 }
 .input-typeReform .lineReform:nth-child(3) input,
 .input-typeReform .lineReform:nth-child(3) select {
-  width: 30%;
-  margin-left: 50px;
+  width: 38%;
+  margin-left: 55px;
 }
 
 select option[value=""][disabled] {
@@ -231,7 +231,7 @@ select option[value=""][disabled] {
 :focus {
   outline: none;
 }
-.endTime{
+.endTime {
   font-size: 12px;
 }
 .input-typeReform .lineReform:nth-child(4) {
@@ -241,8 +241,8 @@ select option[value=""][disabled] {
   align-items: center;
 }
 .input-typeReform .lineReform:nth-child(4) input {
-  width: 170px;
-  margin-left: 10px;
+  width: 140px;
+  margin: 0 55px 0 10px;
 }
 
 /* 슬라이더 구현 */
@@ -314,7 +314,7 @@ select option[value=""][disabled] {
   font-weight: 700;
   font-size: 22px;
   line-height: 27px;
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 .input-rules .rules-box-reform {
   display: flex;

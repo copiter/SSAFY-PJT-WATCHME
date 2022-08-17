@@ -70,7 +70,11 @@ function GroupDetailSprint(props) {
           })
           .then((result) => {
             if (result.code === 200) {
-              swal("정산되었습니다", "", "success");
+              swal(
+                "정산되었습니다",
+                `정산액은 ${result.responseData.points}입니다`,
+                "success"
+              );
               setReload(!reload);
             } else {
               ErrorCode(result);
@@ -243,13 +247,12 @@ function GroupDetailSprint(props) {
         <div id="sprint-done">
           <div id="sprint-done-header">
             <strong>지난 스프린트</strong>
-            {props.role !== 2 && sprintDone.length > 0 && (
-              <button onClick={sprintCal}>스프린트 정산</button>
-            )}
           </div>
 
           {sprintDone.map((sprint, index) => {
-            return <SprintItem sprint={sprint} key={index} />;
+            return (
+              <SprintItem sprint={sprint} key={index} sprintCal={sprintCal} />
+            );
           })}
         </div>
       )}

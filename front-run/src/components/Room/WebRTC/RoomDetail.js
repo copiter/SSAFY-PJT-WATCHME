@@ -22,7 +22,7 @@ import btn_plane from "../../../img/Icons/btn-plane.png";
 import swal from "sweetalert";
 
 import ErrorCode from "../../../Error/ErrorCode";
-import { RoomReform } from "./componentOnRoom/RoomReform.js"
+import { RoomReform } from "./componentOnRoom/RoomReform.js";
 import "./RoomDetail.css";
 
 //강제 리브세션=추방
@@ -61,7 +61,7 @@ class RoomDetail extends Component {
       screenShareCameraNeeded: false,
       firstTimeToCreateSreenShare: true,
       fristCameraChange: true,
-      
+
       modalOpen: false,
     };
 
@@ -236,22 +236,21 @@ class RoomDetail extends Component {
     await this.state.session.unpublish(this.state.mainStreamManager);
     await this.state.session.publish(newPublisher);
     this.setState({
-      mainStreamManager:latestPublisher ,
+      mainStreamManager: latestPublisher,
       publisher: newPublisher,
-      isScreenShareNow:true,
+      isScreenShareNow: true,
     });
   }
   async shareScreenCancle() {
     const latestPublisher = this.state.publisher;
     this.setState({
       publisher: this.state.mainStreamManager,
-      mainStreamManager:latestPublisher ,
-      isScreenShareNow:false,
+      mainStreamManager: latestPublisher,
+      isScreenShareNow: false,
     });
 
     await this.state.session.unpublish(latestPublisher);
     await this.state.session.publish(this.state.publisher);
-  
   }
 
   //방 기본설정들, 문제없이 진행됨.
@@ -348,23 +347,26 @@ class RoomDetail extends Component {
           console.log(result.responseData.room);
           this.setState({
             mySessionId: result.responseData.room.name,
-            isRoomLeader: result.responseData.room.leaderTrue === 0 ? false : true,
-            screenShare: result.responseData.room.mode === "MODE1" ? false : true,
+            isRoomLeader:
+              result.responseData.room.leaderTrue === 0 ? false : true,
+            screenShare:
+              result.responseData.room.mode === "MODE1" ? false : true,
             mode: result.responseData.room.mode,
           });
           console.log(result.responseData.mode);
           sessionStorage.setItem("roomName", result.responseData.room.name);
           this.joinSessionSetOpenVidu(id);
-          setInterval(() => {
-            this.openTeli(
-              id,
-            );
-            console.log("인터벌")
-            console.log(this.state.mySessionId);
-            console.log(this.state.isRoomLeader);
-            console.log(this.state.screenShare);
-            console.log(this.state.mode );
-          }, result.responseData.room.mode==="MODE2"?1000:60000);
+          setInterval(
+            () => {
+              this.openTeli(id);
+              console.log("인터벌");
+              console.log(this.state.mySessionId);
+              console.log(this.state.isRoomLeader);
+              console.log(this.state.screenShare);
+              console.log(this.state.mode);
+            },
+            result.responseData.room.mode === "MODE2" ? 1000 : 20000
+          );
         }
       })
       .catch((err) => {
@@ -519,7 +521,7 @@ class RoomDetail extends Component {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((responseDataError) => {
-            let errorMessage = "에러입니다."
+            let errorMessage = "에러입니다.";
             this.ErrorCode(responseDataError);
             throw new Error(errorMessage);
           });
@@ -530,6 +532,7 @@ class RoomDetail extends Component {
           if (result.code === 200) {
             console.log("오류없음");
           } else if (result.code === 205) {
+            console.log("여기 result", result);
             this.errorFound();
             this.setState({
               newErrorDetected: !this.state.newErrorDetected,
@@ -560,23 +563,26 @@ class RoomDetail extends Component {
     window.location.href = "../";
   }
 
-
   openModal = () => {
-    this.setState({ modalOpen: true })
-  }
+    this.setState({ modalOpen: true });
+  };
   closeModal = () => {
-      this.setState({ modalOpen: false })
-  }
+    this.setState({ modalOpen: false });
+  };
   render() {
     const mySessionId = this.state.mySessionId;
     var chatDisplay = { display: this.state.chatDisplay };
     return (
       <>
-       <React.Fragment>
-        <RoomReform  open={ this.state.modalOpen } close={ this.closeModal } title="Create a chat room">
+        <React.Fragment>
+          <RoomReform
+            open={this.state.modalOpen}
+            close={this.closeModal}
+            title="Create a chat room"
+          >
             내용
-        </RoomReform>
-      </React.Fragment>
+          </RoomReform>
+        </React.Fragment>
 
         {this.state.session === undefined ? null : (
           <div id="session">
@@ -606,6 +612,14 @@ class RoomDetail extends Component {
                       <img src={screen_off} onClick={this.shareScreenCancle} />
                     )}
                   </div>
+                  <div id="btnOut">
+                    <img
+                      src={out}
+                      id="buttonLeaveSession"
+                      onClick={this.leaveSession}
+                      title="방 나가기"
+                    />
+                  </div>
                 </div>
               </div>
               <div id="video-container" className="subVideo">
@@ -622,62 +636,57 @@ class RoomDetail extends Component {
               </div>
             </div>
             <div id="Aside">
+              <div id="chat-container" className="chatBoards">
+                {this.state.publisher !== undefined &&
+                  this.state.publisher.stream !== undefined && (
+                    <div
+                      className="OT_root OT_publisher custom-class"
+                      style={chatDisplay}
+                    >
+                      <ChatComponent
+                        user={this.state.publisher}
+                        chatDisplay={this.state.chatDisplay}
+                        close={this.toggleChat}
+                        messageReceived={this.checkNotification}
+                      />
+                    </div>
+                  )}
+              </div>
               <div id="side-nav">
                 <Link to="./">내 공부</Link>
                 <Link to="./members">멤버</Link>
                 {this.state.isRoomLeader && (
-                 <div onClick={ this.openModal }> 방 수정</div>
+                  <div onClick={this.openModal}> 방 수정</div>
                 )}
               </div>
               <div id="AsideMain">
                 {
                   <div id="aside-board">
-                    <MyStudy
-                      mode={this.state.mode}
-                      newError={this.state.newErrorDetected}
-                    />
                     <Routes>
                       {/* <Route path="/" element={<MyStudy />} /> */}
+                      <Route
+                        path="/"
+                        element={
+                          <MyStudy
+                            mode={this.state.mode}
+                            newError={this.state.newErrorDetected}
+                          />
+                        }
+                      />
+                      {/* <MyStudy
+                        mode={this.state.mode}
+                        newError={this.state.newErrorDetected}
+                      /> */}
                       <Route path="/members" element={<Members />} />
                     </Routes>
                   </div>
                 }
-                <div id="chat-container" className="chatBoards">
-                  {this.state.publisher !== undefined &&
-                    this.state.publisher.stream !== undefined && (
-                      <div
-                        className="OT_root OT_publisher custom-class"
-                        style={chatDisplay}
-                      >
-                        <ChatComponent
-                          user={this.state.publisher}
-                          chatDisplay={this.state.chatDisplay}
-                          close={this.toggleChat}
-                          messageReceived={this.checkNotification}
-                        />
-                      </div>
-                    )}
-                </div>
               </div>
               <div id="button-bottom">
-                {/* {this.state.isRoomLeader && (
-                  <button
-                    type="button"
-                    id="buttonLeaveSession"
-                    onClick={this.closeRoom}
-                  >
-                    방 닫기
-                  </button>
-                )} */}
                 <img
                   src={btn_plane}
                   id="toggleChat"
                   onClick={() => this.toggleChat()}
-                />
-                <img
-                  src={out}
-                  id="buttonLeaveSession"
-                  onClick={this.leaveSession}
                 />
               </div>
             </div>

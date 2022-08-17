@@ -34,9 +34,9 @@ const NavBar = () => {
             <li>
               <NavLink to="GroupRecruit">스터디 그룹 모집</NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="About">소식</NavLink>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </div>

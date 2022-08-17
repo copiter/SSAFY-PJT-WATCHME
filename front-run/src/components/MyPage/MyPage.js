@@ -15,15 +15,15 @@ function MyPage() {
   const FETCH_URL = useContext(FetchUrl);
 
   //로컬 테스트 시
-  const [info, setInfo] = useState(userInfor.responseData);
+  // const [info, setInfo] = useState(userInfor.responseData);
   //실제 통신시
-  // const [info, setInfo] = useState({
-  //   studyByDay: [],
-  //   penalty: {},
-  //   member: {},
-  //   penaltyByDay: [],
-  //   rules: [],
-  // });
+  const [info, setInfo] = useState({
+    studyByDay: [],
+    penalty: {},
+    member: {},
+    penaltyByDay: [],
+    rules: [],
+  });
 
   let studydata = [["Day", "공부시간"]];
   let studydataPen = [["Day", "공부패널티"]];
@@ -62,24 +62,24 @@ function MyPage() {
   timeChartdata[2] = ["이번주 공부시간", info.member.studyTimeWeek];
 
   const url = `${FETCH_URL}/members`;
-  // useEffect(() => {
-  //   fetch(url, {
-  //     headers: {
-  //       accessToken: getCookie("accessToken"),
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((result) => {
-  //       if (result.code === 200) {
-  //         setInfo(result.responseData);
-  //       } else {
-  //         ErrorCode(result);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, []);
+  useEffect(() => {
+    fetch(url, {
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          setInfo(result.responseData);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   console.log(info);
 

@@ -91,7 +91,7 @@
 
 .group-info .info-content {
   display: grid;
-  grid-template-columns: 4fr 1.5fr;
+  grid-template-columns: 2fr 1fr;
 
   font-weight: 500;
   font-size: 14px;

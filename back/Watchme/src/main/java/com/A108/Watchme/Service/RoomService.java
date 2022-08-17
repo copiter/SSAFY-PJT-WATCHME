@@ -420,8 +420,7 @@ public class RoomService {
 
 
     public boolean roomPeople(Long roomId, int num) {
-        Room room = roomRepository.findById(roomId).get();
-        System.out.println(1);
+        Room room;
         try {
             room = roomRepository.findById(roomId).get();
         } catch (Exception e) {

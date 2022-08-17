@@ -53,7 +53,7 @@ public class SprintService {
     private final PointLogRepository pointLogRepository;
     private final MSLRepository mslRepository;
 
-    RoomService roomService;
+    private final RoomService roomService;
     private final S3Uploader s3Uploader;
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -402,14 +402,8 @@ public class SprintService {
         if(memberSprintLog.get().getStatus().equals(Status.DELETE)){
             throw new CustomException(Code.C547);
         }
-        MemberSprintLog msl = memberSprintLog.get();
-        System.out.println(msl.getSprint());
-        System.out.println(msl.getSprint().getRoom());
-        System.out.println(msl.getSprint().getRoom().getId());
-        Long id =msl.getSprint().getRoom().getId();
-        System.out.println(id);
-        boolean a = roomService.roomPeople(id,1);
-        roomService.joinRoomFunc(msl.getSprint().getRoom().getId(),memberId);
+        roomService.roomPeople(memberSprintLog.get().getSprint().getRoom().getId(),1);
+        roomService.joinRoomFunc(memberSprintLog.get().getSprint().getRoom().getId(),memberId);
 
         apiResponse.setCode(200);
         apiResponse.setMessage("SUCCESS START SPRINT");

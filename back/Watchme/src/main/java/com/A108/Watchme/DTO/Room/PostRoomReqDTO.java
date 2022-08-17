@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -15,6 +16,7 @@ public class PostRoomReqDTO {
     private String mode;
     private Integer roomPwd;
     private String description;
+    @NotBlank(message = "카테고리를 입력하세요")
     private String categoryName;
     @NotNull(message = "인원을 입력하세요.")
     @Positive(message = "인원은 0보다 큰 값이 들어가야 합니다.")

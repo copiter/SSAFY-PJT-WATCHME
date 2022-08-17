@@ -17,6 +17,7 @@ public class GroupUpdateReqDTO {
     private String description;
     @Positive(message = "양수를 입력하세요.")
     private String maxMember;
+    @NotBlank(message = "카테고리를 입력하세요")
     private List<String> ctg;
     // TODO : 프론트랑 변수명 맞추기. display? secret?
     private Integer display;

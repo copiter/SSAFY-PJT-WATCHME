@@ -4,10 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @Getter
@@ -20,7 +17,7 @@ public class GroupCreateReqDTO {
     private String description;
     @Positive(message = "양수를 입력하세요.")
     private Integer maxMember;
-    @NotNull
+    @NotBlank(message = "카테고리를 입력하세요")
     private List<String> ctg;
     //TODO : 그룹에서 pwd 삭제. secret은 받을건지??
     private Integer secret;

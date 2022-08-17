@@ -179,7 +179,6 @@ public class SprintService {
                 RoomInfo roominfo = RoomInfo.builder()
                         .room(room)
                         .maxMember(group.getGroupInfo().getMaxMember())
-                        .pwd(-1)
                         .currMember(0)
                         .createdAt(new Timestamp(System.currentTimeMillis()))
                         .endAt(format.parse(sprintPostDTO.getEndAt()))
@@ -362,8 +361,7 @@ public class SprintService {
                     .member(member)
                     .status(Status.YES)
                     .build());
-        }
-        if(!memberSprintLog.get().getStatus().equals(Status.YES)){
+        } else if(!memberSprintLog.get().getStatus().equals(Status.YES)){
             memberSprintLog.get().setStatus(Status.YES);
         }
 
@@ -483,6 +481,8 @@ public class SprintService {
         member.getMemberInfo().setPoint(myPoint + fee);
 
         sprintLog.setStatus(Status.NO);
+        mslRepository.save(sprintLog);
+
         apiResponse.setCode(200);
         apiResponse.setMessage("Success");
 

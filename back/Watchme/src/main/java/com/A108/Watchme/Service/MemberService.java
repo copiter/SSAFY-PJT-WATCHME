@@ -239,7 +239,8 @@ public class MemberService {
 
                 List<WrapperMy> wraperList = new LinkedList<>();
 
-                List<Group> myGroupList = groupApplyLogRegistory.findAllByMemberId(memberId).stream().filter(x->x.getStatus()==1).map(x -> x.getGroup()).collect(Collectors.toList());
+                List<Group> myGroupList = groupApplyLogRegistory.findAllByMemberId(memberId)
+                        .stream().filter(x->x.getStatus()==1).map(x -> x.getGroup()).filter(x->x.getStatus()==Status.YES).collect(Collectors.toList());
 
                 for (Group g : myGroupList) {
 

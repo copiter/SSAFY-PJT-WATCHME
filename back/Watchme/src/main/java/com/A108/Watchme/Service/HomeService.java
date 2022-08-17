@@ -11,9 +11,11 @@ import com.A108.Watchme.VO.ENUM.CategoryList;
 import com.A108.Watchme.VO.ENUM.Status;
 import com.A108.Watchme.VO.Entity.MemberGroup;
 import com.A108.Watchme.VO.Entity.group.Group;
+import com.A108.Watchme.VO.Entity.log.GroupApplyLog;
 import com.A108.Watchme.VO.Entity.member.Member;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
+import com.A108.Watchme.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -34,6 +36,7 @@ public class HomeService {
     private final GroupRepository groupRepository;
     private final MRLRepository mrlRepository;
     private final MGRepository mgRepository;
+    private final GroupApplyLogRegistory groupApplyLogRegistory;
 
 
     public ApiResponse main(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
@@ -45,7 +48,7 @@ public class HomeService {
 
         System.out.println("-----------------------------------");
 
-        if (!authentication.getAuthorities().toString().equals("[ROLE_ANONYMOUS]")) {
+        if (!authentication.getPrincipal().equals("anonymousUser")) {
 
             Long currUserId = Long.parseLong(((UserDetails) authentication.getPrincipal()).getUsername());
 
@@ -67,22 +70,28 @@ public class HomeService {
                 result.setResponseData("member", resMember);
 
 
-                PageRequest mgRoom = PageRequest.of(0, 2);
-
                 List<GroupDataDTO> resMyGroups = new LinkedList<>();
 
-                List<MemberGroup> memberGroupList = mgRepository.findByMemberId(currUserId, mgRoom).stream().collect(Collectors.toList());
+                List<Group> memberGroupList = groupApplyLogRegistory.findAllByMemberId(currUserId)
+                        .stream().filter(x->x.getStatus()==1).map(x->x.getGroup()).filter(x->x.getStatus()==Status.YES).collect(Collectors.toList());
 
-                for (MemberGroup mg :
-                        memberGroupList) {
-                    resMyGroups.add(GroupDataDTO.builder()
-                            .id(mg.getGroup().getId())
-                            .name(mg.getGroup().getGroupName())
-                            .description(mg.getGroup().getGroupInfo().getDescription())
-                            .currMember(mg.getGroup().getGroupInfo().getCurrMember())
-                            .maxMember(mg.getGroup().getGroupInfo().getMaxMember())
-                            .imgLink(mg.getGroup().getGroupInfo().getImageLink())
-                            .build());
+
+                int i = 0;
+                for (Group mg : memberGroupList) {
+                    if(i==2){
+                        break;
+                    }
+                    GroupDataDTO group = GroupDataDTO.builder()
+                            .id(mg.getId())
+                            .name(mg.getGroupName())
+                            .description(mg.getGroupInfo().getDescription())
+                            .currMember(mg.getGroupInfo().getCurrMember())
+                            .maxMember(mg.getGroupInfo().getMaxMember())
+                            .imgLink(mg.getGroupInfo().getImageLink())
+                            .build();
+
+                    resMyGroups.add(group);
+                    i++;
                 }
 
                 result.setResponseData("myGroups", resMyGroups);
@@ -95,7 +104,9 @@ public class HomeService {
         List<RoomDataDTO> resRoom = new LinkedList<>();
 
 
-        List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES).stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
+        List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES)
+                .stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
+
         for (Room room :
                 roomList) {
             System.out.println("roomList = " + room.toString());
@@ -103,8 +114,7 @@ public class HomeService {
 
 
 
-        for (Room room :
-                roomList) {
+        for (Room room : roomList) {
             Integer pwd = -1;
             if(room.getRoomInfo().getPwd()!=null){
                 pwd = room.getRoomInfo().getPwd();

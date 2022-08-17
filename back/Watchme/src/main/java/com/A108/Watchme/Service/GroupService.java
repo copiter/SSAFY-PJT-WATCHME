@@ -109,8 +109,8 @@ public class GroupService {
         for (Group g : groupList) {
             // sprint : 진행할 예정인 sprint
             // TODO : 모집예정 sprint가 있음에도 불구하고 null로 반환함
-            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().after(cal.getTime())).collect(Collectors.toList());
 
+            List<Sprint> sprint = g.getSprints().stream().filter(x -> x.getSprintInfo().getStartAt().after(cal.getTime())).collect(Collectors.toList());
             // sprint 중 첫번째 항목을 반환 : 프론트 요구에 따라 배열로 전달할 수도 있겠다.
             Sprint currSprint;
 
@@ -450,6 +450,10 @@ public class GroupService {
             }
         }
 
+        if (groupCreateReqDTO.getCtg().size() == 0) {
+            throw new CustomException(Code.C511);
+        }
+
         try {
             // 1.group 기본 저장
             Group newGroup = Group.builder()
@@ -565,7 +569,7 @@ public class GroupService {
             group.setGroupName(groupUpdateReqDTO.getName());
 
             // TODO : display? secret?
-            group.setSecret(groupUpdateReqDTO.getDisplay());
+            group.setSecret(groupUpdateReqDTO.getDisplay() == null ? 0 : groupUpdateReqDTO.getDisplay());
 
             groupInfo.setDescription(groupUpdateReqDTO.getDescription());
             groupInfo.setMaxMember(Integer.parseInt(groupUpdateReqDTO.getMaxMember()));
@@ -625,7 +629,7 @@ public class GroupService {
         List<GroupMemberDetailResDTO> members = new LinkedList<>();
 
         List<Member> groupMembers = galRepos.findAllByGroupId(group.getId())
-                .stream().filter(x->x.getStatus()==1).map(x->x.getMember()).collect(Collectors.toList());
+                .stream().filter(x -> x.getStatus() == 1 && x.getMember().getId() != currUserId).map(x -> x.getMember()).collect(Collectors.toList());
 
         for (Member m : groupMembers) {
             List<Integer> penalty = new LinkedList<>();
@@ -980,10 +984,14 @@ public class GroupService {
 
             if (currUserId == checkGroup.get().getLeader().getId()) {
                 Member member;
-                try{
-                     member = memberRepos.findByNickName(groupKickReqDTO.getNickName()).get();
-                } catch(Exception e){
+
+                try {
+                    member = memberRepos.findByNickName(groupKickReqDTO.getNickName()).get();
+                } catch (Exception e) {
                     throw new CustomException(Code.C504);
+                }
+                if (member.getId() == group.getLeader().getId()) {
+                    throw new CustomException(Code.C300);
                 }
 
                 Optional<GroupApplyLog> checkGroupApplyLog = galRepos.findByMemberIdAndGroupId(member.getId(), groupId);

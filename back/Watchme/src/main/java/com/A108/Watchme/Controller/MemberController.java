@@ -82,7 +82,7 @@ public class MemberController {
         return memberService.memberInsert(socialSignUpRequestDTO, request, response);
     }
 
-    @PostMapping("/auth/find-email")
+    @PostMapping("/find-email")
     @ResponseBody
     public ApiResponse findEmail(@Valid @RequestBody FindEmailRequestDTO findEmailRequestDTO){
         System.out.println(findEmailRequestDTO.getNickName());
@@ -97,12 +97,12 @@ public class MemberController {
         return memberService.memberGroup();
     }
 
-    @PostMapping("/find-pwd")
+    @PostMapping("/auth/find-pwd")
     public ApiResponse findPW(@Valid @RequestBody FindPwDTO findPwDTO) {
         return memberService.findPW(findPwDTO);
     }
 
-    @PostMapping("/reset-pwd")
+    @PostMapping("/auth/reset-pwd")
     public ApiResponse resetPW(@Valid @RequestBody ResetPwDTO resetPwDTO){
         return memberService.resetPW(resetPwDTO);
     }

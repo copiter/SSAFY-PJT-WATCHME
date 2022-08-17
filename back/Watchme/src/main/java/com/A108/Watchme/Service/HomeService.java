@@ -46,7 +46,6 @@ public class HomeService {
         SimpleDateFormat format2 = new SimpleDateFormat("HH:mm");
         SimpleDateFormat format3 = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 종료");
 
-        System.out.println("-----------------------------------");
 
         if (!authentication.getPrincipal().equals("anonymousUser")) {
 
@@ -56,7 +55,6 @@ public class HomeService {
 
             if (checkCurrUser.isPresent()) {
                 Member currUser = checkCurrUser.get();
-
 
                 MemberDataDTO resMember = MemberDataDTO.builder()
                         .nickName(currUser.getNickName())
@@ -107,10 +105,6 @@ public class HomeService {
         List<Room> roomList = roomRepository.findAllByStatusOrderByViewDesc(prRoom, Status.YES)
                 .stream().filter(x->!x.getRoomCtg().getName().equals(CategoryList.스프린트)).collect(Collectors.toList());
 
-        for (Room room :
-                roomList) {
-            System.out.println("roomList = " + room.toString());
-        }
 
 
 

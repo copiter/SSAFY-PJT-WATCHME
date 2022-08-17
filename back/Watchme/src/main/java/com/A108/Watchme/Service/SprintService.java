@@ -266,7 +266,6 @@ public class SprintService {
 
 
                 if(summ.isPresent()) {
-                    System.out.println(summ.get());
                     sumTime = summ.get();
                 }
 

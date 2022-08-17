@@ -85,7 +85,6 @@ public class MemberController {
     @PostMapping("/find-email")
     @ResponseBody
     public ApiResponse findEmail(@Valid @RequestBody FindEmailRequestDTO findEmailRequestDTO){
-        System.out.println(findEmailRequestDTO.getNickName());
         ApiResponse result = memberService.findEmail(findEmailRequestDTO);
         return result;
     }

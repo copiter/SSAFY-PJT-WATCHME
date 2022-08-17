@@ -132,7 +132,6 @@ public class RoomService {
 
     public ApiResponse getRoomList(String ctgName, int page, String keyword) {
         ApiResponse result = new ApiResponse();
-        System.out.println(page);
         PageRequest pageRequest = PageRequest.of(page - 1, 9);
         List<Room> roomList;
         try {
@@ -426,7 +425,6 @@ public class RoomService {
         } catch (Exception e) {
             throw new CustomException(Code.C522);
         }
-        System.out.println(2);
         if (room.getRoomInfo().getMaxMember() >= (room.getRoomInfo().getCurrMember() + num)) {
             int man = room.getRoomInfo().getCurrMember();
             room.getRoomInfo().setCurrMember(man + num);
@@ -510,13 +508,14 @@ public class RoomService {
         } catch (Exception e) {
             throw new CustomException(Code.C522);
         }
+        MemberRoomLog myRoomLog;
         try {
-            MemberRoomLog myRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
-            if (!myRoomLog.getStatus().equals(Status.NO)) {
-                throw new CustomException(Code.C595);
-            }
+            myRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
         } catch (Exception e) {
             throw new CustomException(Code.C523);
+        }
+        if (!myRoomLog.getStatus().equals(Status.NO)) {
+            throw new CustomException(Code.C595);
         }
 
         Long ownerId = room.getMember().getId();

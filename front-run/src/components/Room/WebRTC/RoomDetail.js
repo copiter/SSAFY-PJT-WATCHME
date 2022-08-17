@@ -40,6 +40,7 @@ class RoomDetail extends Component {
       myUserName: "Participant" + Math.floor(Math.random() * 100), //내 닉네임.
       isRoomLeader: true, //방장인지 체크->방장전용 데이터 보임
       mode: "MODE1",
+      newErrorDetected: false,
 
       //카메라 설정 데이터
       videoState: true, //보이도록
@@ -529,7 +530,10 @@ class RoomDetail extends Component {
           if (result.code === 200) {
             console.log("오류없음");
           } else if (result.code === 205) {
-            this.errorFound(result);
+            this.errorFound();
+            this.setState({
+              newErrorDetected: !this.state.newErrorDetected,
+            });
           } else if (result.code === 202) {
             this.ban();
           } else {
@@ -628,8 +632,12 @@ class RoomDetail extends Component {
               <div id="AsideMain">
                 {
                   <div id="aside-board">
+                    <MyStudy
+                      mode={this.state.mode}
+                      newError={this.state.newErrorDetected}
+                    />
                     <Routes>
-                      <Route path="/" element={<MyStudy />} />
+                      {/* <Route path="/" element={<MyStudy />} /> */}
                       <Route path="/members" element={<Members />} />
                     </Routes>
                   </div>

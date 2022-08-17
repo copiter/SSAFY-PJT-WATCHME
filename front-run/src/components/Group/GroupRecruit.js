@@ -25,7 +25,8 @@ function GroupRecruit() {
     keyword: "",
   });
 
-  const [groups, setGroups] = useState(groupJsons.responseData.groups);
+  // const [groups, setGroups] = useState(groupJsons.responseData.groups);
+  const [groups, setGroups] = useState({ groups: [] });
 
   const handleChange = (event) => {
     const name = event.target.name;

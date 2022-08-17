@@ -610,6 +610,14 @@ class RoomDetail extends Component {
                       <img src={screen_off} onClick={this.shareScreen} />
                     )}
                   </div>
+                  <div id="btnOut">
+                    <img
+                      src={out}
+                      id="buttonLeaveSession"
+                      onClick={this.leaveSession}
+                      title="방 나가기"
+                    />
+                  </div>
                 </div>
               </div>
               <div id="video-container" className="subVideo">
@@ -626,6 +634,22 @@ class RoomDetail extends Component {
               </div>
             </div>
             <div id="Aside">
+              <div id="chat-container" className="chatBoards">
+                {this.state.publisher !== undefined &&
+                  this.state.publisher.stream !== undefined && (
+                    <div
+                      className="OT_root OT_publisher custom-class"
+                      style={chatDisplay}
+                    >
+                      <ChatComponent
+                        user={this.state.publisher}
+                        chatDisplay={this.state.chatDisplay}
+                        close={this.toggleChat}
+                        messageReceived={this.checkNotification}
+                      />
+                    </div>
+                  )}
+              </div>
               <div id="side-nav">
                 <Link to="./">내 공부</Link>
                 <Link to="./members">멤버</Link>
@@ -643,42 +667,13 @@ class RoomDetail extends Component {
                     </Routes>
                   </div>
                 }
-                <div id="chat-container" className="chatBoards">
-                  {this.state.publisher !== undefined &&
-                    this.state.publisher.stream !== undefined && (
-                      <div
-                        className="OT_root OT_publisher custom-class"
-                        style={chatDisplay}
-                      >
-                        <ChatComponent
-                          user={this.state.publisher}
-                          chatDisplay={this.state.chatDisplay}
-                          close={this.toggleChat}
-                          messageReceived={this.checkNotification}
-                        />
-                      </div>
-                    )}
-                </div>
               </div>
               <div id="button-bottom">
-                {/* {this.state.isRoomLeader && (
-                  <button
-                    type="button"
-                    id="buttonLeaveSession"
-                    onClick={this.closeRoom}
-                  >
-                    방 닫기
-                  </button>
-                )} */}
                 <img
                   src={btn_plane}
                   id="toggleChat"
                   onClick={() => this.toggleChat()}
-                />
-                <img
-                  src={out}
-                  id="buttonLeaveSession"
-                  onClick={this.leaveSession}
+                  title="채팅 열기"
                 />
               </div>
             </div>

@@ -94,7 +94,7 @@ function GroupDetailSprint(props) {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/delete`, {
           method: "POST",
           headers: {
             accessToken: getCookie("accessToken"),
@@ -128,7 +128,7 @@ function GroupDetailSprint(props) {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/join`, {
           method: "POST",
           headers: {
             accessToken: getCookie("accessToken"),
@@ -184,7 +184,7 @@ function GroupDetailSprint(props) {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/cancel`, {
           method: "POST",
           headers: {
             accessToken: getCookie("accessToken"),

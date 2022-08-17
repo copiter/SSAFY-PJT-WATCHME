@@ -28,7 +28,7 @@ function MainPage() {
 
   // const [datas, setDatas] = useState(jsons.responseData);
   const [datas, setDatas] = useState({
-    myGroups: [],
+    myGroups: null,
     member: {},
     rooms: [],
     groups: [],
@@ -99,16 +99,24 @@ function MainPage() {
                   </span>
 
                   {/*그룹 아무것도 가입안한경우 */}
-                  {myGroups.length === 0 && (
+                  {myGroups === null && (
+                    <>
+                      <div id="myGroup-title" onClick={toGroupRecruit}></div>
+                    </>
+                  )}
+                  {myGroups !== null && myGroups.length === 0 && (
                     <>
                       <div id="myGroup-title" onClick={toGroupRecruit}>
                         <span>가입한 그룹이 없습니다. 둘러보세요!</span>
                       </div>
                     </>
                   )}
-                  {myGroups.length > 0 && (
+                  {myGroups !== null && myGroups.length > 0 && (
                     <ul id="mypage-mygroup">
                       {myGroups.map((group, index) => {
+                        if (index >= 2) {
+                          return;
+                        }
                         return (
                           <li key={index}>
                             <GroupItem

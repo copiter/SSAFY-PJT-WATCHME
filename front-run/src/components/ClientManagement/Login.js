@@ -8,6 +8,7 @@ import naver from "../../img/SignUpLogos/naver1.png";
 import google from "../../img/SignUpLogos/google.png";
 import { setCookie } from "../../Cookie";
 import ErrorCode from "../../Error/ErrorCode";
+import swal from "sweetalert";
 
 const Login = () => {
   const FETCH_URL = useContext(FetchUrl);
@@ -41,35 +42,18 @@ const Login = () => {
         "content-type": "application/json",
       },
     })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          response
-            .json()
-            .then((data) => {
-              let errorMessage = data.error;
-              throw new Error();
-            })
-            .catch((error) => {
-              alert("아이디와 비밀번호를 확인하세요");
-            });
-        }
-      })
+      .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
           setCookie("accessToken", result.responseData.accessToken, {});
-          // authCtx.login();
-          alert("로그인 되었습니다");
+          swal("로그인 되었습니다", "", "success");
           navigate("/");
-          // window.location.reload();
         } else {
-          ErrorCode(result);
+          swal("아이디와 비밀번호를 확인하세요", "", "error");
         }
       })
       .catch((err) => {
-        let errorMessage = "오류가 발생하였습니다";
-        throw new Error(errorMessage);
+        swal("통신실패", "", "error");
       });
   };
 

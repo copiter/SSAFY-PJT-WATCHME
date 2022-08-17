@@ -19,13 +19,13 @@
   text-align: center;
 }
 
-#group-create #form-frame-create {
+#form-frame-create {
   display: flex;
   flex-direction: row;
   padding: 10px;
 }
 
-#form-frame-create .group-image {
+#form-frame-create .group-image-create {
   width: 279px;
   height: 500px;
   background: #eff0f2;
@@ -49,7 +49,7 @@
   z-index: 1;
 }
 
-.group-image #group-image__upload {
+.group-image-create #group-image__upload {
   position: absolute;
   top: 55px;
 

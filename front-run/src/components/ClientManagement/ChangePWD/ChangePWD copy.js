@@ -1,14 +1,13 @@
 import React from "react";
-import "./PWDCheck.css";
+import "./ChangePWD.css";
 import { useContext, useState } from "react";
 import { FetchUrl } from "../../../store/communication";
 import { Link, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
 
-function PWDCheck() {
+function ChangePWD() {
   const url = `${useContext(FetchUrl)}/reset-ddd`;
   const navigate = useNavigate();
-
   const [inputs, setInputs] = useState({
     pwd: "",
   });
@@ -27,6 +26,7 @@ function PWDCheck() {
         },
       })
         .then((response) => {
+          console.log(response);
           return response.json();
         })
         .then((result) => {
@@ -34,13 +34,15 @@ function PWDCheck() {
           if (result.message === "RESET PASSWORD FAIL") {
             swal("잘못된 정보입니다", "", "error");
           } else if (result.message === "FIND EMAIL SUCCESS") {
+            swal("비빌번호가 성공적으로 변경되었습니다", "", "success");
+            navigate("/");
             ////////////////////////////성공시 여기입니다.
           } else {
             swal("오류입니다", "", "error");
           }
         })
         .catch((err) => {
-          console.log("ERRROR");
+          swal("통신실패", "", "error");
         });
     } else {
       swal("비밀번호가 서로 다릅니다", "", "error");
@@ -84,4 +86,4 @@ function PWDCheck() {
   );
 }
 
-export default PWDCheck;
+export default ChangePWD;

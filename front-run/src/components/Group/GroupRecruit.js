@@ -25,7 +25,8 @@ function GroupRecruit() {
     keyword: "",
   });
 
-  const [groups, setGroups] = useState(groupJsons.responseData.groups);
+  // const [groups, setGroups] = useState(groupJsons.responseData.groups);
+  const [groups, setGroups] = useState({ groups: [] });
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -219,13 +220,14 @@ function GroupRecruit() {
           </div>
         </div>
         <ul id="groups__whole" value={0}>
-          {groups.map((group, index) => {
-            return (
-              <li key={index}>
-                <GroupItem group={group} width="329" height="285" />
-              </li>
-            );
-          })}
+          {groups.length > 0 &&
+            groups.map((group, index) => {
+              return (
+                <li key={index}>
+                  <GroupItem group={group} width="329" height="285" />
+                </li>
+              );
+            })}
         </ul>
         <button type="button" id="more-btn" name="grouppage" onClick={addMore}>
           <img src={down} alt="+" />

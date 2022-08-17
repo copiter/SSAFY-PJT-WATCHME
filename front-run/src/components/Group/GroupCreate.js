@@ -10,13 +10,13 @@ import swal from "sweetalert";
 
 function GroupCreate() {
   //로그인 안 되었으면 내쫓김
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  if (getCookie("accessToken") === undefined) {
-    swal("로그인을 해주세요", "", "error");
-    window.history.back();
-  } else {
-    setIsLoggedIn(true);
-  }
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // if (getCookie("accessToken") === undefined) {
+  //   swal("로그인을 해주세요", "", "error");
+  //   window.history.back();
+  // } else {
+  //   setIsLoggedIn(true);
+  // }
 
   const handleChangeSelect = (event) => {
     const value = event.target.value;
@@ -127,88 +127,88 @@ function GroupCreate() {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
 
-  if (isLoggedIn) {
-    return (
-      <div id="group-create">
-        <Link to="/GroupRecruit" className="back-to-recruit">
-          &lt; 목록으로 돌아가기
-        </Link>
-        <form onSubmit={handleSubmit}>
-          <div id="form-frame-create">
-            <div className="group-image">
-              {fileImage && (
-                <img
-                  /*이미지 띄워지는곳 */
-                  alt="sample"
-                  src={fileImage}
-                  style={{
-                    position: "absolute",
-                    marginTop: "55px",
-                    width: "150px",
-                    height: "150px",
-                    borderRadius: "50%",
-                    zIndex: "10",
-                  }}
-                />
-              )}
-              <div id="blank-layer"></div>
-              <input
-                type="file"
-                name="img"
-                accept="image/*"
-                onChange={saveFileImage}
-                id="group-image__upload"
-                ref={imgeRef}
+  // if (isLoggedIn) {
+  return (
+    <div id="group-create">
+      <Link to="/GroupRecruit" className="back-to-recruit">
+        &lt; 목록으로 돌아가기
+      </Link>
+      <form onSubmit={handleSubmit}>
+        <div id="form-frame-create">
+          <div className="group-image-create">
+            {fileImage && (
+              <img
+                /*이미지 띄워지는곳 */
+                alt="sample"
+                src={fileImage}
+                style={{
+                  position: "absolute",
+                  marginTop: "55px",
+                  width: "150px",
+                  height: "150px",
+                  borderRadius: "50%",
+                  zIndex: "10",
+                }}
               />
-              <div className="group-image__message">그룹 사진을 올리세요</div>
-            </div>
-            <div className="group-infor">
-              {/*우측부분*/}
-              <div className="group-type">
+            )}
+            <div id="blank-layer"></div>
+            <input
+              type="file"
+              name="img"
+              accept="image/*"
+              onChange={saveFileImage}
+              id="group-image__upload"
+              ref={imgeRef}
+            />
+            <div className="group-image__message">그룹 사진을 올리세요</div>
+          </div>
+          <div className="group-infor">
+            {/*우측부분*/}
+            <div className="group-type">
+              <div className="line">
+                <input
+                  type="text"
+                  name="name"
+                  value={inputs.name || ""}
+                  onChange={handleChange}
+                  required
+                  placeholder="그룹 이름을 적으세요"
+                />
+              </div>
+              <div className="line">
+                <input
+                  type="text"
+                  name="description"
+                  value={inputs.description || ""}
+                  onChange={handleChange}
+                  required
+                  placeholder="간단한 설명을 적으세요"
+                />
+              </div>
+              <div id="group-twin">
                 <div className="line">
                   <input
-                    type="text"
-                    name="name"
-                    value={inputs.name || ""}
+                    type="number"
+                    name="maxMember"
+                    value={inputs.maxMember ? inputs.maxMember : ""}
                     onChange={handleChange}
+                    accept="number"
                     required
-                    placeholder="그룹 이름을 적으세요"
+                    placeholder="인원수를 선택하세요(1~25)"
                   />
                 </div>
                 <div className="line">
-                  <input
-                    type="text"
-                    name="description"
-                    value={inputs.description || ""}
-                    onChange={handleChange}
-                    required
-                    placeholder="간단한 설명을 적으세요"
-                  />
-                </div>
-                <div id="group-twin">
-                  <div className="line">
+                  <span>비공개</span>
+                  <label className="switch">
                     <input
-                      type="number"
-                      name="maxMember"
-                      value={inputs.maxMember ? inputs.maxMember : ""}
-                      onChange={handleChange}
-                      accept="number"
-                      required
-                      placeholder="인원수를 선택하세요(1~25)"
+                      type="checkbox"
+                      name="secret"
+                      value={isChecked}
+                      onChange={handleChangeCheck}
                     />
-                  </div>
-                  <div className="line">
-                    <span>비공개</span>
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        name="secret"
-                        value={isChecked}
-                        onChange={handleChangeCheck}
-                      />
-                      <span className="slider round"></span>
-                    </label>
-                    {/* <input
+                    <span className="slider round"></span>
+                  </label>
+                  {/* <input
                       type="password"
                       name="pwd"
                       value={inputs.pwd || ""}
@@ -218,65 +218,65 @@ function GroupCreate() {
                       minLength="4"
                       placeholder={!isChecked ? "공개방입니다" : "비밀번호 4자리"}
                     /> */}
-                  </div>
                 </div>
               </div>
-              <div className="input-rules">
-                <div className="rules-title" name="ctg">
-                  카테고리
-                </div>
-                <div className="rules-box">
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={handleChangeSelect}
-                      value="공무원"
-                    />
-                    공무원
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={handleChangeSelect}
-                      value="취업"
-                    />
-                    취업
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={handleChangeSelect}
-                      value="수능"
-                    />
-                    수능
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={handleChangeSelect}
-                      value="코딩"
-                    />
-                    코딩
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={handleChangeSelect}
-                      value="기타"
-                    />
-                    기타
-                  </label>
-                </div>
-              </div>
-              <button type="submit" onSubmit={handleSubmit}>
-                생성하기
-              </button>
             </div>
+            <div className="input-rules">
+              <div className="rules-title" name="ctg">
+                카테고리
+              </div>
+              <div className="rules-box">
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="공무원"
+                  />
+                  공무원
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="취업"
+                  />
+                  취업
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="수능"
+                  />
+                  수능
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="코딩"
+                  />
+                  코딩
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="기타"
+                  />
+                  기타
+                </label>
+              </div>
+            </div>
+            <button type="submit" onSubmit={handleSubmit}>
+              생성하기
+            </button>
           </div>
-        </form>
-      </div>
-    );
-  }
+        </div>
+      </form>
+    </div>
+  );
+  // }
 }
 
 export default GroupCreate;

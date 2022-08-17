@@ -1,8 +1,9 @@
 import React from "react";
 import "./ChangePWD.css";
-import { useContext, useState ,useEffect} from "react";
+import { useContext, useState, useEffect } from "react";
 import { FetchUrl } from "../../../store/communication";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import swal from "sweetalert";
 
 function ChangePWD() {
   const url = `${useContext(FetchUrl)}`;
@@ -12,10 +13,13 @@ function ChangePWD() {
   });
 
   const navigate = useNavigate();
-  const [searchParams,setSearchParams] = useSearchParams();
-	useEffect(() => { 
-    setInputs((values)=>({ ...values, "emailkey": searchParams.get('emailKey')}));
-	}, [])
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    setInputs((values) => ({
+      ...values,
+      emailkey: searchParams.get("emailKey"),
+    }));
+  }, []);
 
   const handleChange = (event) => {
     const name = event.target.name;
@@ -23,59 +27,60 @@ function ChangePWD() {
     setInputs((values) => ({ ...values, [name]: value }));
   };
   const submitHandler = (event) => {
-    console.log(JSON.stringify({
-      name:inputs.name,
-      nickName:inputs.nickName
-    }))
+    console.log(
+      JSON.stringify({
+        name: inputs.name,
+        nickName: inputs.nickName,
+      })
+    );
     event.preventDefault();
     fetch(url, {
-        method:"POST",
-        body:JSON.stringify({
-          name:inputs.name,
-          nickName:inputs.nickName
-        }),
-        headers: {
-          "content-type": "application/json",
-        },
+      method: "POST",
+      body: JSON.stringify({
+        name: inputs.name,
+        nickName: inputs.nickName,
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        return response.json();
       })
-    .then((response)=>{
-      console.log(response);
-      return response.json();
-    })
-    .then((result)=>{
-      console.log(result);
-      if(result.message==="FIND EMAIL FAIL"){alert("잘못된 정보입니다");}
-      else if(result.message==="FIND EMAIL SUCCESS")
-      {
-        alert("아이디 : "+result.responseData.email);
-        navigate("/login");
-////////////////////////////성공시 여기입니다.
-      }
-      else{
-        alert("오류입니다.");
-      }
-
-    })
-    .catch((err)=>{
-      console.log("ERRROR");
-    });
-   
+      .then((result) => {
+        console.log(result);
+        if (result.message === "FIND EMAIL FAIL") {
+          swal("잘못된 정보입니다", "", "error");
+        } else if (result.message === "FIND EMAIL SUCCESS") {
+          swal("아이디 : " + result.responseData.email, "", "success");
+          navigate("/login");
+          ////////////////////////////성공시 여기입니다.
+        } else {
+          swal("오류입니다", "", "error");
+        }
+      })
+      .catch((err) => {
+        swal("통신실패", "", "error");
+      });
   };
-console.log(inputs);
+  console.log(inputs);
   return (
     <div className="login">
-        <div className="login-title">아이디찾기
-          <div>
-            <Link to="/FindPWD">비밀번호 찾기</Link>
-          </div>
+      <div className="login-title">
+        아이디찾기
+        <div>
+          <Link to="/FindPWD">비밀번호 찾기</Link>
+        </div>
       </div>
       <form className="login-inputs" onSubmit={submitHandler}>
         <input
-            className="input-box"
-            type="text"
-            name="name"
-            onChange={handleChange}
-            placeholder="이름을 입력하세요" /> 
+          className="input-box"
+          type="text"
+          name="name"
+          onChange={handleChange}
+          placeholder="이름을 입력하세요"
+        />
         <input
           className="input-box"
           type="text"
@@ -83,7 +88,7 @@ console.log(inputs);
           name="nickName"
           placeholder="닉네임을 입력하세요"
           accept="number"
-          />
+        />
         <button className="submit-btn">확인</button>
       </form>
 
@@ -91,7 +96,6 @@ console.log(inputs);
         <Link to="/login">
           <div className="email"> 로그인 페이지로</div>
         </Link>
-          
       </div>
     </div>
   );

@@ -122,6 +122,8 @@ function RoomRecruit() {
       });
   };
 
+  console.log(rooms);
+
   return (
     <div id="open-room">
       {/* 공개룸 찾기 section */}

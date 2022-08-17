@@ -101,6 +101,7 @@ function GroupCreate() {
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
+    if(ctgs.length){
     fetch(url, {
       method: "POST",
       body: formData,
@@ -120,6 +121,10 @@ function GroupCreate() {
       .catch((err) => {
         console.log("ERR");
       });
+    }
+    else{
+      swal("그룹카테고리를 클릭해주세요")
+    }
   };
 
   const [fileImage, setFileImage] = useState("");

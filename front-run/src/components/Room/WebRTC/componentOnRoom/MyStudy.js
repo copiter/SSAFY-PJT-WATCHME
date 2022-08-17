@@ -3,15 +3,16 @@ import { useContext, useState, useEffect } from "react";
 import { getCookie } from "../../../../Cookie";
 import { FetchUrl } from "../../../../store/communication";
 import "./MyStudy.css";
-function MyStudy() {
+
+function MyStudy(props) {
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/rooms`;
 
   const [study, setStudy] = useState({
-    name: "123",
-    startTime: "2022-08-15 22:10",
-    mode: "MODE2",
-    penalty: 13,
+    // name: "123",
+    // startTime: "2022-08-15 22:10",
+    // mode: "MODE2",
+    // penalty: 13,
   });
 
   const id = window.location.pathname.split("/")[2].substring(0);
@@ -57,6 +58,18 @@ function MyStudy() {
   }, []);
 
   const [studyTimes, setStudyTimes] = useState(0);
+  const [errorLogs, setErrorLogs] = useState([{}]);
+  console.log("errorLogs", errorLogs);
+
+  useEffect(() => {
+    const time = new Date().toTimeString().split(" ")[0];
+    let modeArray = [{ mode: props.mode, time: time }, ...errorLogs];
+    // if (modeArray.length > 5) {
+    //   modeArray.pop();
+    // }
+    console.log(modeArray);
+    setErrorLogs(modeArray);
+  }, [props.mode]);
 
   console.log(studyTimes);
   let hours = studyTimes / 1000 / 60 / 60,
@@ -87,35 +100,42 @@ function MyStudy() {
         </div>
       </div>
       <div id="study-rule">
-        <p id="study-rule__title">
-          <span>📝 규칙 - </span>
-          <span>
-            {study.mode === "MODE1"
-              ? " 자율"
-              : study.mode === "MODE2"
-              ? " 졸림 감지"
-              : study.mode === "MODE3"
-              ? " 스마트폰"
-              : " 화면공유"}
-          </span>
-          <span id="study-rule__penalty">
-            {study.mode !== "MODE1" && ` ${study.penalty}회`}
-          </span>
-        </p>
-        {/* <div id="study-rule__rule">
-          <span>
-            {study.mode === "MODE1"
-              ? "자율"
-              : study.mode === "MODE2"
-              ? "졸림 감지"
-              : study.mode === "MODE3"
-              ? "스마트폰"
-              : "화면공유"}
-          </span>
-          <span id="study-rule__penalty">
-            {study.mode !== "MODE1" && `${study.penalty}회`}
-          </span>
-        </div> */}
+        <div>
+          <p id="study-rule__title">
+            <span>📝 규칙 - </span>
+            <span>
+              {study.mode === "MODE1"
+                ? " 자율"
+                : study.mode === "MODE2"
+                ? " 졸림 감지"
+                : study.mode === "MODE3"
+                ? " 스마트폰"
+                : " 화면공유"}
+            </span>
+            <span id="study-rule__penalty">
+              {study.mode !== "MODE1" && ` ${study.penalty}회`}
+            </span>
+          </p>
+        </div>
+        <div id="study-rule__error">
+          {errorLogs.length > 0 &&
+            errorLogs.map((log, index) => {
+              return (
+                <div className="study-rule__error-item" key={index}>
+                  <span>{log.time}</span>
+                  <span>
+                    {log.mode === "MODE1"
+                      ? " 자율"
+                      : log.mode === "MODE2"
+                      ? " 졸림 감지"
+                      : log.mode === "MODE3"
+                      ? " 스마트폰"
+                      : " 화면공유"}
+                  </span>
+                </div>
+              );
+            })}
+        </div>
       </div>
     </div>
   );

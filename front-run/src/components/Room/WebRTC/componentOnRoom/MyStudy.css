@@ -31,11 +31,10 @@
   font-size: 24px;
   font-weight: 400;
 }
-#study-rule__rule {
+
+#study-rule__error {
+  width: 70%;
+  font-size: 20px;
+  line-height: 20px;
   margin-top: 20px;
-  font-size: 18px;
-  font-weight: 500;
-}
-#study-rule__penalty {
-  font-weight: 700;
 }

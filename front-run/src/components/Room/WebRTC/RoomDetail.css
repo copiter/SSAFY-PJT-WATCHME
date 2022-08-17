@@ -1,155 +1,121 @@
-.stream-container {
-	padding: 0;
+#session {
+  width: 1500px;
+  height: 1000px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
 }
 
+/* 왼쪽 Main */
+#Main {
+  width: 100%;
+  height: 100%;
+  background-color: #bdbdbd;
 
-.out{
-	position: relative;
-	display: flex;
+  display: flex;
+  flex-direction: column;
 }
-.Main{
-	position: relative;
-	width:80rem;
+
+#session-header {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  background-color: #bdbdbd;
+
+  border-bottom: 3px solid #9a9a9a;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
-	.Header{
-		position: relative;
-		width: 100%;
-		height: 8rem;
-	}
-		.headerTitle{
-			position: relative;
-			width: 100%;
-			height: 5rem;
-			font-size:4em;
-			font-weight: 400;
-			text-align: center;
-		}
-		.headerButtons{
-			position: relative;
-			width: 100%;
-			height: 3rem;
-		}
-		.btnTotal{
-			position: relative;
-			margin-left: 6rem;
-			top:0.3rem;
-			width: 50%;
-			height: 2.1rem;
-		}
-		.btns{
-			width: 30%;
-			height:2rem;
-			margin-right: 0.5rem;
-		}
-			.btnVedioOFF{
-				position: flex;
-			}
-	.cams{
-		position: relative;
-		width: 100%;
-		height: 50rem;
-		display:flex;
-		flex-wrap: wrap;
-		background-color: gainsboro;
-	}
-	.myCams{
-		position: relative;
-		margin-top: 1rem;
-		width: 100%;
-		height: 15rem;
-		display:flex;
-		
-	}
-	.mainVideo{
-		position: relative;
-		margin-left:15%;
-		width:20rem;
-	}
-	.subVideo
-	{
-		position: relative;
-		margin-left:15%;
-		width:20rem;
-
-	}
-	.others{
-		display:flex;
-		flex-wrap: wrap;
-	}
-.Aside{
-	position: relative;
-	width:35rem;
-	top:1rem;
+#session-title {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  font-size: 36px;
+  font-weight: 700;
 }
-.rightSide{
-	position: relative;
-	width: 100%;
-	height: 100%;
+
+#video-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: space-between;
+  row-gap: 10px;
+  column-gap: 10px;
 }
-	.sideNav{
-		position: relative;
-		height: 5rem;
-		
-	}
-	.AsideMain{
-		margin-top:1rem;
-		background-color: 858585;
-	}
-	.sideBoards{
-		position: absolute;
-		width: 100%;
-		height: 50rem;
-	}
 
-		.linksUl{
-			position: relative;
-			margin-left: 10%;
-			height: 80%;
-			top:3rem;
-		}
-		.linksLi{
-			position: relative;
-			top:10%;
-			height: 3rem;
-			width: 5rem;
-			margin-left: 1rem;
+/* 오른쪽 sidebar */
+#Aside {
+  flex-basis: 20%;
+  min-width: 500px;
+  height: 100%;
+  background-color: #d9d9d9;
+  border-bottom-right-radius: 30px;
 
-		}
-	
-	.chatBoards{
-		
-		position: absolute;
-		display: block;
-		top:50%;
-		margin-left: 1.4rem;
-		width: 90%;
-		height: 24rem;
-	}
-	.btnRight{
-		position: relative;
-		width: 100%;	
-		top:-1.5rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#side-nav {
+  height: 50px;
+  line-height: 50px;
 
-	}
-		.btnRightInner{
-			position: relative;
-			margin-left: 15%;
-			top:-5rem;
-		}
-			.btnR
-			{
-				position: relative;
-				top:10%;
-				height: 3rem;
-				width: 5rem;
-				margin-left: 1rem;
-				
-			}
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(33%, auto));
+  text-align: center;
+  border-bottom: 3px solid #9a9a9a;
+}
+#side-nav > a {
+  display: inline-block;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 500;
+  color: #000;
+  border-right: 1px solid #9a9a9a;
+}
+#side-nav > a:last-child {
+  border: 0;
+}
 
+/* 사이드 컨텐츠 */
+#AsideMain {
+  width: 100%;
+  height: calc(100% - 100px);
+}
+#aside-board {
+  width: inherit;
+  height: 100%;
+}
+/* 하단 버튼 */
+#button-bottom {
+  height: 50px;
+  line-height: 50px;
 
-
-
-
-.routerBackGorund
-{
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+}
+#button-bottom > * {
+  cursor: pointer;
+  margin-left: 10px;
+}
+#buttonLeaveSession {
+  background-color: #dc3545;
+  padding: 7px 30px;
+  border-radius: 30px;
+}
+#toggleChat {
+  background-color: #4fd1d9;
+  padding: 9px 30px;
+  border-radius: 30px;
+}
+#button-bottom > button {
+  background-color: #4fd1d9;
+  outline: none;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
 }

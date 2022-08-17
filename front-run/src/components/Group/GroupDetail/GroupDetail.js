@@ -9,6 +9,7 @@ import GroupDetailHome from "./GroupDetailHome";
 import GroupDetailSprint from "./GroupDetailSprint";
 import GroupDetailMembers from "./GroupDetailMembers";
 import ErrorCode from "../../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function GroupDetail() {
   const [resData, setResData] = useState({
@@ -51,7 +52,7 @@ function GroupDetail() {
         }
       } else if (data.code === 501) {
         window.history.back();
-        alert("비공개 방입니다");
+        swal("비공개 방입니다", "", "error");
       } else {
         window.history.back();
         ErrorCode(data);
@@ -74,13 +75,13 @@ function GroupDetail() {
         const data = await response.json();
 
         if (data.code === 200) {
-          alert("그룹 가입 신청되었습니다");
+          swal("그룹 가입 신청되었습니다", "", "success");
           setIsJoinCheck(true);
         } else {
           ErrorCode(data);
         }
       } catch (e) {
-        alert(`통신 실패 ` + e);
+        swal("통신실패", "", "error");
       }
     };
     getDatas();
@@ -99,13 +100,13 @@ function GroupDetail() {
         const data = await response.json();
 
         if (data.code === 200) {
-          alert("신청 취소되었습니다");
+          swal("신청 취소되었습니다", "", "success");
           setIsJoinCheck(false);
         } else {
           ErrorCode(data);
         }
       } catch (e) {
-        alert(`통신 실패 ` + e);
+        swal("통신실패", "", "error");
       }
     };
     getDatas();

@@ -4,6 +4,8 @@ import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
 
 import "./RoomItem.css";
+import ErrorCode from "../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function RoomItem(props) {
   const room = props.room;
@@ -12,7 +14,8 @@ function RoomItem(props) {
   const navigate = useNavigate();
   const FETCH_URL = useContext(FetchUrl);
 
-  async function enteringRoom(id) {
+  async function enteringRoom(id, secret) {
+    console.log(id, secret);
     //방들어가기 문제없이 작동
     const url = `${FETCH_URL}/rooms/${id}/join`;
 
@@ -48,34 +51,24 @@ function RoomItem(props) {
 
     try {
       fetch(url, config)
-        .then((response) => {
-          console.log("TEST");
-          console.log(response);
-          console.log("TEST");
-          if (response.bodyUsed) {
-            console.log("재사용됨");
-          } else if (response.ok) {
-            console.log(response);
-            return response.json();
-          }
-        })
+        .then((response) => response.json())
         .then((result) => {
           if (result.code == 200) {
             navigate(`/RoomDetail/${id}`);
           } else {
-            console.log(result);
+            ErrorCode(result);
           }
         })
         .catch((err) => {
-          alert("로그인후 이용부탁드립니다.");
+          swal("로그인 후 이용부탁드립니다", "", "error");
         });
     } catch {
-      alert("로그인후 이용부탁드립니다.");
+      swal("로그인 후 이용부탁드립니다", "", "error");
     }
   }
 
   return (
-    <article onClick={() => enteringRoom(room.id)}>
+    <article onClick={() => enteringRoom(room.id, room.secret)}>
       <div
         className="room-specs"
         style={{

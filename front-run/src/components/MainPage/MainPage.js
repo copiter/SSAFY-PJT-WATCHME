@@ -13,7 +13,6 @@ import MyStudyInfo from "./MyStudyInfo";
 import "./MainPage.css";
 import jsons from "../json/main";
 import AuthContext from "../../store/auth-context";
-import mystudy__infor__tmp from "../../img/Icons/mystudy__infor__tmp.png";
 
 function MainPage() {
   const authCtx = useContext(AuthContext);
@@ -62,10 +61,10 @@ function MainPage() {
   if (isLoggedIn) {
     userInformation = datas["member"];
     myGroups = datas["myGroups"];
-     let myNickName = localStorage.setItem(
-       "nickName",
-       userInformation["nickName"]
-     );
+    let myNickName = localStorage.setItem(
+      "nickName",
+      userInformation["nickName"]
+    );
   }
 
   console.log(datas);

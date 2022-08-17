@@ -12,6 +12,17 @@ import MyStudy from "./componentOnRoom/MyStudy";
 import RoomReform from "./componentOnRoom/RoomReform";
 import { getCookie } from "../../../Cookie";
 
+import screen_off from "../../../img/Icons/screen_off.png";
+import screen from "../../../img/Icons/screen.png";
+import mic from "../../../img/Icons/mic.png";
+import mic_mute from "../../../img/Icons/mic_mute.png";
+import video from "../../../img/Icons/video.png";
+import video_off from "../../../img/Icons/video_off.png";
+import out from "../../../img/Icons/out.png";
+import setting from "../../../img/Icons/setting.png";
+import btn_plane from "../../../img/Icons/btn-plane.png";
+import swal from "sweetalert";
+
 //강제 리브세션=추방
 //방장 전용 기능 구현.
 const OPENVIDU_SERVER_URL = "https://watchme1.shop:4443";
@@ -33,7 +44,7 @@ class RoomDetail extends Component {
       audioState: true, //마이크 on
       screenShare: true, //화면공유 버튼,
       //채팅관련 설정 데이터
-      chatDisplay: "block",
+      chatDisplay: "none",
 
       //내 카메라 및 영상 배치 관련 데이터
       session: undefined,
@@ -46,7 +57,7 @@ class RoomDetail extends Component {
       isScreenShareNow: false,
       screenShareCameraNeeded: false,
       firstTimeToCreateSreenShare: true,
-      fristCameraChange:true,
+      fristCameraChange: true,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -195,7 +206,7 @@ class RoomDetail extends Component {
           //newPublisher.once("accessAllowed", () => {
           await this.state.session.unpublish(this.state.mainStreamManager);
           await this.state.session.publish(newPublisher);
-          
+
           this.setState({
             currentVideoDevice: newVideoDevice,
             mainStreamManager: newPublisher,
@@ -208,11 +219,8 @@ class RoomDetail extends Component {
     }
   }
 
-
   //화면 공유 기능
   async shareScreen() {
-
-
     const latestPublisher = this.state.publisher;
     var newPublisher = this.OV.initPublisher(undefined, {
       videoSource: "screen",
@@ -226,7 +234,6 @@ class RoomDetail extends Component {
         screenShareCameraNeeded: true,
         firstTimeToCreateSreenShare: false,
       });
-
 
       await this.state.session.publish(newPublisher);
       await this.state.session.unpublish(newPublisher);
@@ -365,10 +372,8 @@ class RoomDetail extends Component {
               result.responseData.room.mode === "MODE1" ? false : true,
             mode: result.responseData.room.mode,
           });
-          
-          sessionStorage.setItem(
-            "roomName",result.responseData.room.name
-          );
+
+          sessionStorage.setItem("roomName", result.responseData.room.name);
           this.joinSessionSetOpenVidu(id);
           setInterval(() => {
             this.openTeli(
@@ -429,8 +434,10 @@ class RoomDetail extends Component {
                   audio: true,
                 });
               } catch (e) {
-                alert(
-                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요"
+                swal(
+                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요",
+                  "",
+                  "error"
                 );
               }
 
@@ -558,15 +565,15 @@ class RoomDetail extends Component {
 
   errorFound() {
     if (this.state.mode === "MODE2") {
-      alert("졸음이 감지되었습니다.");
+      swal("졸음이 감지되었습니다", "", "error");
     } else if (this.state.mode === "MODE3") {
-      alert("스마트폰이 감지되었습니다");
+      swal("스마트폰이 감지되었습니다", "", "error");
     } else {
       console.log("알수없는에러");
     }
   }
   ban() {
-    alert("벌점이 과다로 추방되었습니다.");
+    swal("벌점이 과다로 추방되었습니다", "", "error");
     window.location.href = "../";
   }
 
@@ -574,165 +581,110 @@ class RoomDetail extends Component {
     const mySessionId = this.state.mySessionId;
     var chatDisplay = { display: this.state.chatDisplay };
     return (
-      <div className="container">
+      <>
         {this.state.session === undefined ? null : (
-          <div id="session" className="out">
-            <div className="Main">
-              <div id="session-header" className="Header">
-                <div id="session-title" className="headerTitle">
-                  <h1>{mySessionId}</h1>
-                </div>
-                <div className="headerButtons">
-                  <div className="btnTotal">
+          <div id="session">
+            <div id="Main">
+              <div id="session-header">
+                <h1 id="session-title" className="headerTitle">
+                  {mySessionId}
+                </h1>
+                <div id="headerButtons">
+                  <div id="btnTotal">
                     {this.state.videoState && (
-                      <button onClick={this.videoHandlerOff} className="btns ">
-                        Video OFF
-                      </button>
+                      <img src={video_off} onClick={this.videoHandlerOff} />
                     )}
                     {!this.state.videoState && (
-                      <button onClick={this.videoHandlerOn} className="btns ">
-                        Video ON
-                      </button>
+                      <img src={video} onClick={this.videoHandlerOn} />
                     )}
                     {this.state.audioState && (
-                      <button onClick={this.audioHandlerOff} className="btns ">
-                        Audio OFF
-                      </button>
+                      <img src={mic_mute} onClick={this.audioHandlerOff} />
                     )}
                     {!this.state.audioState && (
-                      <button onClick={this.audioHandlerOn} className="btns ">
-                        Audio ON
-                      </button>
+                      <img src={mic} onClick={this.audioHandlerOn} />
                     )}
                     {this.state.screenShare && !this.state.isScreenShareNow && (
-                      <button onClick={this.shareScreen} className="btns">
-                        화면공유
-                      </button>
+                      <img src={screen} onClick={this.shareScreen} />
                     )}
                     {this.state.screenShare && this.state.isScreenShareNow && (
-                      <button onClick={this.shareScreenCancle} className="btns">
-                        화면공유 취소
-                      </button>
+                      <img src={screen_off} onClick={this.shareScreen} />
                     )}
                   </div>
                 </div>
               </div>
-              <div className="cams">
-                <div className="myCams">
-                 
-                  <div id="video-container" className="subVideo">
-                    {this.state.publisher !== undefined &&
-                    !this.state.firstTimeToCreateSreenShare ? (
-                      <div className="stream-container col-md-6 col-xs-6">
-                        <UserVideoComponent
-                          streamManager={this.state.publisher}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                  <div id="main-video" className="mainVideo">
-                    {
-                      //개인카메라
-                      this.state.mainStreamManager !== undefined &&
-                      (this.state.isScreenShareNow ||
-                        this.state.firstTimeToCreateSreenShare) ? (
-                        <div className="stream-container col-md-6 col-xs-6">
-                          
-                          <UserVideoComponent
-                            streamManager={this.state.mainStreamManager}
-                            audioState={this.state.audioState}
-                          />
-                        </div>
-                      ) : null
-                    }
-                  </div>
+              <div id="video-container" className="subVideo">
+                {/* 나 */}
+                <div className="stream-container">
+                  <UserVideoComponent streamManager={this.state.publisher} />
                 </div>
-                <div className="others">
-                  {this.state.subscribers.map((sub, i) => (
-                    <div
-                      key={i}
-                      className="stream-container col-md-6 col-xs-6 "
-                    >
-                      <UserVideoComponent streamManager={sub} />
-                    </div>
-                  ))}
-                </div>
+                {/* 남 */}
+                {this.state.subscribers.map((sub, i) => (
+                  <div key={i} className="stream-container">
+                    <UserVideoComponent streamManager={sub} />
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="Aside">
-              <div className="rightSide">
-                <div className="sideNav">
-                  <div className="linksUl">
-                    <Link to="./">
-                      <button className="linksLi">내 공부</button>
-                    </Link>
-                    <Link to="./members">
-                      <button className="linksLi">맴버</button>
-                    </Link>
-                    {this.state.isRoomLeader ? (
-                      <Link to="./RoomReform">
-                        <button className="linksLi">방 수정</button>
-                      </Link>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-                <div className="AsideMain">
-                  <div className="sideBoards">
+            <div id="Aside">
+              <div id="side-nav">
+                <Link to="./">내 공부</Link>
+                <Link to="./members">멤버</Link>
+                {this.state.isRoomLeader && (
+                  <Link to="./RoomReform">방 수정</Link>
+                )}
+              </div>
+              <div id="AsideMain">
+                {
+                  <div id="aside-board">
                     <Routes>
                       <Route path="/" element={<MyStudy />} />
                       <Route path="/members" element={<Members />} />
-                      <Route path="/RoomReform" element={<RoomReform />} />
+                      {/* <Route path="/RoomReform" element={<RoomReform />} /> */}
                     </Routes>
                   </div>
-                  <div id="chat-container" className="chatBoards">
-                    {this.state.publisher !== undefined &&
-                      this.state.publisher.stream !== undefined && (
-                        <div
-                          className="OT_root OT_publisher custom-class"
-                          style={chatDisplay}
-                        >
-                          <ChatComponent
-                            user={this.state.publisher}
-                            chatDisplay={this.state.chatDisplay}
-                            close={this.toggleChat}
-                            messageReceived={this.checkNotification}
-                          />
-                        </div>
-                      )}
-                  </div>
+                }
+                <div id="chat-container" className="chatBoards">
+                  {this.state.publisher !== undefined &&
+                    this.state.publisher.stream !== undefined && (
+                      <div
+                        className="OT_root OT_publisher custom-class"
+                        style={chatDisplay}
+                      >
+                        <ChatComponent
+                          user={this.state.publisher}
+                          chatDisplay={this.state.chatDisplay}
+                          close={this.toggleChat}
+                          messageReceived={this.checkNotification}
+                        />
+                      </div>
+                    )}
                 </div>
               </div>
-              <div className="btnRight">
-                <div className="btnRightInner">
-                  <input
-                    className="btn btn-large btn-danger btnR"
+              <div id="button-bottom">
+                {/* {this.state.isRoomLeader && (
+                  <button
                     type="button"
                     id="buttonLeaveSession"
-                    onClick={this.leaveSession}
-                    value="방 나가기"
-                  />
-                  {this.state.isRoomLeader ? (
-                    <input
-                      className="btn btn-large btn-danger btnR"
-                      type="button"
-                      id="buttonLeaveSession"
-                      onClick={this.closeRoom}
-                      value="방 닫기"
-                    />
-                  ) : (
-                    ""
-                  )}
-                  <button className="btnR" onClick={() => this.toggleChat()}>
-                    채팅
+                    onClick={this.closeRoom}
+                  >
+                    방 닫기
                   </button>
-                </div>
+                )} */}
+                <img
+                  src={btn_plane}
+                  id="toggleChat"
+                  onClick={() => this.toggleChat()}
+                />
+                <img
+                  src={out}
+                  id="buttonLeaveSession"
+                  onClick={this.leaveSession}
+                />
               </div>
             </div>
           </div>
         )}
-      </div>
+      </>
     );
   }
 

@@ -85,7 +85,7 @@ function SocialLogin() {
       }),
       headers: {
         accessToken: getCookie("accessToken"),
-        "content-type": "application/json",
+        "Content-type": "application/json",
       },
     })
       .then((response) => response.json())

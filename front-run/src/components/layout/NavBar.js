@@ -9,7 +9,6 @@ import logo from "../../img/logo.png";
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
 
-  // const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
   const isLoggedIn = !!getCookie("accessToken");
 
   const logoutHandler = () => {

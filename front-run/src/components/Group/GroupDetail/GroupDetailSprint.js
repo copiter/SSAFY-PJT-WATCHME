@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getCookie } from "../../../Cookie";
+import ErrorCode from "../../../Error/ErrorCode";
+import swal from "sweetalert";
+
+import "./GroupDetailSprint.css";
+import json from "../../json/groupdetailsprint.json";
+
 import SprintItem from "./SprintItem";
 
-import { getCookie } from "../../../Cookie";
-import json from "../../json/groupdetailsprint.json";
-import "./GroupDetailSprint.css";
-import ErrorCode from "../../../Error/ErrorCode";
-
 function GroupDetailSprint(props) {
-  const [sprints, setSprints] = useState([]);
   // const [sprints, setSprints] = useState(json.responseData.sprints);
+  const [sprints, setSprints] = useState([]);
   const [reload, setReload] = useState(false);
-
   const navigate = useNavigate();
-
-  const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
+  // const mode = ["규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
 
   //fetch
   const url = `${props.href}/sprints`;
@@ -51,84 +51,107 @@ function GroupDetailSprint(props) {
   });
 
   function sprintCal() {
-    const ask = window.confirm("정산하시겠습니까?");
-    if (!ask) {
-      return;
-    }
-    fetch(`${props.href}/sprints/${sprintJoin.sprintId}/`, {
-      // url!!!!!!!!!!!!
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        if (result.code === 200) {
-          alert("정산되었습니다");
-          setReload(!reload);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        alert("통신실패 " + err);
-      });
+    swal({
+      title: "정산하시겠습니까?",
+      text: "",
+      icon: "info",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+          method: "POST",
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            if (result.code === 200) {
+              swal("정산되었습니다", "", "success");
+              setReload(!reload);
+            } else {
+              ErrorCode(result);
+            }
+          })
+          .catch((err) => {
+            swal("통신실패", "", "error");
+          });
+      } else {
+        return;
+      }
+    });
   }
 
   function sprintDelete() {
-    const ask = window.confirm("모집중인 스프린트를 삭제하시겠습니까?");
-    if (!ask) {
-      return;
-    }
-    fetch(`${props.href}/sprints/${sprintJoin.sprintId}/delete`, {
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        if (result.code === 200) {
-          alert("모집중인 스프린트를 삭제했습니다");
-          setReload(!reload);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        alert("통신실패 " + err);
-      });
+    swal({
+      title: "모집중인 스프린트를 삭제하시겠습니까?",
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+          method: "POST",
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            if (result.code === 200) {
+              swal("모집중인 스프린트를 삭제했습니다", "", "success");
+              setReload(!reload);
+            } else {
+              ErrorCode(result);
+            }
+          })
+          .catch((err) => {
+            swal("통신실패", "", "error");
+          });
+      } else {
+        return;
+      }
+    });
   }
   function sprintJoinHandler() {
-    const ask = window.confirm("스프린트 참가신청 하시겠습니까?");
-    if (!ask) {
-      return;
-    }
-    fetch(`${url}/${sprintJoin.sprintId}/join`, {
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        console.log(result);
-        if (result.code === 200) {
-          alert("스프린트에 정상적으로 참가신청 되었습니다");
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        alert("통신실패 " + err);
-      });
+    swal({
+      title: "스프린트 참가신청 하시겠습니까?",
+      text: "",
+      icon: "info",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+          method: "POST",
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            if (result.code === 200) {
+              swal("스프린트에 정상적으로 참가신청 되었습니다", "", "success");
+              setReload(!reload);
+            } else {
+              ErrorCode(result);
+            }
+          })
+          .catch((err) => {
+            swal("통신실패", "", "error");
+          });
+      } else {
+        return;
+      }
+    });
   }
   function sprintOnGoingHandler() {
     fetch(`${url}/${sprintOngoing.sprintId}/start`, {
@@ -149,34 +172,42 @@ function GroupDetailSprint(props) {
         }
       })
       .catch((err) => {
-        alert("입장실패 " + err);
+        swal("통신실패", "", "error");
       });
   }
   function sprintCancel() {
-    const ask = window.confirm("스프린트 참가 취소하시겠습니까?");
-    if (!ask) {
-      return;
-    }
-    fetch(`${url}/${sprintJoin.sprintId}/cancel`, {
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        if (result.code === 200) {
-          alert("성공적으로 취소되었습니다");
-          setReload(!reload);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        alert("입장실패 " + err);
-      });
+    swal({
+      title: "스프린트 참가 취소하시겠습니까?",
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+          method: "POST",
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((result) => {
+            if (result.code === 200) {
+              swal("성공적으로 취소되었습니다", "", "success");
+              setReload(!reload);
+            } else {
+              ErrorCode(result);
+            }
+          })
+          .catch((err) => {
+            swal("통신실패", "", "error");
+          });
+      } else {
+        return;
+      }
+    });
   }
 
   return (

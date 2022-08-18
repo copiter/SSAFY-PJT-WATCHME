@@ -560,6 +560,7 @@ class RoomDetail extends Component {
   }
   ban() {
     swal("벌점이 과다로 추방되었습니다", "", "error");
+    this.leaveSession();
     window.location.href = "../";
   }
 

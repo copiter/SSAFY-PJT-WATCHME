@@ -269,6 +269,7 @@ export class RoomReform extends Component {
                         <input
                           type="datetime-local"
                           name="endTime"
+                          max="2030-12-31T23:59"
                           value={this.state.endTime || ""}
                           onChange={this.handleChange}
                           className="endTime"

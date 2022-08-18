@@ -80,6 +80,7 @@ function RoomCreate() {
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
+  let dates=new Date()
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">
@@ -167,6 +168,7 @@ function RoomCreate() {
                 <input
                   type="datetime-local"
                   name="endTime"
+                  max="2030-12-31T23:59"
                   value={inputs.endTime || ""}
                   onChange={handleChange}
                   className="endTime"

@@ -31,6 +31,8 @@ function GroupDetailSprint(props) {
 
       if (data.code === 200) {
         setSprints(data.responseData.sprints);
+      } else {
+        ErrorCode(data);
       }
     };
     getDatas();

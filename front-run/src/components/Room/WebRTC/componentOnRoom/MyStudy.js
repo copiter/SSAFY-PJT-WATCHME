@@ -57,8 +57,6 @@ function MyStudy(props) {
     }, 1000);
   }, []);
 
-  console.log("스터디여기", study);
-
   const [studyTimes, setStudyTimes] = useState(0);
   const [errorLogs, setErrorLogs] = useState([{}]);
 

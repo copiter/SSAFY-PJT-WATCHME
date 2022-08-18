@@ -348,7 +348,7 @@ export class RoomReform extends Component {
                             }
                             onChange={this.handleChange}
                           />
-                          화면공유
+                          자리 이탈
                         </label>
                       </div>
                     </div>

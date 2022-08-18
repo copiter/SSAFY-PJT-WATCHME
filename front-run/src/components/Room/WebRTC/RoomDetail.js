@@ -147,7 +147,7 @@ class RoomDetail extends Component {
         } else {
           response.json().then((resPoseError) => {
             console.log("ERR바가기 실패");
-            ErrorCode(resPoseError);
+            swal(resPoseError.message);
             let errorMessage = "오류로 방나가기 안됨ㄴ";
             throw new Error(errorMessage);
           });
@@ -178,6 +178,7 @@ class RoomDetail extends Component {
     } catch {
       console.log("디스콘실패");
       swal("오류가 발생하였습니다.");
+      window.location.href = "../../";
     }
     this.setState({
       session: undefined,
@@ -326,15 +327,16 @@ class RoomDetail extends Component {
     //방데이터 세팅을 위한 백과의 통신
     const FETCH_URL = FetchUrl._currentValue;
     const id = window.location.pathname.split("/")[2].substring(0);
-   
-    this.joinSessionSetOpenVidu(id);
-   
-
     //통신용 개인 닉네임 확인
     let myNickName = localStorage.getItem("nickName");
     this.setState({
       myUserName: myNickName,
     });
+
+    if(myNickName===null){
+      swal("로그인후 접근부탁드립니다.")
+      setTimeout(this.leaveSession(),1000);
+    }    
     setInterval(
       () => {
         fetch(`${FETCH_URL}/rooms/` + id, {
@@ -343,12 +345,15 @@ class RoomDetail extends Component {
           },
         })
           .then((response) => {
+            console.log(response);
             if (response.ok) {
               return response.json(); //ok떨어지면 바로 종료.
             } else {
+              clearInterval();
               response.json().then((responseDataError) => {
                 ErrorCode(responseDataError);
-                setTimeout(()=>{window.location.href="../"},1000);
+                setTimeout(1000);
+                setTimeout(this.leaveSession(),5000);
                 let errorMessage = "";
                 throw new Error(errorMessage);
               });
@@ -370,14 +375,19 @@ class RoomDetail extends Component {
               sessionStorage.setItem("roomName", result.responseData.room.name);
              
             }
+            
+
+
           })
           .catch((err) => {
+            ErrorCode(err)
             console.log("백통신 실패");
           });
         this.openTeli(id);
       },
       this.state.mode === "MODE2" ? 1000 : 20000
     );
+    this.joinSessionSetOpenVidu(id);
   }
   async joinSessionSetOpenVidu(newSessionId) {
     console.log("오픈비두 테스트");

@@ -121,6 +121,8 @@ class RoomDetail extends Component {
     }
   }
   async getUserPermission() {}
+
+
   leaveSession() {
     //세션 탈출
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
@@ -173,8 +175,9 @@ class RoomDetail extends Component {
     // Empty all properties...
     this.OV = null;
     try {
-      mySession.disconnect();
+      swal("방에서 퇴장되셨습니다..");
       window.location.href = "../../";
+      mySession.disconnect();
     } catch {
       console.log("디스콘실패");
       swal("오류가 발생하였습니다.");
@@ -573,7 +576,6 @@ class RoomDetail extends Component {
   ban() {
     swal("벌점이 과다로 추방되었습니다", "", "error");
     this.leaveSession();
-    window.location.href = "../";
   }
 
   openModal = () => {

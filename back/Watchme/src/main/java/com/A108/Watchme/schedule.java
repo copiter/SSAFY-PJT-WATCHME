@@ -78,8 +78,7 @@ public class schedule {
 
             Integer studyTimeDay = 0;
 
-            for (MemberRoomLog mrl :
-                    memberRoomLogList) {
+            for (MemberRoomLog mrl : memberRoomLogList) {
                 studyTimeDay += mrl.getStudyTime();
             }
 
@@ -109,8 +108,7 @@ public class schedule {
 
             Integer studyTimeDay = 0;
 
-            for (MemberRoomLog mrl :
-                    memberRoomLogList) {
+            for (MemberRoomLog mrl : memberRoomLogList) {
                 studyTimeDay += mrl.getStudyTime();
             }
 
@@ -136,7 +134,7 @@ public class schedule {
 
         // 시작 전 스프린트
         List<Sprint> sprintListYes = sprintRepository.findAllByStatus(Status.YES);
-        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
+        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
 
         sprintRepository.saveAll(sprintListYes);
 

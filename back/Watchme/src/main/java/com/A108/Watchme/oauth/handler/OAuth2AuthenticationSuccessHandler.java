@@ -33,6 +33,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
@@ -103,11 +104,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                             .email(userInfo.getEmail())
                             .build());
                 }
-
                 int cookieMaxAge = (int) refreshTokenExpiry / 60;
                 CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
                 CookieUtil.addCookie(response,"accessToken",accessToken.getToken(),cookieMaxAge);
                 CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
+                clearAuthenticationAttributes(request, response);
                 getRedirectStrategy().sendRedirect(request, response, "https://watchme1.shop/slogin");
             }
 

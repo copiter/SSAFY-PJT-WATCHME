@@ -313,7 +313,7 @@ public class MemberService {
         String email = member.get().getEmail();
         String subject = "Watchme 사이트 비밀번호 초기화 메일입니다. ";
         String text = "<p>Watchme 사이트 비밀번호를 초기화 합니다. </p><p>아래 링크를 클릭하셔서 비밀번호 초기화를 완료하세요.</p>"
-                + "<form action='http://localhost:3000/changePWD' method='GET'>"
+                + "<form action='https://watchme1.shop/changePWD' method='GET'>"
                 + "<input type='hidden' name='emailKey' value= '" + uuid + "'/> "
                 + "<input type='submit' value='비밀번호 초기화'/>"
                 + "</form></div>";
@@ -615,29 +615,34 @@ public class MemberService {
         List<PointLog> pointLogListAll = pointLogRepository.findAllByMemberId(currUser.getId()).stream().collect(Collectors.toList());
 
         int chargePoint = 0;
+        int refundPoint = 0;
         for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() == null).collect(Collectors.toList())) {
-            chargePoint += pl.getPointValue();
+            if(pl.getPointValue() >=0){
+                chargePoint += pl.getPointValue();
+            }
+
+            else{
+                refundPoint += pl.getPointValue();
+            }
         }
-        ;
 
         int getPoint = 0;
         for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() > 0).collect(Collectors.toList())) {
             getPoint += pl.getPointValue();
         }
-        ;
 
         int losePoint = 0;
         for (PointLog pl : pointLogListAll.stream().filter(x -> x.getSprint() != null && x.getPointValue() < 0).collect(Collectors.toList())) {
             losePoint += pl.getPointValue();
         }
-        ;
         List<MemberSprintLog> sprintLogs = mslRepository.findAllByMemberId(currUser.getId());
         for (MemberSprintLog memberSprintLog : sprintLogs) {
             losePoint += memberSprintLog.getSprint().getSprintInfo().getFee();
         }
-        losePoint = -losePoint;
+        losePoint *= -1;
+        refundPoint *= -1;
 
-        int sumPoint = chargePoint + getPoint - losePoint;
+        int sumPoint = chargePoint + getPoint - losePoint -refundPoint;
 
         List<PointLogResDTO> pointList = new LinkedList<>();
         List<PointLog> pointLogList = pointLogRepository.findAllByMemberIdOrderByCreatedAt(currUser.getId(), myPoint).stream().collect(Collectors.toList());
@@ -645,13 +650,14 @@ public class MemberService {
         for (PointLog pl : pointLogList) {
             pointList.add(PointLogResDTO.builder()
                     .date(format3.format(pl.getCreatedAt()))
-                    .content(pl.getSprint() != null ? pl.getSprint().getName() : "충전/환급")
+                    .content(pl.getSprint() != null ? pl.getSprint().getGroup().getGroupName()+" 그룹의 스프린트 : "+pl.getSprint().getName() : "충전/환급")
                     .point(pl.getPointValue())
                     .build());
         }
 
         result.setResponseData("sumPoint", sumPoint);
         result.setResponseData("chargePoint", chargePoint);
+        result.setResponseData("refundPoint", refundPoint);
         result.setResponseData("getPoint", getPoint);
         result.setResponseData("losePoint", losePoint);
         result.setResponseData("pointList", pointList);

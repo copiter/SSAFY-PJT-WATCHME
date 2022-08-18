@@ -134,14 +134,16 @@ public class schedule {
 
         // 시작 전 스프린트
         List<Sprint> sprintListYes = sprintRepository.findAllByStatus(Status.YES);
-        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
+        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date())
+                && x.getSprintInfo().getEndAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
 
         sprintRepository.saveAll(sprintListYes);
 
 
         // 진행 중 스프린트
         List<Sprint> sprintListIng = sprintRepository.findAllByStatus(Status.ING);
-        sprintListIng.stream().filter(x -> x.getSprintInfo().getEndAt().before(new Date())).forEach(x -> x.setStatus(Status.NO));
+        sprintListIng.stream().filter(x -> x.getSprintInfo().getEndAt().before(new Date()))
+                .forEach(x -> x.setStatus(Status.NO));
 
         sprintRepository.saveAll(sprintListIng);
     }

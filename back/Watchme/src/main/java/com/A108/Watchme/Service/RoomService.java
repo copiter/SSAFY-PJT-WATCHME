@@ -321,6 +321,9 @@ public class RoomService {
         } catch (Exception e) {
             throw new CustomException(Code.C522);
         }
+        if(room.getStatus().equals(Status.SPR)){
+            throw new CustomException(Code.C574);
+        }
         RoomInfo roomInfo = room.getRoomInfo();
         String url = room.getRoomInfo().getImageLink();
         ApiResponse apiResponse = new ApiResponse();
@@ -398,7 +401,7 @@ public class RoomService {
             throw new CustomException(Code.C522);
         }
 
-        if (room.getMember().getId() == memberId) {
+        if (room.getMember().getId() == memberId && !room.getStatus().equals(Status.SPR)) {
 
             List<MemberRoomLog> mrlList = mrlRepository.findAllByRoomIdAndStatus(roomId, Status.NO);
             if (mrlList.size() != 1) {
@@ -429,7 +432,7 @@ public class RoomService {
             int man = room.getRoomInfo().getCurrMember();
             room.getRoomInfo().setCurrMember(man + num);
             // 마지막사람이 나가면 닫아줌
-            if (man + num <= 0) {
+            if (man + num <= 0 && !room.getStatus().equals(Status.SPR)) {
                 room.setStatus(Status.NO);
             }
             return true;

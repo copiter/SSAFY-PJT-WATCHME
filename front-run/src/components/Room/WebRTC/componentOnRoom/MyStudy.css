@@ -1,9 +1,14 @@
 #borders {
+  min-width: 250px;
   height: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 #clock {
   margin-top: 30px;

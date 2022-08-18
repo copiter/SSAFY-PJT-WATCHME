@@ -126,6 +126,7 @@ function PointAdd() {
     const name = event.target.name;
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
+    console.log(inputs);
     if (value === "Free" && name === "valueSelect") {
       //valueInputs비허용
       setIsShown(true);
@@ -301,7 +302,7 @@ function PointAdd() {
                     min="1000"
                     step="1000"
                     placeholder="금액을 입력하세요"
-                    onChange={handleChangeRefund}
+                    onChange={handleChange}
                   />
                 )}
 

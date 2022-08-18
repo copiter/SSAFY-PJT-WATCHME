@@ -383,9 +383,9 @@ class RoomDetail extends Component {
             ErrorCode(err)
             console.log("백통신 실패");
           });
-        this.openTeli(id);
+        if(this.state.mode!=="MODE1"){this.openTeli(id);}
       },
-      this.state.mode === "MODE2" ? 1000 : 20000
+      5000
     );
     this.joinSessionSetOpenVidu(id);
   }
@@ -564,6 +564,8 @@ class RoomDetail extends Component {
       swal("졸음이 감지되었습니다", "", "error");
     } else if (this.state.mode === "MODE3") {
       swal("스마트폰이 감지되었습니다", "", "error");
+    } else if (this.state.mode === "MODE4") {
+      swal("자리이탈이 감지되었습니다.", "", "error");
     } else {
       console.log("알수없는에러");
     }

@@ -110,7 +110,7 @@ function MyStudy(props) {
                 ? " 졸림 감지"
                 : study.mode === "MODE3"
                 ? " 스마트폰"
-                : " 화면공유"}
+                : " 자리 이탈"}
             </span>
             <span id="study-rule__penalty">
               {study.mode !== "MODE1" && ` ${study.penalty}회`}
@@ -131,7 +131,7 @@ function MyStudy(props) {
                       : log.mode === "MODE3"
                       ? " 스마트폰"
                       : log.mode === "MODE4"
-                      ? " 화면공유"
+                      ? " 자리 이탈"
                       : ""}
                   </span>
                 </div>

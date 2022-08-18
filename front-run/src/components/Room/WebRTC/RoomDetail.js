@@ -37,9 +37,10 @@ class RoomDetail extends Component {
     this.state = {
       //방데이터
       mySessionId: "SessionA", //세션이름
+      roomName:"",
       myUserName: "Participant" + Math.floor(Math.random() * 100), //내 닉네임.
       isRoomLeader: true, //방장인지 체크->방장전용 데이터 보임
-      mode: "MODE1",
+      mode: "MODE2",
       newErrorDetected: false,
 
       //카메라 설정 데이터
@@ -325,59 +326,57 @@ class RoomDetail extends Component {
     //방데이터 세팅을 위한 백과의 통신
     const FETCH_URL = FetchUrl._currentValue;
     const id = window.location.pathname.split("/")[2].substring(0);
-    fetch(`${FETCH_URL}/rooms/` + id, {
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json(); //ok떨어지면 바로 종료.
-        } else {
-          response.json().then((responseDataError) => {
-            swal(responseDataError.message);
-            let errorMessage = "";
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((result) => {
-        if (result != null) {
-          console.log("리저트 테스트");
-          console.log(result.responseData.room);
-          this.setState({
-            mySessionId: result.responseData.room.name,
-            isRoomLeader:
-              result.responseData.room.leaderTrue === 0 ? false : true,
-            screenShare:
-              result.responseData.room.mode === "MODE1" ? false : true,
-            mode: result.responseData.room.mode,
-          });
-          console.log(result.responseData.mode);
-          sessionStorage.setItem("roomName", result.responseData.room.name);
-          this.joinSessionSetOpenVidu(id);
-          setInterval(
-            () => {
-              this.openTeli(id);
-              console.log("인터벌");
-              console.log(this.state.mySessionId);
-              console.log(this.state.isRoomLeader);
-              console.log(this.state.screenShare);
-              console.log(this.state.mode);
-            },
-            result.responseData.room.mode === "MODE2" ? 1000 : 20000
-          );
-        }
-      })
-      .catch((err) => {
-        console.log("백통신 실패");
-      });
+   
+    this.joinSessionSetOpenVidu(id);
+   
 
     //통신용 개인 닉네임 확인
     let myNickName = localStorage.getItem("nickName");
     this.setState({
       myUserName: myNickName,
     });
+    setInterval(
+      () => {
+        fetch(`${FETCH_URL}/rooms/` + id, {
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json(); //ok떨어지면 바로 종료.
+            } else {
+              response.json().then((responseDataError) => {
+                swal(responseDataError.message);
+                let errorMessage = "";
+                throw new Error(errorMessage);
+              });
+            }
+          })
+          .then((result) => {
+            if (result != null) {
+              console.log("리저트 테스트");
+              console.log(result.responseData.room);
+              this.setState({
+                roomName: result.responseData.room.name,
+                isRoomLeader:
+                  result.responseData.room.leaderTrue === 0 ? false : true,
+                screenShare:
+                  result.responseData.room.mode === "MODE1" ? false : true,
+                mode: result.responseData.room.mode,
+              });
+              console.log(result.responseData.mode);
+              sessionStorage.setItem("roomName", result.responseData.room.name);
+             
+            }
+          })
+          .catch((err) => {
+            console.log("백통신 실패");
+          });
+        this.openTeli(id);
+      },
+      this.state.mode === "MODE2" ? 1000 : 20000
+    );
   }
   async joinSessionSetOpenVidu(newSessionId) {
     console.log("오픈비두 테스트");
@@ -590,7 +589,7 @@ class RoomDetail extends Component {
             <div id="Main">
               <div id="session-header">
                 <h1 id="session-title" className="headerTitle">
-                  {mySessionId}
+                  {this.state.roomName}
                 </h1>
                 <div id="headerButtons">
                   <div id="btnTotal">

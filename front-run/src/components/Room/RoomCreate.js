@@ -236,7 +236,7 @@ function RoomCreate() {
                     value="MODE4"
                     onChange={handleChange}
                   />
-                  자리 이탈
+                  자리이탈 감지
                 </label>
               </div>
             </div>

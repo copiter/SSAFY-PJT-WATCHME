@@ -211,7 +211,11 @@ function GroupDetail() {
           {/* Main Contents : home, sprint, members*/}
           <>
             {navBar === 0 && (
-              <GroupDetailHome resData={resData} groupId={groupId} />
+              <GroupDetailHome
+                resData={resData}
+                groupId={groupId}
+                href={FETCH_URL}
+              />
             )}
             {navBar === 1 && (
               <GroupDetailSprint

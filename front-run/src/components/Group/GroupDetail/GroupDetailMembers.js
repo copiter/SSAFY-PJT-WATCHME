@@ -3,7 +3,7 @@ import { getCookie } from "../../../Cookie";
 import { useNavigate } from "react-router-dom";
 
 import "./GroupDetailMembers.css";
-import json from "../../json/groupdetailmembers.json";
+// import json from "../../json/groupdetailmembers.json";
 import ErrorCode from "../../../Error/ErrorCode";
 import swal from "sweetalert";
 

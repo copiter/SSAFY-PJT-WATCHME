@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../../store/communication";
 import { getCookie } from "../../../Cookie";
 import ErrorCode from "../../../Error/ErrorCode";

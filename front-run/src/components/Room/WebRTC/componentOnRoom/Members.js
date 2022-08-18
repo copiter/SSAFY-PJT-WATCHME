@@ -2,40 +2,17 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { getCookie } from "../../../../Cookie";
 import { FetchUrl } from "../../../../store/communication";
+
 import "./Members.css";
+
 function Members() {
   const FETCH_URL = useContext(FetchUrl);
   const id = window.location.pathname.split("/")[2].substring(0);
   const url = `${FETCH_URL}/rooms/` + id + `/members`;
 
-  const [mstudy, setStudy] = useState([
-    // {
-    //   nickName: "1번후보",
-    //   penalty: 10,
-    //   images: "img/cat.png",
-    // },
-    // {
-    //   nickName: "2번후보",
-    //   penalty: 20,
-    //   images: "222",
-    // },
-    // {
-    //   nickName: "2번후보",
-    //   penalty: 20,
-    //   images: "222",
-    // },
-    // {
-    //   nickName: "2번후보",
-    //   penalty: 20,
-    //   images: "222",
-    // },
-    // {
-    //   nickName: "2번후보",
-    //   penalty: 20,
-    //   images: "222",
-    // },
-  ]);
+  const [mstudy, setStudy] = useState([]);
 
+  //멤버 추방
   let leader = localStorage.getItem("L");
   const ban = (event, key) => {
     if (leader) {

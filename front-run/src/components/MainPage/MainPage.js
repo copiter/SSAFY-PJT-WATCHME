@@ -3,7 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
-import ErrorCode from "../../Error/ErrorCode";
+// import ErrorCode from "../../Error/ErrorCode";
 
 import GroupItem from "../Group/GroupItem";
 import Banner from "./Banner";
@@ -11,7 +11,7 @@ import RoomItem from "../Room/RoomItem";
 import MyStudyInfo from "./MyStudyInfo";
 
 import "./MainPage.css";
-import jsons from "../json/main";
+// import jsons from "../json/main";
 import AuthContext from "../../store/auth-context";
 
 function MainPage() {
@@ -37,7 +37,6 @@ function MainPage() {
   useEffect(() => {
     const getDatas = async () => {
       const response = await fetch(url, {
-        // credentials: "include",
         headers: {
           accessToken: getCookie("accessToken"),
         },
@@ -55,6 +54,7 @@ function MainPage() {
     };
     getDatas();
   }, []);
+
   rooms = datas["rooms"];
   groups = datas["groups"];
 
@@ -66,8 +66,6 @@ function MainPage() {
       userInformation["nickName"]
     );
   }
-
-  console.log(datas);
 
   function toGroupRecruit() {
     navigate("/GroupRecruit");

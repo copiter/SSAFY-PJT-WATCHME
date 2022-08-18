@@ -5,7 +5,7 @@ import ErrorCode from "../../../Error/ErrorCode";
 import swal from "sweetalert";
 
 import "./GroupDetailSprint.css";
-import json from "../../json/groupdetailsprint.json";
+// import json from "../../json/groupdetailsprint.json";
 
 import SprintItem from "./SprintItem";
 

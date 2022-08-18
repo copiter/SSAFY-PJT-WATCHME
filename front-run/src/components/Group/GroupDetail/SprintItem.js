@@ -58,9 +58,9 @@ function SprintItem(props) {
                 <li>
                   <span>
                     #{mode[+sprint.mode.slice(-1)]}
-                    {` #${+(
-                      sprint.routineEndAt.split(":")[0] -
-                      sprint.routineStartAt.split(":")[0]
+                    {` #${+Math.abs(
+                      Number(sprint.routineEndAt.split(":")[0]) -
+                        Number(sprint.routineStartAt.split(":")[0])
                     )}시간 #${sprint.fee}원
                 `}
                   </span>

@@ -8,7 +8,7 @@ import "./SprintCreate.css";
 import swal from "sweetalert";
 import ErrorCode from "../../Error/ErrorCode";
 
-function SprintCreate(props) {
+function SprintCreate() {
   const navigate = useNavigate();
 
   //url

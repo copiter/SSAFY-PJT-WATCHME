@@ -26,12 +26,7 @@ function RoomCreate() {
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
-  // const toggleChange = () => {
-  //   setInputs((values) => ({
-  //     ...values,
-  //     display: inputs.display === 1 ? 0 : 1,
-  //   }));
-  // };
+
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/rooms`;
@@ -80,7 +75,7 @@ function RoomCreate() {
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
-  let dates = new Date();
+
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">
@@ -88,7 +83,6 @@ function RoomCreate() {
       </Link>
 
       <form onSubmit={handleSubmit}>
-        {/*form과 input의 name, type 수정시 연락부탁드립니다. 그외 구조나 id는 편하신대로 수정하셔도 됩니다. input추가시에는 말해주시면 감사하겠습니다.*/}
         <div className="form-frame">
           <div className="room-image">
             {fileImage && (
@@ -145,6 +139,8 @@ function RoomCreate() {
                   value={inputs.num ? inputs.num : ""}
                   onChange={handleChange}
                   accept="number"
+                  min="1"
+                  max="25"
                   placeholder="인원수를 선택하세요(1~25)"
                 />
                 <select
@@ -199,7 +195,6 @@ function RoomCreate() {
             </div>
 
             <div className="input-rules">
-              {/*규칙입니다. 현재 진행파트아닙니다. */}
               <div className="rules-title">📝 규칙</div>
               <div className="rules-box">
                 <label>

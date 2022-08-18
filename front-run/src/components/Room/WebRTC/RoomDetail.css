@@ -42,6 +42,7 @@
   width: 45%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 #btnTotal > img {
   cursor: pointer;

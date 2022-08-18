@@ -17,7 +17,6 @@ import mic_mute from "../../../img/Icons/mic_mute.png";
 import video from "../../../img/Icons/video.png";
 import video_off from "../../../img/Icons/video_off.png";
 import out from "../../../img/Icons/out.png";
-import setting from "../../../img/Icons/setting.png";
 import btn_plane from "../../../img/Icons/btn-plane.png";
 import swal from "sweetalert";
 
@@ -37,10 +36,10 @@ class RoomDetail extends Component {
     this.state = {
       //방데이터
       mySessionId: "SessionA", //세션이름
-      roomName:"",
+      roomName: "",
       myUserName: "Participant" + Math.floor(Math.random() * 100), //내 닉네임.
       isRoomLeader: true, //방장인지 체크->방장전용 데이터 보임
-      mode: "MODE2",
+      mode: null,
       newErrorDetected: false,
 
       //카메라 설정 데이터
@@ -122,7 +121,6 @@ class RoomDetail extends Component {
   }
   async getUserPermission() {}
 
-
   leaveSession() {
     //세션 탈출
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
@@ -133,36 +131,39 @@ class RoomDetail extends Component {
     const id = window.location.pathname.split("/")[2].substring(0);
     const url = `${FETCH_URL}/rooms/` + id + "/leave";
 
-    console.log(id);
-    console.log(url);
-    console.log("방나가기 시도");
+    // console.log(id);
+    // console.log(url);
+    // console.log("방나가기 시도");
 
     fetch(url, {
       method: "POST",
       headers: { accessToken: getCookie("accessToken") },
     })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         if (response.ok) {
-          console.log("리스폰스 성공");
+          // console.log("리스폰스 성공");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((resPoseError) => {
-            console.log("ERR바가기 실패");
+            // console.log("ERR바가기 실패");
             swal(resPoseError.message);
-            let errorMessage = "오류로 방나가기 안됨ㄴ";
+            let errorMessage = "오류로 방나가기 안됨";
             throw new Error(errorMessage);
           });
         }
       })
       .then((result) => {
-        console.log("RES:");
+        // console.log("RES:");
         if (result != null) {
-          console.log("NOTNULL:");
-          console.log(result);
+          // console.log("NOTNULL:");
+          // console.log(result);
           if (result.code === 200) {
-            console.log("방나가기 성공");
-            swal("퇴장하셨습니다.");
+            // console.log("방나가기 성공");
+
+            setTimeout(() => {
+              swal("퇴장하셨습니다.", "", "info");
+            }, [2000]);
           } else {
             console.log("오류가 발생하였습니다.");
           }
@@ -175,12 +176,14 @@ class RoomDetail extends Component {
     // Empty all properties...
     this.OV = null;
     try {
-      swal("방에서 퇴장되셨습니다..");
-      window.location.href = "../../";
       mySession.disconnect();
+      setTimeout(() => {
+        swal("방에서 퇴장되셨습니다", "", "error");
+        window.location.href = "../../";
+      }, [1000]);
     } catch {
       console.log("디스콘실패");
-      swal("오류가 발생하였습니다.");
+      swal("오류가 발생하였습니다.", "", "error");
       window.location.href = "../../";
     }
     this.setState({
@@ -299,7 +302,7 @@ class RoomDetail extends Component {
     if (display === "block") {
       this.setState({ chatDisplay: display, messageReceived: false });
     } else {
-      console.log("chat", display);
+      // console.log("chat", display);
       this.setState({ chatDisplay: display });
     }
   }
@@ -336,64 +339,59 @@ class RoomDetail extends Component {
       myUserName: myNickName,
     });
 
-    if(myNickName===null){
-      swal("로그인후 접근부탁드립니다.")
-      setTimeout(this.leaveSession(),1000);
-    }    
-    setInterval(
-      () => {
-        fetch(`${FETCH_URL}/rooms/` + id, {
-          headers: {
-            accessToken: getCookie("accessToken"),
-          },
+    if (myNickName === null) {
+      swal("로그인후 접근부탁드립니다.", "", "error");
+      setTimeout(this.leaveSession(), 1000);
+    }
+    setInterval(() => {
+      fetch(`${FETCH_URL}/rooms/` + id, {
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
+      })
+        .then((response) => {
+          // console.log(response);
+          if (response.ok) {
+            return response.json(); //ok떨어지면 바로 종료.
+          } else {
+            clearInterval();
+            response.json().then((responseDataError) => {
+              ErrorCode(responseDataError);
+              setTimeout(1000);
+              setTimeout(this.leaveSession(), 5000);
+              let errorMessage = "";
+              throw new Error(errorMessage);
+            });
+          }
         })
-          .then((response) => {
-            console.log(response);
-            if (response.ok) {
-              return response.json(); //ok떨어지면 바로 종료.
-            } else {
-              clearInterval();
-              response.json().then((responseDataError) => {
-                ErrorCode(responseDataError);
-                setTimeout(1000);
-                setTimeout(this.leaveSession(),5000);
-                let errorMessage = "";
-                throw new Error(errorMessage);
-              });
-            }
-          })
-          .then((result) => {
-            if (result != null) {
-              console.log("리저트 테스트");
-              console.log(result.responseData.room);
-              this.setState({
-                roomName: result.responseData.room.name,
-                isRoomLeader:
-                  result.responseData.room.leaderTrue === 0 ? false : true,
-                screenShare:
-                  result.responseData.room.mode === "MODE1" ? false : true,
-                mode: result.responseData.room.mode,
-              });
-              console.log(result.responseData.mode);
-              sessionStorage.setItem("roomName", result.responseData.room.name);
-             
-            }
-            
-
-
-          })
-          .catch((err) => {
-            ErrorCode(err)
-            console.log("백통신 실패");
-          });
-        if(this.state.mode!=="MODE1"){this.openTeli(id);}
-      },
-      5000
-    );
+        .then((result) => {
+          if (result != null) {
+            console.log("리저트 테스트");
+            console.log(result.responseData.room);
+            this.setState({
+              roomName: result.responseData.room.name,
+              isRoomLeader:
+                result.responseData.room.leaderTrue === 0 ? false : true,
+              screenShare:
+                result.responseData.room.mode === "MODE1" ? false : true,
+              mode: result.responseData.room.mode,
+            });
+            // console.log(result.responseData.mode);
+            sessionStorage.setItem("roomName", result.responseData.room.name);
+          }
+        })
+        .catch((err) => {
+          ErrorCode(err);
+          console.log("백통신 실패");
+        });
+      if (this.state.mode !== "MODE1") {
+        this.openTeli(id);
+      }
+    }, 5000);
     this.joinSessionSetOpenVidu(id);
   }
   async joinSessionSetOpenVidu(newSessionId) {
-    console.log("오픈비두 테스트");
+    // console.log("오픈비두 테스트");
     console.log(this.state);
     //오픈비두 세팅
     this.OV = new OpenVidu();
@@ -468,7 +466,7 @@ class RoomDetail extends Component {
               });
             })
             .catch((error) => {
-              console.log("오픈비드 JoinSession에러입니다.");
+              // console.log("오픈비드 JoinSession에러입니다.");
               console.log(
                 "There was an error connecting to the session:",
                 error.code,
@@ -543,9 +541,9 @@ class RoomDetail extends Component {
       .then((result) => {
         if (result != null) {
           if (result.code === 200) {
-            console.log("오류없음");
+            // console.log("오류없음");
           } else if (result.code === 205) {
-            console.log("여기 result", result);
+            // console.log("여기 result", result);
             this.errorFound();
             this.setState({
               newErrorDetected: !this.state.newErrorDetected,
@@ -574,7 +572,12 @@ class RoomDetail extends Component {
     }
   }
   ban() {
-    swal("벌점이 과다로 추방되었습니다", "", "error");
+    setTimeout(
+      function () {
+        swal("벌점이 과다로 추방되었습니다", "", "error");
+      },
+      [2000]
+    );
     this.leaveSession();
   }
 
@@ -585,7 +588,6 @@ class RoomDetail extends Component {
     this.setState({ modalOpen: false });
   };
   render() {
-    const mySessionId = this.state.mySessionId;
     var chatDisplay = { display: this.state.chatDisplay };
     return (
       <>
@@ -609,27 +611,52 @@ class RoomDetail extends Component {
                 <div id="headerButtons">
                   <div id="btnTotal">
                     {this.state.videoState && (
-                      <img src={video_off} onClick={this.videoHandlerOff} />
+                      <img
+                        src={video_off}
+                        onClick={this.videoHandlerOff}
+                        alt={"video-off"}
+                      />
                     )}
                     {!this.state.videoState && (
-                      <img src={video} onClick={this.videoHandlerOn} />
+                      <img
+                        src={video}
+                        onClick={this.videoHandlerOn}
+                        alt={"video-on"}
+                      />
                     )}
                     {this.state.audioState && (
-                      <img src={mic_mute} onClick={this.audioHandlerOff} />
+                      <img
+                        src={mic_mute}
+                        onClick={this.audioHandlerOff}
+                        alt={"audio-off"}
+                      />
                     )}
                     {!this.state.audioState && (
-                      <img src={mic} onClick={this.audioHandlerOn} />
+                      <img
+                        src={mic}
+                        onClick={this.audioHandlerOn}
+                        alt={"audio-on"}
+                      />
                     )}
                     {this.state.screenShare && !this.state.isScreenShareNow && (
-                      <img src={screen} onClick={this.shareScreen} />
+                      <img
+                        src={screen}
+                        onClick={this.shareScreen}
+                        alt={"screenshare-on"}
+                      />
                     )}
                     {this.state.screenShare && this.state.isScreenShareNow && (
-                      <img src={screen_off} onClick={this.shareScreenCancle} />
+                      <img
+                        src={screen_off}
+                        onClick={this.shareScreenCancle}
+                        alt={"screenshare-off"}
+                      />
                     )}
                   </div>
                   <div id="btnOut">
                     <img
                       src={out}
+                      alt={"leave-room"}
                       id="buttonLeaveSession"
                       onClick={this.leaveSession}
                       title="방 나가기"
@@ -700,6 +727,7 @@ class RoomDetail extends Component {
               <div id="button-bottom">
                 <img
                   src={btn_plane}
+                  alt={"chat-btn"}
                   id="toggleChat"
                   onClick={() => this.toggleChat()}
                 />

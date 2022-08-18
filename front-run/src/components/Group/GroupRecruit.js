@@ -138,7 +138,7 @@ function GroupRecruit() {
     //값 입력 안받은상태임
     event.preventDefault();
     let page = parseInt(parseInt(groupPage) + 1);
-    console.log(page);
+    // console.log(page);
     fetch(
       url +
         "?" +

@@ -6,6 +6,7 @@ import { getCookie } from "../../Cookie";
 
 import "./RoomCreate.css";
 import ErrorCode from "../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function RoomCreate() {
   //방생성 요청 보내기
@@ -25,12 +26,12 @@ function RoomCreate() {
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
-  const toggleChange = () => {
-    setInputs((values) => ({
-      ...values,
-      display: inputs.display === 1 ? 0 : 1,
-    }));
-  };
+  // const toggleChange = () => {
+  //   setInputs((values) => ({
+  //     ...values,
+  //     display: inputs.display === 1 ? 0 : 1,
+  //   }));
+  // };
   //URL
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/rooms`;
@@ -57,7 +58,7 @@ function RoomCreate() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          alert("방생성이 완료되었습니다.");
+          swal("방생성이 완료되었습니다", "", "success");
           navigate("/RoomDetail/" + result.responseData.roomId);
         } else {
           ErrorCode(result);
@@ -72,13 +73,14 @@ function RoomCreate() {
   const [isChecked, setIsChecked] = useState(false);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
-    if (isChecked) setInputs((values) => ({ ...values, ["roomPwd"]: "" }));
+    if (isChecked) setInputs((values) => ({ ...values, roomPwd: "" }));
   };
 
   const [fileImage, setFileImage] = useState("");
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
+  let dates=new Date()
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">
@@ -157,6 +159,7 @@ function RoomCreate() {
                   <option value="취업">취업</option>
                   <option value="수능">수능</option>
                   <option value="자격증">자격증</option>
+                  <option value="코딩">코딩</option>
                   <option value="기타">기타</option>
                 </select>
               </div>
@@ -165,8 +168,10 @@ function RoomCreate() {
                 <input
                   type="datetime-local"
                   name="endTime"
+                  max="2030-12-31T23:59"
                   value={inputs.endTime || ""}
                   onChange={handleChange}
+                  className="endTime"
                 />
 
                 <span>비공개</span>
@@ -210,7 +215,7 @@ function RoomCreate() {
                   <input
                     type="radio"
                     name="mode"
-                    value="MODE2"
+                    value="MODE3"
                     onChange={handleChange}
                   />
                   스마트폰감지
@@ -219,7 +224,7 @@ function RoomCreate() {
                   <input
                     type="radio"
                     name="mode"
-                    value="MODE3"
+                    value="MODE2"
                     onChange={handleChange}
                   />
                   졸음감지

@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import Fab from "@material-ui/core/Fab";
-import Send from "@material-ui/icons/Send";
 
 import "./ChatComponent.css";
-import { Tooltip } from "@material-ui/core";
+import btnPlane from "../../../../img/Icons/btn-plane.png";
 
 export default class ChatComponent extends Component {
   constructor(props) {
@@ -124,17 +122,15 @@ export default class ChatComponent extends Component {
 
           <div id="messageInput">
             <input
-              placeholder="Send a messge"
+              placeholder="메시지를 입력하세요"
               id="chatInput"
               value={this.state.message}
               onChange={this.handleChange}
               onKeyPress={this.handlePressKey}
             />
-            <Tooltip title="Send message">
-              <Fab size="small" id="sendButton" onClick={this.sendMessage}>
-                <Send />
-              </Fab>
-            </Tooltip>
+            <button type="button" id="sendButton" onClick={this.sendMessage}>
+              <img src={btnPlane} />
+            </button>
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ import logo from "../../img/logo.png";
 const NavBar = () => {
   const authCtx = useContext(AuthContext);
 
-  // const [isLoggedIn, setIsLoggedIn] = useState(authCtx.isLoggedIn);
   const isLoggedIn = !!getCookie("accessToken");
 
   const logoutHandler = () => {
@@ -35,9 +34,9 @@ const NavBar = () => {
             <li>
               <NavLink to="GroupRecruit">스터디 그룹 모집</NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="About">소식</NavLink>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </div>

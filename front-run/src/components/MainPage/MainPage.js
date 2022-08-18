@@ -13,7 +13,6 @@ import MyStudyInfo from "./MyStudyInfo";
 import "./MainPage.css";
 import jsons from "../json/main";
 import AuthContext from "../../store/auth-context";
-import mystudy__infor__tmp from "../../img/Icons/mystudy__infor__tmp.png";
 
 function MainPage() {
   const authCtx = useContext(AuthContext);
@@ -29,7 +28,7 @@ function MainPage() {
 
   // const [datas, setDatas] = useState(jsons.responseData);
   const [datas, setDatas] = useState({
-    myGroups: [],
+    myGroups: null,
     member: {},
     rooms: [],
     groups: [],
@@ -62,10 +61,10 @@ function MainPage() {
   if (isLoggedIn) {
     userInformation = datas["member"];
     myGroups = datas["myGroups"];
-     let myNickName = localStorage.setItem(
-       "nickName",
-       userInformation["nickName"]
-     );
+    let myNickName = localStorage.setItem(
+      "nickName",
+      userInformation["nickName"]
+    );
   }
 
   console.log(datas);
@@ -100,16 +99,24 @@ function MainPage() {
                   </span>
 
                   {/*그룹 아무것도 가입안한경우 */}
-                  {myGroups.length === 0 && (
+                  {myGroups === null && (
+                    <>
+                      <div id="myGroup-title" onClick={toGroupRecruit}></div>
+                    </>
+                  )}
+                  {myGroups !== null && myGroups.length === 0 && (
                     <>
                       <div id="myGroup-title" onClick={toGroupRecruit}>
                         <span>가입한 그룹이 없습니다. 둘러보세요!</span>
                       </div>
                     </>
                   )}
-                  {myGroups.length > 0 && (
+                  {myGroups !== null && myGroups.length > 0 && (
                     <ul id="mypage-mygroup">
                       {myGroups.map((group, index) => {
+                        if (index >= 2) {
+                          return;
+                        }
                         return (
                           <li key={index}>
                             <GroupItem

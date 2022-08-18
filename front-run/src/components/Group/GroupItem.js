@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import swal from "sweetalert";
 import { getCookie } from "../../Cookie";
 
 import "./GroupItem.css";
@@ -11,10 +12,11 @@ function GroupItem(props) {
 
   function enteringGroup(id) {
     if (getCookie("accessToken") === undefined) {
-      alert("로그인을 해주세요");
+      swal("로그인을 해주세요", "", "error");
       return;
+    } else {
+      navigate(`/GroupDetail/${id}`);
     }
-    navigate(`/GroupDetail/${id}`);
   }
 
   return (

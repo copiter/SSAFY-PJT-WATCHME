@@ -6,12 +6,13 @@ import { getCookie } from "../../Cookie";
 
 import "./GroupCreate.css";
 import ErrorCode from "../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function GroupCreate() {
   //로그인 안 되었으면 내쫓김
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
   // if (getCookie("accessToken") === undefined) {
-  //   alert("로그인을 해주세요");
+  //   swal("로그인을 해주세요", "", "error");
   //   window.history.back();
   // } else {
   //   setIsLoggedIn(true);
@@ -100,6 +101,7 @@ function GroupCreate() {
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
+    if(ctgs.length){
     fetch(url, {
       method: "POST",
       body: formData,
@@ -110,7 +112,7 @@ function GroupCreate() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          alert("그룹이 생성되었습니다!");
+          swal("그룹이 생성되었습니다!", "", "success");
           navigate(`/GroupDetail/${result.responseData.groupId}`);
         } else {
           ErrorCode(result);
@@ -119,6 +121,10 @@ function GroupCreate() {
       .catch((err) => {
         console.log("ERR");
       });
+    }
+    else{
+      swal("그룹카테고리를 클릭해주세요")
+    }
   };
 
   const [fileImage, setFileImage] = useState("");
@@ -126,7 +132,7 @@ function GroupCreate() {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
 
-  //if (isLoggedIn) {
+  // if (isLoggedIn) {
   return (
     <div id="group-create">
       <Link to="/GroupRecruit" className="back-to-recruit">
@@ -134,7 +140,7 @@ function GroupCreate() {
       </Link>
       <form onSubmit={handleSubmit}>
         <div id="form-frame-create">
-          <div className="group-image">
+          <div className="group-image-create">
             {fileImage && (
               <img
                 /*이미지 띄워지는곳 */
@@ -275,7 +281,7 @@ function GroupCreate() {
       </form>
     </div>
   );
-  //}
+  // }
 }
 
 export default GroupCreate;

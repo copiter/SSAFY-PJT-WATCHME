@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
 
 import "./MyGroups.css";
 import json from "../json/mygroups.json";
-import { useNavigate } from "react-router-dom";
 import ErrorCode from "../../Error/ErrorCode";
 
 function MyGroups() {

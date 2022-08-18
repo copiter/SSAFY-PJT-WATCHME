@@ -6,6 +6,7 @@ import { getCookie } from "../../Cookie";
 
 import "./GroupReform.css";
 import ErrorCode from "../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function GroupReform() {
   const [inputs, setInputs] = useState({
@@ -160,7 +161,7 @@ function GroupReform() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          alert("그룹이 수정되었습니다!");
+          swal("그룹이 수정되었습니다!", "", "success");
           navigate(`/GroupDetail/${groupId}`);
         } else {
           ErrorCode(result);

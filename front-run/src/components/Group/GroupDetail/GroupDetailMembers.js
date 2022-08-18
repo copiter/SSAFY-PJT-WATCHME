@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./GroupDetailMembers.css";
 import json from "../../json/groupdetailmembers.json";
 import ErrorCode from "../../../Error/ErrorCode";
+import swal from "sweetalert";
 
 function GroupDetailMembers(props) {
   const [memData, setMemData] = useState({ appliers: [], members: [] });
@@ -31,7 +32,7 @@ function GroupDetailMembers(props) {
           ErrorCode(data);
         }
       } catch (e) {
-        alert(`통신 실패 ` + e);
+        swal("통신실패", "", "error");
       }
     };
     getDatas();
@@ -44,173 +45,219 @@ function GroupDetailMembers(props) {
   }
 
   function deleteGroupHandler() {
-    const ask = window.confirm("그룹을 정말 삭제하시겠습니까?");
-    if (!ask) {
-      return;
-    }
+    swal({
+      title: "그룹을 정말 삭제하시겠습니까?",
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        const config = {
+          method: "POST",
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        };
+        const getDatas = async () => {
+          const response = await fetch(url + "/delete", config);
+          const data = await response.json();
 
-    const config = {
-      method: "POST",
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url + "/delete", config);
-      const data = await response.json();
-
-      if (data.code === 200) {
-        alert("그룹 삭제 되었습니다");
-        navigate("/");
+          if (data.code === 200) {
+            swal("그룹 삭제 되었습니다", "", "success");
+            navigate("/");
+          } else {
+            ErrorCode(data);
+          }
+        };
+        getDatas();
       } else {
-        ErrorCode(data);
+        return;
       }
-    };
-    getDatas();
+    });
   }
 
   function leaveGroupHandler() {
-    const ask = window.confirm("탈퇴하시겠습니까?");
-    if (!ask) {
-      return;
-    }
+    swal({
+      title: "탈퇴하시겠습니까?",
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        const config = {
+          method: "POST",
+          body: {
+            nickName: props.myData.nickName,
+          },
+          headers: {
+            accessToken: getCookie("accessToken"),
+          },
+        };
+        const getDatas = async () => {
+          const response = await fetch(url + "/leave", config);
+          const data = await response.json();
 
-    const config = {
-      method: "POST",
-      body: {
-        nickName: props.myData.nickName,
-      },
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url + "/leave", config);
-      const data = await response.json();
-
-      if (data.code === 200) {
-        alert("그룹 탈퇴 되었습니다");
-        window.location.reload();
+          if (data.code === 200) {
+            swal("그룹 탈퇴 되었습니다", "", "success");
+            window.location.reload();
+          } else {
+            ErrorCode(data);
+          }
+        };
+        getDatas();
       } else {
-        ErrorCode(data);
+        return;
       }
-    };
-    getDatas();
+    });
   }
 
   function confirmJoinHandler(nickName) {
-    const ask = window.confirm(`[${nickName}]님을 가입 승인하시겠습니까?`);
-    if (!ask) {
-      return;
-    }
-    //가입 승인
-    const config = {
-      method: "POST",
-      body: JSON.stringify({ nickName: nickName }),
-      headers: {
-        accessToken: getCookie("accessToken"),
-        "Content-Type": "application/json",
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url + "/applies/accept", config);
-      const data = await response.json();
+    swal({
+      title: `[${nickName}]님을 가입 승인하시겠습니까?`,
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        //가입 승인
+        const config = {
+          method: "POST",
+          body: JSON.stringify({ nickName: nickName }),
+          headers: {
+            accessToken: getCookie("accessToken"),
+            "Content-Type": "application/json",
+          },
+        };
+        const getDatas = async () => {
+          const response = await fetch(url + "/applies/accept", config);
+          const data = await response.json();
 
-      if (data.code === 200) {
-        alert("가입 승인되었습니다");
-        setReload(!reload);
+          if (data.code === 200) {
+            swal("가입 승인되었습니다", "", "success");
+            setReload(!reload);
+          } else {
+            ErrorCode(data);
+          }
+        };
+        getDatas();
       } else {
-        ErrorCode(data);
+        return;
       }
-    };
-    getDatas();
+    });
   }
 
   function refuseJoinHandler(nickName) {
-    const ask = window.confirm(`[${nickName}]님을 반려하시겠습니까?`);
-    if (!ask) {
-      return;
-    }
-    //가입 승인
-    const config = {
-      method: "POST",
-      body: JSON.stringify({ nickName: nickName }),
-      headers: {
-        accessToken: getCookie("accessToken"),
-        "Content-Type": "application/json",
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url + "/applies/decline", config);
-      const data = await response.json();
+    swal({
+      title: `[${nickName}]님을 반려하시겠습니까?`,
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        // 가입 반려
+        const config = {
+          method: "POST",
+          body: JSON.stringify({ nickName: nickName }),
+          headers: {
+            accessToken: getCookie("accessToken"),
+            "Content-Type": "application/json",
+          },
+        };
+        const getDatas = async () => {
+          const response = await fetch(url + "/applies/decline", config);
+          const data = await response.json();
 
-      if (data.code === 200) {
-        alert("반려되었습니다");
-        setReload(!reload);
+          if (data.code === 200) {
+            swal("반려되었습니다", "", "success");
+            setReload(!reload);
+          } else {
+            ErrorCode(data);
+          }
+        };
+        getDatas();
       } else {
-        ErrorCode(data);
+        return;
       }
-    };
-    getDatas();
+    });
   }
 
   function expulsionHandler(nickName) {
-    const ask = window.confirm(`[${nickName}]님을 강퇴 하시겠습니까?`);
-    if (!ask) {
-      return;
-    }
+    swal({
+      title: `[${nickName}]님을 강퇴 하시겠습니까?`,
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        //멤버 강퇴
+        const config = {
+          method: "POST",
+          body: JSON.stringify({ nickName: nickName }),
+          headers: {
+            accessToken: getCookie("accessToken"),
+            "Content-Type": "application/json",
+          },
+        };
+        const getDatas = async () => {
+          const response = await fetch(url + "/kick", config);
+          const data = await response.json();
 
-    //멤버 강퇴
-    const config = {
-      method: "POST",
-      body: JSON.stringify({ nickName: nickName }),
-      headers: {
-        accessToken: getCookie("accessToken"),
-        "Content-Type": "application/json",
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url + "/kick", config);
-      const data = await response.json();
-
-      if (data.code === 200) {
-        alert(`[${nickName}]님이 성공적으로 탈퇴되었습니다`);
-        setReload(!reload);
+          if (data.code === 200) {
+            swal(`[${nickName}]님이 성공적으로 탈퇴되었습니다`, "", "success");
+            setReload(!reload);
+          } else {
+            ErrorCode(data);
+          }
+        };
+        getDatas();
       } else {
-        ErrorCode(data);
+        return;
       }
-    };
-    getDatas();
+    });
   }
 
   function transferHandler(nickName) {
-    const ask = window.confirm(
-      `[${nickName}]님으로 리더 권한을 이전 하시겠습니까?`
-    );
-    if (!ask) {
-      return;
-    }
-
-    //권한 이양
-    const config = {
-      method: "POST",
-      body: JSON.stringify({ nickName: nickName }),
-      headers: {
-        accessToken: getCookie("accessToken"),
-        "Content-Type": "application/json",
-      },
-    };
-    const getDatas = async () => {
-      const response = await fetch(url + "/leader-toss", config);
-      const data = await response.json();
-      if (data.code === 200) {
-        alert(`[${nickName}]님으로 리더 권한이 이전되었습니다`);
-        setReload(!reload);
+    swal({
+      title: `[${nickName}]님으로 리더 권한을 이전 하시겠습니까?`,
+      text: "",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        //권한 이양
+        const config = {
+          method: "POST",
+          body: JSON.stringify({ nickName: nickName }),
+          headers: {
+            accessToken: getCookie("accessToken"),
+            "Content-Type": "application/json",
+          },
+        };
+        const getDatas = async () => {
+          const response = await fetch(url + "/leader-toss", config);
+          const data = await response.json();
+          if (data.code === 200) {
+            swal(
+              `[${nickName}]님으로 리더 권한이 이전되었습니다`,
+              "",
+              "success"
+            );
+            setReload(!reload);
+          } else {
+            ErrorCode(data);
+          }
+        };
+        getDatas();
       } else {
-        ErrorCode(data);
+        return;
       }
-    };
-    getDatas();
+    });
   }
 
   return (

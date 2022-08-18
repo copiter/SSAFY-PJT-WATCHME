@@ -78,6 +78,14 @@ function SprintItem(props) {
             {sprint.status !== "YES" && (
               <div className="sprint__content-item-status">
                 <span className="content-status-title">스프린트 현황</span>
+                {sprint.status === "NO" && (
+                  <button
+                    id="sprintCal-btn"
+                    onClick={() => props.sprintCal(sprint.sprintId)}
+                  >
+                    스프린트 정산
+                  </button>
+                )}
                 <ul>
                   <li>
                     <small>⏰ 내 공부시간</small>

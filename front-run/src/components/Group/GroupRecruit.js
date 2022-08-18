@@ -13,7 +13,6 @@ import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import groupJsons from "../json/groupRec.json";
 
-let page = 1;
 
 function GroupRecruit() {
   //Search 못맞춰서 작동 안됩니다...
@@ -25,17 +24,20 @@ function GroupRecruit() {
     keyword: "",
   });
 
-  const [groups, setGroups] = useState(groupJsons.responseData.groups);
-
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
 
+  // const [groups, setGroups] = useState(groupJsons.responseData.groups);
+  const [groups, setGroups] = useState({ groups: [] });
+  const [groupPage, setGroupPage]=useState(1);
+
   //URL
   const url = `${FETCH_URL}/groups`;
   useEffect(() => {
+    setGroupPage(1);
     fetch(url)
       .then((response) => response.json())
       .then((result) => {
@@ -74,33 +76,13 @@ function GroupRecruit() {
     // setInputs((values) => ({ ...values, [inputs.keyword]: "" }));
   };
 
-  const addMore = (event) => {
-    //값 입력 안받은상태임
-    fetch(
-      url +
-        "?" +
-        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
-        (page === "" || page === 1 ? "" : "page=" + page + "&") +
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.code === 200) {
-          page++;
-          setGroups([...groups, ...result.responseData.groups]);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  
 
   const ctgChange = (event) => {
     //카테고리 변동(LI라서 이방법 사용)
     event.preventDefault();
     const ARR = ["", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
+    setGroupPage(1);
 
     setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
     fetch(
@@ -123,7 +105,31 @@ function GroupRecruit() {
         console.log(err);
       });
   };
-
+  const addMore = (event) => {
+    //값 입력 안받은상태임
+    event.preventDefault();
+    let page=parseInt(parseInt(groupPage)+1);
+    console.log(page);
+    fetch(
+      url +
+        "?" +
+        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
+        "page=" + page + "&"+
+        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          setGroups([...groups, ...result.responseData.groups]);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+      setGroupPage(page)
+  };
   // console.log(groups);
 
   return (
@@ -219,13 +225,14 @@ function GroupRecruit() {
           </div>
         </div>
         <ul id="groups__whole" value={0}>
-          {groups.map((group, index) => {
-            return (
-              <li key={index}>
-                <GroupItem group={group} width="329" height="285" />
-              </li>
-            );
-          })}
+          {groups.length > 0 &&
+            groups.map((group, index) => {
+              return (
+                <li key={index}>
+                  <GroupItem group={group} width="329" height="285" />
+                </li>
+              );
+            })}
         </ul>
         <button type="button" id="more-btn" name="grouppage" onClick={addMore}>
           <img src={down} alt="+" />

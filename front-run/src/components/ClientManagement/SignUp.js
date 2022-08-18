@@ -8,6 +8,7 @@ import accept from "../../img/Icons/accept.png";
 import cancel from "../../img/Icons/cancel.png";
 
 import "./SignUp.css";
+import swal from "sweetalert";
 
 function SignUp() {
   const FETCH_URL = useContext(FetchUrl);
@@ -40,15 +41,15 @@ function SignUp() {
 
     //중복확인 여부
     if (isEmailDup || isNickNameDup) {
-      alert("이메일 혹은 닉네임 중복확인이 필요합니다");
+      swal("이메일 혹은 닉네임 중복확인이 필요합니다", "", "error");
       return;
     } else if (isEmailDup === null || isNickNameDup === null) {
-      alert("이메일 혹은 닉네임 중복확인이 필요합니다");
+      swal("이메일 혹은 닉네임 중복확인이 필요합니다", "", "error");
       return;
     }
 
     if (!isPwdSame) {
-      alert("비밀번호를 확인해주세요");
+      swal("비밀번호를 확인해주세요", "", "error");
       return;
     }
 
@@ -81,15 +82,14 @@ function SignUp() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          alert("회원가입 되었습니다");
+          swal("회원가입 되었습니다", "", "success");
           navigate("/login"); //로그인 페이지로
         } else {
           ErrorCode(result);
         }
       })
       .catch((err) => {
-        console.log(err);
-        alert("오류가 발생하였습니다");
+        swal("통신실패", "", "error");
       });
   };
 
@@ -124,7 +124,7 @@ function SignUp() {
           setIsEmailDup(true);
         }
       } catch (e) {
-        alert("통신 실패 " + e);
+        swal("통신실패", "", "error");
       }
     };
     getDatas();
@@ -152,7 +152,7 @@ function SignUp() {
           setIsNickNameDup(true);
         }
       } catch (e) {
-        alert("통신 실패 " + e);
+        swal("통신실패", "", "error");
       }
     };
     getDatas();

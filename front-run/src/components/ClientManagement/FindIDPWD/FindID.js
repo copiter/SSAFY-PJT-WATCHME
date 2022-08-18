@@ -3,6 +3,7 @@ import "./FindID.css";
 import { useContext, useState } from "react";
 import { FetchUrl } from "../../../store/communication";
 import { Link, useNavigate } from "react-router-dom";
+import swal from "sweetalert";
 
 function FindID() {
   const url = `${useContext(FetchUrl)}/find-email`;
@@ -39,17 +40,17 @@ function FindID() {
       .then((result) => {
         console.log(result);
         if (result.message === "FIND EMAIL FAIL") {
-          alert("잘못된 정보입니다");
+          swal("잘못된 정보입니다", "", "error");
         } else if (result.message === "FIND EMAIL SUCCESS") {
-          alert("아이디 : " + result.responseData.email);
+          swal("아이디 : " + result.responseData.email, "", "success");
           navigate("/login");
           ////////////////////////////성공시 여기입니다.
         } else {
-          alert("오류입니다.");
+          swal("오류입니다", "", "error");
         }
       })
       .catch((err) => {
-        console.log("ERRROR");
+        swal("통신실패", "", "error");
       });
   };
   const handleChange = (event) => {

@@ -13,7 +13,6 @@ import json from "../json/roomrecruit.json";
 import ErrorCode from "../../Error/ErrorCode";
 import { getCookie } from "../../Cookie";
 
-let page = 1;
 
 function RoomRecruit() {
   const FETCH_URL = useContext(FetchUrl);
@@ -32,10 +31,12 @@ function RoomRecruit() {
   };
 
   const [rooms, setRooms] = useState(json.responseData.rooms);
-
+  const [roomPage, setRoomPage]=useState(1);
   //URL
   const url = `${FETCH_URL}/rooms`;
   useEffect(() => {
+    console.log(roomPage);
+    setRoomPage(1);
     fetch(url)
       .then((response) => response.json())
       .then((result) => {
@@ -73,8 +74,9 @@ function RoomRecruit() {
       });
   };
   const ctgChange = (event) => {
-    //
     event.preventDefault();
+    setRoomPage(1);
+    console.log(roomPage);
     const ARR = ["all", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
     setInputs((values) => ({ ...values, category: ARR[event.target.value] }));
     console.log(ARR[event.target.value]);
@@ -99,14 +101,15 @@ function RoomRecruit() {
   };
   const addMore = (event) => {
     //테스트 요망
-    page++;
+    let page=parseInt(parseInt(roomPage)+1);
+    console.log(page);
     fetch(
       url +
         "?" +
         (inputs.category === "" || inputs.category === "all"
           ? ""
           : "category=" + inputs.category + "&") +
-        (page === "" || page === 1 ? "" : "page=" + page + "&") +
+        "page=" + page + "&"+
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
@@ -120,6 +123,8 @@ function RoomRecruit() {
       .catch((err) => {
         console.log("ERROR");
       });
+      setRoomPage(page)
+      console.log(roomPage);
   };
 
   return (

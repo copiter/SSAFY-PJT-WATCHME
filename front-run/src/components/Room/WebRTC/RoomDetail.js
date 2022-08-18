@@ -1,7 +1,6 @@
 import axios from "axios";
 import { OpenVidu } from "openvidu-browser";
 import React, { Component } from "react";
-import "./RoomDetail.css";
 import UserVideoComponent from "./UserVideoComponent";
 import ChatComponent from "./chat/ChatComponent";
 import { FetchUrl } from "../../../store/communication";
@@ -9,8 +8,22 @@ import { Routes, Route, Link } from "react-router-dom";
 
 import Members from "./componentOnRoom/Members";
 import MyStudy from "./componentOnRoom/MyStudy";
-import RoomReform from "./componentOnRoom/RoomReform";
 import { getCookie } from "../../../Cookie";
+
+import screen_off from "../../../img/Icons/screen_off.png";
+import screen from "../../../img/Icons/screen.png";
+import mic from "../../../img/Icons/mic.png";
+import mic_mute from "../../../img/Icons/mic_mute.png";
+import video from "../../../img/Icons/video.png";
+import video_off from "../../../img/Icons/video_off.png";
+import out from "../../../img/Icons/out.png";
+import setting from "../../../img/Icons/setting.png";
+import btn_plane from "../../../img/Icons/btn-plane.png";
+import swal from "sweetalert";
+
+import ErrorCode from "../../../Error/ErrorCode";
+import { RoomReform } from "./componentOnRoom/RoomReform.js";
+import "./RoomDetail.css";
 
 //강제 리브세션=추방
 //방장 전용 기능 구현.
@@ -27,13 +40,14 @@ class RoomDetail extends Component {
       myUserName: "Participant" + Math.floor(Math.random() * 100), //내 닉네임.
       isRoomLeader: true, //방장인지 체크->방장전용 데이터 보임
       mode: "MODE1",
+      newErrorDetected: false,
 
       //카메라 설정 데이터
       videoState: true, //보이도록
       audioState: true, //마이크 on
       screenShare: true, //화면공유 버튼,
       //채팅관련 설정 데이터
-      chatDisplay: "block",
+      chatDisplay: "none",
 
       //내 카메라 및 영상 배치 관련 데이터
       session: undefined,
@@ -46,7 +60,9 @@ class RoomDetail extends Component {
       isScreenShareNow: false,
       screenShareCameraNeeded: false,
       firstTimeToCreateSreenShare: true,
-      fristCameraChange:true,
+      fristCameraChange: true,
+
+      modalOpen: false,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -128,9 +144,10 @@ class RoomDetail extends Component {
           console.log("리스폰스 성공");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
-          response.json().then((data) => {
-            console.log("ERR방나기 실패");
-            let errorMessage = "";
+          response.json().then((resPoseError) => {
+            console.log("ERR바가기 실패");
+            swal(resPoseError.message);
+            let errorMessage = "오류로 방나가기 안됨ㄴ";
             throw new Error(errorMessage);
           });
         }
@@ -142,6 +159,7 @@ class RoomDetail extends Component {
           console.log(result);
           if (result.code === 200) {
             console.log("방나가기 성공");
+            swal("퇴장하셨습니다.");
           } else {
             console.log("오류가 발생하였습니다.");
           }
@@ -158,12 +176,13 @@ class RoomDetail extends Component {
       window.location.href = "../../";
     } catch {
       console.log("디스콘실패");
+      swal("오류가 발생하였습니다.");
     }
     this.setState({
       session: undefined,
-      subscribers: [],
-      mySessionId: "SessionA" + Math.floor(Math.random() * 100),
-      myUserName: "Participant" + Math.floor(Math.random() * 100),
+      subscribers: undefined,
+      mySessionId: undefined,
+      myUserName: undefined,
       mainStreamManager: undefined,
       publisher: undefined,
     });
@@ -195,7 +214,7 @@ class RoomDetail extends Component {
           //newPublisher.once("accessAllowed", () => {
           await this.state.session.unpublish(this.state.mainStreamManager);
           await this.state.session.publish(newPublisher);
-          
+
           this.setState({
             currentVideoDevice: newVideoDevice,
             mainStreamManager: newPublisher,
@@ -208,62 +227,30 @@ class RoomDetail extends Component {
     }
   }
 
-
   //화면 공유 기능
   async shareScreen() {
-
-
     const latestPublisher = this.state.publisher;
     var newPublisher = this.OV.initPublisher(undefined, {
       videoSource: "screen",
     });
-    if (this.state.firstTimeToCreateSreenShare) {
-      //mainStream 없애고 새로 생성한 stream 추가\\
-      this.setState({
-        mainStreamManager: newPublisher,
-        publisher: latestPublisher,
-        isScreenShareNow: true,
-        screenShareCameraNeeded: true,
-        firstTimeToCreateSreenShare: false,
-      });
-
-
-      await this.state.session.publish(newPublisher);
-      await this.state.session.unpublish(newPublisher);
-      await this.state.session.publish(latestPublisher);
-    } else {
-      //mainStream 없애고 새로 생성한 stream 추가
-      await this.state.session.unpublish(this.state.mainStreamManager);
-      await this.state.session.publish(newPublisher);
-      this.setState({
-        mainStreamManager: newPublisher,
-        publisher: latestPublisher,
-        isScreenShareNow: true,
-        screenShareCameraNeeded: true,
-      });
-    }
+    await this.state.session.unpublish(this.state.mainStreamManager);
+    await this.state.session.publish(newPublisher);
+    this.setState({
+      mainStreamManager: latestPublisher,
+      publisher: newPublisher,
+      isScreenShareNow: true,
+    });
   }
   async shareScreenCancle() {
     const latestPublisher = this.state.publisher;
-
     this.setState({
+      publisher: this.state.mainStreamManager,
+      mainStreamManager: latestPublisher,
       isScreenShareNow: false,
-      screenShareCameraNeeded: false,
     });
-    await this.state.session.unpublish(this.state.publisher);
-    await this.state.session.publish(latestPublisher);
 
-    /*
-     //화면 공유 중지 누른 뒤 로직
-      newPublisher.stream
-      .getMediaStream()
-      .getVideoTracks()[0]
-      .addEventListener("ended", () => {
-        console.log('User pressed the "Stop sharing" button');
-        this.state.session.unpublish(newPublisher);
-        this.state.session.publish(latestPublisher);
-       
-      });*/
+    await this.state.session.unpublish(latestPublisher);
+    await this.state.session.publish(this.state.publisher);
   }
 
   //방 기본설정들, 문제없이 진행됨.
@@ -347,7 +334,8 @@ class RoomDetail extends Component {
         if (response.ok) {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
-          response.json().then((data) => {
+          response.json().then((responseDataError) => {
+            swal(responseDataError.message);
             let errorMessage = "";
             throw new Error(errorMessage);
           });
@@ -365,18 +353,20 @@ class RoomDetail extends Component {
               result.responseData.room.mode === "MODE1" ? false : true,
             mode: result.responseData.room.mode,
           });
-          
-          sessionStorage.setItem(
-            "roomName",result.responseData.room.name
-          );
+          console.log(result.responseData.mode);
+          sessionStorage.setItem("roomName", result.responseData.room.name);
           this.joinSessionSetOpenVidu(id);
-          setInterval(() => {
-            this.openTeli(
-              id,
-              result.responseData.room.name,
-              result.responseData.room.mode
-            );
-          }, 3000);
+          setInterval(
+            () => {
+              this.openTeli(id);
+              console.log("인터벌");
+              console.log(this.state.mySessionId);
+              console.log(this.state.isRoomLeader);
+              console.log(this.state.screenShare);
+              console.log(this.state.mode);
+            },
+            result.responseData.room.mode === "MODE2" ? 1000 : 20000
+          );
         }
       })
       .catch((err) => {
@@ -429,8 +419,10 @@ class RoomDetail extends Component {
                   audio: true,
                 });
               } catch (e) {
-                alert(
-                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요"
+                swal(
+                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요",
+                  "",
+                  "error"
                 );
               }
 
@@ -528,8 +520,9 @@ class RoomDetail extends Component {
         if (response.ok) {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
-          response.json().then((data) => {
-            let errorMessage = "";
+          response.json().then((responseDataError) => {
+            let errorMessage = "에러입니다.";
+            this.ErrorCode(responseDataError);
             throw new Error(errorMessage);
           });
         }
@@ -539,15 +532,15 @@ class RoomDetail extends Component {
           if (result.code === 200) {
             console.log("오류없음");
           } else if (result.code === 205) {
+            console.log("여기 result", result);
             this.errorFound();
+            this.setState({
+              newErrorDetected: !this.state.newErrorDetected,
+            });
           } else if (result.code === 202) {
             this.ban();
-          } else if (result.code === 504) {
-            console.log("504에러");
-          } else if (result.code === 522) {
-            console.log("522에러");
-          } else if (result.code === 553) {
-            console.log("553에러");
+          } else {
+            this.ErrorCode(result);
           }
         }
       })
@@ -558,181 +551,149 @@ class RoomDetail extends Component {
 
   errorFound() {
     if (this.state.mode === "MODE2") {
-      alert("졸음이 감지되었습니다.");
+      swal("졸음이 감지되었습니다", "", "error");
     } else if (this.state.mode === "MODE3") {
-      alert("스마트폰이 감지되었습니다");
+      swal("스마트폰이 감지되었습니다", "", "error");
     } else {
       console.log("알수없는에러");
     }
   }
   ban() {
-    alert("벌점이 과다로 추방되었습니다.");
+    swal("벌점이 과다로 추방되었습니다", "", "error");
+    this.leaveSession();
     window.location.href = "../";
   }
 
+  openModal = () => {
+    this.setState({ modalOpen: true });
+  };
+  closeModal = () => {
+    this.setState({ modalOpen: false });
+  };
   render() {
     const mySessionId = this.state.mySessionId;
     var chatDisplay = { display: this.state.chatDisplay };
     return (
-      <div className="container">
+      <>
+        <React.Fragment>
+          <RoomReform
+            open={this.state.modalOpen}
+            close={this.closeModal}
+            title="Create a chat room"
+          >
+            내용
+          </RoomReform>
+        </React.Fragment>
+
         {this.state.session === undefined ? null : (
-          <div id="session" className="out">
-            <div className="Main">
-              <div id="session-header" className="Header">
-                <div id="session-title" className="headerTitle">
-                  <h1>{mySessionId}</h1>
-                </div>
-                <div className="headerButtons">
-                  <div className="btnTotal">
+          <div id="session">
+            <div id="Main">
+              <div id="session-header">
+                <h1 id="session-title" className="headerTitle">
+                  {mySessionId}
+                </h1>
+                <div id="headerButtons">
+                  <div id="btnTotal">
                     {this.state.videoState && (
-                      <button onClick={this.videoHandlerOff} className="btns ">
-                        Video OFF
-                      </button>
+                      <img src={video_off} onClick={this.videoHandlerOff} />
                     )}
                     {!this.state.videoState && (
-                      <button onClick={this.videoHandlerOn} className="btns ">
-                        Video ON
-                      </button>
+                      <img src={video} onClick={this.videoHandlerOn} />
                     )}
                     {this.state.audioState && (
-                      <button onClick={this.audioHandlerOff} className="btns ">
-                        Audio OFF
-                      </button>
+                      <img src={mic_mute} onClick={this.audioHandlerOff} />
                     )}
                     {!this.state.audioState && (
-                      <button onClick={this.audioHandlerOn} className="btns ">
-                        Audio ON
-                      </button>
+                      <img src={mic} onClick={this.audioHandlerOn} />
                     )}
                     {this.state.screenShare && !this.state.isScreenShareNow && (
-                      <button onClick={this.shareScreen} className="btns">
-                        화면공유
-                      </button>
+                      <img src={screen} onClick={this.shareScreen} />
                     )}
                     {this.state.screenShare && this.state.isScreenShareNow && (
-                      <button onClick={this.shareScreenCancle} className="btns">
-                        화면공유 취소
-                      </button>
+                      <img src={screen_off} onClick={this.shareScreenCancle} />
                     )}
+                  </div>
+                  <div id="btnOut">
+                    <img
+                      src={out}
+                      id="buttonLeaveSession"
+                      onClick={this.leaveSession}
+                      title="방 나가기"
+                    />
                   </div>
                 </div>
               </div>
-              <div className="cams">
-                <div className="myCams">
-                 
-                  <div id="video-container" className="subVideo">
-                    {this.state.publisher !== undefined &&
-                    !this.state.firstTimeToCreateSreenShare ? (
-                      <div className="stream-container col-md-6 col-xs-6">
-                        <UserVideoComponent
-                          streamManager={this.state.publisher}
-                        />
-                      </div>
-                    ) : null}
-                  </div>
-                  <div id="main-video" className="mainVideo">
-                    {
-                      //개인카메라
-                      this.state.mainStreamManager !== undefined &&
-                      (this.state.isScreenShareNow ||
-                        this.state.firstTimeToCreateSreenShare) ? (
-                        <div className="stream-container col-md-6 col-xs-6">
-                          
-                          <UserVideoComponent
-                            streamManager={this.state.mainStreamManager}
-                            audioState={this.state.audioState}
-                          />
-                        </div>
-                      ) : null
-                    }
-                  </div>
+              <div id="video-container" className="subVideo">
+                {/* 나 */}
+                <div className="stream-container">
+                  <UserVideoComponent streamManager={this.state.publisher} />
                 </div>
-                <div className="others">
-                  {this.state.subscribers.map((sub, i) => (
-                    <div
-                      key={i}
-                      className="stream-container col-md-6 col-xs-6 "
-                    >
-                      <UserVideoComponent streamManager={sub} />
-                    </div>
-                  ))}
-                </div>
+                {/* 남 */}
+                {this.state.subscribers.map((sub, i) => (
+                  <div key={i} className="stream-container">
+                    <UserVideoComponent streamManager={sub} />
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="Aside">
-              <div className="rightSide">
-                <div className="sideNav">
-                  <div className="linksUl">
-                    <Link to="./">
-                      <button className="linksLi">내 공부</button>
-                    </Link>
-                    <Link to="./members">
-                      <button className="linksLi">맴버</button>
-                    </Link>
-                    {this.state.isRoomLeader ? (
-                      <Link to="./RoomReform">
-                        <button className="linksLi">방 수정</button>
-                      </Link>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-                <div className="AsideMain">
-                  <div className="sideBoards">
+            <div id="Aside">
+              <div id="chat-container" className="chatBoards">
+                {this.state.publisher !== undefined &&
+                  this.state.publisher.stream !== undefined && (
+                    <div
+                      className="OT_root OT_publisher custom-class"
+                      style={chatDisplay}
+                    >
+                      <ChatComponent
+                        user={this.state.publisher}
+                        chatDisplay={this.state.chatDisplay}
+                        close={this.toggleChat}
+                        messageReceived={this.checkNotification}
+                      />
+                    </div>
+                  )}
+              </div>
+              <div id="side-nav">
+                <Link to="./">내 공부</Link>
+                <Link to="./members">멤버</Link>
+                {this.state.isRoomLeader && (
+                  <div onClick={this.openModal}> 방 수정</div>
+                )}
+              </div>
+              <div id="AsideMain">
+                {
+                  <div id="aside-board">
                     <Routes>
-                      <Route path="/" element={<MyStudy />} />
+                      {/* <Route path="/" element={<MyStudy />} /> */}
+                      <Route
+                        path="/"
+                        element={
+                          <MyStudy
+                            mode={this.state.mode}
+                            newError={this.state.newErrorDetected}
+                          />
+                        }
+                      />
+                      {/* <MyStudy
+                        mode={this.state.mode}
+                        newError={this.state.newErrorDetected}
+                      /> */}
                       <Route path="/members" element={<Members />} />
-                      <Route path="/RoomReform" element={<RoomReform />} />
                     </Routes>
                   </div>
-                  <div id="chat-container" className="chatBoards">
-                    {this.state.publisher !== undefined &&
-                      this.state.publisher.stream !== undefined && (
-                        <div
-                          className="OT_root OT_publisher custom-class"
-                          style={chatDisplay}
-                        >
-                          <ChatComponent
-                            user={this.state.publisher}
-                            chatDisplay={this.state.chatDisplay}
-                            close={this.toggleChat}
-                            messageReceived={this.checkNotification}
-                          />
-                        </div>
-                      )}
-                  </div>
-                </div>
+                }
               </div>
-              <div className="btnRight">
-                <div className="btnRightInner">
-                  <input
-                    className="btn btn-large btn-danger btnR"
-                    type="button"
-                    id="buttonLeaveSession"
-                    onClick={this.leaveSession}
-                    value="방 나가기"
-                  />
-                  {this.state.isRoomLeader ? (
-                    <input
-                      className="btn btn-large btn-danger btnR"
-                      type="button"
-                      id="buttonLeaveSession"
-                      onClick={this.closeRoom}
-                      value="방 닫기"
-                    />
-                  ) : (
-                    ""
-                  )}
-                  <button className="btnR" onClick={() => this.toggleChat()}>
-                    채팅
-                  </button>
-                </div>
+              <div id="button-bottom">
+                <img
+                  src={btn_plane}
+                  id="toggleChat"
+                  onClick={() => this.toggleChat()}
+                />
               </div>
             </div>
           </div>
         )}
-      </div>
+      </>
     );
   }
 

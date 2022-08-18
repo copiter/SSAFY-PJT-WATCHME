@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { FetchUrl } from "./communication";
 import { getCookie, removeCookie } from "../Cookie";
-import ErrorCode from "../Error/ErrorCode";
+import swal from "sweetalert";
 
 const AuthContext = React.createContext({
   userData: "",
@@ -33,8 +33,11 @@ export const AuthContextProvider = (props) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          window.location.replace(window.location.origin);
-          removeCookie("accessToken");
+          swal("로그아웃 되었습니다!", "", "success");
+          setInterval(() => {
+            removeCookie("accessToken");
+            window.location.replace(window.location.origin);
+          }, [1000]);
         }
       })
       .catch((err) => {

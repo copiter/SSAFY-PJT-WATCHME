@@ -4,9 +4,10 @@ import { useContext, useState } from "react";
 import { FetchUrl } from "../../../store/communication";
 import { Link, useNavigate } from "react-router-dom";
 import swal from "sweetalert";
+import ErrorCode from "../../../Error/ErrorCode";
 
 function FindID() {
-  const url = `${useContext(FetchUrl)}/find-email`;
+  const url = `${useContext(FetchUrl)}/members/find-email`;
   const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
@@ -40,17 +41,16 @@ function FindID() {
       .then((result) => {
         console.log(result);
         if (result.message === "FIND EMAIL FAIL") {
-          swal("잘못된 정보입니다", "", "error");
+          swal("잘못된 정보입니다");
         } else if (result.message === "FIND EMAIL SUCCESS") {
-          swal("아이디 : " + result.responseData.email, "", "success");
+          swal("아이디 : " + result.responseData.email);
           navigate("/login");
           ////////////////////////////성공시 여기입니다.
-        } else {
-          swal("오류입니다", "", "error");
+        } else {ErrorCode(result);
         }
       })
       .catch((err) => {
-        swal("통신실패", "", "error");
+        console.log("ERRROR");
       });
   };
   const handleChange = (event) => {
@@ -62,10 +62,7 @@ function FindID() {
   return (
     <div className="login">
       <div className="login-title">
-        아이디찾기
-        <div>
-          <Link to="/FindPWD">비밀번호 찾기</Link>
-        </div>
+        아이디 찾기 / <Link to="/FindPWD">비밀번호 찾기</Link> 
       </div>
       <form className="login-inputs" onSubmit={submitHandler}>
         <input

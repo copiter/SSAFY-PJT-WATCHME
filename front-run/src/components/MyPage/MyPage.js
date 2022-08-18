@@ -104,10 +104,12 @@ function MyPage() {
               <Link to="/PointAdd">⚡ 충전하기</Link>
             </li>
             <li>
-              <Link to="./PointRefund">💰 전환하기</Link>
+              <Link to="/PointAdd">💰 전환하기</Link>
+              {/* <Link to="./PointRefund">💰 전환하기</Link> */}
             </li>
             <li>
-              <Link to="./PointUsed">⚡ 사용내역</Link>
+              <Link to="/PointAdd">⚡ 사용내역</Link>
+              {/* <Link to="./PointUsed">⚡ 사용내역</Link> */}
             </li>
           </ul>
         </div>
@@ -164,9 +166,9 @@ function MyPage() {
           <div id="mypage__setting">
             <strong>MyPage</strong>
             <ul id="Links">
-              <li>
+              {/* <li>
                 <Link to="./PointAdd">포인트 충전하기</Link>
-              </li>
+              </li> */}
               <li>
                 <a href="#">회원정보 수정</a>
               </li>

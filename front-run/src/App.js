@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Login from "./components/ClientManagement/Login";
 import SocialLogin from "./components/ClientManagement/SocialLogin";
+import SocialLoginFail from "./components/ClientManagement/SocialLoginFail";
 import SignUp from "./components/ClientManagement/SignUp";
 import FindID from "./components/ClientManagement/FindIDPWD/FindID";
 import FindPWD from "./components/ClientManagement/FindIDPWD/FindPWD";
@@ -45,6 +46,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/slogin" element={<SocialLogin />} />
+        <Route path="/sloginfail" element={<SocialLoginFail />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/FindID" element={<FindID />} />
         <Route path="/FindPWD" element={<FindPWD />} />

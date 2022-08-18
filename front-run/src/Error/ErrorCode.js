@@ -181,6 +181,9 @@ function ErrorCode(result) {
     case 573:
       swal("모집중인 스프린트가 있습니다", "", "error");
       break;
+    case 574:
+      swal("스프린트 방은 수정할 수 없습니다", "", "error");
+      break;
     case 595:
       swal("비정상적인 접근입니다", "", "error");
       break;

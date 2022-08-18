@@ -6,6 +6,7 @@ import GetToday from "../ETC/GetToday";
 
 import "./SprintCreate.css";
 import swal from "sweetalert";
+import ErrorCode from "../../Error/ErrorCode";
 
 function SprintCreate(props) {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ function SprintCreate(props) {
       penaltyMoney: penaltyMoneyInputRef.current.value,
       mode: modeInputRef.current.value,
     };
-
+    // debugger;
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);
     formData.append(
@@ -101,8 +102,12 @@ function SprintCreate(props) {
         return response.json();
       })
       .then((result) => {
-        swal("방이 성공적으로 생성되었습니다", "", "success");
-        navigate(`/GroupDetail/${groupId}`);
+        if (result.code === 200) {
+          swal("방이 성공적으로 생성되었습니다", "", "success");
+          navigate(`/GroupDetail/${groupId}`);
+        } else {
+          ErrorCode(result);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -184,8 +189,10 @@ function SprintCreate(props) {
                 <input
                   type="time"
                   required
+                  defaultValue="09:00"
                   ref={routineStartAtInputRef}
                   onChange={timeCheck}
+                  step="600"
                 />
               </label>
               <label>
@@ -193,8 +200,10 @@ function SprintCreate(props) {
                 <input
                   type="time"
                   required
+                  defaultValue="18:00"
                   ref={routineEndAtInputRef}
                   onChange={timeCheck}
+                  step="600"
                 />
               </label>
 

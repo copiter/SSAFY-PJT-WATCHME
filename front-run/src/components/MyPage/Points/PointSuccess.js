@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FetchUrl } from "../../../store/communication";
 import { getCookie } from "../../../Cookie";
+import ErrorCode from "../../../Error/ErrorCode";
 
 import "./PointSuccess.css";
 
@@ -33,6 +34,8 @@ function PointSuccess() {
       if (result.code === 200) {
         localStorage.removeItem("tid");
         navigate("/PointAdd");
+      } else {
+        ErrorCode(result);
       }
     });
 

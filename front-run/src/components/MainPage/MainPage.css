@@ -1,6 +1,11 @@
 a {
   color: none;
   text-decoration: none;
+  cursor: pointer;
+}
+
+#outer button {
+  cursor: pointer;
 }
 
 #mainpage__myinfor {

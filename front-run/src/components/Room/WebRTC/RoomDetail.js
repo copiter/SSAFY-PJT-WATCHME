@@ -147,7 +147,7 @@ class RoomDetail extends Component {
         } else {
           response.json().then((resPoseError) => {
             console.log("ERR바가기 실패");
-            swal(resPoseError.message);
+            ErrorCode(resPoseError);
             let errorMessage = "오류로 방나가기 안됨ㄴ";
             throw new Error(errorMessage);
           });
@@ -347,7 +347,8 @@ class RoomDetail extends Component {
               return response.json(); //ok떨어지면 바로 종료.
             } else {
               response.json().then((responseDataError) => {
-                swal(responseDataError.message);
+                ErrorCode(responseDataError);
+                setTimeout(()=>{window.location.href="../"},1000);
                 let errorMessage = "";
                 throw new Error(errorMessage);
               });

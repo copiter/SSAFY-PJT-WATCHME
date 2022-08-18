@@ -21,13 +21,19 @@
   box-sizing: border-box;
   padding: 30px;
 }
-.kakaopay-form-frame {
+#charge-form-frame {
   border-left: 1px solid #bdbdbd;
   min-width: 300px;
 
   box-sizing: border-box;
   padding: 30px;
+  display: flex;
+  flex-direction: column;
 }
+#charge-cash {
+  flex-basis: 50%;
+}
+
 #pointadd-title {
   font-size: 36px;
 }
@@ -35,7 +41,7 @@
 .point-my-pointdes {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   margin-bottom: 40px;
 }
 
@@ -65,6 +71,8 @@
 
 /* 워치미 포인트 설명 */
 .point-watchme {
+  max-width: 300px;
+  margin-left: 50px;
   flex-basis: 40%;
   display: flex;
   flex-direction: column;
@@ -120,13 +128,13 @@ td {
 }
 
 /* 캐쉬충전 */
-#point-cash-title {
+.point-cash-title {
   font-size: 26px;
   font-weight: 500;
   margin-bottom: 15%;
   letter-spacing: 1px;
 }
-#selection-title {
+.selection-title {
   font-size: 20px;
   margin-bottom: 15px;
 }
@@ -186,4 +194,12 @@ td {
 }
 .dirInput {
   max-width: 110px;
+}
+
+/* 캐쉬 환급 */
+#refund-cash-title {
+}
+#refund-input > span {
+  display: inline-block;
+  margin: 15px 0;
 }

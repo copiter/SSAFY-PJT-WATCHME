@@ -80,7 +80,7 @@ function RoomCreate() {
   const saveFileImage = (event) => {
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
-  let dates=new Date()
+  let dates = new Date();
   return (
     <div className="body-frame">
       <Link to="/RoomRecruit" className="back-to-recruit">

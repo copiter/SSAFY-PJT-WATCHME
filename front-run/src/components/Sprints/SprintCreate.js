@@ -184,8 +184,10 @@ function SprintCreate(props) {
                 <input
                   type="time"
                   required
+                  defaultValue="09:00"
                   ref={routineStartAtInputRef}
                   onChange={timeCheck}
+                  step="600"
                 />
               </label>
               <label>
@@ -193,8 +195,10 @@ function SprintCreate(props) {
                 <input
                   type="time"
                   required
+                  defaultValue="18:00"
                   ref={routineEndAtInputRef}
                   onChange={timeCheck}
+                  step="600"
                 />
               </label>
 

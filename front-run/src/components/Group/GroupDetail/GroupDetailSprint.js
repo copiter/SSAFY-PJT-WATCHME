@@ -49,6 +49,7 @@ function GroupDetailSprint(props) {
       sprintDone.push(sprint);
     }
   });
+  // console.log(sprints);
 
   function sprintCal(id) {
     swal({

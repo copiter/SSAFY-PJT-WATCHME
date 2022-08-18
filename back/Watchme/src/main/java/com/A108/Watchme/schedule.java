@@ -36,6 +36,7 @@ public class schedule {
     public void studyTime() {
 
         studyTimeReset();
+        startSprint();
 
     }
 
@@ -48,7 +49,6 @@ public class schedule {
 
         for (MemberInfo mI : memberInfoList) {
 
-            Integer studyTime = 0;
             Integer studyTimeDay = 0;
             Integer studyTimeWeek = 0;
             Integer studyTimeMonth = 0;
@@ -78,7 +78,6 @@ public class schedule {
             }
 
 
-            mI.setStudyTime(studyTime);
             mI.setStudyTimeDay(studyTimeDay);
             mI.setStudyTimeWeek(studyTimeWeek);
             mI.setStudyTimeMonth(studyTimeMonth);
@@ -91,25 +90,16 @@ public class schedule {
     }
 
 
-    @Scheduled(cron = "0 * * * * *")
-//    @Scheduled(fixedRateString = "5000", initialDelay = 10000)
+    @Transactional(rollbackFor = {Exception.class})
     public void startSprint() {
 
         System.out.println("start-Sprint");
 
-        Calendar cal = Calendar.getInstance();
-
-        cal.setTime(currTS);
-        cal.add(Calendar.DATE, -1);
-
-        currTS.setTime(cal.getTime().getTime());
-
-        Date curr = java.sql.Date.valueOf(LocalDate.now());
 
         // 시작 전 스프린트
         List<Sprint> sprintListYes = sprintRepository.findAllByStatus(Status.YES);
         sprintListYes.stream()
-                .filter(x -> x.getSprintInfo().getStartAt().before(curr) && x.getSprintInfo().getEndAt().after(curr))
+                .filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date()))
                 .forEach(x -> x.setStatus(Status.ING));
 
         sprintRepository.saveAll(sprintListYes);

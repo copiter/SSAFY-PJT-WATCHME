@@ -56,13 +56,16 @@ public class HomeService {
             if (checkCurrUser.isPresent()) {
                 Member currUser = checkCurrUser.get();
 
+                int studyTimeTotal = mrlRepository.findAllByMemberId(currUser.getId())
+                        .stream().mapToInt(x -> x.getStudyTime()).sum();
+
                 MemberDataDTO resMember = MemberDataDTO.builder()
                         .nickName(currUser.getNickName())
                         .profileImage(currUser.getMemberInfo().getImageLink())
                         .studyTimeToday(currUser.getMemberInfo().getStudyTimeDay())
                         .studyTimeWeek(currUser.getMemberInfo().getStudyTimeWeek())
                         .studyTimeMonth(currUser.getMemberInfo().getStudyTimeMonth())
-                        .studyTimeTotal(currUser.getMemberInfo().getStudyTime())
+                        .studyTimeTotal(studyTimeTotal)
                         .build();
 
                 result.setResponseData("member", resMember);

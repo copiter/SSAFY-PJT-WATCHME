@@ -537,6 +537,9 @@ public class MemberService {
 
         MemberInfo currUserInfo = currUser.getMemberInfo();
 
+        int studyTimeTotal = mrlRepository.findAllByMemberId(currUser.getId())
+                .stream().mapToInt(x -> x.getStudyTime()).sum();
+
         // member
         MemberDTO resMemberDTO = MemberDTO.builder()
                 .nickName(currUser.getNickName())
@@ -546,7 +549,7 @@ public class MemberService {
                 .studyTimeToday(currUserInfo.getStudyTimeDay())
                 .studyTimeWeek(currUserInfo.getStudyTimeWeek())
                 .studyTimeMonth(currUserInfo.getStudyTimeMonth())
-                .studyTimeTotal(currUserInfo.getStudyTime())
+                .studyTimeTotal(studyTimeTotal)
                 .build();
 
         result.setResponseData("member", resMemberDTO);
@@ -566,18 +569,19 @@ public class MemberService {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_MONTH, 0);
 
-        int[] penaltyByDay = new int[Calendar.getInstance().get(Calendar.DATE)];
+        int[] penaltyByDay = new int[Calendar.getInstance().get(Calendar.DATE)+1];
 
-        List<PenaltyLog> myPenaltyLog = penaltyLogRegistory.findByMember_idAndCreatedAtAfter(currUser.getId(), Date.from(cal.toInstant()));
+        List<PenaltyLog> myPenaltyLog = penaltyLogRegistory.
+                findByMember_idAndCreatedAtAfter(currUser.getId(), Date.from(cal.toInstant()));
 
-        myPenaltyLog.stream().forEach(x -> penaltyByDay[x.getCreatedAt().getDate() - 1] += 1);
+        myPenaltyLog.stream().forEach(x -> penaltyByDay[x.getCreatedAt().getDate()-1] += 1);
 
         result.setResponseData("penaltyByDay", penaltyByDay);
 
 
         // studyByDay
         // 2.일자별 공부 시간
-        int[] studyByDay = new int[Calendar.getInstance().get(Calendar.DATE)];
+        int[] studyByDay = new int[Calendar.getInstance().get(Calendar.DATE)+1];
 
         List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), Date.from(cal.toInstant()));
 

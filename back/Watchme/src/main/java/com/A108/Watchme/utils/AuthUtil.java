@@ -19,11 +19,12 @@ public class AuthUtil {
     @Autowired
     private MemberRepository memberRepository;
     public Long memberAuth(){
+
         Long memberId;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try{
             memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-
+            System.out.println(memberId);
             if(!memberRepository.existsById(memberId)){
                 throw new CustomException(Code.C503);
             }

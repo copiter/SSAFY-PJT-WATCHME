@@ -19,10 +19,12 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
+                    System.out.println(cookie.getDomain());
                     return Optional.of(cookie);
                 }
             }
         }
+
         return Optional.empty();
     }
 

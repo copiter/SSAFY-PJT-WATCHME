@@ -50,7 +50,7 @@ function GroupDetailSprint(props) {
     }
   });
 
-  function sprintCal() {
+  function sprintCal(id) {
     swal({
       title: "정산하시겠습니까?",
       text: "",
@@ -59,7 +59,7 @@ function GroupDetailSprint(props) {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        fetch(`${props.href}/sprints/${sprintJoin.sprintId}/points`, {
+        fetch(`${props.href}/sprints/${id}/points`, {
           method: "POST",
           headers: {
             accessToken: getCookie("accessToken"),
@@ -169,7 +169,7 @@ function GroupDetailSprint(props) {
       })
       .then((result) => {
         if (result.code === 200) {
-          navigate(`/RoomDetail/`+ result.responseData.roomId);
+          navigate(`/RoomDetail/` + result.responseData.roomId);
         } else {
           ErrorCode(result);
         }

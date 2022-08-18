@@ -302,7 +302,7 @@ class RoomDetail extends Component {
     if (display === "block") {
       this.setState({ chatDisplay: display, messageReceived: false });
     } else {
-      console.log("chat", display);
+      // console.log("chat", display);
       this.setState({ chatDisplay: display });
     }
   }
@@ -350,7 +350,7 @@ class RoomDetail extends Component {
         },
       })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           if (response.ok) {
             return response.json(); //ok떨어지면 바로 종료.
           } else {
@@ -376,7 +376,7 @@ class RoomDetail extends Component {
                 result.responseData.room.mode === "MODE1" ? false : true,
               mode: result.responseData.room.mode,
             });
-            console.log(result.responseData.mode);
+            // console.log(result.responseData.mode);
             sessionStorage.setItem("roomName", result.responseData.room.name);
           }
         })
@@ -391,7 +391,7 @@ class RoomDetail extends Component {
     this.joinSessionSetOpenVidu(id);
   }
   async joinSessionSetOpenVidu(newSessionId) {
-    console.log("오픈비두 테스트");
+    // console.log("오픈비두 테스트");
     console.log(this.state);
     //오픈비두 세팅
     this.OV = new OpenVidu();

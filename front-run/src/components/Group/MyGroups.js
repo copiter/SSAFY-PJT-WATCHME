@@ -37,7 +37,7 @@ function MyGroups() {
     navigate(`/GroupDetail/${id}`);
   }
 
-  console.log(datas);
+  // console.log(datas);
 
   return (
     <div id="my-group">

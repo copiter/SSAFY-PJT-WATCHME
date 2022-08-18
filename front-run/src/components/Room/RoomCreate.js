@@ -34,7 +34,7 @@ function RoomCreate() {
   const imgeRef = useRef();
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(inputs);
+    // console.log(inputs);
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);

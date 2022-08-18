@@ -70,7 +70,7 @@ function GroupCreate() {
     let ctgs = [];
     let i = 0;
     let j = 0;
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i <= 5; i++) {
       if (inputs.ctg[i]) {
         ctgs[j] =
           i === 0
@@ -81,6 +81,8 @@ function GroupCreate() {
             ? "수능"
             : i === 3
             ? "코딩"
+            : i === 4
+            ? "자격증"
             : "기타";
         j++;
       }
@@ -255,6 +257,14 @@ function GroupCreate() {
                     value="수능"
                   />
                   수능
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    onChange={handleChangeSelect}
+                    value="자격증"
+                  />
+                  자격증
                 </label>
                 <label>
                   <input

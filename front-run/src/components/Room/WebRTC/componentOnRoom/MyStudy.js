@@ -1,4 +1,3 @@
-import { now } from "jquery";
 import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { getCookie } from "../../../../Cookie";
@@ -17,18 +16,18 @@ function MyStudy(props) {
   });
 
   const id = window.location.pathname.split("/")[2].substring(0);
-  console.log("URL:" + url + "/" + id);
+  // console.log("URL:" + url + "/" + id);
 
   useEffect(() => {
     setInterval(() => {
-      console.log("TESTHERE");
+      // console.log("TESTHERE");
       fetch(url + "/" + id, {
         headers: {
           accessToken: getCookie("accessToken"),
         },
       })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           if (response.ok) {
             return response.json(); //ok떨어지면 바로 종료.
           } else {
@@ -57,14 +56,14 @@ function MyStudy(props) {
   const [errorLogs, setErrorLogs] = useState([{}]);
 
   useEffect(() => {
-    const time = new Date().toTimeString().split(" ")[0];
-    let modeArray = [{ mode: props.mode, time: time }, ...errorLogs];
-    if (modeArray.length > 5) {
-      modeArray.pop();
+    if (props.mode !== null) {
+      const time = new Date().toTimeString().split(" ")[0];
+      let modeArray = [{ mode: props.mode, time: time }, ...errorLogs];
+      if (modeArray.length > 5) {
+        modeArray.pop();
+      }
+      setErrorLogs(modeArray);
     }
-    setErrorLogs(modeArray);
-    console.log("바뀜");
-    console.log("errorLogs", errorLogs);
   }, [props.newError]);
 
   console.log(studyTimes);
@@ -114,7 +113,7 @@ function MyStudy(props) {
           </p>
         </div>
         <div id="study-rule__error">
-          {errorLogs.length > 2 &&
+          {errorLogs.length > 0 &&
             errorLogs.map((log, index) => {
               return (
                 <div className="study-rule__error-item" key={index}>

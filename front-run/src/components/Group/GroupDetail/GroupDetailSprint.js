@@ -37,7 +37,7 @@ function GroupDetailSprint(props) {
     };
     getDatas();
   }, [reload]);
-  console.log(sprints);
+  // console.log(sprints);
 
   //sprint 분류
   let sprintJoin = {},

@@ -220,7 +220,7 @@
 }
 .input-typeReform .lineReform:nth-child(3) input,
 .input-typeReform .lineReform:nth-child(3) select {
-  width: 38%;
+  width: 30%;
   margin-left: 55px;
 }
 
@@ -241,7 +241,7 @@ select option[value=""][disabled] {
   align-items: center;
 }
 .input-typeReform .lineReform:nth-child(4) input {
-  width: 140px;
+  width: 175px;
   margin: 0 55px 0 10px;
 }
 

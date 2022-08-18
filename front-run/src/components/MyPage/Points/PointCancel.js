@@ -24,10 +24,5 @@ function PointCancel() {
     </div>
   );
 }
-{
-  /* <html>
-  <h2>hi</h2>
-</html>; */
-}
 
 export default PointCancel;

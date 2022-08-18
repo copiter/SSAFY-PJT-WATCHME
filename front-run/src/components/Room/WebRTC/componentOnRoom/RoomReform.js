@@ -7,8 +7,6 @@ import { getCookie } from "../../../../Cookie";
 
 import "./RoomReform.css";
 import "./RoomReform.css";
-import { startTransition } from "react";
-import { data } from "jquery";
 
 export class RoomReform extends Component {
   constructor(props) {
@@ -242,6 +240,8 @@ export class RoomReform extends Component {
                             value={this.state.num ? this.state.num : ""}
                             onChange={this.handleChange}
                             accept="number"
+                            min="1"
+                            max="25"
                             placeholder="인원수를 선택하세요(1~25)"
                           />
                         </label>

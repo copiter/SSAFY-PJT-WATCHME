@@ -76,7 +76,7 @@
   flex-basis: 40%;
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
   padding: 0 60px 15px 0;
   box-sizing: border-box;
 }
@@ -174,8 +174,6 @@ td {
   transform: scale(0.98);
 }
 
-#charge-input {
-}
 #charge-input > span {
   display: inline-block;
   margin: 15px 0;
@@ -197,8 +195,6 @@ td {
 }
 
 /* 캐쉬 환급 */
-#refund-cash-title {
-}
 #refund-input > span {
   display: inline-block;
   margin: 15px 0;

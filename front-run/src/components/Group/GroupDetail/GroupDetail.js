@@ -3,7 +3,7 @@ import { FetchUrl } from "../../../store/communication";
 import { getCookie } from "../../../Cookie";
 
 import "./GroupDetail.css";
-import json from "../../json/groupdetail.json";
+// import json from "../../json/groupdetail.json";
 
 import GroupDetailHome from "./GroupDetailHome";
 import GroupDetailSprint from "./GroupDetailSprint";

@@ -101,29 +101,28 @@ function GroupCreate() {
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
     );
 
-    if(ctgs.length){
-    fetch(url, {
-      method: "POST",
-      body: formData,
-      headers: {
-        accessToken: getCookie("accessToken"),
-      },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.code === 200) {
-          swal("그룹이 생성되었습니다!", "", "success");
-          navigate(`/GroupDetail/${result.responseData.groupId}`);
-        } else {
-          ErrorCode(result);
-        }
+    if (ctgs.length) {
+      fetch(url, {
+        method: "POST",
+        body: formData,
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
       })
-      .catch((err) => {
-        console.log("ERR");
-      });
-    }
-    else{
-      swal("그룹카테고리를 클릭해주세요")
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.code === 200) {
+            swal("그룹이 생성되었습니다!", "", "success");
+            navigate(`/GroupDetail/${result.responseData.groupId}`);
+          } else {
+            ErrorCode(result);
+          }
+        })
+        .catch((err) => {
+          console.log("ERR");
+        });
+    } else {
+      swal("그룹카테고리를 클릭해주세요");
     }
   };
 
@@ -198,6 +197,8 @@ function GroupCreate() {
                     value={inputs.maxMember ? inputs.maxMember : ""}
                     onChange={handleChange}
                     accept="number"
+                    min="1"
+                    max="25"
                     required
                     placeholder="인원수를 선택하세요(1~25)"
                   />

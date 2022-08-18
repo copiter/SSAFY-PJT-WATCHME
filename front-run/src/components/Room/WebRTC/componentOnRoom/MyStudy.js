@@ -11,7 +11,7 @@ function MyStudy(props) {
 
   const [study, setStudy] = useState({
     // name: "123",
-     startTime: new Date(),
+    startTime: new Date(),
     // mode: "MODE2",
     // penalty: 13,
   });
@@ -50,11 +50,6 @@ function MyStudy(props) {
         .catch((err) => {
           console.log("ERR");
         });
-      // console.log("STUDYTIME-체크");
-      // console.log(
-      //   new Date().getTime() -
-      //     new Date(result.responseData.room.startTime).getTime()
-      // );
     }, 1000);
   }, []);
 

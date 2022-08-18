@@ -16,6 +16,7 @@ import com.A108.Watchme.VO.Entity.log.MemberRoomLog;
 import com.A108.Watchme.VO.Entity.log.MemberSprintLog;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.VO.Entity.room.Room;
 import com.A108.Watchme.VO.Entity.room.RoomInfo;
 import com.A108.Watchme.VO.Entity.sprint.Sprint;
@@ -52,7 +53,7 @@ public class SprintService {
     private final GroupRepository groupRepository;
     private final PointLogRepository pointLogRepository;
     private final MSLRepository mslRepository;
-
+    private final MemberInfoRepository memberInfoRepository;
     private final RoomService roomService;
     private final S3Uploader s3Uploader;
 
@@ -295,7 +296,7 @@ public class SprintService {
                         .penaltyMoney(sprint.getSprintInfo().getPenaltyMoney())
                         .startAt(format.format(sprint.getSprintInfo().getStartAt()))
                         .routineEndAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
-                        .routineStartAt(format2.format(sprint.getSprintInfo().getRoutineEndAt()))
+                        .routineStartAt(format2.format(sprint.getSprintInfo().getRoutineStartAt()))
                         .status(sprint.getStatus())
                         .kingName(nickName)
                         .kingPenalty(count)
@@ -450,8 +451,11 @@ public class SprintService {
                         .member(member)
                         .finish(1)
                 .build());
-        int myPoint = member.getMemberInfo().getPoint();
+
+
+        int myPoint = member.getMemberInfo().getPoint();;
         member.getMemberInfo().setPoint(myPoint+points);
+
         memberRepository.save(member);
         apiResponse.setCode(200);
         apiResponse.setMessage("Success");

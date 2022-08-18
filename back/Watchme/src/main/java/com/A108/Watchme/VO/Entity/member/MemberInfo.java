@@ -18,7 +18,7 @@ public class MemberInfo{
     @Column(name="member_id", nullable = false)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @MapsId
     @JoinColumn(name="member_id")
     @JsonBackReference

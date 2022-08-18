@@ -7,10 +7,12 @@ import com.A108.Watchme.DTO.KakaoPay.KakaoPayRes;
 import com.A108.Watchme.Exception.CustomException;
 import com.A108.Watchme.Http.ApiResponse;
 import com.A108.Watchme.Http.Code;
+import com.A108.Watchme.Repository.MemberInfoRepository;
 import com.A108.Watchme.Repository.MemberRepository;
 import com.A108.Watchme.Repository.PointLogRepository;
 import com.A108.Watchme.VO.Entity.log.PointLog;
 import com.A108.Watchme.VO.Entity.member.Member;
+import com.A108.Watchme.VO.Entity.member.MemberInfo;
 import com.A108.Watchme.oauth.entity.UserPrincipal;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -35,7 +37,7 @@ import java.util.Optional;
 public class PointService {
     private final PointLogRepository pointLogRepository;
     private final MemberRepository memberRepository;
-
+    private final MemberInfoRepository memberInfoRepository;
     public KakaoPayRes kakaoPayReady(Long id, Integer point) {
         System.out.println("hello");
         KakaoPayReq kakaoPayReq = KakaoPayReq.builder()
@@ -140,6 +142,7 @@ public class PointService {
         if(memberPoint < value){
             throw new CustomException(Code.C538);
         }
+
         member.getMemberInfo().setPoint(memberPoint-value);
         pointLogRepository.save(PointLog.builder()
                 .member(member)

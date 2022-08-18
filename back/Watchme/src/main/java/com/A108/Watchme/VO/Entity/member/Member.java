@@ -23,11 +23,12 @@ public class Member{
     @Column(name="member_id")
     private Long id;
 
+    @Column(nullable = false)
     private String email;
 
-    @Column(name="nick_name")
+    @Column(name="nick_name", nullable = false)
     private String nickName;
-
+    @Column(nullable = false)
     private String pwd;
 
     @Enumerated(EnumType.STRING)
@@ -39,7 +40,7 @@ public class Member{
     @Enumerated(EnumType.STRING)
     private ProviderType providerType;
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.EAGER)
+    @OneToOne(mappedBy = "member")
     @JsonManagedReference
     private MemberInfo memberInfo;
 

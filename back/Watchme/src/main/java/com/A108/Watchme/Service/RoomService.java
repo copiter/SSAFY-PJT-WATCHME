@@ -452,11 +452,12 @@ public class RoomService {
         MemberRoomLog memberRoomLog;
         try {
             memberRoomLog = mrlRepository.findByMember_idAndRoom_id(memberId, roomId).get();
-            if (!memberRoomLog.getStatus().equals(Status.NO)) {
-                throw new CustomException(Code.C595);
-            }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new CustomException(Code.C523);
+        }
+        if (!memberRoomLog.getStatus().equals(Status.NO)) {
+            throw new CustomException(Code.C595);
         }
 
         RoomDetMyDTO roomDetMyDTO = new RoomDetMyDTO();

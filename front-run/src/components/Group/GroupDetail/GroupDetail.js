@@ -60,7 +60,7 @@ function GroupDetail() {
     })();
   }, [isJoinCheck]);
 
-  console.log(resData);
+  // console.log(resData);
 
   function joinHandler() {
     const config = {

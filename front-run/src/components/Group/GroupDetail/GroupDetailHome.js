@@ -8,7 +8,7 @@ import crown from "../../../img/Icons/crown.png";
 import "./GroupDetailHome.css";
 
 const GroupDetailHome = (props) => {
-  console.log(props);
+  // console.log(props);
   const navigate = useNavigate();
 
   const resData = props.resData;

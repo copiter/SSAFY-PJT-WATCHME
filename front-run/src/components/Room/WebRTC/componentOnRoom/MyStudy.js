@@ -1,3 +1,4 @@
+import { now } from "jquery";
 import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { getCookie } from "../../../../Cookie";
@@ -10,7 +11,7 @@ function MyStudy(props) {
 
   const [study, setStudy] = useState({
     // name: "123",
-    // startTime: "2022-08-15 22:10",
+     startTime: new Date(),
     // mode: "MODE2",
     // penalty: 13,
   });

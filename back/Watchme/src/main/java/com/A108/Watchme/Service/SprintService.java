@@ -127,24 +127,26 @@ public class SprintService {
 
         Optional<Sprint> runningSprint = sprintRepository.findByGroupIdAndStatus(groupId, Status.ING);
 
-        if(runningSprint.isPresent()){
-            try{
-                Date startDate = format.parse(sprintPostDTO.getStartAt());
-                Date endDate = format.parse(sprintPostDTO.getEndAt());
+        Date startDate;
+        Date endDate;
+        try{
+            startDate = format.parse(sprintPostDTO.getStartAt());
+            endDate = format.parse(sprintPostDTO.getEndAt());
 
-                if(!runningSprint.get().getSprintInfo().getEndAt().before(startDate)){
-                    throw new CustomException(Code.C544);
-                }
-                if(startDate.before(DateTime.now().toDate())){
-                    throw new CustomException(Code.C545);
-                }
-                if(!startDate.before(endDate)){
-                    throw new CustomException(Code.C546);
-                }
+        } catch(Exception e){
+            throw new CustomException(Code.C599);
+        }
 
-            } catch(Exception e){
-                throw new CustomException(Code.C599);
+        if(runningSprint.isPresent()) {
+            if (!runningSprint.get().getSprintInfo().getEndAt().before(startDate)) {
+                throw new CustomException(Code.C544);
             }
+        }
+        if(startDate.before(DateTime.now().toDate())){
+            throw new CustomException(Code.C545);
+        }
+        if(!startDate.before(endDate)){
+            throw new CustomException(Code.C546);
         }
 
         Category category = categoryRepository.findByName(CategoryList.valueOf("스프린트"));
@@ -450,6 +452,7 @@ public class SprintService {
                 .build());
         int myPoint = member.getMemberInfo().getPoint();
         member.getMemberInfo().setPoint(myPoint+points);
+        memberRepository.save(member);
         apiResponse.setCode(200);
         apiResponse.setMessage("Success");
         apiResponse.setResponseData("points", points);

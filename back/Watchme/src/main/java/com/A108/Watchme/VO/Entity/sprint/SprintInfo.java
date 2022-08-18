@@ -28,11 +28,11 @@ public class SprintInfo {
     @Column(name = "end_at")
     private Date endAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIME)
     @Column(name = "routineStart_at")
     private Date routineStartAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.TIME)
     @Column(name = "routineEnd_at")
     private Date routineEndAt;
 

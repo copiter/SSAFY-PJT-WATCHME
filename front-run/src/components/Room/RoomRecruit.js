@@ -65,6 +65,7 @@ function RoomRecruit() {
       .then((result) => {
         if (result.code === 200) {
           setRooms(result["responseData"]["rooms"]);
+          setInputs({keyword:""})
         } else {
           ErrorCode(result);
         }

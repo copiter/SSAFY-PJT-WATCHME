@@ -31,7 +31,6 @@ public class GroupController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponse createGroup(@RequestPart(value="groupCreateReqDTO") GroupCreateReqDTO groupCreateReqDTO, @RequestPart(required = false, value = "images") MultipartFile image, HttpServletRequest request){
-        groupCreateReqDTO.getCtg().stream().forEach(System.out::println);
         return groupService.createGroup(groupCreateReqDTO, image, request);
     }
 

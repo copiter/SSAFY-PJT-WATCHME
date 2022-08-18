@@ -54,8 +54,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String email = authentication.getName();
-        System.out.println(authentication.getName());
-        System.out.println(authentication.getPrincipal());
 
         Optional<Member> member = memberRepository.findByEmail(email);
         if(!member.isPresent()){

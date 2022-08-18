@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,34 +30,25 @@ public class schedule {
 
     Timestamp currTS = new Timestamp(System.currentTimeMillis());
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void studyTimeResetDay() {
-        System.out.println("studyTime");
+
+        System.out.println("studyTime-Day");
 
         List<MemberInfo> memberInfoList = memberInfoRepository.findAll();
 
-
         Calendar cal = Calendar.getInstance();
         cal.setTime(currTS);
-        cal.add(Calendar.DATE, -1);
         currTS.setTime(cal.getTime().getTime());
-
-        System.out.println(currTS.toString());
 
         for (MemberInfo mI : memberInfoList) {
             Integer studyTimeDay = 0;
 
             List<MemberRoomLog> memberRoomLogList = mrlRepository.findAllByMemberId(mI.getId())
-                    .stream().filter((m) -> m.getJoinedAt().after(currTS) && m.getStudyTime() != null).collect(Collectors.toList()
+                    .stream().filter((m) -> m.getJoinedAt().after(java.sql.Date.valueOf(LocalDate.now())) && m.getStudyTime() != null).collect(Collectors.toList()
                     );
 
             for (MemberRoomLog mrl : memberRoomLogList) {
-                System.out.println("-----------------");
-                System.out.println(mI.getId());
-                System.out.println(mrl.getId());
-                System.out.println(mrl.getStudyTime());
-                System.out.println("-----------------");
-
                 studyTimeDay += mrl.getStudyTime();
             }
 
@@ -68,13 +60,15 @@ public class schedule {
 
     }
 
-    @Scheduled(cron = "0 17 18 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void studyTimeResetWeek() {
+
+        System.out.println("studyTime-Week");
 
         List<MemberInfo> memberInfoList = memberInfoRepository.findAll();
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(currTS);
+        cal.setTime(java.sql.Date.valueOf(LocalDate.now()));
         cal.add(Calendar.DATE, -7);
         currTS.setTime(cal.getTime().getTime());
 
@@ -84,8 +78,7 @@ public class schedule {
 
             Integer studyTimeDay = 0;
 
-            for (MemberRoomLog mrl :
-                    memberRoomLogList) {
+            for (MemberRoomLog mrl : memberRoomLogList) {
                 studyTimeDay += mrl.getStudyTime();
             }
 
@@ -97,13 +90,15 @@ public class schedule {
 
     }
 
-    @Scheduled(cron = "0 17 18 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void studyTimeResetMonth() {
+
+        System.out.println("studyTime-Month");
 
         List<MemberInfo> memberInfoList = memberInfoRepository.findAll();
 
         Calendar cal = Calendar.getInstance();
-        cal.setTime(currTS);
+        cal.setTime(java.sql.Date.valueOf(LocalDate.now()));
         cal.add(Calendar.MONTH, -1);
         currTS.setTime(cal.getTime().getTime());
 
@@ -113,8 +108,7 @@ public class schedule {
 
             Integer studyTimeDay = 0;
 
-            for (MemberRoomLog mrl :
-                    memberRoomLogList) {
+            for (MemberRoomLog mrl : memberRoomLogList) {
                 studyTimeDay += mrl.getStudyTime();
             }
 
@@ -126,8 +120,11 @@ public class schedule {
 
     }
 
-    @Scheduled(cron = "0 17 18 * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void startSprint() {
+
+        System.out.println("start-Sprint");
+
         Calendar cal = Calendar.getInstance();
 
         cal.setTime(currTS);
@@ -137,7 +134,7 @@ public class schedule {
 
         // 시작 전 스프린트
         List<Sprint> sprintListYes = sprintRepository.findAllByStatus(Status.YES);
-        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
+        sprintListYes.stream().filter(x -> x.getSprintInfo().getStartAt().before(new Date()) && x.getSprintInfo().getEndAt().after(new Date())).forEach(x -> x.setStatus(Status.ING));
 
         sprintRepository.saveAll(sprintListYes);
 

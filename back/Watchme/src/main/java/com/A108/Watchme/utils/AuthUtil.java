@@ -21,7 +21,6 @@ public class AuthUtil {
     public Long memberAuth(){
         Long memberId;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
         try{
             memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
 

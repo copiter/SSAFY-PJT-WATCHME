@@ -18,19 +18,12 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
         if (properties == null) {
             return null;
         }
-        System.out.println("kakaoNickName call");
         return (String) properties.get("nickname");
     }
 
     @Override
     public String getEmail() {
-//        Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
-//        System.out.println((String) properties.get("account_email"));
-//        System.out.println("NOW KAKAO");
-//        System.out.println((String) attributes.get("account_email"));
-//        if (properties == null) {
-//            return null;
-//        }
+
         Map<String, Object> kakaoAttributes = (Map<String, Object>) attributes.get("kakao_account");
         return (String) kakaoAttributes.get("email");
     }
@@ -42,7 +35,6 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo {
         if (properties == null) {
             return null;
         }
-        System.out.println("url call");
         return (String) properties.get("thumbnail_image");
     }
 }

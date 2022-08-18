@@ -38,7 +38,9 @@ function PointAdd() {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          setPointInfo(result.responseData);
+          let tmpData = result.responseData;
+          tmpData.pointList.reverse();
+          setPointInfo(tmpData);
         }
       })
       .catch((err) => console.log(err));
@@ -169,8 +171,8 @@ function PointAdd() {
               </li>
               <li>
                 <span className="point-mypoint-sub">내가 환급한 포인트</span>
-                {/* <span>{pointInfo.refundPoint} 💎</span> */}
-                <span>{pointInfo.chargePoint} 💎</span>
+                <span>{pointInfo.refundPoint} 💎</span>
+                {/* <span>{pointInfo.chargePoint} 💎</span> */}
               </li>
               <li>
                 <span className="point-mypoint-sub">내가 획득한 포인트</span>
@@ -216,7 +218,7 @@ function PointAdd() {
                 </colgroup>
                 <tbody>
                   {pointInfo.pointList.length > 0 &&
-                    pointInfo.pointList.reverse().map((point, index) => {
+                    pointInfo.pointList.map((point, index) => {
                       return (
                         <tr key={index}>
                           <td>{point.date}</td>

@@ -1,100 +1,94 @@
 import React from "react";
 import "./ChangePWD.css";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { FetchUrl } from "../../../store/communication";
-import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useSearchParams } from "react-router-dom";
 import swal from "sweetalert";
-
+import ErrorCode from "../../../Error/ErrorCode";
 function ChangePWD() {
-  const url = `${useContext(FetchUrl)}`;
+  const url = `${useContext(FetchUrl)}/members/auth/reset-pwd`;
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
-    pwd: "",
-    emailkey: "",
+    emailKey:"",
+    password: "",
   });
 
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  useEffect(() => {
-    setInputs((values) => ({
-      ...values,
-      emailkey: searchParams.get("emailKey"),
-    }));
-  }, []);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  // Function handling submit button
+  const submitHandler = (event) => {
+    event.preventDefault();
+    const sendJson={
+      password: inputs.password,
+      emailKey:searchParams.get("emailKey")}
+      console.log(sendJson);
+    if (inputs.password === inputs.check) {
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(sendJson),
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+        .then((response) => {
+          console.log(response);
+          return response.json();
+        })
+        .then((result) => {
+          console.log(result);
+          if (result.message === "RESET PASSWORD FAIL") {
+            swal("잘못된 정보입니다");
+          } else if(result.code===200) {
+            swal("비빌번호가 성공적으로 변경되었습니다.");
+            navigate("/");
+            ////////////////////////////성공시 여기입니다.
+          }
+          else{
+            ErrorCode(result);
+          }
+        })
+        .catch((err) => {
+          console.log("ERRROR");
+        });
+    }else
+    {
+      swal("비밀번호가 서로 다릅니다.");
+    }
+  };
   const handleChange = (event) => {
     const name = event.target.name;
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
   };
-  const submitHandler = (event) => {
-    console.log(
-      JSON.stringify({
-        name: inputs.name,
-        nickName: inputs.nickName,
-      })
-    );
-    event.preventDefault();
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        name: inputs.name,
-        nickName: inputs.nickName,
-      }),
-      headers: {
-        "content-type": "application/json",
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((result) => {
-        console.log(result);
-        if (result.message === "FIND EMAIL FAIL") {
-          swal("잘못된 정보입니다", "", "error");
-        } else if (result.message === "FIND EMAIL SUCCESS") {
-          swal("아이디 : " + result.responseData.email, "", "success");
-          navigate("/login");
-          ////////////////////////////성공시 여기입니다.
-        } else {
-          swal("오류입니다", "", "error");
-        }
-      })
-      .catch((err) => {
-        swal("통신실패", "", "error");
-      });
-  };
-  console.log(inputs);
+
   return (
     <div className="login">
       <div className="login-title">
-        아이디찾기
         <div>
-          <Link to="/FindPWD">비밀번호 찾기</Link>
+          비밀번호 변경페이지입니다
         </div>
       </div>
       <form className="login-inputs" onSubmit={submitHandler}>
         <input
           className="input-box"
-          type="text"
-          name="name"
+          type="password"
           onChange={handleChange}
-          placeholder="이름을 입력하세요"
+          name="password"
+          placeholder="비밀번호를 입력하세요"
         />
         <input
           className="input-box"
-          type="text"
+          type="password"
+          name="check"
           onChange={handleChange}
-          name="nickName"
-          placeholder="닉네임을 입력하세요"
-          accept="number"
+          placeholder="비밀번호를 다시 입력하세요"
         />
         <button className="submit-btn">확인</button>
       </form>
 
       <div className="signup-btns">
         <Link to="/login">
-          <div className="email"> 로그인 페이지로</div>
+          <div className="email"> 메인 페이지로</div>
         </Link>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { getCookie } from "../../../Cookie";
 import { useNavigate } from "react-router-dom";
 
 import "./GroupDetailMembers.css";
-import json from "../../json/groupdetailmembers.json";
+// import json from "../../json/groupdetailmembers.json";
 import ErrorCode from "../../../Error/ErrorCode";
 import swal from "sweetalert";
 
@@ -320,7 +320,7 @@ function GroupDetailMembers(props) {
                     <span>페널티 횟수</span>
                     <span className="medium-text">
                       {applier.hasOwnProperty("penalty")
-                        ? `😴${applier.penalty[1]} / 📱${applier.penalty[2]}`
+                        ? `😴${applier.penalty[1]} / 📱${applier.penalty[2]} / 🏃‍♀️${applier.penalty[3]}`
                         : null}{" "}
                     </span>
                   </div>
@@ -378,7 +378,7 @@ function GroupDetailMembers(props) {
                     <span>페널티 횟수</span>
                     <span className="medium-text">
                       {member.hasOwnProperty("penalty")
-                        ? `😴${member.penalty[1]} / 📱${member.penalty[2]}`
+                        ? `😴${member.penalty[1]} / 📱${member.penalty[2]} / 🏃‍♀️${member.penalty[3]}`
                         : null}
                     </span>
                   </div>

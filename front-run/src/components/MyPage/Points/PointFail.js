@@ -18,10 +18,5 @@ function PointFail() {
     </div>
   );
 }
-{
-  /* <html>
-  <h2>hi</h2>
-</html>; */
-}
 
 export default PointFail;

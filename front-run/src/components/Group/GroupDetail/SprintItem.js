@@ -11,7 +11,7 @@ function SprintItem(props) {
       : sprint.status === "ING"
       ? "입장하시려면 클릭하세요"
       : null;
-  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
+  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "자리이탈 감지"];
 
   return (
     <>
@@ -58,9 +58,9 @@ function SprintItem(props) {
                 <li>
                   <span>
                     #{mode[+sprint.mode.slice(-1)]}
-                    {` #${+(
-                      sprint.routineEndAt.split(":")[0] -
-                      sprint.routineStartAt.split(":")[0]
+                    {` #${+Math.abs(
+                      Number(sprint.routineEndAt.split(":")[0]) -
+                        Number(sprint.routineStartAt.split(":")[0])
                     )}시간 #${sprint.fee}원
                 `}
                   </span>

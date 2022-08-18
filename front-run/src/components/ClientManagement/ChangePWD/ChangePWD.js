@@ -2,26 +2,29 @@ import React from "react";
 import "./ChangePWD.css";
 import { useContext, useState } from "react";
 import { FetchUrl } from "../../../store/communication";
-import { Link, useNavigate,useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import swal from "sweetalert";
 import ErrorCode from "../../../Error/ErrorCode";
+
 function ChangePWD() {
   const url = `${useContext(FetchUrl)}/members/auth/reset-pwd`;
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
-    emailKey:"",
+    emailKey: "",
     password: "",
+    check: "",
+    isSame: null,
   });
-
 
   const [searchParams, setSearchParams] = useSearchParams();
   // Function handling submit button
   const submitHandler = (event) => {
     event.preventDefault();
-    const sendJson={
+    const sendJson = {
       password: inputs.password,
-      emailKey:searchParams.get("emailKey")}
-      console.log(sendJson);
+      emailKey: searchParams.get("emailKey"),
+    };
+    console.log(sendJson);
     if (inputs.password === inputs.check) {
       fetch(url, {
         method: "POST",
@@ -38,20 +41,18 @@ function ChangePWD() {
           console.log(result);
           if (result.message === "RESET PASSWORD FAIL") {
             swal("잘못된 정보입니다");
-          } else if(result.code===200) {
+          } else if (result.code === 200) {
             swal("비빌번호가 성공적으로 변경되었습니다.");
             navigate("/");
             ////////////////////////////성공시 여기입니다.
-          }
-          else{
+          } else {
             ErrorCode(result);
           }
         })
         .catch((err) => {
           console.log("ERRROR");
         });
-    }else
-    {
+    } else {
       swal("비밀번호가 서로 다릅니다.");
     }
   };
@@ -64,9 +65,7 @@ function ChangePWD() {
   return (
     <div className="login">
       <div className="login-title">
-        <div>
-          비밀번호 변경페이지입니다
-        </div>
+        <div>비밀번호 변경페이지입니다</div>
       </div>
       <form className="login-inputs" onSubmit={submitHandler}>
         <input

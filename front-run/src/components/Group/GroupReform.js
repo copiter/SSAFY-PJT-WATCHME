@@ -91,12 +91,6 @@ function GroupReform() {
     }
   };
 
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
-
   const [isChecked, setIsChecked] = useState(true);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
@@ -239,6 +233,8 @@ function GroupReform() {
                       type="number"
                       name="maxMember"
                       accept="number"
+                      min="1"
+                      max="25"
                       required
                       placeholder="인원수를 선택하세요(1~25)"
                       ref={maxMemberInputRef}

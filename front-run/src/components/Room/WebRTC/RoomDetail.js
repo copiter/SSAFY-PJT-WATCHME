@@ -121,6 +121,8 @@ class RoomDetail extends Component {
     }
   }
   async getUserPermission() {}
+
+
   leaveSession() {
     //세션 탈출
     // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
@@ -173,8 +175,9 @@ class RoomDetail extends Component {
     // Empty all properties...
     this.OV = null;
     try {
-      mySession.disconnect();
+      swal("방에서 퇴장되셨습니다..");
       window.location.href = "../../";
+      mySession.disconnect();
     } catch {
       console.log("디스콘실패");
       swal("오류가 발생하였습니다.");
@@ -383,9 +386,9 @@ class RoomDetail extends Component {
             ErrorCode(err)
             console.log("백통신 실패");
           });
-        this.openTeli(id);
+        if(this.state.mode!=="MODE1"){this.openTeli(id);}
       },
-      this.state.mode === "MODE2" ? 1000 : 20000
+      5000
     );
     this.joinSessionSetOpenVidu(id);
   }
@@ -564,6 +567,8 @@ class RoomDetail extends Component {
       swal("졸음이 감지되었습니다", "", "error");
     } else if (this.state.mode === "MODE3") {
       swal("스마트폰이 감지되었습니다", "", "error");
+    } else if (this.state.mode === "MODE4") {
+      swal("자리이탈이 감지되었습니다.", "", "error");
     } else {
       console.log("알수없는에러");
     }
@@ -571,7 +576,6 @@ class RoomDetail extends Component {
   ban() {
     swal("벌점이 과다로 추방되었습니다", "", "error");
     this.leaveSession();
-    window.location.href = "../";
   }
 
   openModal = () => {

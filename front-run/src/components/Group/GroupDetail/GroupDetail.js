@@ -3,7 +3,7 @@ import { FetchUrl } from "../../../store/communication";
 import { getCookie } from "../../../Cookie";
 
 import "./GroupDetail.css";
-import json from "../../json/groupdetail.json";
+// import json from "../../json/groupdetail.json";
 
 import GroupDetailHome from "./GroupDetailHome";
 import GroupDetailSprint from "./GroupDetailSprint";
@@ -211,7 +211,11 @@ function GroupDetail() {
           {/* Main Contents : home, sprint, members*/}
           <>
             {navBar === 0 && (
-              <GroupDetailHome resData={resData} groupId={groupId} />
+              <GroupDetailHome
+                resData={resData}
+                groupId={groupId}
+                href={FETCH_URL}
+              />
             )}
             {navBar === 1 && (
               <GroupDetailSprint

@@ -1,3 +1,4 @@
+import { now } from "jquery";
 import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { getCookie } from "../../../../Cookie";
@@ -10,7 +11,7 @@ function MyStudy(props) {
 
   const [study, setStudy] = useState({
     // name: "123",
-    // startTime: "2022-08-15 22:10",
+    startTime: new Date(),
     // mode: "MODE2",
     // penalty: 13,
   });
@@ -49,11 +50,6 @@ function MyStudy(props) {
         .catch((err) => {
           console.log("ERR");
         });
-      // console.log("STUDYTIME-체크");
-      // console.log(
-      //   new Date().getTime() -
-      //     new Date(result.responseData.room.startTime).getTime()
-      // );
     }, 1000);
   }, []);
 
@@ -110,7 +106,7 @@ function MyStudy(props) {
                 ? " 졸림 감지"
                 : study.mode === "MODE3"
                 ? " 스마트폰"
-                : " 화면공유"}
+                : " 자리 이탈"}
             </span>
             <span id="study-rule__penalty">
               {study.mode !== "MODE1" && ` ${study.penalty}회`}
@@ -131,7 +127,7 @@ function MyStudy(props) {
                       : log.mode === "MODE3"
                       ? " 스마트폰"
                       : log.mode === "MODE4"
-                      ? " 화면공유"
+                      ? " 자리 이탈"
                       : ""}
                   </span>
                 </div>

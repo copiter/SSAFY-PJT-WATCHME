@@ -8,7 +8,7 @@ import "./SprintCreate.css";
 import swal from "sweetalert";
 import ErrorCode from "../../Error/ErrorCode";
 
-function SprintCreate(props) {
+function SprintCreate() {
   const navigate = useNavigate();
 
   //url
@@ -220,7 +220,7 @@ function SprintCreate(props) {
                   <option value="MODE1">규칙없음</option>
                   <option value="MODE2">졸림 감지</option>
                   <option value="MODE3">스마트폰 감시</option>
-                  <option value="MODE4">화면공유 필수</option>
+                  <option value="MODE4">자리이탈 감지</option>
                 </select>
               </label>
             </div>

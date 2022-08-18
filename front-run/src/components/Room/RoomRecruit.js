@@ -7,16 +7,12 @@ import RoomItem from "./RoomItem";
 import "./RoomRecruit.css";
 
 import btnPlane from "../../img/Icons/btn-plane.png";
-import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
 import json from "../json/roomrecruit.json";
 import ErrorCode from "../../Error/ErrorCode";
-import { getCookie } from "../../Cookie";
-
 
 function RoomRecruit() {
   const FETCH_URL = useContext(FetchUrl);
-  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     category: "",
     roomSearch: "",
@@ -31,7 +27,7 @@ function RoomRecruit() {
   };
 
   const [rooms, setRooms] = useState(json.responseData.rooms);
-  const [roomPage, setRoomPage]=useState(1);
+  const [roomPage, setRoomPage] = useState(1);
   //URL
   const url = `${FETCH_URL}/rooms`;
   useEffect(() => {
@@ -65,6 +61,7 @@ function RoomRecruit() {
       .then((result) => {
         if (result.code === 200) {
           setRooms(result["responseData"]["rooms"]);
+          setInputs({ keyword: "" });
         } else {
           ErrorCode(result);
         }
@@ -101,7 +98,7 @@ function RoomRecruit() {
   };
   const addMore = (event) => {
     //테스트 요망
-    let page=parseInt(parseInt(roomPage)+1);
+    let page = parseInt(parseInt(roomPage) + 1);
     console.log(page);
     fetch(
       url +
@@ -109,7 +106,9 @@ function RoomRecruit() {
         (inputs.category === "" || inputs.category === "all"
           ? ""
           : "category=" + inputs.category + "&") +
-        "page=" + page + "&"+
+        "page=" +
+        page +
+        "&" +
         (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
@@ -123,8 +122,8 @@ function RoomRecruit() {
       .catch((err) => {
         console.log("ERROR");
       });
-      setRoomPage(page)
-      console.log(roomPage);
+    setRoomPage(page);
+    console.log(roomPage);
   };
 
   return (

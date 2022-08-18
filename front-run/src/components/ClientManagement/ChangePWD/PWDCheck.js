@@ -2,11 +2,10 @@ import React from "react";
 import "./PWDCheck.css";
 import { useContext, useState } from "react";
 import { FetchUrl } from "../../../store/communication";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function PWDCheck() {
   const url = `${useContext(FetchUrl)}/reset-ddd`;
-  const navigate = useNavigate();
 
   const [inputs, setInputs] = useState({
     pwd: "",
@@ -32,18 +31,16 @@ function PWDCheck() {
           console.log(result);
           if (result.message === "RESET PASSWORD FAIL") {
             alert("잘못된 정보입니다");
-          } else if(result.message==="FIND EMAIL SUCCESS") {
+          } else if (result.message === "FIND EMAIL SUCCESS") {
             ////////////////////////////성공시 여기입니다.
-          }
-          else{
+          } else {
             alert("오류입니다.");
           }
         })
         .catch((err) => {
           console.log("ERRROR");
         });
-    }else
-    {
+    } else {
       alert("비밀번호가 서로 다릅니다.");
     }
   };
@@ -56,9 +53,7 @@ function PWDCheck() {
   return (
     <div className="login">
       <div className="login-title">
-        <div>
-          비밀번호 변경페이지입니다
-        </div>
+        <div>비밀번호 변경페이지입니다</div>
       </div>
       <form className="login-inputs" onSubmit={submitHandler}>
         <input

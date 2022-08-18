@@ -152,7 +152,7 @@ function MyPage() {
                   <span>{!!info.penalty.MODE3 ? info.penalty.MODE3 : 0}회</span>
                 </li>
                 <li>
-                  <small>🖥 화면공유</small>
+                  <small>🖥 자리 이탈</small>
                   <span>{!!info.penalty.MODE4 ? info.penalty.MODE4 : 0}회</span>
                 </li>
               </ul>

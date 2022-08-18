@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 
 import GroupItem from "./GroupItem";
@@ -9,15 +9,11 @@ import ErrorCode from "../../Error/ErrorCode";
 import "./GroupRecruit.css";
 
 import btnPlane from "../../img/Icons/btn-plane.png";
-import filter from "../../img/Icons/filter.png";
 import down from "../../img/Icons/down.png";
-import groupJsons from "../json/groupRec.json";
-
+// import groupJsons from "../json/groupRec.json";
 
 function GroupRecruit() {
-  //Search 못맞춰서 작동 안됩니다...
   const FETCH_URL = useContext(FetchUrl);
-  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     ctg: "",
     groupSearch: "",
@@ -32,7 +28,7 @@ function GroupRecruit() {
 
   // const [groups, setGroups] = useState(groupJsons.responseData.groups);
   const [groups, setGroups] = useState({ groups: [] });
-  const [groupPage, setGroupPage]=useState(1);
+  const [groupPage, setGroupPage] = useState(1);
 
   //URL
   const url = `${FETCH_URL}/groups`;
@@ -44,6 +40,7 @@ function GroupRecruit() {
         if (result.code === 200) {
           setGroups(result["responseData"]["groups"]);
         }
+        setInputs({ groupSearch: "" });
       })
       .catch((err) => {
         console.log(err);
@@ -56,10 +53,17 @@ function GroupRecruit() {
     fetch(
       url +
         "?" +
-        (inputs.ctg === "" || inputs.ctg === "all"
+        (inputs.ctg === "" ||
+        inputs.ctg === "all" ||
+        inputs.ctg === null ||
+        inputs.ctg === undefined
           ? ""
           : "ctg=" + inputs.ctg + "&") +
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
+        (inputs.keyword === "" ||
+        inputs.keyword === null ||
+        inputs.keyword === undefined
+          ? ""
+          : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
       .then((result) => {
@@ -76,46 +80,79 @@ function GroupRecruit() {
     // setInputs((values) => ({ ...values, [inputs.keyword]: "" }));
   };
 
-  
-
   const ctgChange = (event) => {
     //카테고리 변동(LI라서 이방법 사용)
     event.preventDefault();
     const ARR = ["", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
     setGroupPage(1);
-
-    setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
-    fetch(
-      url +
-        "?" +
-        (ARR[event.target.value] === ""
-          ? ""
-          : "ctg=" + ARR[event.target.value] + "&") +
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.code === 200) {
-          setGroups(result["responseData"]["groups"]);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (event.target.value === 0) {
+      fetch(
+        url +
+          "?" +
+          (inputs.keyword === "" ||
+          inputs.keyword === null ||
+          inputs.keyword === undefined
+            ? ""
+            : "keyword=" + inputs.keyword)
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.code === 200) {
+            setGroups(result["responseData"]["groups"]);
+          } else {
+            ErrorCode(result);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setInputs({ ctg: "" });
+    } else {
+      setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
+      fetch(
+        url +
+          "?" +
+          (ARR[event.target.value] === ""
+            ? ""
+            : "ctg=" + ARR[event.target.value] + "&") +
+          (inputs.keyword === "" ||
+          inputs.keyword === null ||
+          inputs.keyword === undefined
+            ? ""
+            : "keyword=" + inputs.keyword)
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.code === 200) {
+            setGroups(result["responseData"]["groups"]);
+          } else {
+            ErrorCode(result);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
   const addMore = (event) => {
     //값 입력 안받은상태임
     event.preventDefault();
-    let page=parseInt(parseInt(groupPage)+1);
+    let page = parseInt(parseInt(groupPage) + 1);
     console.log(page);
     fetch(
       url +
         "?" +
-        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
-        "page=" + page + "&"+
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
+        (inputs.ctg === "" || inputs.ctg === null || inputs.ctg === undefined
+          ? ""
+          : "ctg=" + inputs.ctg + "&") +
+        "page=" +
+        page +
+        "&" +
+        (inputs.keyword === "" ||
+        inputs.keyword === null ||
+        inputs.keyword === undefined
+          ? ""
+          : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
       .then((result) => {
@@ -128,7 +165,7 @@ function GroupRecruit() {
       .catch((err) => {
         console.log(err);
       });
-      setGroupPage(page)
+    setGroupPage(page);
   };
   // console.log(groups);
 
@@ -164,7 +201,9 @@ function GroupRecruit() {
           <ul className="header__tags">
             <li
               className={
-                inputs.ctg === "" || inputs.ctg === "all" ? "active" : ""
+                inputs.ctg === null || inputs.ctg === "" || inputs.ctg === "all"
+                  ? "active"
+                  : ""
               }
               onClick={ctgChange}
               value={0}

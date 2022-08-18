@@ -4,7 +4,7 @@ import "./SprintItem.css";
 
 function SprintItem(props) {
   const sprint = props.sprint;
-  console.log(sprint);
+  // console.log(sprint);
   const title =
     sprint.status === "YES"
       ? "참가하시려면 클릭하세요"
@@ -125,7 +125,7 @@ function SprintItem(props) {
             )}
           </div>
 
-          {sprint.status !== "YES" && (
+          {/*sprint.status !== "YES" && (
             <div className="sprint-king">
               <div className="sprint-king-title">
                 <span className="content-status-title">
@@ -156,7 +156,7 @@ function SprintItem(props) {
                 </li>
               </ul>
             </div>
-          )}
+          )*/}
         </div>
       )}
     </>

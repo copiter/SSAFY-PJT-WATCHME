@@ -161,11 +161,13 @@ class RoomDetail extends Component {
           if (result.code === 200) {
             // console.log("방나가기 성공");
 
+            swal("퇴장하셨습니다.", "", "info");
             setTimeout(() => {
-              swal("퇴장하셨습니다.", "", "info");
+              window.location.href = "../../";
             }, [2000]);
           } else {
             console.log("오류가 발생하였습니다.");
+            window.location.href = "../../";
           }
         }
       })
@@ -175,17 +177,7 @@ class RoomDetail extends Component {
 
     // Empty all properties...
     this.OV = null;
-    try {
-      mySession.disconnect();
-      setTimeout(() => {
-        swal("방에서 퇴장되셨습니다", "", "error");
-        window.location.href = "../../";
-      }, [1000]);
-    } catch {
-      console.log("디스콘실패");
-      swal("오류가 발생하였습니다.", "", "error");
-      window.location.href = "../../";
-    }
+    mySession.disconnect();
     this.setState({
       session: undefined,
       subscribers: undefined,
@@ -572,14 +564,85 @@ class RoomDetail extends Component {
     }
   }
   ban() {
-    setTimeout(
-      function () {
-        swal("벌점이 과다로 추방되었습니다", "", "error");
-      },
-      [2000]
-    );
-    this.leaveSession();
+    swal("벌점이 과다로 추방되었습니다", "", "error");
+    clearInterval();
+
+    const mySession = this.state.session;
+    const FETCH_URL = FetchUrl._currentValue;
+    const id = window.location.pathname.split("/")[2].substring(0);
+    const url = `${FETCH_URL}/rooms/` + id + "/leave";
+
+    // console.log(id);
+    // console.log(url);
+    // console.log("방나가기 시도");
+
+    fetch(url, {
+      method: "POST",
+      headers: { accessToken: getCookie("accessToken") },
+    })
+      .then((response) => {
+        // console.log(response);
+        if (response.ok) {
+          // console.log("리스폰스 성공");
+          return response.json(); //ok떨어지면 바로 종료.
+        } else {
+          response.json().then((resPoseError) => {
+            // console.log("ERR바가기 실패");
+            swal(resPoseError.message);
+            let errorMessage = "오류로 방나가기 안됨";
+            throw new Error(errorMessage);
+          });
+        }
+      })
+      .then((result) => {
+        // console.log("RES:");
+        if (result != null) {
+          // console.log("NOTNULL:");
+          // console.log(result);
+          if (result.code === 200) {
+            // console.log("방나가기 성공");
+
+            swal("방에서 퇴장되셨습니다", "", "error");
+            setTimeout(() => {
+              window.location.href = "../../";
+            }, [2000]);
+          } else {
+            swal("오류가 발생하였습니다", "", "error");
+            setTimeout(() => {
+              window.location.href = "../../";
+            }, [2000]);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("ERR여기 못나감");
+      });
+
+    // Empty all properties...
+    this.OV = null;
+  
+
+    try {
+      setTimeout(() => {
+      }, [1000]);
+    } catch {
+      console.log("디스콘실패");
+      swal("오류가 발생하였습니다.", "", "error");
+      window.location.href = "../../";
+    }
+    mySession.disconnect();
+    this.setState({
+      session: undefined,
+      subscribers: undefined,
+      mySessionId: undefined,
+      myUserName: undefined,
+      mainStreamManager: undefined,
+      publisher: undefined,
+    });
+    mySession.disconnect();
   }
+
+  
 
   openModal = () => {
     this.setState({ modalOpen: true });

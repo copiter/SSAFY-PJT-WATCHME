@@ -11,7 +11,7 @@ function SprintItem(props) {
       : sprint.status === "ING"
       ? "입장하시려면 클릭하세요"
       : null;
-  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
+  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "자리이탈 감지"];
 
   return (
     <>

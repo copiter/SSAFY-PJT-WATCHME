@@ -187,6 +187,7 @@
   transform: scale(0.98);
 }
 
-.signup input:focus {
+.signup input:focus:not(input[type="file"]),
+.signup select:focus {
   border: 3px solid #c2c6cc;
 }

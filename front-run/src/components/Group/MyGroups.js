@@ -4,7 +4,7 @@ import { FetchUrl } from "../../store/communication";
 import { getCookie } from "../../Cookie";
 
 import "./MyGroups.css";
-import json from "../json/mygroups.json";
+// import json from "../json/mygroups.json";
 import ErrorCode from "../../Error/ErrorCode";
 
 function MyGroups() {
@@ -86,7 +86,7 @@ function MyGroups() {
                     </li>
                     <li>
                       <small>😥 페널티 받은 횟수 </small>
-                      <span>{`😴${data.myData.penalty[1]} / 📱${data.myData.penalty[2]}`}</span>
+                      <span>{`😴${data.myData.penalty[1]} / 📱${data.myData.penalty[2]} / 🏃‍♀️${data.myData.penalty[3]}`}</span>
                     </li>
                     <li>
                       <small>📆 그룹 가입일</small>

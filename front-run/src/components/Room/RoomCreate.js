@@ -236,7 +236,7 @@ function RoomCreate() {
                     value="MODE4"
                     onChange={handleChange}
                   />
-                  화면공유
+                  자리이탈 감지
                 </label>
               </div>
             </div>

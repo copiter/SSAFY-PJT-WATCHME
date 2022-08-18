@@ -1,25 +1,43 @@
 import React from "react";
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getCookie } from "../../../Cookie";
+import ErrorCode from "../../../Error/ErrorCode";
+import swal from "sweetalert";
 
 import crown from "../../../img/Icons/crown.png";
 import "./GroupDetailHome.css";
 
 const GroupDetailHome = (props) => {
   console.log(props);
+  const navigate = useNavigate();
 
   const resData = props.resData;
   const groupTotalTime = resData.groupData.sumTime;
-  // const groupTotalTime = 0;
 
-  let penalty = [0, 0, 0];
-  if (resData.myData.hasOwnProperty("penalty")) {
-    for (let index in resData.myData.penalty) {
-      penalty[index] = resData.myData.penalty[index];
-    }
+  //GropuDetailSprint 중복
+  function sprintOnGoingHandler(id) {
+    fetch(`${props.href}/sprints/${id}/start`, {
+      method: "POST",
+      headers: {
+        accessToken: getCookie("accessToken"),
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        if (result.code === 200) {
+          navigate(`/RoomDetail/` + result.responseData.roomId);
+        } else {
+          ErrorCode(result);
+        }
+      })
+      .catch((err) => {
+        swal("통신실패", "", "error");
+      });
   }
 
-  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "화면공유 필수"];
+  const mode = ["", "규칙없음", "졸림 감지", "스마트폰 감시", "자리이탈 감지"];
 
   return (
     <div id="group-detail__home">
@@ -56,7 +74,7 @@ const GroupDetailHome = (props) => {
                 <small>😥 페널티 받은 횟수 </small>
                 <span>
                   {resData.myData.hasOwnProperty("penalty")
-                    ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]}`
+                    ? `😴${resData.myData.penalty[1]} / 📱${resData.myData.penalty[2]} / 🏃‍♀️${resData.myData.penalty[3]}`
                     : null}
                 </span>
               </li>
@@ -125,7 +143,11 @@ const GroupDetailHome = (props) => {
             {resData.sprints.length > 0 &&
               resData.sprints.map((sprint, index) => {
                 return (
-                  <div className="sprint-summary-content" key={index}>
+                  <div
+                    className="sprint-summary-content"
+                    key={index}
+                    onClick={() => sprintOnGoingHandler(sprint.sprintId)}
+                  >
                     <p className="sprint-exists-title">{sprint.name}</p>
                     <ul>
                       <li>{`🕑 루틴 : ${sprint.routineStartAt} ~ ${sprint.routineEndAt} 참여 필수`}</li>

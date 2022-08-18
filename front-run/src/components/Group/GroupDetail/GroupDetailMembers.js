@@ -28,7 +28,7 @@ function GroupDetailMembers(props) {
         if (data.code === 200) {
           setMemData(data.responseData);
         } else {
-          console.log(data);
+          // console.log(data);
           ErrorCode(data);
         }
       } catch (e) {
@@ -38,7 +38,7 @@ function GroupDetailMembers(props) {
     getDatas();
   }, [reload]);
 
-  console.log(memData);
+  // console.log(memData);
 
   function reformGroupHandler() {
     navigate(`/GroupReform/${props.groupId}`);

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useContext, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FetchUrl } from "../../store/communication";
 import RoomItem from "./RoomItem";
 
@@ -31,7 +31,7 @@ function RoomRecruit() {
   //URL
   const url = `${FETCH_URL}/rooms`;
   useEffect(() => {
-    console.log(roomPage);
+    // console.log(roomPage);
     setRoomPage(1);
     fetch(url)
       .then((response) => response.json())
@@ -76,7 +76,7 @@ function RoomRecruit() {
     console.log(roomPage);
     const ARR = ["all", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
     setInputs((values) => ({ ...values, category: ARR[event.target.value] }));
-    console.log(ARR[event.target.value]);
+    // console.log(ARR[event.target.value]);
     fetch(
       url +
         "?" +
@@ -99,7 +99,7 @@ function RoomRecruit() {
   const addMore = (event) => {
     //테스트 요망
     let page = parseInt(parseInt(roomPage) + 1);
-    console.log(page);
+    // console.log(page);
     fetch(
       url +
         "?" +
@@ -123,7 +123,7 @@ function RoomRecruit() {
         console.log("ERROR");
       });
     setRoomPage(page);
-    console.log(roomPage);
+    // console.log(roomPage);
   };
 
   return (

@@ -1,6 +1,6 @@
 #chatContainer {
   position: absolute;
-  z-index: 0;
+  z-index: 99997;
   width: 100%;
   height: calc(100% - 50px);
   bottom: 0px;
@@ -28,7 +28,7 @@
 #chatComponent {
   background-color: #b8b8b8;
   position: absolute;
-  z-index: 99999;
+  z-index: 99998;
   top: 0;
   left: 0;
   right: 0;

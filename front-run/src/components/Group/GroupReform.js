@@ -102,7 +102,7 @@ function GroupReform() {
   const imgeRef = useRef();
   const [fileImage, setFileImage] = useState("");
   const saveFileImage = (event) => {
-    console.log(event.target.files[0]);
+    // console.log(event.target.files[0]);
     setFileImage(URL.createObjectURL(event.target.files[0]));
   };
 
@@ -136,7 +136,7 @@ function GroupReform() {
       ctg: ctgs,
       secret: isChecked ? 0 : 1,
     };
-    console.log(outputs);
+    // console.log(outputs);
 
     const formData = new FormData();
     formData.append("images", imgeRef.current.files[0]);

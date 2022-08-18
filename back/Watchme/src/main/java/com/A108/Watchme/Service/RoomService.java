@@ -404,7 +404,7 @@ public class RoomService {
         if (room.getMember().getId() == memberId && !room.getStatus().equals(Status.SPR)) {
 
             List<MemberRoomLog> mrlList = mrlRepository.findAllByRoomIdAndStatus(roomId, Status.NO);
-            if (mrlList.size() != 1) {
+            if (mrlList.size() > 1) {
                 Long tossId = mrlList.get(0).getMember().getId();
                 if (tossId == memberId)
                     tossId = mrlList.get(1).getMember().getId();

@@ -44,6 +44,7 @@ function GroupRecruit() {
         if (result.code === 200) {
           setGroups(result["responseData"]["groups"]);
         }
+        setInputs({groupSearch:""});
       })
       .catch((err) => {
         console.log(err);
@@ -56,10 +57,10 @@ function GroupRecruit() {
     fetch(
       url +
         "?" +
-        (inputs.ctg === "" || inputs.ctg === "all"
+        (inputs.ctg === "" || inputs.ctg === "all"||inputs.ctg===null||inputs.ctg===undefined
           ? ""
           : "ctg=" + inputs.ctg + "&") +
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
+        (inputs.keyword === ""||inputs.keyword===null||inputs.keyword===undefined ? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
       .then((result) => {
@@ -83,27 +84,47 @@ function GroupRecruit() {
     event.preventDefault();
     const ARR = ["", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
     setGroupPage(1);
-
-    setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
-    fetch(
-      url +
-        "?" +
-        (ARR[event.target.value] === ""
-          ? ""
-          : "ctg=" + ARR[event.target.value] + "&") +
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        if (result.code === 200) {
-          setGroups(result["responseData"]["groups"]);
-        } else {
-          ErrorCode(result);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if(event.target.value===0){
+      fetch(
+        url +
+          "?" +
+          (inputs.keyword === ""||inputs.keyword===null||inputs.keyword===undefined ? "" : "keyword=" + inputs.keyword)
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.code === 200) {
+            setGroups(result["responseData"]["groups"]);
+          } else {
+            ErrorCode(result);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+        setInputs({ctg:""})
+    }
+    else{
+      setInputs((values) => ({ ...values, ctg: ARR[event.target.value] }));
+      fetch(
+        url +
+          "?" +
+          (ARR[event.target.value] === ""
+            ? ""
+            : "ctg=" + ARR[event.target.value] + "&") +
+          (inputs.keyword === ""||inputs.keyword===null||inputs.keyword===undefined ? "" : "keyword=" + inputs.keyword)
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.code === 200) {
+            setGroups(result["responseData"]["groups"]);
+          } else {
+            ErrorCode(result);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   };
   const addMore = (event) => {
     //값 입력 안받은상태임
@@ -113,9 +134,9 @@ function GroupRecruit() {
     fetch(
       url +
         "?" +
-        (inputs.ctg === "" ? "" : "ctg=" + inputs.ctg + "&") +
+        (inputs.ctg === ""||inputs.ctg ===null||inputs.ctg ===undefined ? "" : "ctg=" + inputs.ctg + "&") +
         "page=" + page + "&"+
-        (inputs.keyword === "" ? "" : "keyword=" + inputs.keyword)
+        (inputs.keyword === "" ||inputs.keyword===null||inputs.keyword===undefined? "" : "keyword=" + inputs.keyword)
     )
       .then((response) => response.json())
       .then((result) => {
@@ -164,7 +185,7 @@ function GroupRecruit() {
           <ul className="header__tags">
             <li
               className={
-                inputs.ctg === "" || inputs.ctg === "all" ? "active" : ""
+                inputs.ctg === null||inputs.ctg === "" || inputs.ctg === "all" ? "active" : ""
               }
               onClick={ctgChange}
               value={0}

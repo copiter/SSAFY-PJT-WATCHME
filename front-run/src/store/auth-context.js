@@ -33,8 +33,8 @@ export const AuthContextProvider = (props) => {
       .then((response) => response.json())
       .then((result) => {
         if (result.code === 200) {
-          window.location.replace(window.location.origin);
           removeCookie("accessToken");
+          window.location.replace(window.location.origin);
         }
       })
       .catch((err) => {

@@ -4,11 +4,18 @@ import { FetchUrl } from "../../../store/communication";
 import { getCookie } from "../../../Cookie";
 
 import "./PointAdd.css";
+import swal from "sweetalert";
 function PointAdd() {
   const FETCH_URL = useContext(FetchUrl);
   const inquireUrl = `${FETCH_URL}/members/points`;
   const chargeUrl = `${FETCH_URL}/points/kakao?`;
+  const refundUrl = `${FETCH_URL}/points/return?`;
+  const [reload, setReload] = useState(false); //환급 받고 리로딩
   const [inputs, setInputs] = useState({
+    valueSelect: "1000",
+    valueInputs: "",
+  });
+  const [inputsRefund, setInputsRefund] = useState({
     valueSelect: "1000",
     valueInputs: "",
   });
@@ -35,18 +42,11 @@ function PointAdd() {
         }
       })
       .catch((err) => console.log(err));
-  }, []);
-  console.log(pointInfo);
+  }, [reload]);
+  // console.log(pointInfo);
 
-  const handleSubmit = (event) => {
+  const handleSubmitCharge = (event) => {
     event.preventDefault();
-    // console.log(
-    //   url +
-    //     "value=" +
-    //     (inputs.valueSelect === "Free"
-    //       ? inputs.valueInputs
-    //       : inputs.valueSelect)
-    // );
     fetch(
       chargeUrl +
         "value=" +
@@ -81,6 +81,40 @@ function PointAdd() {
         console.log("ERR");
       });
   };
+  const handleSubmitRefund = (event) => {
+    event.preventDefault();
+    fetch(
+      refundUrl +
+        "value=" +
+        (inputsRefund.valueSelect === "Free"
+          ? inputsRefund.valueInputs
+          : inputsRefund.valueSelect),
+      {
+        method: "POST",
+        headers: {
+          accessToken: getCookie("accessToken"),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.code === 200) {
+          swal(
+            "환급되었습니다!",
+            `환급액 ${
+              inputsRefund.valueSelect === "Free"
+                ? inputsRefund.valueInputs
+                : inputsRefund.valueSelect
+            }`,
+            "success"
+          );
+          setReload(!reload);
+        }
+      })
+      .catch((err) => {
+        console.log("ERR");
+      });
+  };
 
   function sendApproval() {}
 
@@ -95,6 +129,20 @@ function PointAdd() {
       setIsShown(true);
     } else if (value !== "Free" && name === "valueSelect") {
       setIsShown(false);
+    }
+  };
+
+  //환급금액 설정
+  const [isShownRefund, setIsShownRefund] = useState(false);
+  const handleChangeRefund = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setInputsRefund((values) => ({ ...values, [name]: value }));
+    if (value === "Free" && name === "valueSelect") {
+      //valueInputs비허용
+      setIsShownRefund(true);
+    } else if (value !== "Free" && name === "valueSelect") {
+      setIsShownRefund(false);
     }
   };
 
@@ -117,6 +165,11 @@ function PointAdd() {
               </li>
               <li>
                 <span className="point-mypoint-sub">내가 충전한 포인트</span>
+                <span>{pointInfo.chargePoint} 💎</span>
+              </li>
+              <li>
+                <span className="point-mypoint-sub">내가 환급한 포인트</span>
+                {/* <span>{pointInfo.refundPoint} 💎</span> */}
                 <span>{pointInfo.chargePoint} 💎</span>
               </li>
               <li>
@@ -163,7 +216,7 @@ function PointAdd() {
                 </colgroup>
                 <tbody>
                   {pointInfo.pointList.length > 0 &&
-                    pointInfo.pointList.map((point, index) => {
+                    pointInfo.pointList.reverse().map((point, index) => {
                       return (
                         <tr key={index}>
                           <td>{point.date}</td>
@@ -177,10 +230,10 @@ function PointAdd() {
             </div>
           </div>
         </div>
-        <div className="kakaopay-form-frame">
-          <div>
-            <div id="point-cash-title">캐쉬충전</div>
-            <div id="selection-title">💳 결제수단을 선택하세요</div>
+        <div id="charge-form-frame">
+          <div id="charge-cash">
+            <div className="point-cash-title">캐쉬충전</div>
+            <div className="selection-title">💳 결제수단을 선택하세요</div>
             <ul id="pay-selection">
               <li value={0} onClick={handleCurrentCase}>
                 <input
@@ -225,7 +278,7 @@ function PointAdd() {
                 />
               </li>
             </ul>
-            <form onSubmit={handleSubmit} id="charge-input">
+            <form onSubmit={handleSubmitCharge} id="charge-input">
               <span>충전할 금액을 선택하세요(원)</span>
               <div id="charge-select">
                 <select onChange={handleChange} name="valueSelect">
@@ -246,7 +299,7 @@ function PointAdd() {
                     min="1000"
                     step="1000"
                     placeholder="금액을 입력하세요"
-                    onChange={handleChange}
+                    onChange={handleChangeRefund}
                   />
                 )}
 
@@ -255,32 +308,39 @@ function PointAdd() {
                 </button>
               </div>
             </form>
-            {/* <div id="charge-input">
-              결제 금액
-              <input
-                type="number"
-                // min="0"
-                step="5000"
-                placeholder="금액을 입력해주세요."
-                value={chargeAmount}
-                onChange={handleInputMoney}
-              />
-            </div>
-            <div className="money-selection">충전할 금액을 선택하세요</div>
-            <div className="charge-btn-up">
-              <button type="button" value="10000" onClick={handleChargeMoney}>
-                +1만원
-              </button>
-              <button type="button" value="30000" onClick={handleChargeMoney}>
-                +3만원
-              </button>
-              <button type="button" value="50000" onClick={handleChargeMoney}>
-                +5만원
-              </button>
-              <button type="button" value="100000" onClick={handleChargeMoney}>
-                +10만원
-              </button>
-            </div> */}
+          </div>
+          <div id="refund-cash">
+            <div className="point-cash-title">캐쉬환급</div>
+            <form onSubmit={handleSubmitRefund} id="refund-input">
+              <span>환급받을 금액을 선택하세요(원)</span>
+              <div id="charge-select">
+                <select onChange={handleChangeRefund} name="valueSelect">
+                  <option value="1000">1,000</option>
+                  <option value="5000">5,000</option>
+                  <option value="10000">10,000</option>
+                  <option value="20000">20,000</option>
+                  <option value="50000">50,000</option>
+                  <option value="100000">100,000</option>
+                  <option value="Free">직접입력</option>
+                </select>
+                {isShownRefund && (
+                  <input
+                    type="number"
+                    className="dirInput"
+                    name="valueInputs"
+                    defaultValue="1000"
+                    min="1000"
+                    step="1000"
+                    placeholder="금액을 입력하세요"
+                    onChange={handleChangeRefund}
+                  />
+                )}
+
+                <button type="submit" id="charge-submit-btn">
+                  환급
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

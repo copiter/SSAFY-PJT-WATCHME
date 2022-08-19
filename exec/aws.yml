@@ -1,0 +1,13 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIAVXDCZBGP7QFTZT6E
+
+      secretKey: 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
+
+    s3:
+      bucket: popoimages
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false

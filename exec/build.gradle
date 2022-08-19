@@ -1,0 +1,67 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.1'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.A108'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.7.2'
+	implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.7.2'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.4.10'
+	implementation 'org.projectlombok:lombok'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'com.auth0', name: 'java-jwt', version: '4.0.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation 'io.openvidu:openvidu-java-client:2.22.0'
+	implementation platform('software.amazon.awssdk:bom:2.15.0')
+	implementation 'software.amazon.awssdk:s3control'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.7.2'
+
+	// WebRTC SETTING
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	implementation 'org.webjars:stomp-websocket:2.3.3-1'
+	implementation 'org.webjars.bower:webrtc-adapter:7.4.0'
+	implementation 'org.webjars:webjars-locator:0.30'
+	implementation 'org.kurento:kurento-client:6.16.0'
+	implementation 'org.kurento:kurento-utils-js:6.15.0'
+	implementation 'org.webjars:webjars-locator:0.45'
+	implementation 'org.webjars.bower:bootstrap:5.2.0-beta1'
+	implementation 'org.webjars.bower:demo-console:1.5.1'
+	implementation 'org.webjars.bower:adapter.js:6.4.0'
+	implementation 'org.webjars:jquery:3.6.0'
+	implementation 'org.webjars.bower:ekko-lightbox:5.2.0'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

@@ -132,7 +132,7 @@ def penaltRecord(nickName, memberId, roomId, mode):
     row = cursor.fetchone()
     if(row == None) :
 
-        if (totalRoom[roomId][nickName][1] + totalRoom[roomId][nickName][2] >=maxPenaltyCnt) or ( totalRoom[roomId][nickName][3] >= 3):
+        if (totalRoom[roomId][nickName][1] + totalRoom[roomId][nickName][2] + totalRoom[roomId][nickName][3] >=maxPenaltyCnt) or ( totalRoom[roomId][nickName][3] >= 3):
             print("EXILE ROOM")
             sql = """UPDATE member_room_log SET `status` = 'DELETE' WHERE(`member_id` = '%s') AND (`room_id` = '%s')""" % (memberId, roomId)
             cursor.execute(sql)
@@ -150,7 +150,7 @@ def penaltRecord(nickName, memberId, roomId, mode):
     fee = row[0]
     penalty = row[1]
 
-    sql = """SELECT COUNT(*) FROM penalty_log WHERE member_id = '%s' AND sprint_id = '%s'""" % (memberId, sprintId)
+    sql = """SELECT COUNT(*) FROM penalty_log WHERE member_id = '%s' AND room_id = '%s'""" % (memberId, roomId)
     cursor.execute(sql)
     row = cursor.fetchone()
     if(row == None):
@@ -159,21 +159,26 @@ def penaltRecord(nickName, memberId, roomId, mode):
     else :
         count = row[0]
 
+    code = 205
+    penaltyMoney = penalty
 
     if fee < penalty * count:
         sql = """UPDATE member_sprint_log SET `status` = 'DELETE' WHERE(`member_id` = '%s') AND (`sprint_id` = '%s')""" % (memberId, sprintId)
         cursor.execute(sql)
+        penaltyMoney = fee - penalty * (count - 1)
         db.commit();
         # 강퇴 처리 보내기
-        db.close();
-        return 202
+        code = 202
 
-    sql = """INSERT INTO point_log(`created_at`,`point_value`, `member_id`, `sprint_id`) VALUES ('%s', '%s', '%s', '%s')""" %  (datetime.datetime.atetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M:%S'), -1 * penalty, memberId, sprintId)
+    sql = """INSERT INTO point_log(`created_at`,`point_value`, `member_id`, `sprint_id`) VALUES ('%s', '%s', '%s', '%s')""" %  (datetime.datetime.now(timezone('Asia/Seoul')).strftime('%Y-%m-%d %H:%M:%S'), -1 * penaltyMoney, memberId, sprintId)
     cursor.execute(sql)
     db.commit();
+    sql = """UPDATE sprint SET `sum_point` = `sum_point` + %d""" % penaltyMoney
+
     db.close();
     # detect
-    return 205
+
+    return code
 
 
 
@@ -375,9 +380,6 @@ def upload_file():
             del pred
             gc.collect()
 
-    del img2
-    gc.collect()
-
     if mode == "MODE4":
         with torch.no_grad():
             print("mode4")
@@ -416,8 +418,8 @@ def upload_file():
                 else :
                     print('no person')
                     totalRoom[roomId][nickName][3] += 1
-                    # code = penaltRecord(nickName, memberId, roomId, "MODE4")
-                    code = 200
+                    code = penaltRecord(nickName, memberId, roomId, "MODE4")
+                    #code = 200
 
                     gc.collect()
                     result.update({"code": code, "MESSAGE": CODE[code]})

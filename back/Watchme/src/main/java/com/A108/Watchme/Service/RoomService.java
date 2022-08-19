@@ -283,6 +283,7 @@ public class RoomService {
             memberRoomLog.setStudyTime(time + addTime);
             memberRoomLog.setStatus(Status.YES);
             mrlRepository.save(memberRoomLog);
+            return;
         } else {
             throw new CustomException(Code.C532);
         }

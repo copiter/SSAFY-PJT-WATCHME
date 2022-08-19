@@ -39,7 +39,6 @@ public class PointService {
     private final MemberRepository memberRepository;
     private final MemberInfoRepository memberInfoRepository;
     public KakaoPayRes kakaoPayReady(Long id, Integer point) {
-        System.out.println("hello");
         KakaoPayReq kakaoPayReq = KakaoPayReq.builder()
                 .cid("TC0ONETIME")
                 .partner_order_id("포인트 결제")

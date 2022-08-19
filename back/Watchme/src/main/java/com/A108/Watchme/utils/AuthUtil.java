@@ -24,7 +24,6 @@ public class AuthUtil {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try{
             memberId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
-            System.out.println(memberId);
             if(!memberRepository.existsById(memberId)){
                 throw new CustomException(Code.C503);
             }

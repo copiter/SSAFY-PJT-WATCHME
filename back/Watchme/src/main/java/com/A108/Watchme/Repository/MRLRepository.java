@@ -34,4 +34,6 @@ public interface MRLRepository extends JpaRepository<MemberRoomLog, Long> {
     Optional<MemberRoomLog> findTopByRoomIdOrderByStudyTimeDesc(Long roomId);
 
     List<MemberRoomLog> findByMember_idAndStartAtAfter(Long memberId, Date date);
+
+    Optional<MemberRoomLog> findByMemberIdAndRoomId(Long memberId, Long id);
 }

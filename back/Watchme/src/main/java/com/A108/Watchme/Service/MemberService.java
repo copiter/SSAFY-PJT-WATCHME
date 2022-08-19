@@ -52,6 +52,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.Calendar;
@@ -566,24 +567,23 @@ public class MemberService {
 
         // penaltyByDay
         // 1.일자별 패널티
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, 0);
-
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(,0);
+        LocalDate date = LocalDate.now();
+        date = date.withDayOfMonth(1);
         int[] penaltyByDay = new int[Calendar.getInstance().get(Calendar.DATE)+1];
-
         List<PenaltyLog> myPenaltyLog = penaltyLogRegistory.
-                findByMember_idAndCreatedAtAfter(currUser.getId(), Date.from(cal.toInstant()));
-
+                findByMember_idAndCreatedAtAfter(currUser.getId(), java.sql.Date.valueOf(date));
         myPenaltyLog.stream().forEach(x -> penaltyByDay[x.getCreatedAt().getDate()-1] += 1);
-
         result.setResponseData("penaltyByDay", penaltyByDay);
+        // studyByDay
 
 
         // studyByDay
         // 2.일자별 공부 시간
         int[] studyByDay = new int[Calendar.getInstance().get(Calendar.DATE)+1];
 
-        List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), Date.from(cal.toInstant()));
+        List<MemberRoomLog> myStudyLog = mrlRepository.findByMember_idAndStartAtAfter(currUser.getId(), java.sql.Date.valueOf(date));
 
         if (myStudyLog.size() != 0) {
             myStudyLog.stream().forEach(x -> studyByDay[x.getStartAt().getDate() - 1] += x.getStudyTime());

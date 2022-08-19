@@ -1,10 +1,11 @@
 #mypage {
-  margin: 50px 5vw;
+    margin: 50px auto;
 
   display: flex;
   justify-content: center;
   align-items: center;
   height: 550px;
+  width: 1300px;
 }
 
 #mypage__left {
@@ -103,13 +104,11 @@
   margin-left: 35px;
 }
 
+/* width: 270px; */
 /* 오른쪽 - 아래 */
 #mypage__bottom {
-  display: grid;
-  height: 50%;
-  padding-top: 10px;
-
-  grid-template-columns: 5fr 1fr;
+    display: flex;
+      height: 50%;
 }
 
 #mypage__penalty-wrap {
@@ -124,8 +123,7 @@
   padding: 25px 50px;
   background: #e0e2e6;
   border-radius: 8px;
-  min-width: 150px;
-  max-width: 260px;
+  width: 240px;
 }
 
 #mypage__penalty > ul > li {

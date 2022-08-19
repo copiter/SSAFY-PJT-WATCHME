@@ -1,0 +1,72 @@
+#group-detail__sprint {
+  box-sizing: border-box;
+  width: 75%;
+  height: 102%;
+  padding-left: 25px;
+  overflow: scroll;
+}
+
+#group-detail__sprint strong {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+
+  color: #484848;
+}
+#group-detail__sprint strong > i {
+  font-size: 18px;
+  color: #9a9a9a;
+}
+#sprint-join-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+#sprint-join-header > button,
+#sprint-done-header button {
+  margin-right: 5px;
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+
+  background: #dc3545;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+#sprint-join button:hover {
+  opacity: 1;
+}
+
+#sprint-ongoing {
+  margin: 25px 0;
+}
+
+.sprint__content {
+  cursor: pointer;
+}
+#sprint-join .sprint__content,
+#sprint-join #no-sprint {
+  border-color: #4fd1d9;
+}
+
+#sprint-ongoing .sprint__content,
+#sprint-ongoing #no-sprint {
+  border-color: #dc3545;
+}
+
+#sprint-done .sprint__content {
+  border-color: #9d9d9d;
+  opacity: 0.5;
+}

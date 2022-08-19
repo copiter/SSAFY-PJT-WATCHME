@@ -1,0 +1,194 @@
+#group-detail__members {
+  box-sizing: border-box;
+  width: 75%;
+  /* height: 100%; */
+  padding-left: 25px;
+}
+
+#group-detail__members-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+#group-detail__members-title > strong {
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 28px;
+
+  color: #484848;
+}
+
+#group-detail__members-content {
+  margin-top: 28px;
+  height: 93%;
+  overflow: scroll;
+}
+#group-detail__members-content > ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(auto-fit, minmax(70px, auto));
+  row-gap: 20px;
+  column-gap: 20px;
+
+  align-items: center;
+}
+
+#group-detail__members-content > ul > li {
+  padding: 0 10px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 70px;
+
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #545454;
+}
+.group-detail__appliers-item {
+  border: 3px solid #4fd1d9;
+}
+.group-detail__members-item {
+  border: 1px solid #9d9d9d;
+}
+
+.group-detail__members-item-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+.group-detail__members-item-name {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+}
+.group-detail__members-item-name > * {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+.group-detail__appliers-item small {
+  color: #d9d9d9;
+  font-weight: 600;
+  font-size: 8px;
+}
+.group-detail__members-item small {
+  color: #d9d9d9;
+  font-weight: 600;
+  font-size: 8px;
+}
+.group-detail__members-item-achieve {
+  line-height: 20px;
+}
+.group-detail__members-item-achieve > div {
+  width: 200px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.medium-text {
+  font-weight: 400;
+}
+
+/* 버튼 */
+.group-detail__members-btn {
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+
+  background: #dc3545;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+.group-detail__leader-btn {
+  margin-right: 10px;
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+
+  background: #4fd1d9;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+  color: #000;
+
+  cursor: pointer;
+}
+.group-detail__leader-btn:hover {
+  opacity: 1;
+}
+.group-detail__leader-btn:active {
+  transform: scale(0.98);
+}
+
+.group-detail__members-btn.handover {
+  display: block;
+  background: #4fd1d9;
+  color: #000;
+  position: absolute;
+}
+
+.group-detail__members-btn.appliers {
+  background: #4fd1d9;
+  color: #000;
+  font-weight: 600;
+  opacity: 1;
+}
+.group-detail__members-btn:hover {
+  opacity: 1;
+}
+.group-detail__members-btn:active {
+  transform: scale(0.98);
+}
+
+.dropbtn {
+  background-color: #d9d9d9;
+  color: #000;
+  font-weight: bold;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+}
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+  background-color: #9a9a9a;
+}

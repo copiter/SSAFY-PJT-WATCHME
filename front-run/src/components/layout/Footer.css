@@ -1,0 +1,65 @@
+#footer {
+  position: relative;
+}
+
+#coInfo {
+  position: absolute;
+  display: flex;
+  align-items: center;
+
+  top: 40px;
+  left: 120px;
+}
+#coInfo img {
+  width: 120px;
+}
+#coInfo span {
+  font-family: "Montserrat", sans-serif;
+
+  margin-left: 5px;
+  font-weight: 800;
+  font-size: 40px;
+  color: rgba(0, 0, 0, 0.6);
+}
+#contact-info {
+  position: absolute;
+  top: 50px;
+  right: 210px;
+
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+
+  color: #484848;
+}
+#list-sns {
+  position: absolute;
+  top: 80px;
+  right: 71px;
+  width: 280px;
+}
+
+#list-sns > li {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 25px;
+  color: #484848;
+}
+#list-sns > li > b {
+  font-weight: 700;
+}
+
+#footer small {
+  color: #484848;
+  font-size: 14px;
+}
+#txt-copy {
+  position: absolute;
+  top: 260px;
+  left: 130px;
+}
+#txt-created {
+  position: absolute;
+  top: 260px;
+  right: 190px;
+}

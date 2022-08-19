@@ -1,0 +1,201 @@
+#pointadd {
+  margin: 30px 10vw;
+  min-width: 1200px;
+  height: 800px;
+}
+#pointadd-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 10px;
+  background-color: #eff0f2;
+  margin-top: 20px;
+}
+.point-my-point {
+  flex-grow: 1;
+  display: flex;
+  flex-basis: 60%;
+  flex-direction: column;
+  min-width: 860px;
+
+  box-sizing: border-box;
+  padding: 30px;
+}
+#charge-form-frame {
+  border-left: 1px solid #bdbdbd;
+  min-width: 300px;
+
+  box-sizing: border-box;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+#charge-cash {
+  flex-basis: 50%;
+}
+
+#pointadd-title {
+  font-size: 36px;
+}
+
+.point-my-pointdes {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  margin-bottom: 40px;
+}
+
+.point-my-pointdet {
+  flex-basis: 50%;
+}
+.point-my-pointdet > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 5px;
+}
+.point-my-pointdet > li > * {
+  display: inline-block;
+}
+.point-my-pointdet > li:first-child {
+  font-size: 24px;
+  font-weight: 700;
+  border: 3px solid #4fd1d9;
+  padding: 10px;
+  border-radius: 5px;
+}
+.point-mypoint-sub {
+  font-weight: 500;
+}
+
+/* 워치미 포인트 설명 */
+.point-watchme {
+  max-width: 300px;
+  margin-left: 50px;
+  flex-basis: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 60px 15px 0;
+  box-sizing: border-box;
+}
+#point-watchme-title {
+  display: inline-block;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+#point-watchme-text {
+  font-size: 12px;
+  color: #9a9a9a;
+  line-height: 15px;
+}
+
+/* 포인트 내역 */
+.point-log {
+  display: flex;
+  flex-direction: column;
+}
+.point-list {
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+/* 테이블 */
+.point-log > table {
+  text-align: center;
+}
+#point-table {
+  height: 400px;
+  overflow-y: scroll;
+}
+#point-table > table {
+  border-collapse: separate;
+  border-spacing: 0 15px;
+  width: 100%;
+  text-align: center;
+}
+#point-table-head {
+  font-weight: 500;
+}
+
+.point-log > table {
+  padding: 5px 0;
+  border-bottom: 2px solid #9a9a9a;
+}
+td {
+  padding: 5px 0;
+}
+
+/* 캐쉬충전 */
+.point-cash-title {
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 15%;
+  letter-spacing: 1px;
+}
+.selection-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+#pay-selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 5px;
+  column-gap: 5px;
+}
+#pay-selection input {
+  background-color: #bdbdbd;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
+#pay-selection input:hover,
+#pay-selection .active {
+  background-color: #fff;
+}
+#charge-submit-btn {
+  background-color: #4fd1d9;
+  border: none;
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.8;
+}
+#charge-submit-btn:hover {
+  background-color: #4fd1d9;
+  opacity: 1;
+}
+#charge-submit-btn:active {
+  transform: scale(0.98);
+}
+
+#charge-input > span {
+  display: inline-block;
+  margin: 15px 0;
+}
+
+#charge-select {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#charge-select > select,
+#charge-select > input[type="number"] {
+  border: none;
+  border-radius: 5px;
+}
+.dirInput {
+  max-width: 110px;
+}
+
+/* 캐쉬 환급 */
+#refund-input > span {
+  display: inline-block;
+  margin: 15px 0;
+}

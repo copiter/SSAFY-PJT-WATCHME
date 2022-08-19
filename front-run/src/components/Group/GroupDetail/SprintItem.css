@@ -1,0 +1,197 @@
+#no-sprint {
+  border: 3px solid;
+  height: 130px;
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 130px;
+  text-align: center;
+}
+
+.sprint__content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 7px;
+  padding: 15px 30px;
+  box-sizing: border-box;
+  border: 3px solid;
+  border-radius: 10px;
+}
+
+.sprint__content-item-img {
+  width: 95px;
+  height: 95px;
+  border-radius: 32px;
+}
+
+.sprint__content-item-desc {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 160px;
+}
+.sprint__content-item-desc > * {
+  display: block;
+}
+.sprint__content-item-desc > span {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+
+  color: #484848;
+}
+.sprint__content-item-desc > small {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  text-align: justify;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #9a9a9a;
+}
+
+.sprint__content-item-info {
+  width: 300px;
+}
+.sprint__content-item-info > ul > li {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}
+
+.sprint__content-item-info > ul > li > span {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 23px;
+
+  color: #9a9a9a;
+}
+.sprint__content-item-info > ul > li > span > b {
+  font-weight: 500;
+}
+
+.item-info-date {
+  display: inline-block;
+  margin-bottom: 7px;
+  font-weight: 500;
+  font-size: 20px;
+
+  color: #484848;
+}
+
+/* 참가비 */
+#sprint-join__content-item-fee {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 230px;
+}
+#sprint-join__content-item-fee span {
+  font-size: 20px;
+  line-height: 24px;
+}
+#sprint-join__content-item-fee small {
+  font-size: 14px;
+  line-height: 17px;
+  color: #9a9a9a;
+  transform: translateX(16px);
+}
+#sprint-cancel-button {
+  width: 50px;
+  margin-left: 10px;
+
+  background: #dc3545;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+
+  cursor: pointer;
+
+  z-index: 2;
+}
+
+/* 스프린트 현황 */
+.sprint__content-item-status {
+  width: 230px;
+  z-index: 0;
+}
+.content-status-title {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.75px;
+}
+
+.sprint__content-item-status > ul > li {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+.sprint__content-item-status > ul > li > small {
+  color: #858585;
+}
+.sprint__content-item-status > ul > li > span {
+  font-weight: 700;
+  font-size: 16px;
+  color: #292929;
+}
+
+/* hover effect */
+.sprint-king {
+  visibility: hidden;
+}
+.sprint__content:hover {
+  position: relative;
+  background: #fff;
+  /* visibility: hidden; */
+}
+.sprint__content:hover .sprint-king {
+  display: block;
+  position: absolute;
+  z-index: 1;
+}
+
+#sprintCal-btn {
+  margin-left: 25px;
+  padding: 10px;
+  width: fit-content;
+  height: fit-content;
+
+  background: #dc3545;
+  opacity: 0.5;
+
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  color: #ffffff;
+
+  cursor: pointer;
+  z-index: 1000;
+}
+#sprintCal-btn:hover {
+  opacity: 1;
+}

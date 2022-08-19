@@ -1,0 +1,45 @@
+#mainpage__banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin: 130px auto 130px;
+  padding: 60px;
+
+  width: 1120px;
+  height: 280px;
+
+  /* background: #e0e2e6; */
+  background: #eff0f2;
+  border-radius: 12px;
+}
+#banner__left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#mainpage__banner__title {
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 52px;
+  margin-bottom: 50px;
+
+  color: #484848;
+}
+#mainpage__banner__main {
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 78px;
+  text-align: right;
+  letter-spacing: 3px;
+
+  color: #535353;
+}
+#mainpage__banner__description {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 1px;
+
+  color: #9a9a9a;
+}

@@ -1,0 +1,131 @@
+#sprint-create-whole {
+  margin: 30px 15vw;
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+}
+
+#sprint-create-title {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+#sprint-create {
+  display: flex;
+}
+
+/* 배치 */
+#sprint-image {
+  width: 279px;
+  height: 550px;
+  background: #eff0f2;
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+#sprint-input {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 42px;
+
+  position: relative;
+}
+
+/* 이미지 */
+#sprint-image__upload {
+  position: absolute;
+  top: 10%;
+
+  width: 150px;
+  height: 150px;
+  background: #d9d9d9;
+  text-indent: -10000px;
+
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#sprint-image-loaded {
+  position: absolute;
+  top: 10%;
+
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+#sprint-image__message {
+  position: absolute;
+  top: 50%;
+
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -1px;
+}
+
+#sprint-create input {
+  font-size: 15px;
+}
+
+#sprint-input-items > input {
+  display: block;
+  border: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid #ccc;
+  height: 34px;
+}
+#sprint-fee > input {
+  display: inline-block;
+  border: 0;
+  padding: 7px 0;
+  border-bottom: 1px solid #ccc;
+  margin-right: 20px;
+  width: 200px;
+  height: 34px;
+}
+#sprint-input-items input[type="text"] {
+  width: 100%;
+}
+
+#label-container {
+  width: 320px;
+}
+#label-container > label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+}
+#label-container > label > input,
+#label-container > label > select {
+  cursor: pointer;
+  width: 120px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* 버튼 */
+#sprint-input > button {
+  position: absolute;
+  bottom: 10px;
+  right: 0;
+
+  display: inline-block;
+  width: 147px;
+  height: 46px;
+  border: 1px solid #c2c6cc;
+  border-radius: 20px;
+
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 46px;
+  text-align: center;
+  cursor: pointer;
+}

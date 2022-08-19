@@ -1,0 +1,115 @@
+.navbar {
+  padding: 15px 70px 15px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 19px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  box-sizing: border-box;
+  /* height: 100%; */
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+.navbar .navbar__left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.navbar .nav-logo {
+  margin-right: 32px;
+  display: flex;
+  align-items: center;
+
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+}
+
+.navbar .nav-list {
+  display: inline-block;
+}
+
+.nav-list ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar .nav-list li {
+  font-weight: 400;
+  font-size: 16px;
+  float: left;
+}
+.navbar .nav-list li + li {
+  margin-left: 32px;
+}
+
+.navbar a:hover,
+.navbar a:active {
+  font-weight: 700;
+}
+
+.navbar .navbar__right {
+  display: flex;
+  flex-direction: row;
+}
+
+#nav-profile-picture {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.dropdown__login .user-info {
+  display: flex;
+  align-items: center;
+}
+
+.navbar .nav-username {
+  display: inline-block;
+  margin-left: 10px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown__login {
+  display: inline-block;
+  position: relative;
+}
+
+.dropdowncontent__login {
+  display: none;
+  position: absolute;
+  background-color: #e0e2e6;
+  min-width: 110px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdowncontent__login a,
+.dropdowncontent__login button {
+  cursor: pointer;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown__login:hover .dropdowncontent__login {
+  display: block;
+}
+.dropdowncontent__login:hover .dropdowncontent__login {
+  background-color: #fff;
+}

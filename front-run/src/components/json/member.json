@@ -1,0 +1,28 @@
+{
+  "code": 200,
+  "message": "SUCCESS GET MEMBER INFO",
+  "responseData": {
+    "studyByDay": [
+      110, 180, 220, 210, 90, 60, 140, 150, 160, 150, 180, 160, 110, 180, 220,
+      210, 200
+    ],
+    "penalty": {
+      "MODE2": 5,
+      "MODE3": 2
+    },
+    "member": {
+      "nickName": "춘식이입니당",
+      "profileImage": "https://images.unsplash.com/photo-1660340439887-6635db0a8ac4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
+      "point": 1,
+      "description": null,
+      "studyTimeToday": 0,
+      "studyTimeWeek": 54,
+      "studyTimeMonth": 231,
+      "studyTimeTotal": 416
+    },
+    "penaltyByDay": [
+      0, 5, 10, 20, 12, 10, 9, 2, 5, 10, 11, 12, 8, 3, 5, 1, 0, 3
+    ],
+    "rules": ["MDOE2", "MODE3"]
+  }
+}

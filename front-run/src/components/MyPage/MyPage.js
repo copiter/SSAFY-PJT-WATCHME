@@ -7,7 +7,7 @@ import { Chart } from "react-google-charts";
 import ErrorCode from "../../Error/ErrorCode";
 
 import "./MyPage.css";
-import userInfor from "../json/member.json";
+// import userInfor from "../json/member.json";
 
 import MyStudyInfo from "../MainPage/MyStudyInfo";
 
@@ -45,10 +45,6 @@ function MyPage() {
     height: "220",
     positon: "absolue",
   };
-  const options_timeChartdata = {
-    curveType: "function",
-    pieHole: 0.4,
-  };
 
   for (let i = 0; i < info.studyByDay.length; i++) {
     studydata[i + 1] = [i + 1 + "일", info.studyByDay[i]];
@@ -76,12 +72,8 @@ function MyPage() {
           ErrorCode(result);
         }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }, []);
-
-  console.log(info);
 
   return (
     <div id="mypage">
@@ -105,11 +97,9 @@ function MyPage() {
             </li>
             <li>
               <Link to="/PointAdd">💰 전환하기</Link>
-              {/* <Link to="./PointRefund">💰 전환하기</Link> */}
             </li>
             <li>
               <Link to="/PointAdd">⚡ 사용내역</Link>
-              {/* <Link to="./PointUsed">⚡ 사용내역</Link> */}
             </li>
           </ul>
         </div>
@@ -117,13 +107,6 @@ function MyPage() {
       <div id="mypage__right">
         <div id="mypage__top">
           <div id="my-study-time__number">
-            {/* <Chart
-              chartType="PieChart"
-              data={timeChartdata}
-              options={options_timeChartdata}
-              width={"100%"}
-              height={"400px"}
-            /> */}
             <strong>나의 공부량</strong>
             <MyStudyInfo userInformation={info.member} isMainPage={false} />
           </div>
@@ -163,12 +146,9 @@ function MyPage() {
               options={options_studydataPen}
             />
           </div>
-          <div id="mypage__setting">
+          {/* <div id="mypage__setting">
             <strong>MyPage</strong>
             <ul id="Links">
-              {/* <li>
-                <Link to="./PointAdd">포인트 충전하기</Link>
-              </li> */}
               <li>
                 <a href="#">회원정보 수정</a>
               </li>
@@ -179,7 +159,7 @@ function MyPage() {
                 <a href="#">회원탈퇴</a>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

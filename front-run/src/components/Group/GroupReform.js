@@ -66,7 +66,7 @@ function GroupReform() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 
@@ -94,7 +94,7 @@ function GroupReform() {
   const [isChecked, setIsChecked] = useState(true);
   const handleChangeCheck = (event) => {
     setIsChecked((current) => !current);
-    console.log(isChecked);
+    //console.log(isChecked);
     const name = event.target.name;
     setInputs((values) => ({ ...values, [name]: isChecked ? 1 : 0 }));
   };
@@ -162,7 +162,7 @@ function GroupReform() {
         }
       })
       .catch((err) => {
-        console.log("ERR");
+        //console.log("ERR");
       });
   };
 

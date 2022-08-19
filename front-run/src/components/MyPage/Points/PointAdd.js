@@ -43,7 +43,10 @@ function PointAdd() {
           setPointInfo(tmpData);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => 
+      //console.log(err)
+      {}
+      );
   }, [reload]);
   // console.log(pointInfo);
 
@@ -63,7 +66,6 @@ function PointAdd() {
       }
     )
       .then((response) => {
-        console.log(response);
         if (response.ok) {
           return response.json(); //ok떨어지면 바로 종료.
         } else {
@@ -80,7 +82,7 @@ function PointAdd() {
         }
       })
       .catch((err) => {
-        console.log("ERR");
+        //console.log("ERR");
       });
   };
   const handleSubmitRefund = (event) => {
@@ -114,7 +116,7 @@ function PointAdd() {
         }
       })
       .catch((err) => {
-        console.log("ERR");
+        //console.log("ERR");
       });
   };
 
@@ -126,7 +128,6 @@ function PointAdd() {
     const name = event.target.name;
     const value = event.target.value;
     setInputs((values) => ({ ...values, [name]: value }));
-    console.log(inputs);
     if (value === "Free" && name === "valueSelect") {
       //valueInputs비허용
       setIsShown(true);

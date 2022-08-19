@@ -26,9 +26,7 @@ function FindPWD() {
         name: inputs.name,
         email: inputs.email,}
 
-        console.log(
-          json
-        );
+       
       event.preventDefault();
       fetch(url, {
         method: "POST",
@@ -38,11 +36,9 @@ function FindPWD() {
         },
       })
         .then((response) => {
-          console.log(response);
           return response.json();
         })
         .then((result) => {
-          console.log(result);
           if (result.message === "이메일 입력이 잘못되었습니다.") {
             swal("잘못된 정보입니다");
           } else if (result.message === "EMAIL SEND SUCCESS") {
@@ -54,7 +50,7 @@ function FindPWD() {
           }
         })
         .catch((err) => {
-          console.log("ERRROR");
+          //console.log("ERRROR");
         });
     }
   };

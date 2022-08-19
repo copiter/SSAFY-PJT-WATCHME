@@ -121,7 +121,7 @@ function GroupCreate() {
           }
         })
         .catch((err) => {
-          console.log("ERR");
+          //console.log("ERR");
         });
     } else {
       swal("그룹카테고리를 클릭해주세요");

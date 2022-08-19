@@ -26,25 +26,21 @@ function Members() {
       },
     })
       .then((response) => {
-        console.log("MemberResTest");
         if (response.ok) {
-          console.log("Res OK");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
-            console.log("ERROn_ResMem");
+            //console.log("ERROn_ResMem");
             let errorMessage = "";
             throw new Error(errorMessage);
           });
         }
       })
       .then((result) => {
-        console.log("ResultOK");
         setStudy(result.responseData.logs);
-        console.log(result.responseData.logs);
       })
       .catch((err) => {
-        console.log("ERR_Member");
+        //console.log("ERR_Member");
       });
   }, []);
 

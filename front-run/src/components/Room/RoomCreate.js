@@ -60,7 +60,7 @@ function RoomCreate() {
         }
       })
       .catch((err) => {
-        console.log("ERR");
+        //console.log("ERR");
       });
   };
 

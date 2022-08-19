@@ -28,7 +28,6 @@ function PWDCheck() {
           return response.json();
         })
         .then((result) => {
-          console.log(result);
           if (result.message === "RESET PASSWORD FAIL") {
             alert("잘못된 정보입니다");
           } else if (result.message === "FIND EMAIL SUCCESS") {
@@ -38,7 +37,7 @@ function PWDCheck() {
           }
         })
         .catch((err) => {
-          console.log("ERRROR");
+          //console.log("ERRROR");
         });
     } else {
       alert("비밀번호가 서로 다릅니다.");

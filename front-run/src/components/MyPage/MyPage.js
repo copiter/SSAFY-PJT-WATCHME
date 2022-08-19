@@ -33,8 +33,8 @@ function MyPage() {
     title: "나의 공부패널티 그래프",
     curveType: "function",
     legend: { position: "none" },
-    width: "650",
-    height: "300",
+    width: "700",
+    height: "220",
     positon: "absolue",
   };
   const options = {

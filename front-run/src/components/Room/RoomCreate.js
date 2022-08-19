@@ -168,6 +168,7 @@ function RoomCreate() {
                   value={inputs.endTime || ""}
                   onChange={handleChange}
                   className="endTime"
+                  required
                 />
 
                 <span>비공개</span>

@@ -1,9 +1,9 @@
 #borders {
   min-width: 250px;
-  height: 300px;
+  height: 450px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   position: absolute;
   top: 20px;
@@ -12,7 +12,7 @@
 }
 #clock {
   margin-top: 30px;
-  flex-basis: 50%;
+  flex-basis: 30%;
   text-align: center;
 }
 #study-time__title {
@@ -28,7 +28,7 @@
 }
 
 #study-rule {
-  flex-basis: 50%;
+  flex-basis: 70%;
   padding-top: 20px;
   text-align: center;
 }

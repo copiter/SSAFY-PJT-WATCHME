@@ -43,7 +43,7 @@ function GroupRecruit() {
         setInputs({ groupSearch: "" });
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 
@@ -74,7 +74,7 @@ function GroupRecruit() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
     // inputs.keyword = "";
     // setInputs((values) => ({ ...values, [inputs.keyword]: "" }));
@@ -104,7 +104,7 @@ function GroupRecruit() {
           }
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         });
       setInputs({ ctg: "" });
     } else {
@@ -130,7 +130,7 @@ function GroupRecruit() {
           }
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
         });
     }
   };
@@ -163,7 +163,7 @@ function GroupRecruit() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
     setGroupPage(page);
   };

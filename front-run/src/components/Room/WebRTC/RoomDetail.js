@@ -131,22 +131,15 @@ class RoomDetail extends Component {
     const id = window.location.pathname.split("/")[2].substring(0);
     const url = `${FETCH_URL}/rooms/` + id + "/leave";
 
-    // console.log(id);
-    // console.log(url);
-    // console.log("방나가기 시도");
-
     fetch(url, {
       method: "POST",
       headers: { accessToken: getCookie("accessToken") },
     })
       .then((response) => {
-        // console.log(response);
         if (response.ok) {
-          // console.log("리스폰스 성공");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((resPoseError) => {
-            // console.log("ERR바가기 실패");
             swal(resPoseError.message);
             let errorMessage = "오류로 방나가기 안됨";
             throw new Error(errorMessage);
@@ -154,25 +147,21 @@ class RoomDetail extends Component {
         }
       })
       .then((result) => {
-        // console.log("RES:");
         if (result != null) {
-          // console.log("NOTNULL:");
-          // console.log(result);
           if (result.code === 200) {
-            // console.log("방나가기 성공");
 
             swal("퇴장하셨습니다.", "", "info");
             setTimeout(() => {
               window.location.href = "../../";
             }, [2000]);
           } else {
-            console.log("오류가 발생하였습니다.");
+            //console.log("오류가 발생하였습니다.");
             window.location.href = "../../";
           }
         }
       })
       .catch((err) => {
-        console.log("ERR여기 못나감");
+        //console.log("ERR여기 못나감");
       });
 
     // Empty all properties...
@@ -342,7 +331,6 @@ class RoomDetail extends Component {
         },
       })
         .then((response) => {
-          // console.log(response);
           if (response.ok) {
             return response.json(); //ok떨어지면 바로 종료.
           } else {
@@ -358,8 +346,6 @@ class RoomDetail extends Component {
         })
         .then((result) => {
           if (result != null) {
-            console.log("리저트 테스트");
-            console.log(result.responseData.room);
             this.setState({
               roomName: result.responseData.room.name,
               isRoomLeader:
@@ -368,13 +354,11 @@ class RoomDetail extends Component {
                 result.responseData.room.mode === "MODE1" ? false : true,
               mode: result.responseData.room.mode,
             });
-            // console.log(result.responseData.mode);
             sessionStorage.setItem("roomName", result.responseData.room.name);
           }
         })
         .catch((err) => {
           ErrorCode(err);
-          console.log("백통신 실패");
         });
       if (this.state.mode !== "MODE1") {
         this.openTeli(id);
@@ -383,9 +367,6 @@ class RoomDetail extends Component {
     this.joinSessionSetOpenVidu(id);
   }
   async joinSessionSetOpenVidu(newSessionId) {
-    // console.log("오픈비두 테스트");
-    console.log(this.state);
-    //오픈비두 세팅
     this.OV = new OpenVidu();
     this.setState(
       {
@@ -423,8 +404,8 @@ class RoomDetail extends Component {
                 });
               } catch (e) {
                 swal(
-                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다. 권한 허용 후 새로고침 해주세요",
-                  "",
+                  "서비스 사용을 위해 카메라와 마이크 권한이 필요합니다",
+                  "권한 허용 후 빨간색 방 나가기 버튼을 누르고 나갔다 들어와주세요",
                   "error"
                 );
               }
@@ -459,11 +440,11 @@ class RoomDetail extends Component {
             })
             .catch((error) => {
               // console.log("오픈비드 JoinSession에러입니다.");
-              console.log(
-                "There was an error connecting to the session:",
-                error.code,
-                error.message
-              );
+              // console.log(
+              //   "There was an error connecting to the session:",
+              //   error.code,
+              //   error.message
+              // );
             });
         });
       }
@@ -535,7 +516,6 @@ class RoomDetail extends Component {
           if (result.code === 200) {
             // console.log("오류없음");
           } else if (result.code === 205) {
-            // console.log("여기 result", result);
             this.errorFound();
             this.setState({
               newErrorDetected: !this.state.newErrorDetected,
@@ -548,7 +528,7 @@ class RoomDetail extends Component {
         }
       })
       .catch((err) => {
-        console.log("ERR여기임");
+        //console.log("ERR여기임");
       });
   }
 
@@ -560,7 +540,7 @@ class RoomDetail extends Component {
     } else if (this.state.mode === "MODE4") {
       swal("자리이탈이 감지되었습니다.", "", "error");
     } else {
-      console.log("알수없는에러");
+      //console.log("알수없는에러");
     }
   }
   ban() {
@@ -572,22 +552,15 @@ class RoomDetail extends Component {
     const id = window.location.pathname.split("/")[2].substring(0);
     const url = `${FETCH_URL}/rooms/` + id + "/leave";
 
-    // console.log(id);
-    // console.log(url);
-    // console.log("방나가기 시도");
-
     fetch(url, {
       method: "POST",
       headers: { accessToken: getCookie("accessToken") },
     })
       .then((response) => {
-        // console.log(response);
         if (response.ok) {
-          // console.log("리스폰스 성공");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((resPoseError) => {
-            // console.log("ERR바가기 실패");
             swal(resPoseError.message);
             let errorMessage = "오류로 방나가기 안됨";
             throw new Error(errorMessage);
@@ -595,12 +568,8 @@ class RoomDetail extends Component {
         }
       })
       .then((result) => {
-        // console.log("RES:");
         if (result != null) {
-          // console.log("NOTNULL:");
-          // console.log(result);
           if (result.code === 200) {
-            // console.log("방나가기 성공");
 
             swal("방에서 퇴장되셨습니다", "", "error");
             setTimeout(() => {
@@ -615,7 +584,7 @@ class RoomDetail extends Component {
         }
       })
       .catch((err) => {
-        console.log("ERR여기 못나감");
+        //console.log("ERR여기 못나감");
       });
 
     // Empty all properties...
@@ -626,7 +595,6 @@ class RoomDetail extends Component {
       setTimeout(() => {
       }, [1000]);
     } catch {
-      console.log("디스콘실패");
       swal("오류가 발생하였습니다.", "", "error");
       window.location.href = "../../";
     }
@@ -813,8 +781,7 @@ class RoomDetail extends Component {
             "Content-Type": "application/json",
           },
         })
-        .then((response) => {
-          console.log("세션성공");
+        .then((response) => {;
           resolve(response.data.id);
         })
         .catch((response) => {
@@ -822,7 +789,6 @@ class RoomDetail extends Component {
           if (error?.response?.status === 409) {
             resolve(sessionId);
           } else {
-            console.log(error);
             console.warn(
               "No connection to OpenVidu Server. This may be a certificate error at " +
                 OPENVIDU_SERVER_URL
@@ -873,7 +839,7 @@ class RoomDetail extends Component {
           resolve(response.data.token);
         })
         .catch((error) => {
-          console.log("생성실패");
+          //console.log("생성실패");
           reject(error);
         });
     });

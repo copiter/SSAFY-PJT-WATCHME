@@ -69,6 +69,19 @@ function SprintCreate() {
     }
   }
 
+  function feeCheck() {
+    if (
+      feeInputRef.current.value === "" ||
+      penaltyMoneyInputRef.current.value === ""
+    ) {
+      return;
+    }
+    if (feeInputRef.current.value < penaltyMoneyInputRef.current.value) {
+      swal("참가비는 벌금보다 커야합니다", "", "error");
+      penaltyMoneyInputRef.current.value = "";
+    }
+  }
+
   //submit
   const handleSubmit = (event) => {
     const data = {
@@ -110,7 +123,7 @@ function SprintCreate() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
   };
 
@@ -231,6 +244,7 @@ function SprintCreate() {
                 step="1000"
                 disabled={selectMode === "MODE1" ? true : false}
                 ref={feeInputRef}
+                onChange={feeCheck}
                 placeholder="참가비를 입력하세요(원)"
               />
               <input
@@ -243,6 +257,7 @@ function SprintCreate() {
                 }
                 disabled={selectMode === "MODE1" ? true : false}
                 ref={penaltyMoneyInputRef}
+                onChange={feeCheck}
                 placeholder="벌금 단위를 입력하세요(원)"
               />
             </div>

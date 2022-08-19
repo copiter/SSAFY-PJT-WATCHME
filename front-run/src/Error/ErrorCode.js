@@ -184,6 +184,9 @@ function ErrorCode(result) {
     case 574:
       swal("스프린트 방은 수정할 수 없습니다", "", "error");
       break;
+    case 576:
+      swal("강퇴되었습니다", "", "error");
+      break;
     case 595:
       swal("비정상적인 접근입니다", "", "error");
       break;

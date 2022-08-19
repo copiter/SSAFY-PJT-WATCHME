@@ -21,7 +21,6 @@ export default class ChatComponent extends Component {
   componentDidMount() {
     this.props.user.stream.session.on("signal:chat", (event) => {
       const data = JSON.parse(event.data);
-      console.log("데이타데이타", data);
       let messageList = this.state.messageList;
       messageList.push({
         connectionId: event.from.connectionId,
@@ -54,7 +53,6 @@ export default class ChatComponent extends Component {
   }
 
   sendMessage() {
-    console.log("메시지", this.state.message);
     if (this.props.user && this.state.message) {
       let message = this.state.message.replace(/ +(?= )/g, "");
       if (message !== "" && message !== " ") {

@@ -123,7 +123,7 @@ function SprintCreate() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
   };
 

@@ -16,18 +16,15 @@ function MyStudy(props) {
   });
 
   const id = window.location.pathname.split("/")[2].substring(0);
-  // console.log("URL:" + url + "/" + id);
 
   useEffect(() => {
     setInterval(() => {
-      // console.log("TESTHERE");
       fetch(url + "/" + id, {
         headers: {
           accessToken: getCookie("accessToken"),
         },
       })
         .then((response) => {
-          // console.log(response);
           if (response.ok) {
             return response.json(); //ok떨어지면 바로 종료.
           } else {
@@ -47,7 +44,7 @@ function MyStudy(props) {
           }
         })
         .catch((err) => {
-          console.log("ERR");
+          //console.log("ERR");
         });
     }, 1000);
   }, []);
@@ -66,7 +63,6 @@ function MyStudy(props) {
     }
   }, [props.newError]);
 
-  console.log(studyTimes);
   let hours = studyTimes / 1000 / 60 / 60,
     minutes = (studyTimes / 1000 / 60) % 60,
     seconds = (studyTimes / 1000) % 60;

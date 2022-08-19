@@ -77,11 +77,10 @@ function MyPage() {
         }
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   }, []);
 
-  console.log(info);
 
   return (
     <div id="mypage">

@@ -31,7 +31,6 @@ function RoomRecruit() {
   //URL
   const url = `${FETCH_URL}/rooms`;
   useEffect(() => {
-    // console.log(roomPage);
     setRoomPage(1);
     fetch(url)
       .then((response) => response.json())
@@ -43,7 +42,7 @@ function RoomRecruit() {
         }
       })
       .catch((err) => {
-        console.log("ERROR");
+        // console.log("ERROR");
       });
   }, []);
 
@@ -67,16 +66,14 @@ function RoomRecruit() {
         }
       })
       .catch((err) => {
-        console.log("ERROR");
+        // console.log("ERROR");
       });
   };
   const ctgChange = (event) => {
     event.preventDefault();
     setRoomPage(1);
-    console.log(roomPage);
     const ARR = ["all", "공무원", "취업", "수능", "자격증", "코딩", "기타"];
     setInputs((values) => ({ ...values, category: ARR[event.target.value] }));
-    // console.log(ARR[event.target.value]);
     fetch(
       url +
         "?" +
@@ -93,13 +90,11 @@ function RoomRecruit() {
         }
       })
       .catch((err) => {
-        console.log("ERROR");
+        //console.log("ERROR");
       });
   };
   const addMore = (event) => {
-    //테스트 요망
     let page = parseInt(parseInt(roomPage) + 1);
-    // console.log(page);
     fetch(
       url +
         "?" +
@@ -120,10 +115,9 @@ function RoomRecruit() {
         }
       })
       .catch((err) => {
-        console.log("ERROR");
+        //console.log("ERROR");
       });
     setRoomPage(page);
-    // console.log(roomPage);
   };
 
   return (

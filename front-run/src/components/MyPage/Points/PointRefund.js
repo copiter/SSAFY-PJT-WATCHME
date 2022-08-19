@@ -23,7 +23,6 @@ function PointRefund() {
       return cookie[0][1];
     }
     
-    console.log(url+"value="+(inputs.valueSelect==="Free"?inputs.valueInputs:inputs.valueSelect));
     fetch(url+"value="+(inputs.valueSelect==="Free"?inputs.valueInputs:inputs.valueSelect)
       , {
       method: "POST",
@@ -33,12 +32,9 @@ function PointRefund() {
     })
       .then((response) => {
         if (response.ok) {
-          console.log("C1");
-          console.log(response);
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((data) => {
-            console.log("ERR");
             let errorMessage = "";
             throw new Error(errorMessage);
           });
@@ -50,7 +46,6 @@ function PointRefund() {
         }
       })
       .catch((err) => {
-        console.log("ERR");
       });
   };
 

@@ -70,7 +70,6 @@ function SignUp() {
       new Blob([JSON.stringify(data)], { type: "application/json" })
     );
 
-    console.log(data);
 
     //myjsons->application.josn
 

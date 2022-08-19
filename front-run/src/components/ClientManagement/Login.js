@@ -29,7 +29,6 @@ const Login = () => {
     const enteredPassword = passwordInputRef.current.value;
 
     const url = `${FETCH_URL}/members/auth/login`;
-    console.log(url);
 
     // Interacting with server
     fetch(url, {

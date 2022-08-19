@@ -39,9 +39,6 @@ export class RoomReform extends Component {
       roomMemberMaxNo: this.state.num,
       endAt: this.state.endTime,
     };
-    console.log("아우풋이었습니다.");
-    console.log(outputs);
-    console.log("아우풋이었습니다.");
     formData.append(
       "roomUpdateDTO",
       new Blob([JSON.stringify(outputs)], { type: "application/json" })
@@ -54,13 +51,6 @@ export class RoomReform extends Component {
     ) {
       formData.append("images", this.state.imgeRef.current.files[0]);
     }
-    console.log("URL입니다.");
-    console.log(
-      FetchUrl._currentValue +
-        "/rooms/" +
-        window.location.pathname.split("/")[2].substring(0) +
-        "/update"
-    );
     fetch(
       FetchUrl._currentValue +
         "/rooms/" +
@@ -73,9 +63,7 @@ export class RoomReform extends Component {
       }
     )
       .then((response) => {
-        console.log(response);
         if (response.ok) {
-          console.log("오류검출없음");
           return response.json(); //ok떨어지면 바로 종료.
         } else {
           response.json().then((errorResult) => {
@@ -87,14 +75,11 @@ export class RoomReform extends Component {
       })
       .then((result) => {
         if (result != null) {
-          console.log(result);
-          console.log("최종테스트");
           swal("방정보가 수정되었습니다");
           this.exitModal();
         }
       })
       .catch((err) => {
-        console.log("에러 POST");
         swal("에러가 발생하였습니다.");
       });
   };
@@ -107,7 +92,6 @@ export class RoomReform extends Component {
 
   //시작시 한번만 실행
   getRoomDataSetting() {
-    console.log("모달_룸정보가져오기_테스트");
     fetch(
       FetchUrl._currentValue +
         "/rooms/" +
@@ -132,13 +116,11 @@ export class RoomReform extends Component {
       .then((result) => {
         if (result != null) {
           let datas = result.responseData.room;
-          console.log("GETDataResult");
-          console.log("GETDataResult끝");
           this.setState(datas);
         }
       })
       .catch((err) => {
-        console.log("에러체크입니다.");
+        //console.log("에러체크입니다.");
       });
 
     this.setState({ starDistroyed: null });

@@ -14,7 +14,6 @@ function PointSuccess() {
   const tid = localStorage.getItem("tid");
   const FETCH_URL = useContext(FetchUrl);
   const url = `${FETCH_URL}/points/kakao/approval`;
-  console.log(pg_token);
 
   const navigate = useNavigate();
 

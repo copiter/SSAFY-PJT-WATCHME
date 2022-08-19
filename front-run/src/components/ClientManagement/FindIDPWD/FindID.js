@@ -17,12 +17,6 @@ function FindID() {
 
   // Function handling submit button
   const submitHandler = (event) => {
-    console.log(
-      JSON.stringify({
-        name: inputs.name,
-        nickName: inputs.nickName,
-      })
-    );
     event.preventDefault();
     fetch(url, {
       method: "POST",
@@ -35,11 +29,9 @@ function FindID() {
       },
     })
       .then((response) => {
-        console.log(response);
         return response.json();
       })
       .then((result) => {
-        console.log(result);
         if (result.message === "FIND EMAIL FAIL") {
           swal("잘못된 정보입니다");
         } else if (result.message === "FIND EMAIL SUCCESS") {
@@ -50,7 +42,7 @@ function FindID() {
         }
       })
       .catch((err) => {
-        console.log("ERRROR");
+        //console.log("ERRROR");
       });
   };
   const handleChange = (event) => {

@@ -24,7 +24,6 @@ function ChangePWD() {
       password: inputs.password,
       emailKey: searchParams.get("emailKey"),
     };
-    console.log(sendJson);
     if (inputs.password === inputs.check) {
       fetch(url, {
         method: "POST",
@@ -34,11 +33,9 @@ function ChangePWD() {
         },
       })
         .then((response) => {
-          console.log(response);
           return response.json();
         })
         .then((result) => {
-          console.log(result);
           if (result.message === "RESET PASSWORD FAIL") {
             swal("잘못된 정보입니다");
           } else if (result.code === 200) {
@@ -50,7 +47,7 @@ function ChangePWD() {
           }
         })
         .catch((err) => {
-          console.log("ERRROR");
+          //console.log("ERRROR");
         });
     } else {
       swal("비밀번호가 서로 다릅니다.");

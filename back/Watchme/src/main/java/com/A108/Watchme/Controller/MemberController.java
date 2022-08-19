@@ -114,7 +114,6 @@ public class MemberController {
     @PostMapping(value="/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
     public ApiResponse memberUpdate(@Valid @RequestPart(value = "data") UpdateRequestDTO updateRequestDTO, @RequestPart(value = "files", required = false) MultipartFile image) throws ParseException {
-        // 프로필 이미지 수정시 삭제?
         return memberService.memberUpdate(updateRequestDTO, image);
     }
 
@@ -146,7 +145,6 @@ public class MemberController {
             throw new CustomException(Code.C501);
         }
 
-        // 일반 로그인의 경우
         Long currUserId = Long.parseLong(((UserDetails)authentication.getPrincipal()).getUsername());
         Optional<Member> checkCurrUser = memberRepository.findById(currUserId);
 

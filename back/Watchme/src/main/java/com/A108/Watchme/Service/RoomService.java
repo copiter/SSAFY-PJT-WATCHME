@@ -284,7 +284,10 @@ public class RoomService {
             memberRoomLog.setStatus(Status.YES);
             mrlRepository.save(memberRoomLog);
             return;
-        } else {
+        } else if(memberRoomLog.getStatus().equals(Status.DELETE)){
+            return;
+        }
+        else {
             throw new CustomException(Code.C532);
         }
     }

@@ -68,7 +68,8 @@ public enum Code {
     C545(545,"START DATE ERROR" ),
     C546(546, "END DATE ERROR" ),
     C547(547,"SPRINT BAN" ),
-    C548(548, "ONLY FOR GROUP MEMBER"), C574(574,"CAN NOT UPDATE SPRINT ROOM" );
+    C548(548, "ONLY FOR GROUP MEMBER"), C574(574,"CAN NOT UPDATE SPRINT ROOM" ),
+    C576(576, "강퇴되었습니다." );
 
 
     private int errCode;

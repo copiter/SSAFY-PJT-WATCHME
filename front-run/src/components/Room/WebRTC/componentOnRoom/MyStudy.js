@@ -103,9 +103,9 @@ function MyStudy(props) {
                 ? " 스마트폰"
                 : " 자리 이탈"}
             </span>
-            <span id="study-rule__penalty">
-              {study.mode !== "MODE1" && ` ${study.penalty}회`}
-            </span>
+            <div id="study-rule__penalty" style={{ marginTop: "10px" }}>
+              {study.mode !== "MODE1" && `총 ${study.penalty}회`}
+            </div>
           </p>
         </div>
         <div id="study-rule__error">
